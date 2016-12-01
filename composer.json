@@ -1,0 +1,19 @@
+{
+    "name": "leonmrni/search_core",
+    "type": "typo3-cms-extension",
+    "description": "Leonmrni Search Core.",
+    "homepage": "http://www.leonmrni.com",
+    "license": ["GPL-2.0+"],
+    "autoload": {
+        "psr-4": {
+            "Leonmrni\\SearchCore\\": "Classes"
+        }
+    },
+    "authors": [
+        {
+            "name": "Justus Leon Moroni",
+            "email": "developer@leonmrni.com",
+            "role": "lead"
+        }
+    ]
+}
