@@ -134,7 +134,6 @@ class DataHandlerTest extends UnitTestCase
             ->method('update')
             ->with(
                 $this->equalTo($table),
-                $this->equalTo($recordUid),
                 $this->equalTo($record)
             );
 
