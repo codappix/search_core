@@ -1,0 +1,13 @@
+<f:form name="searchRequest" object="{searchRequest}">
+
+    <f:form.textfield property="query" />
+    <f:form.submit value="search" />
+
+</f:form>
+
+<f:for each="{searchResult}" as="result">
+    <f:link.page pageUid="{result.hit._source.pid}">
+        {result.id} [{result.type}] - {result.hit._source.search_title}
+    </f:link.page>
+    <br>
+</f:for>

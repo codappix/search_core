@@ -27,7 +27,7 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use Leonmrni\SearchCore\Service\DataHandler as OwnDataHandler;
+use Leonmrni\SearchCore\Domain\Service\DataHandler as OwnDataHandler;
 
 /**
  * Wrapper for TYPO3 Hooks to internal API.

@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Command;
+namespace Leonmrni\SearchCore\Domain\Index;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,36 +20,41 @@ namespace Leonmrni\SearchCore\Command;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
-use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
+use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 /**
- * Command controller to provide indexing through CLI.
+ * Factory to get configured indexer based on configuration.
  */
-class IndexCommandController extends CommandController
+class IndexerFactory implements Singleton
 {
     /**
-     * @var IndexerFactory
+     * @var ObjectManager
      */
-    protected $indexerFactory;
+    protected $objectManager;
 
     /**
-     * @param IndexerFactory $factory
+     * @param ObjectManagerInterface $objectManager
      */
-    public function injectIndexerFactory(IndexerFactory $factory)
+    public function __construct(ObjectManagerInterface $objectManager)
     {
-        $this->indexerFactory = $factory;
+        $this->objectManager = $objectManager;
     }
 
     /**
-     * Will index the given table or everything.
+     * @param string $tableName
      *
-     * @param string $table
+     * @return IndexerInterface
      */
-    public function indexCommand($table)
+    public function getIndexer($tableName)
     {
-        // TODO: Allow to index multiple tables at once?
-        // TODO: Also allow to index everything?
-        $this->indexerFactory->getIndexer($table)->index();
+        // This is the place to use configuration to return different indexer.
+        return $this->objectManager->get(
+            TcaIndexer::Class,
+            $this->objectManager->get(
+                TcaIndexer\TcaTableService::class,
+                $tableName
+            )
+        );
     }
 }

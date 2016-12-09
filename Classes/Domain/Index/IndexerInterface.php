@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Command;
+namespace Leonmrni\SearchCore\Domain\Index;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,36 +20,13 @@ namespace Leonmrni\SearchCore\Command;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
-use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
-
 /**
- * Command controller to provide indexing through CLI.
+ * Interface that all indexer should implement.
  */
-class IndexCommandController extends CommandController
+interface IndexerInterface
 {
     /**
-     * @var IndexerFactory
+     * Index the index.
      */
-    protected $indexerFactory;
-
-    /**
-     * @param IndexerFactory $factory
-     */
-    public function injectIndexerFactory(IndexerFactory $factory)
-    {
-        $this->indexerFactory = $factory;
-    }
-
-    /**
-     * Will index the given table or everything.
-     *
-     * @param string $table
-     */
-    public function indexCommand($table)
-    {
-        // TODO: Allow to index multiple tables at once?
-        // TODO: Also allow to index everything?
-        $this->indexerFactory->getIndexer($table)->index();
-    }
+    public function index();
 }
