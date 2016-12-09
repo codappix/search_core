@@ -34,12 +34,12 @@ class TypeFactory implements Singleton
      * Get an index bases on TYPO3 table name.
      *
      * @param \Elastica\Index $index
-     * @param string $tableName
+     * @param string $documentType
      *
      * @return \Elastica\Type
      */
-    public function getType(\Elastica\Index $index, $tableName)
+    public function getType(\Elastica\Index $index, $documentType)
     {
-        return $index->getType($tableName);
+        return $index->getType($documentType);
     }
 }

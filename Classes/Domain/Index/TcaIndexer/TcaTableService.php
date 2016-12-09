@@ -132,11 +132,7 @@ class TcaTableService
      */
     protected function isRelation(array &$columnConfig)
     {
-        if (isset($columnConfig['foreign_table'])) {
-            return true;
-        }
-
-        return false;
+        return isset($columnConfig['foreign_table']);
     }
 
     /**
@@ -158,10 +154,7 @@ class TcaTableService
             $this->tca['ctrl']['languageField'],
             $this->tca['ctrl']['origUid'],
         ];
-        if (in_array($columnName, $systemFields)) {
-            return true;
-        }
 
-        return false;
+        return in_array($columnName, $systemFields);
     }
 }

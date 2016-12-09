@@ -26,49 +26,50 @@ namespace Leonmrni\SearchCore\Connection;
 interface ConnectionInterface
 {
     /**
-     * Will add a new document, based on his identifier and record type.
+     * Will add a new document.
      *
-     * @param string $recordType
-     * @param int $identifier
-     * @param array $record
+     * @param string $documentType
+     * @param array $document
      *
-     * @return
+     * @return void
      */
-    public function add($recordType, $identifier, array $record);
+    public function add($documentType, array $document);
 
     /**
-     * Add the given records.
+     * Add the given documents.
      *
-     * @param string $recordType
-     * @param array $records
+     * @param string $documentType
+     * @param array $documents
+     *
+     * @return void
      */
-    public function addDocuments($recordType, array $records);
+    public function addDocuments($documentType, array $documents);
 
     /**
-     * Will update an existing document, based on his identifier and record type.
+     * Will update an existing document.
      *
-     * @param string $recordType
-     * @param int $identifier
-     * @param array $record
+     * @param string $documentType
+     * @param array $document
      *
-     * @return
+     * @return void
      */
-    public function update($recordType, $identifier, array $record);
+    public function update($documentType, array $document);
 
     /**
-     * Will remove an existing document, based on his identifier and record type.
+     * Will remove an existing document.
      *
-     * @param string $recordType
+     * @param string $documentType
      * @param int $identifier
      *
-     * @return
+     * @return void
      */
-    public function delete($recordType, $identifier);
+    public function delete($documentType, $identifier);
 
     /**
      * Search by given request and return result.
      *
      * @param SearchRequestInterface $searchRequest
+     *
      * @return SearchResultInterface
      */
     public function search(SearchRequestInterface $searchRequest);
