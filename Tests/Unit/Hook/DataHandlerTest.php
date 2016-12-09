@@ -20,12 +20,10 @@ namespace Leonmrni\SearchCore\Tests\Unit\Hook;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Hook\DataHandler as Hook;
-use Leonmrni\SearchCore\Service\DataHandler;
-use Leonmrni\SearchCore\Tests\Fakes\FakeLogManager;
 use TYPO3\CMS\Core\DataHandling\DataHandler as CoreDataHandler;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
+use Leonmrni\SearchCore\Domain\Service\DataHandler;
+use Leonmrni\SearchCore\Hook\DataHandler as Hook;
 
 /**
  *
@@ -47,9 +45,6 @@ class DataHandlerTest extends UnitTestCase
      */
     protected function setUp()
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\Container\Container')
-            ->registerImplementation(LogManager::class, FakeLogManager::class);
-
         $this->subject = $this->getAccessibleMock(DataHandler::class);
         $this->hook = $this->getAccessibleMock(
             Hook::class,
@@ -57,9 +52,7 @@ class DataHandlerTest extends UnitTestCase
                 'getTablesToProcess',
                 'getRecord'
             ],
-            [
-                $this->subject,
-            ]
+            [$this->subject]
         );
 
         $this->hook->method('getTablesToProcess')
@@ -82,7 +75,7 @@ class DataHandlerTest extends UnitTestCase
         $this->subject->expects($this->exactly(0))->method('add');
         $this->subject->expects($this->exactly(0))->method('update');
 
-        $dataHandler = $this->getAccessibleMock(CoreDataHandler::class, [], [], '', false);
+        $dataHandler = new CoreDataHandler();
         $dataHandler->substNEWwithIDs = ['NEW34' => $recordUid];
 
         $this->hook->processCmdmap_deleteAction($table, $recordUid, [], false, $dataHandler);
@@ -101,7 +94,7 @@ class DataHandlerTest extends UnitTestCase
         $this->subject->expects($this->once())->method('add');
         $this->subject->expects($this->once())->method('update');
 
-        $dataHandler = $this->getAccessibleMock(CoreDataHandler::class, [], [], '', false);
+        $dataHandler = new CoreDataHandler();
         $dataHandler->substNEWwithIDs = ['NEW34' => $recordUid];
 
         $this->hook->processCmdmap_deleteAction($table, $recordUid, [], false, $dataHandler);

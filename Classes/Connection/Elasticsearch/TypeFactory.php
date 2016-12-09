@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Command;
+namespace Leonmrni\SearchCore\Connection\Elasticsearch;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,36 +20,26 @@ namespace Leonmrni\SearchCore\Command;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
-use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
+use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /**
- * Command controller to provide indexing through CLI.
+ * Factory to get indexes.
+ *
+ * The factory will take care of configuration and creation of index if necessary.
  */
-class IndexCommandController extends CommandController
+class TypeFactory implements Singleton
 {
     /**
-     * @var IndexerFactory
-     */
-    protected $indexerFactory;
-
-    /**
-     * @param IndexerFactory $factory
-     */
-    public function injectIndexerFactory(IndexerFactory $factory)
-    {
-        $this->indexerFactory = $factory;
-    }
-
-    /**
-     * Will index the given table or everything.
+     * Get an index bases on TYPO3 table name.
      *
-     * @param string $table
+     * @param \Elastica\Index $index
+     * @param string $tableName
+     *
+     * @return \Elastica\Type
      */
-    public function indexCommand($table)
+    public function getType(\Elastica\Index $index, $tableName)
     {
-        // TODO: Allow to index multiple tables at once?
-        // TODO: Also allow to index everything?
-        $this->indexerFactory->getIndexer($table)->index();
+        return $index->getType($tableName);
     }
 }

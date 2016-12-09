@@ -15,13 +15,12 @@
             "TYPO3\\CMS\\Core\\Tests\\": ".Build/vendor/typo3/cms/typo3/sysext/core/Tests/"
         }
     },
-
     "require" : {
         "php": ">=5.6.0",
         "typo3/cms": ">=6.2.0"
     },
     "require-dev": {
-		"phpunit/phpunit": "~4.8.0"
+        "phpunit/phpunit": "~4.8.0"
     },
     "config": {
         "optimize-autoloader": true,

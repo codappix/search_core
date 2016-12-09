@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Command;
+namespace Leonmrni\SearchCore\Connection;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,36 +20,15 @@ namespace Leonmrni\SearchCore\Command;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
-use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
-
 /**
- * Command controller to provide indexing through CLI.
+ *
  */
-class IndexCommandController extends CommandController
+interface SearchRequestInterface
 {
     /**
-     * @var IndexerFactory
-     */
-    protected $indexerFactory;
-
-    /**
-     * @param IndexerFactory $factory
-     */
-    public function injectIndexerFactory(IndexerFactory $factory)
-    {
-        $this->indexerFactory = $factory;
-    }
-
-    /**
-     * Will index the given table or everything.
+     * Returns the actual string the user searched for.
      *
-     * @param string $table
+     * @return string
      */
-    public function indexCommand($table)
-    {
-        // TODO: Allow to index multiple tables at once?
-        // TODO: Also allow to index everything?
-        $this->indexerFactory->getIndexer($table)->index();
-    }
+    public function getSearchTerm();
 }

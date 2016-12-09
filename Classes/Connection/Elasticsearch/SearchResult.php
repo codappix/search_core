@@ -1,8 +1,8 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Fakes;
+namespace Leonmrni\SearchCore\Connection\Elasticsearch;
 
 /*
- * Copyright (C) 2016  Daniel Siepmann <daniel.siepmann@typo3.org>
+ * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +20,12 @@ namespace Leonmrni\SearchCore\Tests\Fakes;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Core\Log\LogManager;
+use Leonmrni\SearchCore\Connection\SearchResultInterface;
 
 /**
- * Fakes the LogManager to prevent dependencies and logging during tests.
+ *
  */
-class FakeLogManager extends LogManager
+class SearchResult extends \Elastica\SearchResult implements SearchResultInterface
 {
-    public function __construct()
-    {
-        $this->loggers['fake'] = new Logger('fake');
-    }
 
-    public function getLogger($name = '')
-    {
-        return $this->loggers['fake'];
-    }
 }
