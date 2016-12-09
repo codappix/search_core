@@ -12,7 +12,7 @@ typo3DatabaseHost ?= "127.0.0.1"
 .PHONY: install
 install:
 	rm .Build
-	COMPOSER_PROCESS_TIMEOUT=1000 composer require -vvv --dev typo3/cms="$(TYPO3_VERSION)"
+	COMPOSER_PROCESS_TIMEOUT=1000 composer require -vvv --dev --prefer-source typo3/cms="$(TYPO3_VERSION)"
 
 	git checkout composer.json
 	mkdir -p $(TYPO3_WEB_DIR)/uploads $(TYPO3_WEB_DIR)/typo3temp
