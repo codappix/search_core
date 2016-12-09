@@ -102,14 +102,15 @@ class DataHandler implements Singleton
         }
 
         if ($status === 'new') {
-            $this->dataHandler->add($table, $dataHandler->substNEWwithIDs[$uid], $fieldArray);
+            $fieldArray['uid'] = $dataHandler->substNEWwithIDs[$uid];
+            $this->dataHandler->add($table, $fieldArray);
             return;
         }
 
         if ($status === 'update') {
             $record = $this->getRecord($table, $uid);
             if ($record !== null) {
-                $this->dataHandler->update($table, $uid, $record);
+                $this->dataHandler->update($table, $record);
             }
             return;
         }

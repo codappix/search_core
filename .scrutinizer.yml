@@ -1,9 +1,11 @@
 filter:
     excluded_paths:
+        - 'Configuration/*'
         - 'Documentation/*'
-        - 'Resources/JavaScript/*'
+        - 'Resources/*'
     paths:
         - 'Classes/*'
+        - 'Tests/*'
 tools:
 
     php_cpd:

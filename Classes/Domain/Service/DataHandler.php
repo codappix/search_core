@@ -63,22 +63,20 @@ class DataHandler implements Singleton
 
     /**
      * @param string $table
-     * @param int $identifier
      * @param array $record
      */
-    public function add($table, $identifier, array $record)
+    public function add($table, array $record)
     {
-        $this->logger->debug('Record received for add.', [$table, $identifier, $record]);
-        $this->connection->add($table, $identifier, $record);
+        $this->logger->debug('Record received for add.', [$table, $record]);
+        $this->connection->add($table, $record);
     }
 
     /**
      * @param string $table
-     * @param int $identifier
      */
-    public function update($table, $identifier, array $record)
+    public function update($table, array $record)
     {
-        $this->logger->debug('Record received for update.', [$table, $identifier, $record]);
-        $this->connection->update($table, $identifier, $record);
+        $this->logger->debug('Record received for update.', [$table, $record]);
+        $this->connection->update($table, $record);
     }
 }
