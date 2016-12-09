@@ -1,0 +1,22 @@
+<phpunit
+    backupGlobals="false"
+    backupStaticAttributes="false"
+    bootstrap="../../.Build/vendor/typo3/cms/typo3/sysext/core/Build/FunctionalTestsBootstrap.php"
+
+    colors="true"
+    convertErrorsToExceptions="false"
+    convertWarningsToExceptions="false"
+    forceCoversAnnotation="false"
+    processIsolation="false"
+    stopOnError="false"
+    stopOnFailure="false"
+    stopOnIncomplete="false"
+    stopOnSkipped="false"
+    verbose="false">
+
+    <testsuites>
+        <testsuite name="functional-tests">
+            <directory>.</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
