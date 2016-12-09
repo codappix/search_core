@@ -74,11 +74,8 @@ class DataHandler implements Singleton
      *
      * @param string $table
      * @param int $uid
-     * @param array $record
-     * @param bool $recordWasDeleted
-     * @param CoreDataHandler $dataHandler
      */
-    public function processCmdmap_deleteAction($table, $uid, array $record, $recordWasDeleted, CoreDataHandler $dataHandler)
+    public function processCmdmap_deleteAction($table, $uid)
     {
         if (! $this->shouldProcessTable($table)) {
             $this->logger->debug('Delete not processed, cause table is not allowed.', [$table]);
@@ -110,15 +107,17 @@ class DataHandler implements Singleton
         }
 
         if ($status === 'update') {
-            $this->dataHandler->update(
-                $table,
-                $uid,
-                $this->getRecord($table, $uid)
-            );
+            $record = $this->getRecord($table, $uid);
+            if ($record !== null) {
+                $this->dataHandler->update($table, $uid, $record);
+            }
             return;
         }
 
-        $this->logger->debug('Database update not processed, cause status is unhandled.', [$status, $table, $uid, $fieldArray]);
+        $this->logger->debug(
+            'Database update not processed, cause status is unhandled.',
+            [$status, $table, $uid, $fieldArray]
+        );
     }
 
     /**
@@ -126,7 +125,7 @@ class DataHandler implements Singleton
      *
      * TODO: Fetch from config
      *
-     * @return array
+     * @return string[]
      */
     protected function getTablesToProcess()
     {
@@ -149,7 +148,7 @@ class DataHandler implements Singleton
      *
      * @param string $table
      * @param int $uid
-     * @return array
+     * @return null|array
      */
     protected function getRecord($table, $uid)
     {

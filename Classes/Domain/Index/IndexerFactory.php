@@ -29,7 +29,7 @@ use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 class IndexerFactory implements Singleton
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 

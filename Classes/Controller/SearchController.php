@@ -47,7 +47,7 @@ class SearchController extends ActionController
     /**
      * Process a search and deliver original request and result to view.
      *
-     * @param SearchRequest $searchRequest
+     * @param null|SearchRequest $searchRequest
      */
     public function searchAction(SearchRequest $searchRequest = null)
     {

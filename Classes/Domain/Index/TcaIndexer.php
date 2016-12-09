@@ -54,7 +54,7 @@ class TcaIndexer implements IndexerInterface
     }
 
     /**
-     * @param string $tableName
+     * @param TcaIndexer\TcaTableService $tcaTableService
      * @param ConnectionInterface $connection
      */
     public function __construct(
@@ -76,7 +76,7 @@ class TcaIndexer implements IndexerInterface
     }
 
     /**
-     * @return \Iterator
+     * @return \Generator
      */
     protected function getRecordGenerator()
     {

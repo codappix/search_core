@@ -27,6 +27,8 @@ interface IndexerInterface
 {
     /**
      * Index the index.
+     *
+     * @return void
      */
     public function index();
 }

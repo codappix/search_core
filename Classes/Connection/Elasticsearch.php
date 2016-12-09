@@ -33,17 +33,17 @@ class Elasticsearch implements Singleton, ConnectionInterface
     protected $connection;
 
     /**
-     * @var IndexFactory
+     * @var Elasticsearch\IndexFactory
      */
     protected $indexFactory;
 
     /**
-     * @var TypeFactory
+     * @var Elasticsearch\TypeFactory
      */
     protected $typeFactory;
 
     /**
-     * @var DocumentFactory
+     * @var Elasticsearch\DocumentFactory
      */
     protected $documentFactory;
 
@@ -80,44 +80,39 @@ class Elasticsearch implements Singleton, ConnectionInterface
         $this->documentFactory = $documentFactory;
     }
 
-    public function add($recordType, $identifier, array $record)
+    public function add($documentType, array $document)
     {
          throw new \Exception('Implement', 1481190734);
     }
 
-    public function delete($recordType, $identifier)
+    public function delete($documentType, $identifier)
     {
          throw new \Exception('Implement', 1481190734);
     }
 
-    public function update($tableName, $identifier, array $record)
+    public function update($documentType, array $document)
     {
-        $this->addDocument($tableName, $identifier, $record);
-    }
-
-    protected function addDocument($tableName, $identifier, array $record)
-    {
-         throw new \Exception('Implement', 1481192791);
+         throw new \Exception('Implement', 1481190734);
     }
 
     /**
-     * Add the given records to elasticsearch.
+     * Add the given documents to elasticsearch.
      *
-     * @param string $tableName
-     * @param array $records
+     * @param string $documentType
+     * @param array $documents
      */
-    public function addDocuments($tableName, array $records)
+    public function addDocuments($documentType, array $documents)
     {
         $type = $this->typeFactory->getType(
             $this->indexFactory->getIndex(
                 $this->connection,
-                $tableName
+                $documentType
             ),
-            $tableName
+            $documentType
         );
 
         $type->addDocuments(
-            $this->documentFactory->getDocuments($tableName, $records)
+            $this->documentFactory->getDocuments($documentType, $documents)
         );
 
         $type->getIndex()->refresh();

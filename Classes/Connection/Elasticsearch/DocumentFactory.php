@@ -43,40 +43,42 @@ class DocumentFactory implements Singleton
     }
 
     /**
-     * Creates document from record.
+     * Creates document from document.
      *
-     * @param string $tableName
-     * @param array $record
+     * @param string $documentType
+     * @param array $document
      *
      * @return \Elastica\Document
      */
-    public function getDocument($tableName, array $record)
+    public function getDocument($documentType, array $document)
     {
-        if (!isset($record['search_identifier'])) {
-             throw new \Exception('No search_identifier provided for record.', 1481194385);
+        // TODO: Use DocumentType for further configuration.
+
+        if (!isset($document['search_identifier'])) {
+             throw new \Exception('No search_identifier provided for document.', 1481194385);
         }
 
-        $identifier = $record['search_identifier'];
-        unset($record['search_identifier']);
+        $identifier = $document['search_identifier'];
+        unset($document['search_identifier']);
 
-        $this->logger->debug('Convert record to document', [$identifier, $record]);
-        return new \Elastica\Document($identifier, $record);
+        $this->logger->debug('Convert document to document', [$identifier, $document]);
+        return new \Elastica\Document($identifier, $document);
     }
 
     /**
-     * Creates documents based on records.
+     * Creates documents based on documents.
      *
-     * @param string $tableName
-     * @param array $records
+     * @param string $documentType
+     * @param array $documents
      *
      * @return array
      */
-    public function getDocuments($tableName, array $records)
+    public function getDocuments($documentType, array $documents)
     {
-        foreach ($records as &$record) {
-            $record = $this->getDocument($tableName, $record);
+        foreach ($documents as &$document) {
+            $document = $this->getDocument($documentType, $document);
         }
 
-        return $records;
+        return $documents;
     }
 }

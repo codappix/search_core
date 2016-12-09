@@ -20,6 +20,7 @@ namespace Leonmrni\SearchCore\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
+use Elastica\Exception\ResponseException;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
@@ -34,20 +35,20 @@ class IndexFactory implements Singleton
      * Get an index bases on TYPO3 table name.
      *
      * @param Connection $connection
-     * @param string $tableName
+     * @param string $documentType
      *
      * @return \Elastica\Index
      */
-    public function getIndex(Connection $connection, $tableName)
+    public function getIndex(Connection $connection, $documentType)
     {
-        // TODO: Fetch index name from configuration, based on $tableName.
+        // TODO: Fetch index name from configuration, based on $documentType.
         $index = $connection->getClient()->getIndex('typo3content');
 
         try {
             // TODO: Provide configuration?!
             // http://elastica.io/getting-started/storing-and-indexing-documents.html#section-analysis
             $index->create();
-        } catch (\Elastica\Exception\ResponseException $exception) {
+        } catch (ResponseException $exception) {
             if (stripos($exception->getMessage(), 'already exists') === false) {
                 throw $exception;
             }
