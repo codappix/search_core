@@ -10,12 +10,9 @@ typo3DatabasePassword ?= "dev"
 typo3DatabaseHost ?= "127.0.0.1"
 
 .PHONY: install
-install:
-	rm -rf .Build
+install: clean
 	COMPOSER_PROCESS_TIMEOUT=1000 composer require -vv --dev --prefer-source typo3/cms="$(TYPO3_VERSION)"
-
 	git checkout composer.json
-	mkdir -p $(TYPO3_WEB_DIR)/uploads $(TYPO3_WEB_DIR)/typo3temp
 
 unitTests:
 	TYPO3_PATH_WEB=$(TYPO3_WEB_DIR) \
@@ -33,3 +30,6 @@ functionalTests:
 
 .PHONY: Tests
 Tests: unitTests functionalTests
+
+clean:
+	rm -rf .Build composer.lock
