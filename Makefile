@@ -11,7 +11,7 @@ typo3DatabaseHost ?= "127.0.0.1"
 
 .PHONY: install
 install: clean
-	COMPOSER_PROCESS_TIMEOUT=1000 composer require -vv --dev  typo3/cms="$(TYPO3_VERSION)"
+	COMPOSER_PROCESS_TIMEOUT=1000 composer require -vv --dev --prefer-source typo3/cms="$(TYPO3_VERSION)"
 	git checkout composer.json
 
 unitTests:
