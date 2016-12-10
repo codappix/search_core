@@ -31,4 +31,11 @@ interface IndexerInterface
      * @return void
      */
     public function index();
+
+    /**
+     * Index a single record.
+     *
+     * @return void
+     */
+    public function indexRecord($identifier);
 }

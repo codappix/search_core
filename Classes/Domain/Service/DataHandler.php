@@ -37,6 +37,12 @@ class DataHandler implements Singleton
     protected $connection;
 
     /**
+     * @var \Leonmrni\SearchCore\Domain\Index\IndexerFactory
+     * @inject
+     */
+    protected $indexerFactory;
+
+    /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
@@ -53,22 +59,12 @@ class DataHandler implements Singleton
 
     /**
      * @param string $table
-     * @param int $identifier
-     */
-    public function delete($table, $identifier)
-    {
-        $this->logger->debug('Record received for delete.', [$table, $identifier]);
-        $this->connection->delete($table, $identifier);
-    }
-
-    /**
-     * @param string $table
      * @param array $record
      */
     public function add($table, array $record)
     {
         $this->logger->debug('Record received for add.', [$table, $record]);
-        $this->connection->add($table, $record);
+        $this->indexerFactory->getIndexer($table)->indexRecord($record['uid']);
     }
 
     /**
@@ -77,6 +73,16 @@ class DataHandler implements Singleton
     public function update($table, array $record)
     {
         $this->logger->debug('Record received for update.', [$table, $record]);
-        $this->connection->update($table, $record);
+        $this->indexerFactory->getIndexer($table)->indexRecord($record['uid']);
+    }
+
+    /**
+     * @param string $table
+     * @param int $identifier
+     */
+    public function delete($table, $identifier)
+    {
+        $this->logger->debug('Record received for delete.', [$table, $identifier]);
+        $this->connection->delete($table, $identifier);
     }
 }

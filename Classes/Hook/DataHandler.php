@@ -74,12 +74,14 @@ class DataHandler implements Singleton
      *
      * @param string $table
      * @param int $uid
+     *
+     * @return bool False if hook was not processed.
      */
     public function processCmdmap_deleteAction($table, $uid)
     {
         if (! $this->shouldProcessTable($table)) {
             $this->logger->debug('Delete not processed, cause table is not allowed.', [$table]);
-            return;
+            return false;
         }
 
         $this->dataHandler->delete($table, $uid);
@@ -93,18 +95,20 @@ class DataHandler implements Singleton
      * @param string|int $uid
      * @param array $fieldArray
      * @param CoreDataHandler $dataHandler
+     *
+     * @return bool False if hook was not processed.
      */
     public function processDatamap_afterDatabaseOperations($status, $table, $uid, array $fieldArray, CoreDataHandler $dataHandler)
     {
         if (! $this->shouldProcessTable($table)) {
             $this->logger->debug('Database update not processed, cause table is not allowed.', [$table]);
-            return;
+            return false;
         }
 
         if ($status === 'new') {
             $fieldArray['uid'] = $dataHandler->substNEWwithIDs[$uid];
             $this->dataHandler->add($table, $fieldArray);
-            return;
+            return false;
         }
 
         if ($status === 'update') {
@@ -112,7 +116,7 @@ class DataHandler implements Singleton
             if ($record !== null) {
                 $this->dataHandler->update($table, $record);
             }
-            return;
+            return false;
         }
 
         $this->logger->debug(
