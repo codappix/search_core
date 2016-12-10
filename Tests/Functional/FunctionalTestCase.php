@@ -40,6 +40,10 @@ abstract class FunctionalTestCase extends CoreTestCase
     {
         parent::setUp();
 
+        // Provide necessary configuration for extension
+        $this->importDataSet('Tests/Functional/Fixtures/BasicSetup.xml');
+        $this->setUpFrontendRootPage(1, ['EXT:search_core/Tests/Functional/Fixtures/BasicSetup.ts']);
+
         // Create client to make requests and assert something.
         $this->client = new \Elastica\Client([
             'host' => getenv('ES_HOST') ?: \Elastica\Connection::DEFAULT_HOST,

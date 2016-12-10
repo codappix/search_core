@@ -34,7 +34,6 @@ class IndexTcaTableTest extends FunctionalTestCase
         parent::setUp();
 
         $this->importDataSet('Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml');
-        $this->setUpFrontendRootPage(1, ['EXT:search_core/Tests/Functional/Fixtures/Indexing/IndexTcaTable.ts']);
     }
 
     /**
@@ -53,4 +52,8 @@ class IndexTcaTableTest extends FunctionalTestCase
         $this->assertTrue($response->isOK());
         $this->assertSame($response->getData()['hits']['total'], 1, 'Not exactly 1 document was indexed.');
     }
+
+    // TODO: Add tests for hook.
+
+    // TODO: Add tests for search in frontend.
 }
