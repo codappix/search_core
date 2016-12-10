@@ -19,4 +19,16 @@
             <directory>.</directory>
         </testsuite>
     </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">../../Classes</directory>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-html" target="../../.Build/report/unit/html" lowUpperBound="35" highLowerBound="70"/>
+        <log type="coverage-clover" target="../../.Build/report/unit/clover/coverage"/>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
+    </logging>
 </phpunit>
