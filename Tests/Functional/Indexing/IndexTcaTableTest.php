@@ -53,7 +53,38 @@ class IndexTcaTableTest extends FunctionalTestCase
         $this->assertSame($response->getData()['hits']['total'], 1, 'Not exactly 1 document was indexed.');
     }
 
-    // TODO: Add tests for hook.
+    /**
+     * @test
+     * @expectedException \Leonmrni\SearchCore\Domain\Index\IndexingException
+     */
+    public function indexingNonConfiguredTableWillThrowException()
+    {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
+            ->get(IndexerFactory::class)
+            ->getIndexer('non_existing_table')
+            ;
+    }
 
-    // TODO: Add tests for search in frontend.
+    /**
+     * @test
+     */
+    public function canHandleExisingIndex()
+    {
+        $indexer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
+            ->get(IndexerFactory::class)
+            ->getIndexer('tt_content')
+            ;
+
+        $indexer->index();
+
+        // Index 2nd time, index already exists in elasticsearch.
+        $indexer->index();
+
+        $response = $this->client->request('typo3content/_search?q=*:*');
+
+        $this->assertTrue($response->isOK());
+        $this->assertSame($response->getData()['hits']['total'], 1, 'Not exactly 1 document was indexed.');
+    }
+
+    // TODO: Add tests for hook.
 }
