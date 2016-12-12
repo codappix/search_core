@@ -21,14 +21,14 @@ namespace Leonmrni\SearchCore\Tests\Functional\Hooks;
  */
 
 use Leonmrni\SearchCore\Hook\DataHandler as Hook;
-use Leonmrni\SearchCore\Tests\Functional\FunctionalTestCase;
+use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Core\DataHandling\DataHandler as CoreDataHandler;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  *
  */
-class DataHandlerTest extends FunctionalTestCase
+class DataHandlerTest extends AbstractFunctionalTestCase
 {
     public function setUp()
     {

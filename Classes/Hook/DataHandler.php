@@ -85,6 +85,7 @@ class DataHandler implements Singleton
         }
 
         $this->dataHandler->delete($table, $uid);
+        return true;
     }
 
     /**
@@ -123,6 +124,7 @@ class DataHandler implements Singleton
             'Database update not processed, cause status is unhandled.',
             [$status, $table, $uid, $fieldArray]
         );
+        return true;
     }
 
     /**
@@ -153,7 +155,7 @@ class DataHandler implements Singleton
      *
      * @param string $table
      * @param int $uid
-     * @return null|array
+     * @return null|array<String>
      */
     protected function getRecord($table, $uid)
     {

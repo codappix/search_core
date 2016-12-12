@@ -27,7 +27,7 @@ use TYPO3\CMS\Core\Tests\FunctionalTestCase as CoreTestCase;
  *
  * It will take care of leaving a clean environment for next test.
  */
-abstract class FunctionalTestCase extends CoreTestCase
+abstract class AbstractFunctionalTestCase extends CoreTestCase
 {
     protected $testExtensionsToLoad = ['typo3conf/ext/search_core'];
 
@@ -54,7 +54,9 @@ abstract class FunctionalTestCase extends CoreTestCase
     public function tearDown()
     {
         // Delete everything so next test starts clean.
+        if ($this->client) {
         $this->client->getIndex('_all')->delete();
         $this->client->getIndex('_all')->clearCache();
+        }
     }
 }

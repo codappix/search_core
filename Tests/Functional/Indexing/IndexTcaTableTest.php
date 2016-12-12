@@ -21,13 +21,13 @@ namespace Leonmrni\SearchCore\Tests\Functional\Indexing;
  */
 
 use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
-use Leonmrni\SearchCore\Tests\Functional\FunctionalTestCase;
+use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  *
  */
-class IndexTcaTableTest extends FunctionalTestCase
+class IndexTcaTableTest extends AbstractFunctionalTestCase
 {
     public function setUp()
     {

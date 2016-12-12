@@ -84,8 +84,8 @@ class Elasticsearch implements Singleton, ConnectionInterface
     {
         $this->withType(
             $documentType,
-            function ($type) use($document) {
-                $type->addDocument($this->documentFactory->getDocument($documentType, $document));
+            function ($type) use ($document) {
+                $type->addDocument($this->documentFactory->getDocument($type->getName(), $document));
             }
         );
     }
@@ -104,8 +104,8 @@ class Elasticsearch implements Singleton, ConnectionInterface
     {
         $this->withType(
             $documentType,
-            function ($type) use($documentType) {
-                $type->updateDocument($this->documentFactory->getDocument($documentType, $document));
+            function ($type) use ($document) {
+                $type->updateDocument($this->documentFactory->getDocument($type->getName(), $document));
             }
         );
     }
@@ -120,8 +120,8 @@ class Elasticsearch implements Singleton, ConnectionInterface
     {
         $this->withType(
             $documentType,
-            function ($type) use($documents) {
-                $type->addDocuments($this->documentFactory->getDocuments($documentType, $documents));
+            function ($type) use ($documents) {
+                $type->addDocuments($this->documentFactory->getDocuments($type->getName(), $documents));
             }
         );
     }
@@ -141,7 +141,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
 
     /**
      * @param SearchRequestInterface $searchRequest
-     * @return SearchResultInterface
+     * @return \Elastica\ResultSet
      */
     public function search(SearchRequestInterface $searchRequest)
     {
@@ -151,6 +151,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         $search->addIndex('typo3content');
 
         // TODO: Return wrapped result to implement our interface.
+        // Also update php doc to reflect the change.
         return $search->search($searchRequest->getSearchTerm());
     }
 
