@@ -54,9 +54,7 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
     public function tearDown()
     {
         // Delete everything so next test starts clean.
-        if ($this->client) {
         $this->client->getIndex('_all')->delete();
         $this->client->getIndex('_all')->clearCache();
-        }
     }
 }
