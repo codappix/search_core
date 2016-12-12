@@ -82,17 +82,32 @@ class Elasticsearch implements Singleton, ConnectionInterface
 
     public function add($documentType, array $document)
     {
-         throw new \Exception('Implement', 1481190734);
+        $this->withType(
+            $documentType,
+            function ($type) use($document) {
+                $type->addDocument($this->documentFactory->getDocument($documentType, $document));
+            }
+        );
     }
 
     public function delete($documentType, $identifier)
     {
-         throw new \Exception('Implement', 1481190734);
+        $this->withType(
+            $documentType,
+            function ($type) use($identifier) {
+                $type->deleteById($identifier);
+            }
+        );
     }
 
     public function update($documentType, array $document)
     {
-         throw new \Exception('Implement', 1481190734);
+        $this->withType(
+            $documentType,
+            function ($type) use($documentType) {
+                $type->updateDocument($this->documentFactory->getDocument($documentType, $document));
+            }
+        );
     }
 
     /**
@@ -103,18 +118,24 @@ class Elasticsearch implements Singleton, ConnectionInterface
      */
     public function addDocuments($documentType, array $documents)
     {
-        $type = $this->typeFactory->getType(
-            $this->indexFactory->getIndex(
-                $this->connection,
-                $documentType
-            ),
-            $documentType
+        $this->withType(
+            $documentType,
+            function ($type) use($documents) {
+                $type->addDocuments($this->documentFactory->getDocuments($documentType, $documents));
+            }
         );
+    }
 
-        $type->addDocuments(
-            $this->documentFactory->getDocuments($documentType, $documents)
-        );
-
+    /**
+     * Execute given callback with Elastica Type based on provided documentType
+     *
+     * @param string $documentType
+     * @param callable $callback
+     */
+    protected function withType($documentType, callable $callback)
+    {
+        $type = $this->getType($documentType);
+        $callback($type);
         $type->getIndex()->refresh();
     }
 
@@ -131,5 +152,21 @@ class Elasticsearch implements Singleton, ConnectionInterface
 
         // TODO: Return wrapped result to implement our interface.
         return $search->search($searchRequest->getSearchTerm());
+    }
+
+    /**
+     * @param string $documentType
+     *
+     * @return \Elastica\Type
+     */
+    protected function getType($documentType)
+    {
+        return $this->typeFactory->getType(
+            $this->indexFactory->getIndex(
+                $this->connection,
+                $documentType
+            ),
+            $documentType
+        );
     }
 }

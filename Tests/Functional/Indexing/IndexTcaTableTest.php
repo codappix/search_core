@@ -85,6 +85,4 @@ class IndexTcaTableTest extends FunctionalTestCase
         $this->assertTrue($response->isOK());
         $this->assertSame($response->getData()['hits']['total'], 1, 'Not exactly 1 document was indexed.');
     }
-
-    // TODO: Add tests for hook.
 }

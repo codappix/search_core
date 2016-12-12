@@ -75,6 +75,13 @@ class TcaIndexer implements IndexerInterface
         $this->logger->info('Finish indexing');
     }
 
+    public function indexRecord($identifier)
+    {
+        $this->logger->info('Start indexing single record.', [$identifier]);
+        $this->connection->add($this->tcaTableService->getTableName(), $this->getRecord($identifier));
+        $this->logger->info('Finish indexing');
+    }
+
     /**
      * @return \Generator
      */
@@ -113,5 +120,21 @@ class TcaIndexer implements IndexerInterface
         // TODO: Ignore records from sys folder?
 
         return $records;
+    }
+
+    /**
+     * @param int $identifier
+     * @return array
+     */
+    protected function getRecord($identifier)
+    {
+        $record = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
+            $this->tcaTableService->getFields(),
+            $this->tcaTableService->getTableName(),
+            $this->tcaTableService->getWhereClause() . ' AND uid = ' . (int) $identifier
+        );
+        $this->tcaTableService->prepareRecord($record);
+
+        return $record;
     }
 }
