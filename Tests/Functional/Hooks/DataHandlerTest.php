@@ -105,6 +105,7 @@ class DataHandlerTest extends AbstractFunctionalTestCase
         $hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(Hook::class);
         $hook->processDatamap_afterDatabaseOperations('something', 'tt_content', 6, [], $dataHandler);
 
-        $response = $this->client->request('typo3content/_search?q=*:*');
+        // Should trigger Exception
+        $this->client->request('typo3content/_search?q=*:*');
     }
 }
