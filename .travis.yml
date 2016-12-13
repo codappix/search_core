@@ -3,8 +3,18 @@ language: php
 php:
   - 5.6
   - 7.0
+  - 7.1
 
 env:
+  global:
+    - TYPO3_DATABASE_NAME="typo3_ci"
+    - TYPO3_DATABASE_HOST="127.0.0.1"
+    - TYPO3_DATABASE_USERNAME="travis"
+    - TYPO3_DATABASE_PASSWORD=""
+    - typo3DatabaseName="typo3_ci"
+    - typo3DatabaseHost="127.0.0.1"
+    - typo3DatabaseUsername="travis"
+    - typo3DatabasePassword=""
   matrix:
     - TYPO3_VERSION="~6.2"
     - TYPO3_VERSION="~7.6"
@@ -12,25 +22,32 @@ env:
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - env: TYPO3_VERSION="~6.2"
-      php: 7.0
-    - env: TYPO3_VERSION="dev-master"
-      php: 7.0
   exclude:
     # TYPO3 no longer supports 5.6
     - env: TYPO3_VERSION="dev-master"
       php: 5.6
+    # There is some error with 6.2 and 7 not finding the "UnitTestsBootstrap.php"
+    - env: TYPO3_VERSION="~6.2"
+      php: 7.0
+    - env: TYPO3_VERSION="~6.2"
+      php: 7.1
+  allow_failures:
+    - env: TYPO3_VERSION="dev-master"
+      php: 7.0
+    - env: TYPO3_VERSION="dev-master"
+      php: 7.1
 
-before_install:
-  - composer self-update
-  - composer --version
+services:
+  - mysql
+  - elasticsearch
 
-install:
-  - make install
+install: make install
 
-script:
-  - make Tests
+script: make Tests
+
+after_script:
+  - make uploadCodeCoverage
+  - make clean
 
 cache:
   directories:

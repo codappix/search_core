@@ -1,13 +1,13 @@
 <phpunit
-    backupGlobals="false"
+    backupGlobals="true"
     backupStaticAttributes="false"
-    bootstrap="../../.Build/vendor/typo3/cms/typo3/sysext/core/Build/UnitTestsBootstrap.php"
+    bootstrap="../../.Build/vendor/typo3/cms/typo3/sysext/core/Build/FunctionalTestsBootstrap.php"
 
     colors="true"
     convertErrorsToExceptions="false"
     convertWarningsToExceptions="false"
     forceCoversAnnotation="false"
-    processIsolation="false"
+    processIsolation="true"
     stopOnError="false"
     stopOnFailure="false"
     stopOnIncomplete="false"
@@ -15,7 +15,7 @@
     verbose="false">
 
     <testsuites>
-        <testsuite name="unit-tests">
+        <testsuite name="functional-tests">
             <directory>.</directory>
         </testsuite>
     </testsuites>
@@ -27,8 +27,8 @@
     </filter>
 
     <logging>
-        <log type="coverage-html" target="../../.Build/report/unit/html" lowUpperBound="35" highLowerBound="70"/>
-        <log type="coverage-clover" target="../../.Build/report/unit/clover/coverage"/>
+        <log type="coverage-html" target="../../.Build/report/functional/html" lowUpperBound="35" highLowerBound="70"/>
+        <log type="coverage-clover" target="../../.Build/report/functional/clover/coverage"/>
         <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
     </logging>
 </phpunit>
