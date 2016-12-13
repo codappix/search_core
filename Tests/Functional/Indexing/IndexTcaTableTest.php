@@ -129,7 +129,6 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
      */
     public function resolvesRelations()
     {
-        $this->setUpBackendUserFromFixture(1);
         $this->importDataSet('Tests/Functional/Fixtures/Indexing/ResolveRelations.xml');
 
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
