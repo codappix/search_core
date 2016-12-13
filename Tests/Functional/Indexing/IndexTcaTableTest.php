@@ -123,4 +123,51 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
             'Record was not indexed.'
         );
     }
+
+    /**
+     * @test
+     */
+    public function resolvesRelations()
+    {
+        $this->setUpBackendUserFromFixture(1);
+        $this->importDataSet('Tests/Functional/Fixtures/Indexing/ResolveRelations.xml');
+
+        \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
+            ->get(IndexerFactory::class)
+            ->getIndexer('tt_content')
+            ->index()
+            ;
+
+        $response = $this->client->request('typo3content/_search?q=*:*');
+
+        $this->assertArraySubset(
+            ['_source' => [
+                'uid' => '9',
+                'CType' => 'textmedia', // Testing items
+                'categories' => ['Category 2', 'Category 1'], // Testing mm (with sorting)
+            ]],
+            $response->getData()['hits']['hits'][0],
+            false,
+            'Record was not indexed with resolved category relation to a single value.'
+        );
+        $this->assertArraySubset(
+            ['_source' => [
+                'uid' => '10',
+                'CType' => 'textmedia',
+                'categories' => ['Category 2'],
+            ]],
+            $response->getData()['hits']['hits'][1],
+            false,
+            'Record was not indexed with resolved category relation to multiple values.'
+        );
+        $this->assertArraySubset(
+            ['_source' => [
+                'uid' => '6',
+                'categories' => null,
+            ]],
+            $response->getData()['hits']['hits'][2],
+            false,
+            'Record was indexed with resolved category relation, but should not have any.'
+        );
+    }
 }

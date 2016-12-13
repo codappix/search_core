@@ -25,7 +25,7 @@ use Leonmrni\SearchCore\Domain\Index\IndexingException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 
 /**
- * Encapsulate logik related to tca configuration.
+ * Encapsulate logik related to TCA configuration.
  */
 class TcaTableService
 {
@@ -52,6 +52,11 @@ class TcaTableService
     protected $logger;
 
     /**
+     * @var RelationResolver
+     */
+    protected $relationResolver;
+
+    /**
      * Inject log manager to get concrete logger from it.
      *
      * @param \TYPO3\CMS\Core\Log\LogManager $logManager
@@ -65,8 +70,11 @@ class TcaTableService
      * @param string $tableName
      * @param ConfigurationContainer $configuration
      */
-    public function __construct($tableName, ConfigurationContainerInterface $configuration)
-    {
+    public function __construct(
+        $tableName,
+        RelationResolver $relationResolver,
+        ConfigurationContainerInterface $configuration
+    ) {
         if (!isset($GLOBALS['TCA'][$tableName])) {
             throw new IndexingException(
                 'Table "' . $tableName . '" is not configured in TCA.',
@@ -77,6 +85,7 @@ class TcaTableService
         $this->tableName = $tableName;
         $this->tca = &$GLOBALS['TCA'][$this->tableName];
         $this->configuration = $configuration;
+        $this->relationResolver = $relationResolver;
     }
 
     /**
@@ -101,7 +110,7 @@ class TcaTableService
      */
     public function prepareRecord(array &$record)
     {
-        // TODO: Resolve values from 'items' like static select, radio or checkbox.
+        $this->relationResolver->resolveRelationsForRecord($this, $record);
 
         if (isset($record['uid']) && !isset($record['search_identifier'])) {
             $record['search_identifier'] = $record['uid'];
@@ -144,8 +153,7 @@ class TcaTableService
             array_filter(
                 array_keys($this->tca['columns']),
                 function ($columnName) {
-                    $columnConfig = $this->tca['columns'][$columnName]['config'];
-                    return !$this->isRelation($columnConfig) && !$this->isSystemField($columnName);
+                    return !$this->isSystemField($columnName);
                 }
             )
         );
@@ -156,15 +164,6 @@ class TcaTableService
 
         $this->logger->debug('Generated fields.', [$this->tableName, $fields]);
         return implode(',', $fields);
-    }
-
-    /**
-     * @param array
-     * @return bool
-     */
-    protected function isRelation(array &$columnConfig)
-    {
-        return isset($columnConfig['foreign_table']);
     }
 
     /**
@@ -189,4 +188,19 @@ class TcaTableService
 
         return in_array($columnName, $systemFields);
     }
+
+    /**
+     * @param string $columnName
+     * @return array
+     * @throws InvalidArgumentException
+     */
+    public function getColumnConfig($columnName)
+    {
+        if (!isset($this->tca['columns'][$columnName])) {
+             throw new InvalidArgumentException('Column does not exist.', InvalidArgumentException::COLUMN_DOES_NOT_EXIST);
+        }
+
+        return $this->tca['columns'][$columnName]['config'];
+    }
+
 }
