@@ -197,7 +197,10 @@ class TcaTableService
     public function getColumnConfig($columnName)
     {
         if (!isset($this->tca['columns'][$columnName])) {
-             throw new InvalidArgumentException('Column does not exist.', InvalidArgumentException::COLUMN_DOES_NOT_EXIST);
+            throw new InvalidArgumentException(
+                'Column does not exist.',
+                InvalidArgumentException::COLUMN_DOES_NOT_EXIST
+            );
         }
 
         return $this->tca['columns'][$columnName]['config'];
