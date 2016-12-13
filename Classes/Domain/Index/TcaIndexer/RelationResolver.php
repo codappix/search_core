@@ -20,8 +20,12 @@ namespace Leonmrni\SearchCore\Domain\Index\TcaIndexer;
  * 02110-1301, USA.
  */
 
+use TYPO3\CMS\Backend\Form\FormDataCompiler;
+use TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord;
+use TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseEditRow;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Resolves relations from TCA using TCA.
@@ -32,12 +36,6 @@ use TYPO3\CMS\Core\SingletonInterface as Singleton;
 class RelationResolver implements Singleton
 {
     /**
-     * @var \TYPO3\CMS\Backend\Form\DataPreprocessor
-     * @inject
-     */
-    protected $formEngine;
-
-    /**
      * Resolve relations for the given record.
      *
      * @param TcaTableService $service
@@ -45,12 +43,19 @@ class RelationResolver implements Singleton
      */
     public function resolveRelationsForRecord(TcaTableService $service, array &$record)
     {
-        $preprocessedData = $this->formEngine->renderRecordRaw(
-            $service->getTableName(),
-            $record['uid'],
-            $record['pid'],
-            $record
-        );
+        $formDataGroup = GeneralUtility::makeInstance(TcaDatabaseRecord::class);
+        // $formDataGroup->setProviderList([ DatabaseEditRow::class ]);
+        /** @var FormDataCompiler $formDataCompiler */
+        $formDataCompiler = GeneralUtility::makeInstance(FormDataCompiler::class, $formDataGroup);
+        $input = [
+            'tableName' => $service->getTableName(),
+            'vanillaUid' => (int)$record['uid'],
+            'command' => 'edit',
+        ];
+        $result = $formDataCompiler->compile($input);
+        // \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump( $result['processedTca'], '$result', 8, false );die;
+        // Tree
+        // \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump( $result['processedTca']['columns']['categories']['config']['treeData']['selectedNodes'], '$result', 8, true );
 
         foreach (array_keys($record) as $column) {
             try {
