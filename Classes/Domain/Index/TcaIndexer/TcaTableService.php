@@ -77,6 +77,14 @@ class TcaTableService
     }
 
     /**
+     * @return string
+     */
+    public function getTableClause()
+    {
+        return $this->tableName . ' LEFT JOIN pages on ' . $this->tableName . '.pid = pages.uid';
+    }
+
+    /**
      * Adjust record accordingly to configuration.
      * @param array &$record
      */
@@ -100,6 +108,10 @@ class TcaTableService
         $whereClause = '1=1 '
             . BackendUtility::BEenableFields($this->tableName)
             . BackendUtility::deleteClause($this->tableName)
+
+            . BackendUtility::BEenableFields('pages')
+            . BackendUtility::deleteClause('pages')
+            . ' AND pages.no_search = 0'
             ;
 
         $this->logger->debug('Generated where clause.', [$this->tableName, $whereClause]);
@@ -111,8 +123,8 @@ class TcaTableService
      */
     public function getFields()
     {
-        $fields = 'uid,pid,' . implode(
-            ',',
+        $fields = array_merge(
+            ['uid','pid'],
             array_filter(
                 array_keys($this->tca['columns']),
                 function ($columnName) {
@@ -122,8 +134,12 @@ class TcaTableService
             )
         );
 
+        foreach ($fields as $key => $field) {
+            $fields[$key] = $this->tableName . '.' . $field;
+        }
+
         $this->logger->debug('Generated fields.', [$this->tableName, $fields]);
-        return $fields;
+        return implode(',', $fields);
     }
 
     /**

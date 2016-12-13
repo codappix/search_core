@@ -70,6 +70,10 @@ class TcaIndexer implements IndexerInterface
         $this->logger->info('Start indexing');
         foreach ($this->getRecordGenerator() as $records) {
             $this->logger->debug('Index records.', [$records]);
+            if ($records === null) {
+                break;
+            }
+
             $this->connection->addDocuments($this->tcaTableService->getTableName(), $records);
         }
         $this->logger->info('Finish indexing');
@@ -100,13 +104,13 @@ class TcaIndexer implements IndexerInterface
     /**
      * @param int $offset
      * @param int $limit
-     * @return array
+     * @return array|null
      */
     protected function getRecords($offset, $limit)
     {
         $records = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
             $this->tcaTableService->getFields(),
-            $this->tcaTableService->getTableName(),
+            $this->tcaTableService->getTableClause(),
             $this->tcaTableService->getWhereClause(),
             '',
             '',
@@ -116,8 +120,6 @@ class TcaIndexer implements IndexerInterface
         foreach ($records as &$record) {
             $this->tcaTableService->prepareRecord($record);
         }
-
-        // TODO: Ignore records from sys folder?
 
         return $records;
     }
@@ -130,8 +132,9 @@ class TcaIndexer implements IndexerInterface
     {
         $record = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
             $this->tcaTableService->getFields(),
-            $this->tcaTableService->getTableName(),
-            $this->tcaTableService->getWhereClause() . ' AND uid = ' . (int) $identifier
+            $this->tcaTableService->getTableClause(),
+            $this->tcaTableService->getWhereClause()
+                . ' AND ' . $this->tcaTableService->getTableName() . '.uid = ' . (int) $identifier
         );
         $this->tcaTableService->prepareRecord($record);
 
