@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dataset>
     <tt_content>
-        <uid>6</uid>
+        <uid>9</uid>
         <pid>1</pid>
         <tstamp>1480686370</tstamp>
         <crdate>1480686370</crdate>
         <hidden>0</hidden>
         <sorting>72</sorting>
         <CType>textmedia</CType>
-        <header>indexed content element</header>
-        <bodytext>this is the content of textmedia content element that should get indexed</bodytext>
+        <header>Also indexable record</header>
+        <bodytext></bodytext>
         <media>0</media>
         <layout>0</layout>
         <deleted>0</deleted>
@@ -21,34 +21,14 @@
     </tt_content>
 
     <tt_content>
-        <uid>7</uid>
-        <pid>1</pid>
-        <tstamp>1480686371</tstamp>
-        <crdate>1480686370</crdate>
-        <hidden>0</hidden>
-        <sorting>72</sorting>
-        <CType>textmedia</CType>
-        <header>endtime hidden record</header>
-        <bodytext></bodytext>
-        <media>0</media>
-        <layout>0</layout>
-        <deleted>0</deleted>
-        <cols>0</cols>
-        <starttime>0</starttime>
-        <endtime>1481305963</endtime>
-        <colPos>0</colPos>
-        <filelink_sorting>0</filelink_sorting>
-    </tt_content>
-
-    <tt_content>
-        <uid>8</uid>
+        <uid>10</uid>
         <pid>1</pid>
         <tstamp>1480686370</tstamp>
         <crdate>1480686370</crdate>
         <hidden>1</hidden>
         <sorting>72</sorting>
-        <CType>textmedia</CType>
-        <header>Hidden record</header>
+        <CType>div</CType>
+        <header>Not indexed by user where ctype condition</header>
         <bodytext></bodytext>
         <media>0</media>
         <layout>0</layout>
@@ -59,5 +39,4 @@
         <colPos>0</colPos>
         <filelink_sorting>0</filelink_sorting>
     </tt_content>
-
 </dataset>

@@ -5,6 +5,12 @@ plugin {
                 host = localhost
                 port = 9200
             }
+
+            index {
+                tt_content {
+                    additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu')
+                }
+            }
         }
     }
 }
