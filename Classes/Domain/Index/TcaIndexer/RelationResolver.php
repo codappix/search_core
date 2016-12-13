@@ -87,6 +87,11 @@ class RelationResolver implements Singleton
      */
     protected function resolveValue($value)
     {
+        // TODO: Check for type inline and call another method that will fetch
+        // all rows based on uids and use backend utility getRecordTitle
+        // In case of inline a comma separated list of uids will be returned.
+        // Of course we have to determine whether we are in inline mode,
+        // perhaps send the type into this method?
         $newValue = [];
         if ($value === '' || $value === '0') {
             return '';
