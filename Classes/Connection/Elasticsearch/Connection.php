@@ -20,8 +20,8 @@ namespace Leonmrni\SearchCore\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
+use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /**
  * The current connection to elasticsearch.
@@ -36,45 +36,24 @@ class Connection implements Singleton
     protected $elasticaClient;
 
     /**
-     * @var array
+     * @var ConfigurationContainerInterface
      */
-    protected $settings;
+    protected $configuration;
 
     /**
      * @param \Elastica\Client $elasticaClient
      */
-    public function __construct(\Elastica\Client $elasticaClient = null)
-    {
+    public function __construct(
+        ConfigurationContainerInterface $configuration,
+        \Elastica\Client $elasticaClient = null
+    ) {
+        $this->configuration = $configuration;
+
         $this->elasticaClient = $elasticaClient;
-    }
-
-    /**
-     * Inject news settings via ConfigurationManager.
-     *
-     * TODO: Refactor to configuration object to have a singleton holding the
-     * settings with validation and propper getter?
-     *
-     * @param \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager
-     */
-    public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
-    {
-        $this->settings = $configurationManager->getConfiguration(
-            ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
-            'SearchCore',
-            'search'
-        );
-    }
-
-    /**
-     * Used to configure elasticaClient if no one was injected. Will use
-     * injected settings for configuration.
-     */
-    public function initializeObject()
-    {
         if ($this->elasticaClient === null) {
             $this->elasticaClient = new \Elastica\Client([
-                'host' => $this->settings['host'],
-                'port' => $this->settings['port'],
+                'host' => $this->configuration->get('connection', 'host'),
+                'port' => $this->configuration->get('connection', 'port'),
                 // TODO: Make configurable
                 // 'log' => 'file',
             ]);

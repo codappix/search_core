@@ -39,7 +39,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
     /**
      * @test
      */
-    public function indexBasicTtContentWithoutBasicConfiguration()
+    public function indexBasicTtContent()
     {
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
@@ -51,6 +51,12 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
 
         $this->assertTrue($response->isOK());
         $this->assertSame($response->getData()['hits']['total'], 1, 'Not exactly 1 document was indexed.');
+        $this->assertArraySubset(
+            ['_source' => ['header' => 'indexed content element']],
+            $response->getData()['hits']['hits'][0],
+            false,
+            'Record was not indexed.'
+        );
     }
 
     /**
@@ -84,5 +90,37 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
 
         $this->assertTrue($response->isOK());
         $this->assertSame($response->getData()['hits']['total'], 1, 'Not exactly 1 document was indexed.');
+    }
+
+    /**
+     * @test
+     */
+    public function indexingRespectsUserWhereClause()
+    {
+        $this->setUpFrontendRootPage(1, ['EXT:search_core/Tests/Functional/Fixtures/Indexing/UserWhereClause.ts']);
+        $this->importDataSet('Tests/Functional/Fixtures/Indexing/UserWhereClause.xml');
+
+        \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
+            ->get(IndexerFactory::class)
+            ->getIndexer('tt_content')
+            ->index()
+            ;
+
+        $response = $this->client->request('typo3content/_search?q=*:*');
+
+        $this->assertTrue($response->isOK());
+        $this->assertSame($response->getData()['hits']['total'], 2, 'Not exactly 2 document was indexed.');
+        $this->assertArraySubset(
+            ['_source' => ['header' => 'Also indexable record']],
+            $response->getData()['hits']['hits'][0],
+            false,
+            'Record was not indexed.'
+        );
+        $this->assertArraySubset(
+            ['_source' => ['header' => 'indexed content element']],
+            $response->getData()['hits']['hits'][1],
+            false,
+            'Record was not indexed.'
+        );
     }
 }

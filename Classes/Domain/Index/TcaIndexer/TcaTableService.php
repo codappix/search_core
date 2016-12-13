@@ -20,8 +20,9 @@ namespace Leonmrni\SearchCore\Domain\Index\TcaIndexer;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Backend\Utility\BackendUtility;
+use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
 use Leonmrni\SearchCore\Domain\Index\IndexingException;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 
 /**
  * Encapsulate logik related to tca configuration.
@@ -41,6 +42,11 @@ class TcaTableService
     protected $tableName;
 
     /**
+     * @var ConfigurationContaineInterfacer
+     */
+    protected $configuration;
+
+    /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
@@ -55,7 +61,11 @@ class TcaTableService
         $this->logger = $logManager->getLogger(__CLASS__);
     }
 
-    public function __construct($tableName)
+    /**
+     * @param string $tableName
+     * @param ConfigurationContainer $configuration
+     */
+    public function __construct($tableName, ConfigurationContainerInterface $configuration)
     {
         if (!isset($GLOBALS['TCA'][$tableName])) {
             throw new IndexingException(
@@ -66,6 +76,7 @@ class TcaTableService
 
         $this->tableName = $tableName;
         $this->tca = &$GLOBALS['TCA'][$this->tableName];
+        $this->configuration = $configuration;
     }
 
     /**
@@ -113,6 +124,11 @@ class TcaTableService
             . BackendUtility::deleteClause('pages')
             . ' AND pages.no_search = 0'
             ;
+
+        $userDefinedWhere = $this->configuration->getIfExists('index', $this->tableName);
+        if (is_string($userDefinedWhere)) {
+            $whereClause .= $userDefinedWhere;
+        }
 
         $this->logger->debug('Generated where clause.', [$this->tableName, $whereClause]);
         return $whereClause;
