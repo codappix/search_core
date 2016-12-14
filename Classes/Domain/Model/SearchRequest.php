@@ -55,6 +55,7 @@ class SearchRequest implements SearchRequestInterface
      */
     public function getSearchTerm()
     {
+        //TODO: This seems to be connection specific
         return '"' . $this->query . '"';
     }
 }

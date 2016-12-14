@@ -49,7 +49,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
 
         $response = $this->client->request('typo3content/_search?q=*:*');
 
-        $this->assertTrue($response->isOK());
+        $this->assertTrue($response->isOK(), 'Elastica did not answer with ok code.');
         $this->assertSame($response->getData()['hits']['total'], 1, 'Not exactly 1 document was indexed.');
         $this->assertArraySubset(
             ['_source' => ['header' => 'indexed content element']],
@@ -72,9 +72,10 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
     }
 
     /**
+     * TODO: this does not test the indexer, it tests the backend
      * @test
      */
-    public function canHandleExisingIndex()
+    public function canHandleExistingIndex()
     {
         $indexer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
@@ -88,7 +89,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
 
         $response = $this->client->request('typo3content/_search?q=*:*');
 
-        $this->assertTrue($response->isOK());
+        $this->assertTrue($response->isOK(), 'Elastica did not answer with ok code.');
         $this->assertSame($response->getData()['hits']['total'], 1, 'Not exactly 1 document was indexed.');
     }
 
@@ -108,7 +109,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
 
         $response = $this->client->request('typo3content/_search?q=*:*');
 
-        $this->assertTrue($response->isOK());
+        $this->assertTrue($response->isOK(), 'Elastica did not answer with ok code.');
         $this->assertSame($response->getData()['hits']['total'], 2, 'Not exactly 2 document was indexed.');
         $this->assertArraySubset(
             ['_source' => ['header' => 'Also indexable record']],

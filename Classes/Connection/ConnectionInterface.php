@@ -28,6 +28,8 @@ interface ConnectionInterface
     /**
      * Will add a new document.
      *
+     * TODO: Should be addDocument
+     *
      * @param string $documentType
      * @param array $document
      *
@@ -48,6 +50,8 @@ interface ConnectionInterface
     /**
      * Will update an existing document.
      *
+     * TODO: updateDocument (what about batches? consistency)
+     *
      * @param string $documentType
      * @param array $document
      *
@@ -57,6 +61,8 @@ interface ConnectionInterface
 
     /**
      * Will remove an existing document.
+     *
+     * TODO: deleteDocument (what about batches? consistency)
      *
      * @param string $documentType
      * @param int $identifier

@@ -27,6 +27,8 @@ use TYPO3\CMS\Core\SingletonInterface as Singleton;
  * The current connection to elasticsearch.
  *
  * Wrapper for Elastica\Client.
+ *
+ * TODO: Catch inner exception and throw general ones (at least in Connection-Namespace (not elastic specific))
  */
 class Connection implements Singleton
 {
