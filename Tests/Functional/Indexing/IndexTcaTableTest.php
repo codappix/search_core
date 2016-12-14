@@ -127,7 +127,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
     /**
      * @test
      */
-    public function resolvesRelations()
+    public function resolvesItemsAndTreeRelations()
     {
         $this->importDataSet('Tests/Functional/Fixtures/Indexing/ResolveRelations.xml');
 
@@ -146,7 +146,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
             ['_source' => [
                 'uid' => '9',
                 'CType' => 'textmedia', // Testing items
-                'categories' => ['Category 2', 'Category 1'], // Testing mm (with sorting)
+                'categories' => ['Category 2', 'Category 1'], // Testing mm tree (with sorting)
             ]],
             $response->getData()['hits']['hits'][0],
             false,
@@ -174,6 +174,31 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
             $response->getData()['hits']['hits'][0],
             false,
             'Record was indexed with resolved category relation, but should not have any.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function resolvesCommaRelations()
+    {
+        $this->importDataSet('Tests/Functional/Fixtures/Indexing/ResolveRelations.xml');
+
+        \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
+            ->get(IndexerFactory::class)
+            ->getIndexer('pages')
+            ->index()
+            ;
+
+        $response = $this->client->request('typo3content/_search?q=uid:2 and type:pages');
+        $this->assertArraySubset(
+            ['_source' => [
+                'uid' => '2',
+                'fe_groups' => ['Show at any login', 'Group 1'], // Testing comma separated list
+            ]],
+            $response->getData()['hits']['hits'][0],
+            false,
+            'Record was not indexed with resolved fe_groups relations to multiple values.'
         );
     }
 }

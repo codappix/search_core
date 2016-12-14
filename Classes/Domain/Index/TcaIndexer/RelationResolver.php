@@ -53,27 +53,21 @@ class RelationResolver implements Singleton
             'command' => 'edit',
         ];
         $result = $formDataCompiler->compile($input);
-        // \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump( $result['processedTca'], '$result', 8, false );die;
-        // Tree
-        // \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump( $result['processedTca']['columns']['categories']['config']['treeData']['selectedNodes'], '$result', 8, true );
 
         foreach (array_keys($record) as $column) {
-            try {
-                $config = $service->getColumnConfig($column);
-            } catch (InvalidArgumentException $e) {
-                // Column is not configured.
+            if (! isset($result['processedTca']['columns'][$column])
+                || ! $this->isRelation($result['processedTca']['columns'][$column]['config'])
+            ) {
                 continue;
             }
 
-            if (! $this->isRelation($config)) {
-                continue;
+            $value = $record[$column];
+
+            if (isset($result['processedTca']['columns'][$column]['config']['treeData']['selectedNodes'])) {
+                $value = $this->resolveSelectValue($result['processedTca']['columns'][$column]['config']['treeData']['selectedNodes']);
             }
 
-            $record[$column] = $this->resolveValue(
-                $preprocessedData[$column],
-                $config,
-                $column
-            );
+            $record[$column] = $value;
         }
     }
 
@@ -86,27 +80,18 @@ class RelationResolver implements Singleton
      * TODO: Unittest to break as soon as TYPO3 api has changed, so we know
      * exactly that we need to tackle this place.
      *
-     * @param string $value The value from FormEngine to resolve.
+     * @param array<String> $values
      *
      * @return array<String>|string
      */
-    protected function resolveValue($value)
+    protected function resolveSelectValue(array $values)
     {
         $newValue = [];
-        if ($value === '' || $value === '0') {
-            return '';
-        }
-
-        if (strpos($value, '|') === false) {
-            return $value;
-        }
-
-        foreach (\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $value) as $value) {
+        foreach ($values as $value) {
             $value = substr($value, strpos($value, '|') + 1);
             $value = rawurldecode($value);
             $newValue[] = $value;
         }
-
         return $newValue;
     }
 
