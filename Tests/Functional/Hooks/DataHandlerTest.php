@@ -21,12 +21,15 @@ namespace Leonmrni\SearchCore\Tests\Functional\Hooks;
  */
 
 use Leonmrni\SearchCore\Hook\DataHandler as Hook;
-use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
+use Leonmrni\SearchCore\Tests\Functional\Connection\Elasticsearch\AbstractFunctionalTestCase;
 use TYPO3\CMS\Core\DataHandling\DataHandler as CoreDataHandler;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
- *
+ * TODO: Rewrite as this test doesn't test what it should do.
+ * We have to split it up in two tests:
+ * 1. Test whether TYPO3 DataHandler will our hook as expected.
+ * 2. Test whether our hook will send the documents to connection as expected.
  */
 class DataHandlerTest extends AbstractFunctionalTestCase
 {

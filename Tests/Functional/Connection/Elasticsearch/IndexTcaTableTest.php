@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Functional\Indexing;
+namespace Leonmrni\SearchCore\Tests\Functional\Connection\Elasticsearch;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -21,11 +21,10 @@ namespace Leonmrni\SearchCore\Tests\Functional\Indexing;
  */
 
 use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
-use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
- *
+ * TODO: https://github.com/DanielSiepmann/search_core/issues/16
  */
 class IndexTcaTableTest extends AbstractFunctionalTestCase
 {

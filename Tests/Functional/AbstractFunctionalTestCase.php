@@ -24,18 +24,22 @@ use TYPO3\CMS\Core\Tests\FunctionalTestCase as CoreTestCase;
 
 /**
  * All functional tests should extend this base class.
- *
- * It will take care of leaving a clean environment for next test.
- * TODO: this is in reality an "elastica" abstract case - not search_core ;)
  */
 abstract class AbstractFunctionalTestCase extends CoreTestCase
 {
     protected $testExtensionsToLoad = ['typo3conf/ext/search_core'];
 
     /**
-     * @var \Elastica\Client
+     * Define whether to setup default typoscript on page 1.
+     *
+     * Set to false if you need to add further ts and use getDefaultPageTs to get the default one.
+     *
+     * This is necessary as setUpFrontendRootPage will allways add a new record
+     * and only the first one is used.
+     *
+     * @var bool
      */
-    protected $client;
+    protected $loadDefaultTs = true;
 
     public function setUp()
     {
@@ -46,19 +50,14 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
 
         // Provide necessary configuration for extension
         $this->importDataSet('Tests/Functional/Fixtures/BasicSetup.xml');
-        $this->setUpFrontendRootPage(1, ['EXT:search_core/Tests/Functional/Fixtures/BasicSetup.ts']);
 
-        // Create client to make requests and assert something.
-        $this->client = new \Elastica\Client([
-            'host' => getenv('ES_HOST') ?: \Elastica\Connection::DEFAULT_HOST,
-            'port' => getenv('ES_PORT') ?: \Elastica\Connection::DEFAULT_PORT,
-        ]);
+        if ($this->loadDefaultTs) {
+            $this->setUpFrontendRootPage(1, $this->getDefaultPageTs());
+        }
     }
 
-    public function tearDown()
+    protected function getDefaultPageTs()
     {
-        // Delete everything so next test starts clean.
-        $this->client->getIndex('_all')->delete();
-        $this->client->getIndex('_all')->clearCache();
+        return ['EXT:search_core/Tests/Functional/Fixtures/BasicSetup.ts'];
     }
 }
