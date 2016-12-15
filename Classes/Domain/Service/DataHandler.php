@@ -28,7 +28,8 @@ use TYPO3\CMS\Core\SingletonInterface as Singleton;
  * This is the place to add mappings of further parts to adjust the data before
  * sending ot to connection.
  *
- * TODO: Probably a candidate for deletion
+ * TODO: Probably a candidate for deletion. Currently this class makes use of
+ * extbase DI. We have to resolve this somehow.
  */
 class DataHandler implements Singleton
 {
