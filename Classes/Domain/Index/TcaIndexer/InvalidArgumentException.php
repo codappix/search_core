@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Configuration;
+namespace Leonmrni\SearchCore\Domain\Index\TcaIndexer;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -22,5 +22,6 @@ namespace Leonmrni\SearchCore\Configuration;
 
 class InvalidArgumentException extends \InvalidArgumentException
 {
-    const OPTION_DOES_NOT_EXIST = 1481623127;
+    const COLUMN_DOES_NOT_EXIST = 1481632388;
+    const RECORD_NOT_FOUND = 1481643208;
 }

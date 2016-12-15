@@ -14,15 +14,14 @@ call_user_func(
                             Leonmrni\SearchCore\Command\IndexCommandController::class,
                         ],
                     ],
-                    // Not yet, first finish whole indexing through command controller as it's more important.
-                    // 't3lib/class.t3lib_tcemain.php' => [
-                    //     'processCmdmapClass' => [
-                    //         $extensionKey => \Leonmrni\SearchCore\Hook\DataHandler::class,
-                    //     ],
-                    //     'processDatamapClass' => [
-                    //         $extensionKey => \Leonmrni\SearchCore\Hook\DataHandler::class,
-                    //     ],
-                    // ],
+                    't3lib/class.t3lib_tcemain.php' => [
+                        'processCmdmapClass' => [
+                            $extensionKey => \Leonmrni\SearchCore\Hook\DataHandler::class,
+                        ],
+                        'processDatamapClass' => [
+                            $extensionKey => \Leonmrni\SearchCore\Hook\DataHandler::class,
+                        ],
+                    ],
                 ],
             ]
         );

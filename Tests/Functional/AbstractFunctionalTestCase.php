@@ -41,6 +41,9 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
     {
         parent::setUp();
 
+        $this->setUpBackendUserFromFixture(1);
+        \TYPO3\CMS\Core\Core\Bootstrap::getInstance()->initializeLanguageObject();
+
         // Provide necessary configuration for extension
         $this->importDataSet('Tests/Functional/Fixtures/BasicSetup.xml');
         $this->setUpFrontendRootPage(1, ['EXT:search_core/Tests/Functional/Fixtures/BasicSetup.ts']);
