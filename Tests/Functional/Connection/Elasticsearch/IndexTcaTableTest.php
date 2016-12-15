@@ -28,11 +28,12 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
  */
 class IndexTcaTableTest extends AbstractFunctionalTestCase
 {
-    public function setUp()
+    protected function getDataSets()
     {
-        parent::setUp();
-
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml');
+        return array_merge(
+            parent::getDataSets(),
+            ['Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml']
+        );
     }
 
     /**

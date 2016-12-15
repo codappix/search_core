@@ -23,32 +23,35 @@ namespace Leonmrni\SearchCore\Tests\Functional\Hooks\DataHandler;
 use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
 use Leonmrni\SearchCore\Domain\Service\DataHandler as DataHandlerService;
 use Leonmrni\SearchCore\Hook\DataHandler as DataHandlerHook;
+use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Core\DataHandling\DataHandler as Typo3DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
-class IgnoresUnkownOperationTest extends AbstractDataHandlerTest
+abstract class AbstractDataHandlerTest extends AbstractFunctionalTestCase
 {
     /**
      * @var DataHandlerService|\PHPUnit_Framework_MockObject_MockObject|AccessibleObjectInterface
      */
     protected $subject;
 
-    /**
-     * @test
-     */
-    public function dataHandlerCommandSomethingIsIgnored()
+    public function setUp()
     {
-        $subject = new DataHandlerHook($this->subject);
-        $this->assertFalse(
-            $subject->processDatamap_afterDatabaseOperations(
-                'something',
-                'tt_content',
-                1,
-                [],
-                new Typo3DataHandler
-            ),
-            'Hook processed status "something".'
+        parent::setUp();
+
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+
+        $this->subject = $this->getAccessibleMock(
+            DataHandlerService::class,
+            [
+                'add',
+                'update',
+                'delete',
+            ],
+            [$objectManager->get(ConfigurationContainerInterface::class)]
         );
+
+        // This way TYPO3 will use our mock instead of a new instance.
+        $GLOBALS['T3_VAR']['getUserObj']['&' . DataHandlerHook::class] = new DataHandlerHook($this->subject);
     }
 }

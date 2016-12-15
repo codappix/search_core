@@ -36,10 +36,23 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
         $this->setUpBackendUserFromFixture(1);
         \TYPO3\CMS\Core\Core\Bootstrap::getInstance()->initializeLanguageObject();
 
-        // Provide necessary configuration for extension
-        $this->importDataSet('Tests/Functional/Fixtures/BasicSetup.xml');
+        foreach ($this->getDataSets() as $dataSet) {
+            $this->importDataSet($dataSet);
+        }
 
         $this->setUpFrontendRootPage(1, $this->getTypoScriptFilesForFrontendRootPage());
+    }
+
+    /**
+     * Overwrite to import different files.
+     *
+     * Defines which DataSet Files should be imported.
+     *
+     * @return array<String>
+     */
+    protected function getDataSets()
+    {
+        return ['Tests/Functional/Fixtures/BasicSetup.xml'];
     }
 
     /**

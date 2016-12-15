@@ -23,37 +23,23 @@ namespace Leonmrni\SearchCore\Tests\Functional\Hooks\DataHandler;
 use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
 use Leonmrni\SearchCore\Domain\Service\DataHandler as DataHandlerService;
 use Leonmrni\SearchCore\Hook\DataHandler as DataHandlerHook;
-use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Core\DataHandling\DataHandler as Typo3DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
-class ProcessesAllowedTablesTest extends AbstractFunctionalTestCase
+class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
 {
     /**
      * @var DataHandlerService|\PHPUnit_Framework_MockObject_MockObject|AccessibleObjectInterface
      */
     protected $subject;
 
-    public function setUp()
+    protected function getDataSets()
     {
-        parent::setUp();
-        $this->importDataSet('Tests/Functional/Fixtures/Hooks/DataHandler/AllowedTables.xml');
-
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-
-        $this->subject = $this->getAccessibleMock(
-            DataHandlerService::class,
-            [
-                'add',
-                'update',
-                'delete',
-            ],
-            [$objectManager->get(ConfigurationContainerInterface::class)]
+        return array_merge(
+            parent::getDataSets(),
+            ['Tests/Functional/Fixtures/Hooks/DataHandler/AllowedTables.xml']
         );
-
-        // This way TYPO3 will use our mock instead of a new instance.
-        $GLOBALS['T3_VAR']['getUserObj']['&' . DataHandlerHook::class] = new DataHandlerHook($this->subject);
     }
 
     /**
