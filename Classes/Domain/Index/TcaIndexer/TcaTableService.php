@@ -263,7 +263,7 @@ class TcaTableService
      */
     protected function isBlackListedRootLineConfigured()
     {
-       return (bool) $this->configuration->getIfExists('index', 'rootLineBlacklist');
+        return (bool) $this->configuration->getIfExists('index', 'rootLineBlacklist');
     }
 
     /**
