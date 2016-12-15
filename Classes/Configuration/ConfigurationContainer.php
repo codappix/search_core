@@ -59,7 +59,7 @@ class ConfigurationContainer implements ConfigurationContainerInterface
     {
         if (!isset($this->settings[$section]) || !isset($this->settings[$section][$key])) {
             throw new InvalidArgumentException(
-                'The given configuration option does not exit.',
+                'The given configuration option does not exist.',
                 InvalidArgumentException::OPTION_DOES_NOT_EXIST
             );
         }

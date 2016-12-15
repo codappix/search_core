@@ -48,9 +48,6 @@ class DataHandler implements Singleton
      * Dependency injection as TYPO3 doesn't provide it on it's own.
      * Still you can submit your own dataHandler.
      *
-     * TODO: Inject datahandler only on use?! Using getter / setter or something else?
-     * Otherwise a connection to elastic and whole bootstrapping will be triggered.
-     *
      * @param OwnDataHandler $dataHandler
      * @param Logger $logger
      */
@@ -109,7 +106,7 @@ class DataHandler implements Singleton
         if ($status === 'new') {
             $fieldArray['uid'] = $dataHandler->substNEWwithIDs[$uid];
             $this->dataHandler->add($table, $fieldArray);
-            return false;
+            return true;
         }
 
         if ($status === 'update') {
@@ -117,28 +114,14 @@ class DataHandler implements Singleton
             if ($record !== null) {
                 $this->dataHandler->update($table, $record);
             }
-            return false;
+            return true;
         }
 
         $this->logger->debug(
             'Database update not processed, cause status is unhandled.',
             [$status, $table, $uid, $fieldArray]
         );
-        return true;
-    }
-
-    /**
-     * Returns array containing tables that should be processed by this hook.
-     *
-     * TODO: Fetch from config
-     *
-     * @return string[]
-     */
-    protected function getTablesToProcess()
-    {
-        return [
-            'tt_content',
-        ];
+        return false;
     }
 
     /**
@@ -147,7 +130,7 @@ class DataHandler implements Singleton
      */
     protected function shouldProcessTable($table)
     {
-        return in_array($table, $this->getTablesToProcess());
+        return in_array($table, $this->dataHandler->getAllowedTablesForIndexing());
     }
 
     /**

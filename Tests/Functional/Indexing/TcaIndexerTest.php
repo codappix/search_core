@@ -30,22 +30,12 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class TcaIndexerTest extends AbstractFunctionalTestCase
 {
-    protected $loadDefaultTs = false;
-
     /**
      * @test
      */
     public function respectRootLineBlacklist()
     {
         $this->importDataSet('Tests/Functional/Fixtures/Indexing/TcaIndexer/RespectRootLineBlacklist.xml');
-        $this->setUpFrontendRootPage(
-            1,
-            array_merge(
-                $this->getDefaultPageTs(),
-                ['EXT:search_core/Tests/Functional/Fixtures/Indexing/TcaIndexer/RespectRootLineBlacklist.ts']
-            )
-        );
-
         $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
         $tableName = 'tt_content';
         $tableService = $objectManager->get(
@@ -82,5 +72,13 @@ class TcaIndexerTest extends AbstractFunctionalTestCase
             );
 
         $objectManager->get(TcaIndexer::class, $tableService, $connection)->indexAllDocuments();
+    }
+
+    protected function getTypoScriptFilesForFrontendRootPage()
+    {
+        return array_merge(
+            parent::getTypoScriptFilesForFrontendRootPage(),
+            ['EXT:search_core/Tests/Functional/Fixtures/Indexing/TcaIndexer/RespectRootLineBlacklist.ts']
+        );
     }
 }

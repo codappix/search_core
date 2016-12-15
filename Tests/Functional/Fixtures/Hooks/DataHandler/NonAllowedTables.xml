@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <sys_category>
+        <uid>1</uid>
+        <pid>1</pid>
+        <tstamp>1480686370</tstamp>
+        <crdate>1480686370</crdate>
+        <deleted>0</deleted>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <sorting>1</sorting>
+        <title>Some Category that should not be indexed as sys_category is not allowed</title>
+        <description></description>
+        <parent>0</parent>
+        <items>0</items>
+    </sys_category>
+</dataset>
+

@@ -29,18 +29,6 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
 {
     protected $testExtensionsToLoad = ['typo3conf/ext/search_core'];
 
-    /**
-     * Define whether to setup default typoscript on page 1.
-     *
-     * Set to false if you need to add further ts and use getDefaultPageTs to get the default one.
-     *
-     * This is necessary as setUpFrontendRootPage will allways add a new record
-     * and only the first one is used.
-     *
-     * @var bool
-     */
-    protected $loadDefaultTs = true;
-
     public function setUp()
     {
         parent::setUp();
@@ -51,12 +39,17 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
         // Provide necessary configuration for extension
         $this->importDataSet('Tests/Functional/Fixtures/BasicSetup.xml');
 
-        if ($this->loadDefaultTs) {
-            $this->setUpFrontendRootPage(1, $this->getDefaultPageTs());
-        }
+        $this->setUpFrontendRootPage(1, $this->getTypoScriptFilesForFrontendRootPage());
     }
 
-    protected function getDefaultPageTs()
+    /**
+     * Overwrite to import different files.
+     *
+     * Defines which TypoScript Files should be imported.
+     *
+     * @return array<String>
+     */
+    protected function getTypoScriptFilesForFrontendRootPage()
     {
         return ['EXT:search_core/Tests/Functional/Fixtures/BasicSetup.ts'];
     }

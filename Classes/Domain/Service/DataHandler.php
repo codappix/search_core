@@ -20,7 +20,9 @@ namespace Leonmrni\SearchCore\Domain\Service;
  * 02110-1301, USA.
  */
 
+use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Handles all data related things like updates, deletes and inserts.
@@ -30,10 +32,14 @@ use TYPO3\CMS\Core\SingletonInterface as Singleton;
  *
  * TODO: Probably a candidate for deletion. Currently this class makes use of
  * extbase DI. We have to resolve this somehow.
+ *
+ * I think we keep it for easier testing and DI.
  */
 class DataHandler implements Singleton
 {
     /**
+     * TODO: Only inject on first use?!
+     *
      * @var \Leonmrni\SearchCore\Connection\ConnectionInterface
      * @inject
      */
@@ -44,6 +50,12 @@ class DataHandler implements Singleton
      * @inject
      */
     protected $indexerFactory;
+
+    /**
+     * @var ConfigurationContainerInterface
+     * @inject
+     */
+    protected $configuration;
 
     /**
      * @var \TYPO3\CMS\Core\Log\Logger
@@ -58,6 +70,24 @@ class DataHandler implements Singleton
     public function injectLogger(\TYPO3\CMS\Core\Log\LogManager $logManager)
     {
         $this->logger = $logManager->getLogger(__CLASS__);
+    }
+
+    /**
+     * @param ConfigurationContainerInterface $configuration
+     */
+    public function __construct(ConfigurationContainerInterface $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
+     * Get all tables that are allowed for indexing.
+     *
+     * @return array<String>
+     */
+    public function getAllowedTablesForIndexing()
+    {
+        return GeneralUtility::trimExplode(',', $this->configuration->get('index', 'allowedTables'));
     }
 
     /**

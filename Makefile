@@ -14,11 +14,6 @@ install: clean
 	COMPOSER_PROCESS_TIMEOUT=1000 composer require -vv --dev --prefer-source typo3/cms="$(TYPO3_VERSION)"
 	git checkout composer.json
 
-unitTests:
-	TYPO3_PATH_WEB=$(TYPO3_WEB_DIR) \
-		.Build/bin/phpunit --colors --debug -v \
-			-c Tests/Unit/UnitTests.xml
-
 functionalTests:
 	typo3DatabaseName=$(typo3DatabaseName) \
 		typo3DatabaseUsername=$(typo3DatabaseUsername) \
@@ -27,9 +22,6 @@ functionalTests:
 		TYPO3_PATH_WEB=$(TYPO3_WEB_DIR) \
 		.Build/bin/phpunit --colors --debug -v \
 			-c Tests/Functional/FunctionalTests.xml
-
-.PHONY: Tests
-Tests: unitTests functionalTests
 
 uploadCodeCoverage: uploadCodeCoverageToScrutinizer uploadCodeCoverageToCodacy
 
