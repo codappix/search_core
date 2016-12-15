@@ -53,7 +53,6 @@ class DataHandler implements Singleton
 
     /**
      * @var ConfigurationContainerInterface
-     * @inject
      */
     protected $configuration;
 
