@@ -17,8 +17,6 @@ env:
     - typo3DatabasePassword=""
   matrix:
     - TYPO3_VERSION="~6.2"
-    - TYPO3_VERSION="~7.6"
-    - TYPO3_VERSION="dev-master"
 
 matrix:
   fast_finish: true
