@@ -30,7 +30,7 @@ interface IndexerInterface
      *
      * @return void
      */
-    public function index();
+    public function indexAllDocuments();
 
     /**
      * Fetches a single document from the indexerService and pushes it to the connection.
@@ -38,7 +38,6 @@ interface IndexerInterface
      * @param string $identifier identifier, the indexer needs to identify a single document
      *
      * @return void
-     * TODO: is record the correct name? (minor)
      */
-    public function indexRecord($identifier);
+    public function indexDocument($identifier);
 }

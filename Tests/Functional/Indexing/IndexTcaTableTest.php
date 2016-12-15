@@ -44,7 +44,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
             ->getIndexer('tt_content')
-            ->index()
+            ->indexAllDocuments()
             ;
 
         $response = $this->client->request('typo3content/_search?q=*:*');
@@ -82,10 +82,10 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
             ->getIndexer('tt_content')
             ;
 
-        $indexer->index();
+        $indexer->indexAllDocuments();
 
         // Index 2nd time, index already exists in elasticsearch.
-        $indexer->index();
+        $indexer->indexAllDocuments();
 
         $response = $this->client->request('typo3content/_search?q=*:*');
 
@@ -104,7 +104,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
             ->getIndexer('tt_content')
-            ->index()
+            ->indexAllDocuments()
             ;
 
         $response = $this->client->request('typo3content/_search?q=*:*');

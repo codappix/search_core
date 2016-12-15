@@ -29,6 +29,5 @@
     <logging>
         <log type="coverage-html" target="../../.Build/report/functional/html" lowUpperBound="35" highLowerBound="70"/>
         <log type="coverage-clover" target="../../.Build/report/functional/clover/coverage"/>
-        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
     </logging>
 </phpunit>

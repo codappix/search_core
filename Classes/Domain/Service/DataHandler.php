@@ -66,7 +66,7 @@ class DataHandler implements Singleton
     public function add($table, array $record)
     {
         $this->logger->debug('Record received for add.', [$table, $record]);
-        $this->indexerFactory->getIndexer($table)->indexRecord($record['uid']);
+        $this->indexerFactory->getIndexer($table)->indexDocument($record['uid']);
     }
 
     /**
@@ -75,7 +75,7 @@ class DataHandler implements Singleton
     public function update($table, array $record)
     {
         $this->logger->debug('Record received for update.', [$table, $record]);
-        $this->indexerFactory->getIndexer($table)->indexRecord($record['uid']);
+        $this->indexerFactory->getIndexer($table)->indexDocument($record['uid']);
     }
 
     /**
@@ -85,6 +85,6 @@ class DataHandler implements Singleton
     public function delete($table, $identifier)
     {
         $this->logger->debug('Record received for delete.', [$table, $identifier]);
-        $this->connection->delete($table, $identifier);
+        $this->connection->deleteDocument($table, $identifier);
     }
 }
