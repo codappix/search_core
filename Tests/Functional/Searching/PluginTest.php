@@ -21,13 +21,13 @@ namespace Leonmrni\SearchCore\Tests\Functional\Searching;
  */
 
 use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
-use Leonmrni\SearchCore\Tests\Functional\FunctionalTestCase;
+use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  *
  */
-class PluginTest extends FunctionalTestCase
+class PluginTest extends AbstractFunctionalTestCase
 {
     public function setUp()
     {
@@ -38,6 +38,7 @@ class PluginTest extends FunctionalTestCase
 
     /**
      * @test
+     * @group current
      */
     public function searchingDoesWork()
     {
@@ -45,7 +46,7 @@ class PluginTest extends FunctionalTestCase
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
             ->getIndexer('tt_content')
-            ->index()
+            ->indexAllDocuments()
             ;
 
         $response = $this->getFrontendResponse(1);
