@@ -33,6 +33,12 @@ Table of Contents
 =================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+   :glob:
 
    installation
+   configuration
+   usage
+   concepts
+   connections
+   indexer
