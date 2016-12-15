@@ -13,6 +13,11 @@ typo3DatabaseHost ?= "127.0.0.1"
 install: clean
 	COMPOSER_PROCESS_TIMEOUT=1000 composer require -vv --dev --prefer-source typo3/cms="$(TYPO3_VERSION)"
 	git checkout composer.json
+	mkdir -p .Build/vendor/typo3/Packages/Libraries
+	[ -L .Build/vendor/typo3/Packages/Libraries/autoload.php ] \
+		|| cd .Build/vendor/typo3/Packages/Libraries \
+		&& ln -snvf ../../../../vendor/autoload.php
+	sed -i '22i\putenv("TYPO3_COMPOSER_AUTOLOAD=1");' .Build/Web/index.php
 
 functionalTests:
 	typo3DatabaseName=$(typo3DatabaseName) \
