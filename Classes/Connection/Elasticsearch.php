@@ -94,7 +94,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
     {
         $this->withType(
             $documentType,
-            function ($type) use($identifier) {
+            function ($type) use ($identifier) {
                 $type->deleteById($identifier);
             }
         );

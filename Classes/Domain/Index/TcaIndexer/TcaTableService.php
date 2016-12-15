@@ -23,6 +23,7 @@ namespace Leonmrni\SearchCore\Domain\Index\TcaIndexer;
 use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
 use Leonmrni\SearchCore\Domain\Index\IndexingException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Encapsulate logik related to TCA configuration.
@@ -105,6 +106,22 @@ class TcaTableService
     }
 
     /**
+     * Filter the given records by root line blacklist settings.
+     *
+     * @param array &$records
+     * @return void
+     */
+    public function filterRecordsByRootLineBlacklist(array &$records)
+    {
+        $records = array_filter(
+            $records,
+            function ($record) {
+                return ! $this->isRecordBlacklistedByRootline($record);
+            }
+        );
+    }
+
+    /**
      * Adjust record accordingly to configuration.
      * @param array &$record
      */
@@ -125,7 +142,7 @@ class TcaTableService
      */
     public function getWhereClause()
     {
-        $whereClause = '1=1 '
+        $whereClause = '1=1'
             . BackendUtility::BEenableFields($this->tableName)
             . BackendUtility::deleteClause($this->tableName)
 
@@ -137,6 +154,15 @@ class TcaTableService
         $userDefinedWhere = $this->configuration->getIfExists('index', $this->tableName);
         if (is_string($userDefinedWhere)) {
             $whereClause .= $userDefinedWhere;
+        }
+
+        if ($this->isBlacklistedRootLineConfigured()) {
+            $whereClause .= ' AND pages.uid NOT IN ('
+                . implode(',', $this->getBlacklistedRootLine())
+                . ')'
+                . ' AND pages.pid NOT IN ('
+                . implode(',', $this->getBlacklistedRootLine())
+                . ')';
         }
 
         $this->logger->debug('Generated where clause.', [$this->tableName, $whereClause]);
@@ -206,4 +232,47 @@ class TcaTableService
         return $this->tca['columns'][$columnName]['config'];
     }
 
+    /**
+     * Checks whether the given record was blacklisted by root line.
+     * This can be configured by typoscript as whole root lines can be black listed.
+     *
+     * @param array &$record
+     * @return bool
+     */
+    protected function isRecordBlacklistedByRootline(array &$record)
+    {
+        // NOTE: Does not support pages yet. We have to add a switch once we
+        // support them to use uid instead.
+        if (! $this->isBlackListedRootLineConfigured()) {
+            return false;
+        }
+
+        foreach (BackendUtility::BEgetRootLine($record['uid']) as $pageInRootLine) {
+            if (in_array($pageInRootLine['uid'], $this->getBlackListedRootLine())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether any page uids are black listed.
+     *
+     * @return bool
+     */
+    protected function isBlackListedRootLineConfigured()
+    {
+        return (bool) $this->configuration->getIfExists('index', 'rootLineBlacklist');
+    }
+
+    /**
+     * Get the list of black listed root line page uids.
+     *
+     * @return array<Int>
+     */
+    protected function getBlackListedRootLine()
+    {
+        return GeneralUtility::intExplode(',', $this->configuration->getIfExists('index', 'rootLineBlacklist'));
+    }
 }
