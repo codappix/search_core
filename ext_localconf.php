@@ -16,10 +16,10 @@ call_user_func(
                     ],
                     't3lib/class.t3lib_tcemain.php' => [
                         'processCmdmapClass' => [
-                            $extensionKey => \Leonmrni\SearchCore\Hook\DataHandler::class,
+                            $extensionKey => '&' . \Leonmrni\SearchCore\Hook\DataHandler::class,
                         ],
                         'processDatamapClass' => [
-                            $extensionKey => \Leonmrni\SearchCore\Hook\DataHandler::class,
+                            $extensionKey => '&' . \Leonmrni\SearchCore\Hook\DataHandler::class,
                         ],
                     ],
                 ],

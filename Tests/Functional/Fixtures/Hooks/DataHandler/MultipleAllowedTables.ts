@@ -1,13 +1,8 @@
 plugin {
     tx_searchcore {
         settings {
-            connection {
-                host = localhost
-                port = 9200
-            }
-
             index {
-                allowedTables = tt_content
+                allowedTables = tt_content, fe_user
             }
         }
     }

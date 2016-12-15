@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dataset>
     <tt_content>
-        <uid>6</uid>
+        <uid>1</uid>
         <pid>1</pid>
         <tstamp>1480686370</tstamp>
         <crdate>1480686370</crdate>
@@ -9,7 +9,7 @@
         <sorting>72</sorting>
         <CType>textmedia</CType>
         <header>test</header>
-        <bodytext>this is the content of textmedia content element that should get indexed</bodytext>
+        <bodytext>Record that can be processed by hook</bodytext>
         <media>0</media>
         <layout>0</layout>
         <deleted>0</deleted>

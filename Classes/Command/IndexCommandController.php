@@ -21,6 +21,7 @@ namespace Leonmrni\SearchCore\Command;
  */
 
 use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
 /**
@@ -32,6 +33,12 @@ class IndexCommandController extends CommandController
      * @var IndexerFactory
      */
     protected $indexerFactory;
+
+    /**
+     * @var \Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface
+     * @inject
+     */
+    protected $configuration;
 
     /**
      * @param IndexerFactory $factory
@@ -50,6 +57,11 @@ class IndexCommandController extends CommandController
     {
         // TODO: Allow to index multiple tables at once?
         // TODO: Also allow to index everything?
+        if (! in_array($table, GeneralUtility::trimExplode(',', $this->configuration->get('index', 'allowedTables')))) {
+            $this->outputLine('Table is not allowed for indexing.');
+            $this->quit(1);
+        }
         $this->indexerFactory->getIndexer($table)->indexAllDocuments();
+        $this->outputLine('Table was indexed.');
     }
 }
