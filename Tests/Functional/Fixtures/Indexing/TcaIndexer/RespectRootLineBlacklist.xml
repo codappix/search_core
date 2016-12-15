@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <pages>
+        <uid>2</uid>
+        <pid>1</pid>
+        <title>Content here will be indexed</title>
+    </pages>
+
+    <pages>
+        <uid>3</uid>
+        <pid>2</pid>
+        <title>Content here will not be indexed</title>
+    </pages>
+
+    <pages>
+        <uid>4</uid>
+        <pid>3</pid>
+        <title>Content here will not be indexed either</title>
+    </pages>
+
+    <tt_content>
+        <uid>1</uid>
+        <pid>1</pid>
+        <tstamp>1480686370</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>0</hidden>
+        <sorting>72</sorting>
+        <CType>textmedia</CType>
+        <header>indexed content element</header>
+        <bodytext>this is the content of textmedia content element that should get indexed</bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
+
+    <tt_content>
+        <uid>2</uid>
+        <pid>2</pid>
+        <tstamp>1480686371</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>0</hidden>
+        <sorting>72</sorting>
+        <CType>textmedia</CType>
+        <header>indexed content element</header>
+        <bodytext>this is the content of textmedia content element that should get indexed</bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
+
+    <tt_content>
+        <uid>3</uid>
+        <pid>3</pid>
+        <tstamp>1480686371</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>0</hidden>
+        <sorting>72</sorting>
+        <CType>textmedia</CType>
+        <header>This content should not be indexed due to root line contraints</header>
+        <bodytext></bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
+
+    <tt_content>
+        <uid>4</uid>
+        <pid>4</pid>
+        <tstamp>1480686371</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>0</hidden>
+        <sorting>72</sorting>
+        <CType>textmedia</CType>
+        <header>This content should not be indexed due to root line contraints</header>
+        <bodytext></bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
+</dataset>

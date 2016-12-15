@@ -116,6 +116,7 @@ class TcaIndexer implements IndexerInterface
             '',
             (int) $offset . ',' . (int) $limit
         );
+        $this->tcaTableService->filterRecordsByRootLineBlacklist($records);
 
         foreach ($records as &$record) {
             $this->tcaTableService->prepareRecord($record);
