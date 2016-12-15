@@ -76,7 +76,7 @@ class DataHandlerTest extends AbstractFunctionalTestCase
         $hook->processDatamap_afterDatabaseOperations('update', 'tt_content', 6, [], $dataHandler);
 
         $response = $this->client->request('typo3content/_search?q=*:*');
-        $this->assertTrue($response->isOK());
+        $this->assertTrue($response->isOK(), 'Elastica did not answer with ok code.');
         $this->assertSame($response->getData()['hits']['total'], 1, 'Not exactly 1 document was indexed.');
     }
 
@@ -91,7 +91,7 @@ class DataHandlerTest extends AbstractFunctionalTestCase
         $hook->processCmdmap_deleteAction('tt_content', 6, [], false, $dataHandler);
 
         $response = $this->client->request('typo3content/_search?q=*:*');
-        $this->assertTrue($response->isOK());
+        $this->assertTrue($response->isOK(), 'Elastica did not answer with ok code.');
         $this->assertSame($response->getData()['hits']['total'], 0, 'Not exactly 0 document was indexed.');
     }
 
@@ -99,10 +99,11 @@ class DataHandlerTest extends AbstractFunctionalTestCase
      * @test
      * @expectedException \Elastica\Exception\ResponseException
      */
-    public function someUnkownOperationDoesNotBreakSomething()
+    public function someUnknownOperationDoesNotBreakSomething()
     {
         $dataHandler = new CoreDataHandler();
         $hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(Hook::class);
+        //TODO: this test is senseless, checking an exception not correct, this operation should not do anything!
         $hook->processDatamap_afterDatabaseOperations('something', 'tt_content', 6, [], $dataHandler);
 
         // Should trigger Exception

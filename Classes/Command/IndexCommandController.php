@@ -50,6 +50,6 @@ class IndexCommandController extends CommandController
     {
         // TODO: Allow to index multiple tables at once?
         // TODO: Also allow to index everything?
-        $this->indexerFactory->getIndexer($table)->index();
+        $this->indexerFactory->getIndexer($table)->indexAllDocuments();
     }
 }

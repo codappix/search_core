@@ -26,16 +26,18 @@ namespace Leonmrni\SearchCore\Domain\Index;
 interface IndexerInterface
 {
     /**
-     * Index the index.
+     * Fetches all documents from the indexerService and pushes it to the connection.
      *
      * @return void
      */
-    public function index();
+    public function indexAllDocuments();
 
     /**
-     * Index a single record.
+     * Fetches a single document from the indexerService and pushes it to the connection.
+     *
+     * @param string $identifier identifier, the indexer needs to identify a single document
      *
      * @return void
      */
-    public function indexRecord($identifier);
+    public function indexDocument($identifier);
 }

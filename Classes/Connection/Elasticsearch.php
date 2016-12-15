@@ -80,7 +80,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         $this->documentFactory = $documentFactory;
     }
 
-    public function add($documentType, array $document)
+    public function addDocument($documentType, array $document)
     {
         $this->withType(
             $documentType,
@@ -90,7 +90,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         );
     }
 
-    public function delete($documentType, $identifier)
+    public function deleteDocument($documentType, $identifier)
     {
         $this->withType(
             $documentType,
@@ -100,7 +100,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         );
     }
 
-    public function update($documentType, array $document)
+    public function updateDocument($documentType, array $document)
     {
         $this->withType(
             $documentType,
@@ -110,12 +110,6 @@ class Elasticsearch implements Singleton, ConnectionInterface
         );
     }
 
-    /**
-     * Add the given documents to elasticsearch.
-     *
-     * @param string $documentType
-     * @param array $documents
-     */
     public function addDocuments($documentType, array $documents)
     {
         $this->withType(
@@ -141,6 +135,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
 
     /**
      * @param SearchRequestInterface $searchRequest
+     *
      * @return \Elastica\ResultSet
      */
     public function search(SearchRequestInterface $searchRequest)
@@ -152,7 +147,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
 
         // TODO: Return wrapped result to implement our interface.
         // Also update php doc to reflect the change.
-        return $search->search($searchRequest->getSearchTerm());
+        return $search->search('"' . $searchRequest->getSearchTerm() . '"');
     }
 
     /**

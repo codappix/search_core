@@ -65,7 +65,7 @@ class TcaIndexer implements IndexerInterface
         $this->connection = $connection;
     }
 
-    public function index()
+    public function indexAllDocuments()
     {
         $this->logger->info('Start indexing');
         foreach ($this->getRecordGenerator() as $records) {
@@ -79,10 +79,10 @@ class TcaIndexer implements IndexerInterface
         $this->logger->info('Finish indexing');
     }
 
-    public function indexRecord($identifier)
+    public function indexDocument($identifier)
     {
         $this->logger->info('Start indexing single record.', [$identifier]);
-        $this->connection->add($this->tcaTableService->getTableName(), $this->getRecord($identifier));
+        $this->connection->addDocument($this->tcaTableService->getTableName(), $this->getRecord($identifier));
         $this->logger->info('Finish indexing');
     }
 

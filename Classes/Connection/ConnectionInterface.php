@@ -33,7 +33,7 @@ interface ConnectionInterface
      *
      * @return void
      */
-    public function add($documentType, array $document);
+    public function addDocument($documentType, array $document);
 
     /**
      * Add the given documents.
@@ -48,22 +48,26 @@ interface ConnectionInterface
     /**
      * Will update an existing document.
      *
+     * NOTE: Batch updating is not yet supported.
+     *
      * @param string $documentType
      * @param array $document
      *
      * @return void
      */
-    public function update($documentType, array $document);
+    public function updateDocument($documentType, array $document);
 
     /**
      * Will remove an existing document.
+     *
+     * NOTE: Batch deleting is not yet supported.
      *
      * @param string $documentType
      * @param int $identifier
      *
      * @return void
      */
-    public function delete($documentType, $identifier);
+    public function deleteDocument($documentType, $identifier);
 
     /**
      * Search by given request and return result.

@@ -26,6 +26,7 @@ use TYPO3\CMS\Core\Tests\FunctionalTestCase as CoreTestCase;
  * All functional tests should extend this base class.
  *
  * It will take care of leaving a clean environment for next test.
+ * TODO: this is in reality an "elastica" abstract case - not search_core ;)
  */
 abstract class AbstractFunctionalTestCase extends CoreTestCase
 {
