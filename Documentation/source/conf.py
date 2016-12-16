@@ -32,6 +32,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.ifconfig',
+    'sphinx.ext.extlinks',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -302,5 +303,10 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    't3-tca-ref': ('https://docs.typo3.org/typo3cms/TCAReference/', None)
+    't3TcaRef': ('https://docs.typo3.org/typo3cms/TCAReference/', None),
+}
+extlinks = {
+    'project': ('https://github.com/DanielSiepmann/search_core/projects/%s', 'Github project: '),
+    'pr': ('https://github.com/DanielSiepmann/search_core/pull/%s', 'Github pull request: '),
+    'issue': ('https://github.com/DanielSiepmann/search_core/issues/%s', 'Github issue: '),
 }

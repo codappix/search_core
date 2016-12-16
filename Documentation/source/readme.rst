@@ -8,7 +8,7 @@ What does it do?
 ----------------
 
 The goal of this extension is to provide search integrations into TYPO3 CMS. The extension will
-abstract the concrete implementations to allow exchange of concrete backends like elasticsearch or
+abstract the concrete implementations to allow exchange of concrete backends like Elasticsearch or
 solr.
 
 The extension provides integration into TYPO3 like a frontend plugin for searches and hooks to
@@ -22,6 +22,8 @@ This is still a very early alpha version. More information can be taken from Git
 `current issues`_ and `current projects`_.
 
 We are also focusing on Code Quality and Testing through `travis ci`_, `scrutinizer`_ and `codacy`_.
+
+TYPO3 7 is not supported yet, see :project:`1`.
 
 .. _current issues: https://github.com/DanielSiepmann/search_core/issues
 .. _current projects: https://github.com/DanielSiepmann/search_core/projects
