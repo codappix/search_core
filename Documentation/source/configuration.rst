@@ -18,7 +18,7 @@ mode of TYPO3. Do so by placing the following line at the end::
 Currently no constants are available, but this will change in the near future to make configuration
 easier.
 
-The strucutre is following TYPO3 Extbase conventions. All settings are placed inside of::
+The structure is following TYPO3 Extbase conventions. All settings are placed inside of::
 
     plugin.tx_searchcore.settings
 
@@ -37,12 +37,19 @@ Options
 The following section contain the different options for e.g.
 ``plugin.tx_searchcore.settings.connection`` or ``plugin.tx_searchcore.settings.index``.
 
+.. warning::
+
+  The structure will change as we need to support multiple indexer and connections.
+  The options will stay the same.
+
+  For further information take a look at :issue:`31`.
+
 .. _configuration_options_connection:
 
 connection
 ^^^^^^^^^^
 
-Holds settings regarding the connection to search service like elasticsearch or solr.
+Holds settings regarding the connection to search service like Elasticsearch or Solr.
 
 Configured as::
 
@@ -63,7 +70,7 @@ Configured as::
 
     Used by: :ref:`Elasticsearch`.
 
-    The host, e.g. ``localhost`` or an ip where the search service is reachable from TYPO3
+    The host, e.g. ``localhost`` or an IP where the search service is reachable from TYPO3
     installation.
 
     Example::
@@ -77,12 +84,11 @@ Configured as::
 
     Used by: :ref:`Elasticsearch`.
 
-    The port where search service is reachable. E.g. default ``9200`` for elasticsearch.
+    The port where search service is reachable. E.g. default ``9200`` for Elasticsearch.
 
     Example::
 
         plugin.tx_searchcore.settings.connection.port = 9200
-
 
 
 .. _configuration_options_index:
@@ -111,7 +117,7 @@ Configured as::
 
     Used by: :ref:`TcaIndexer`.
 
-    Defines which TYPO3 tables are allowed to be indexed. Only whitelisted tables will be processed
+    Defines which TYPO3 tables are allowed to be indexed. Only white listed tables will be processed
     through Command Line Interface and Hooks.
 
     Contains a comma separated list of table names. Spaces are trimmed.
