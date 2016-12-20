@@ -145,9 +145,26 @@ class Elasticsearch implements Singleton, ConnectionInterface
         $search = new \Elastica\Search($this->connection->getClient());
         $search->addIndex('typo3content');
 
+        // TODO: Refactor to own method
+        // TODO: Make configurable
+        $query = new \Elastica\Query([
+            'query' => [
+                'term' => ['_all' => '"' . $searchRequest->getSearchTerm() . '"'],
+            ],
+        ]);
+        $query = new \Elastica\Query('"' . $searchRequest->getSearchTerm() . '"');
+
+        $facet = new \Elastica\Aggregation\Terms('Content Types', 'CType');
+        $facet->setField('CType');
+        $query->addAggregation($facet);
+
+        $facet = new \Elastica\Aggregation\DateHistogram('Geändert', 'tstamp', 'month');
+        $query->addAggregation($facet);
+
         // TODO: Return wrapped result to implement our interface.
         // Also update php doc to reflect the change.
-        return $search->search('"' . $searchRequest->getSearchTerm() . '"');
+        // return $search->search('"' . $searchRequest->getSearchTerm() . '"');
+        return $search->search($query);
     }
 
     /**

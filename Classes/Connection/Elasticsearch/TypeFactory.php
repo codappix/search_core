@@ -31,6 +31,18 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 class TypeFactory implements Singleton
 {
     /**
+     * @var \Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface
+     * @inject
+     */
+    protected $configuration;
+
+    /**
+     * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+     * @inject
+     */
+    protected $objectManager;
+
+    /**
      * Get an index bases on TYPO3 table name.
      *
      * @param \Elastica\Index $index
@@ -40,6 +52,35 @@ class TypeFactory implements Singleton
      */
     public function getType(\Elastica\Index $index, $documentType)
     {
-        return $index->getType($documentType);
+        $type = $index->getType($documentType);
+
+        $mapper = $this->getMapper($type);
+        if ($mapper !== null) {
+            $this->mapType($type, $mapper);
+        }
+
+        return $type;
+    }
+
+    protected function getMapper(\Elastica\Type $type)
+    {
+        $config = $this->configuration->getIfExists('connections.elasticsearch.types.' . $type->getName() . '.mapping');
+        if ($config === null) {
+            return null;
+        }
+
+        if (class_exists($config)) {
+            return $this->objectManager->get($config, $type->getName());
+        }
+
+        return null;
+    }
+
+    protected function mapType(\Elastica\Type $type, $mapper)
+    {
+        $mapping = new \Elastica\Type\Mapping();
+        $mapping->setType($type);
+        $mapping->setProperties($mapper->getMapping());
+        $mapping->send();
     }
 }

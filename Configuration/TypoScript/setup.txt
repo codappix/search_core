@@ -5,6 +5,12 @@ plugin {
                 elasticsearch {
                     host = localhost
                     port = 9200
+
+                    types {
+                        tt_content {
+                            mapping = \Leonmrni\SearchCore\Connection\Elasticsearch\TypeMapper\TcaMapper
+                        }
+                    }
                 }
             }
 

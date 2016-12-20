@@ -5,6 +5,18 @@
 
 </f:form>
 
+<f:for each="{searchResult.aggregations}" key="label" as="facet">
+    {label}:<br>
+    <ul>
+        <f:for each="{facet.buckets}" as="option">
+            <li>
+                {f:if(condition: option.key_as_string, then: option.key_as_string, else: option.key)}
+                ({option.doc_count})
+            </li>
+        </f:for>
+    </ul>
+</f:for>
+
 <f:for each="{searchResult}" as="result">
     <f:link.page pageUid="{result.hit._source.pid}">
         {result.id} [{result.type}] - {result.hit._source.search_title}
