@@ -86,7 +86,7 @@ class DataHandler implements Singleton
      */
     public function getAllowedTablesForIndexing()
     {
-        return GeneralUtility::trimExplode(',', $this->configuration->get('index', 'allowedTables'));
+        return GeneralUtility::trimExplode(',', $this->configuration->get('indexer.tca.allowedTables'));
     }
 
     /**

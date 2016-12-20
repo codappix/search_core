@@ -21,6 +21,7 @@ namespace Leonmrni\SearchCore\Configuration;
  */
 
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Utility\ArrayUtility;
 
 /**
  * Container of all configurations for extension.
@@ -29,14 +30,14 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 class ConfigurationContainer implements ConfigurationContainerInterface
 {
     /**
-     * Plaint TypoScript array from extbase for extension / plugin.
+     * Plain TypoScript array from extbase for extension / plugin.
      *
      * @var array
      */
     protected $settings;
 
     /**
-     * Inject news settings via ConfigurationManager.
+     * Inject settings via ConfigurationManager.
      *
      * @param ConfigurationManagerInterface $configurationManager
      */
@@ -50,34 +51,30 @@ class ConfigurationContainer implements ConfigurationContainerInterface
     }
 
     /**
-     * @param string $section
-     * @param string $key
+     * @param string $path In dot notation.
      * @return mixed
      * @throws InvalidArgumentException
      */
-    public function get($section, $key)
+    public function get($path)
     {
-        if (!isset($this->settings[$section]) || !isset($this->settings[$section][$key])) {
+        $value = ArrayUtility::getValueByPath($this->settings, $path);
+
+        if ($value === null) {
             throw new InvalidArgumentException(
-                'The given configuration option does not exist.',
+                'The given configuration option "' . $path . '" does not exist.',
                 InvalidArgumentException::OPTION_DOES_NOT_EXIST
             );
         }
 
-        return $this->settings[$section][$key];
+        return $value;
     }
 
     /**
-     * @param string $section
-     * @param string $key
-     * @return mixed|null
+     * @param string $path In dot notation.
+     * @return mixed
      */
-    public function getIfExists($section, $key)
+    public function getIfExists($path)
     {
-        try {
-            return $this->get($section, $key);
-        } catch (InvalidArgumentException $e) {
-            return null;
-        }
+        return ArrayUtility::getValueByPath($this->settings, $path);
     }
 }

@@ -34,34 +34,35 @@ Here is the example default configuration that's provided through static setup:
 Options
 -------
 
-The following section contain the different options for e.g.
-``plugin.tx_searchcore.settings.connection`` or ``plugin.tx_searchcore.settings.index``.
-
-.. warning::
-
-  The structure will change as we need to support multiple indexer and connections.
-  The options will stay the same.
-
-  For further information take a look at :issue:`31`.
+The following section contains the different options, e.g. for :ref:`connections` and
+:ref:`indexer`: ``plugin.tx_searchcore.settings.connection`` or
+``plugin.tx_searchcore.settings.index``.
 
 .. _configuration_options_connection:
 
-connection
-^^^^^^^^^^
+connections
+^^^^^^^^^^^
 
-Holds settings regarding the connection to search service like Elasticsearch or Solr.
+Holds settings regarding the different possible connections for search services like Elasticsearch
+or Solr.
 
 Configured as::
 
     plugin {
         tx_searchcore {
             settings {
-                connection {
-                    // the settings
+                connections {
+                    connectionName {
+                        // the settings
+                    }
                 }
             }
         }
     }
+
+Where ``connectionName`` is one of the available :ref:`connections`.
+
+The following settings are available. For each setting its documented which connection consumes it.
 
 .. _host:
 
@@ -75,7 +76,7 @@ Configured as::
 
     Example::
 
-        plugin.tx_searchcore.settings.connection.host = localhost
+        plugin.tx_searchcore.settings.connections.elasticsearch.host = localhost
 
 .. _port:
 
@@ -88,7 +89,7 @@ Configured as::
 
     Example::
 
-        plugin.tx_searchcore.settings.connection.port = 9200
+        plugin.tx_searchcore.settings.connections.elasticsearch.port = 9200
 
 
 .. _configuration_options_index:
@@ -96,19 +97,25 @@ Configured as::
 index
 ^^^^^
 
-Holds settings regarding the indexing of TYPO3 records to search service.
+Holds settings regarding the indexing, e.g. of TYPO3 records, to search services.
 
 Configured as::
 
     plugin {
         tx_searchcore {
             settings {
-                index {
-                    // the settings
+                indexer {
+                    indexerName {
+                        // the settings
+                    }
                 }
             }
         }
     }
+
+Where ``indexerName`` is one of the available :ref:`indexer`.
+
+The following settings are available. For each setting its documented which indexer consumes it.
 
 .. _allowedTables:
 
@@ -124,7 +131,7 @@ Configured as::
 
     Example::
 
-        plugin.tx_searchcore.settings.index.allowedTables = tt_content, fe_users
+        plugin.tx_searchcore.settings.indexer.tca.allowedTables = tt_content, fe_users
 
 .. _rootLineBlacklist:
 
@@ -142,7 +149,7 @@ Configured as::
 
     Example::
 
-        plugin.tx_searchcore.settings.index.rootLineBlacklist = 3, 10, 100
+        plugin.tx_searchcore.settings.index.tca.rootLineBlacklist = 3, 10, 100
 
 Also it's possible to define some behaviour for the different document types. In context of TYPO3
 tables are used as document types 1:1. It's possible to configure different tables. The following
@@ -161,7 +168,7 @@ options are available:
 
     Example::
 
-        plugin.tx_searchcore.settings.index.tt_content.additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu')
+        plugin.tx_searchcore.settings.index.tca.tt_content.additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu')
 
     .. attention::
 

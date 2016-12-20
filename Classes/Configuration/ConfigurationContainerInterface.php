@@ -30,20 +30,18 @@ interface ConfigurationContainerInterface extends Singleton
 {
     /**
      * Returns the option defined by section and key.
-     * May throw an exception if it's not set.
+     * May throw an exception if it's not set or is null.
      *
-     * @param string $section
-     * @param string $key
+     * @param string $path In dot notation. E.g. indexer.tca.allowedTables
      * @return mixed
      */
-    public function get($section, $key);
+    public function get($path);
 
     /**
      * Same as get but will not throw an exception but return null.
      *
-     * @param string $section
-     * @param string $key
+     * @param string $path In dot notation.
      * @return mixed|null
      */
-    public function getIfExists($section, $key);
+    public function getIfExists($path);
 }

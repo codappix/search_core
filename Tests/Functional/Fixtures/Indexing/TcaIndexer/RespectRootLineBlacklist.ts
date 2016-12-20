@@ -1,8 +1,10 @@
 plugin {
     tx_searchcore {
         settings {
-            index {
-                rootLineBlacklist = 3
+            indexer {
+                tca {
+                    rootLineBlacklist = 3
+                }
             }
         }
     }

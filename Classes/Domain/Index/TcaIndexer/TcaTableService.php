@@ -151,7 +151,7 @@ class TcaTableService
             . ' AND pages.no_search = 0'
             ;
 
-        $userDefinedWhere = $this->configuration->getIfExists('index', $this->tableName);
+        $userDefinedWhere = $this->configuration->getIfExists('indexer.tca.' . $this->tableName);
         if (is_string($userDefinedWhere)) {
             $whereClause .= $userDefinedWhere;
         }
@@ -263,7 +263,7 @@ class TcaTableService
      */
     protected function isBlackListedRootLineConfigured()
     {
-        return (bool) $this->configuration->getIfExists('index', 'rootLineBlacklist');
+        return (bool) $this->configuration->getIfExists('indexer.tca.rootLineBlacklist');
     }
 
     /**
@@ -273,6 +273,6 @@ class TcaTableService
      */
     protected function getBlackListedRootLine()
     {
-        return GeneralUtility::intExplode(',', $this->configuration->getIfExists('index', 'rootLineBlacklist'));
+        return GeneralUtility::intExplode(',', $this->configuration->getIfExists('indexer.tca.rootLineBlacklist'));
     }
 }
