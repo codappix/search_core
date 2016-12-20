@@ -22,6 +22,8 @@ namespace Leonmrni\SearchCore\Domain\Index\TcaIndexer;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Resolves relations from TCA using TCA.
@@ -64,11 +66,7 @@ class RelationResolver implements Singleton
                 continue;
             }
 
-            $record[$column] = $this->resolveValue(
-                $preprocessedData[$column],
-                $config,
-                $column
-            );
+            $record[$column] = $this->resolveValue($preprocessedData[$column], $config);
         }
     }
 
@@ -82,27 +80,26 @@ class RelationResolver implements Singleton
      * exactly that we need to tackle this place.
      *
      * @param string $value The value from FormEngine to resolve.
+     * @param array $config The tca config of the relation.
      *
      * @return array<String>|string
      */
-    protected function resolveValue($value)
+    protected function resolveValue($value, array $config)
     {
-        $newValue = [];
         if ($value === '' || $value === '0') {
             return '';
         }
-
-        if (strpos($value, '|') === false) {
-            return $value;
+        if (strpos($value, '|') !== false) {
+            return $this->resolveSelectValue($value);
+        }
+        if (strpos($value, ',') !== false) {
+            return $this->resolveInlineValue($value, $config['foreign_table']);
+        }
+        if ($config['type'] === 'select' && is_array($config['items'])) {
+            return $this->resolveSelectItemValue($value, $config['items']);
         }
 
-        foreach (\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $value) as $value) {
-            $value = substr($value, strpos($value, '|') + 1);
-            $value = rawurldecode($value);
-            $newValue[] = $value;
-        }
-
-        return $newValue;
+        return '';
     }
 
     /**
@@ -115,5 +112,62 @@ class RelationResolver implements Singleton
             || (isset($config['items']) && is_array($config['items']))
             || (isset($config['internal_type']) && strtolower($config['internal_type']) === 'db')
             ;
+    }
+
+    /**
+     * Resolves internal representation of select to array of labels.
+     *
+     * @param string $value
+     * @return array
+     */
+    protected function resolveSelectValue($value)
+    {
+        $newValue = [];
+
+        foreach (GeneralUtility::trimExplode(',', $value) as $value) {
+            $value = substr($value, strpos($value, '|') + 1);
+            $value = rawurldecode($value);
+            $newValue[] = $value;
+        }
+
+        return $newValue;
+    }
+
+    /**
+     * @param string $value
+     * @param string $table
+     *
+     * @return array
+     */
+    protected function resolveInlineValue($value, $table)
+    {
+        $newValue = [];
+        $records = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $table, 'uid in (' . $value . ')');
+        if ($records === null) {
+            return $newValue;
+        }
+
+        foreach ($records as $record) {
+            $newValue[] = BackendUtility::getRecordTitle($table, $record);
+        }
+
+        return $newValue;
+    }
+
+    /**
+     * @param string $value
+     * @param array $items
+     *
+     * @return string
+     */
+    protected function resolveSelectItemValue($value, array $items)
+    {
+        foreach ($items as $item) {
+            if ($item[1] === $value) {
+                return LocalizationUtility::translate($item[0], '');
+            }
+        }
+
+        return '';
     }
 }

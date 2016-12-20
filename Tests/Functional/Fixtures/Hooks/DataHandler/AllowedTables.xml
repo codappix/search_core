@@ -7,7 +7,7 @@
         <crdate>1480686370</crdate>
         <hidden>0</hidden>
         <sorting>72</sorting>
-        <CType>textmedia</CType>
+        <CType>header</CType>
         <header>test</header>
         <bodytext>Record that can be processed by hook</bodytext>
         <media>0</media>

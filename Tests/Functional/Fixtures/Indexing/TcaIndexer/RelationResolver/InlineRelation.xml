@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <sys_file>
+        <uid>1</uid>
+        <pid>0</pid>
+        <metadata>2</metadata>
+        <name>title of file</name>
+    </sys_file>
+
+    <sys_file_metadata>
+        <uid>1</uid>
+        <pid>0</pid>
+        <file>1</file>
+        <title>Metadata title 1</title>
+    </sys_file_metadata>
+
+    <sys_file_metadata>
+        <uid>2</uid>
+        <pid>0</pid>
+        <file>1</file>
+        <title>Metadata title 2</title>
+    </sys_file_metadata>
+
+    <sys_file_metadata>
+        <uid>3</uid>
+        <pid>0</pid>
+        <file>2</file>
+        <title>Metadata title with no relation</title>
+    </sys_file_metadata>
+</dataset>

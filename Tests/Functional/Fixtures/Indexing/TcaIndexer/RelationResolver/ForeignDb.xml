@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <tt_content>
+        <uid>1</uid>
+        <pid>1</pid>
+        <CType>shortcut</CType>
+        <records>2,3</records>
+        <header>Record 1</header>
+        <deleted>0</deleted>
+    </tt_content>
+    <tt_content>
+        <uid>2</uid>
+        <pid>1</pid>
+        <CType>header</CType>
+        <header>Record 2</header>
+        <deleted>0</deleted>
+    </tt_content>
+    <tt_content>
+        <uid>3</uid>
+        <pid>1</pid>
+        <CType>header</CType>
+        <header>Record 3</header>
+        <deleted>0</deleted>
+    </tt_content>
+</dataset>

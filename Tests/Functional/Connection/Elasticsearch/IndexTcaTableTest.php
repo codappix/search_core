@@ -146,7 +146,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
         $this->assertArraySubset(
             ['_source' => [
                 'uid' => '9',
-                'CType' => 'textmedia', // Testing items
+                'CType' => 'Header', // Testing items
                 'categories' => ['Category 2', 'Category 1'], // Testing mm (with sorting)
             ]],
             $response->getData()['hits']['hits'][0],
@@ -158,7 +158,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
         $this->assertArraySubset(
             ['_source' => [
                 'uid' => '10',
-                'CType' => 'textmedia',
+                'CType' => 'Header',
                 'categories' => ['Category 2'],
             ]],
             $response->getData()['hits']['hits'][0],
