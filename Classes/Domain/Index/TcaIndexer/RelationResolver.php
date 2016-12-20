@@ -164,7 +164,12 @@ class RelationResolver implements Singleton
     {
         foreach ($items as $item) {
             if ($item[1] === $value) {
-                return LocalizationUtility::translate($item[0], '');
+                $newValue = LocalizationUtility::translate($item[0], '');
+
+                if ($newValue === null) {
+                    return '';
+                }
+                return $newValue;
             }
         }
 

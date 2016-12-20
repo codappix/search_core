@@ -3,9 +3,9 @@ filter:
         - 'Configuration/*'
         - 'Documentation/*'
         - 'Resources/*'
+        - 'Tests/*'
     paths:
         - 'Classes/*'
-        - 'Tests/*'
 tools:
 
     php_cpd:
