@@ -43,7 +43,7 @@ class TcaTableService
     protected $tableName;
 
     /**
-     * @var ConfigurationContaineInterfacer
+     * @var ConfigurationContainerInterface
      */
     protected $configuration;
 
@@ -69,7 +69,7 @@ class TcaTableService
 
     /**
      * @param string $tableName
-     * @param ConfigurationContainer $configuration
+     * @param ConfigurationContainerInterface $configuration
      */
     public function __construct(
         $tableName,
