@@ -55,6 +55,7 @@
         <description>Category for testing</description>
         <parent>0</parent>
         <items>1</items>
+        <l10n_diffsource></l10n_diffsource>
     </sys_category>
 
     <sys_category>
@@ -70,6 +71,7 @@
         <description>Another category for testing</description>
         <parent>1</parent>
         <items>1</items>
+        <l10n_diffsource></l10n_diffsource>
     </sys_category>
 
     <sys_category>
@@ -85,6 +87,7 @@
         <description></description>
         <parent>0</parent>
         <items>1</items>
+        <l10n_diffsource></l10n_diffsource>
     </sys_category>
 
     <sys_category_record_mm>

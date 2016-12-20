@@ -13,5 +13,6 @@
         <description></description>
         <parent>0</parent>
         <items>0</items>
+        <l10n_diffsource></l10n_diffsource>
     </sys_category>
 </dataset>
