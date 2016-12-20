@@ -303,7 +303,7 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    't3TcaRef': ('https://docs.typo3.org/typo3cms/TCAReference/', None),
+    't3tcaref': ('https://docs.typo3.org/typo3cms/TCAReference/', None),
 }
 extlinks = {
     'project': ('https://github.com/DanielSiepmann/search_core/projects/%s', 'Github project: '),
