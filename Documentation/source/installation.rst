@@ -12,7 +12,6 @@ or by `downloading`_ and placing it inside the :file:`typo3conf/ext`-Folder of y
 In that case you need to install all dependencies yourself. Dependencies are:
 
 .. literalinclude:: ../../composer.json
-   :language: json
    :caption: Dependencies from composer.json
    :lines: 19-21
    :dedent: 8

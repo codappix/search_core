@@ -12,7 +12,7 @@ The extension provides the following indexer out of the box:
 TcaIndexer
 ----------
 
-Provides zero configuration TYPO3 integration by using the :ref:`t3TcaRef:start`. You just can
+Provides zero configuration TYPO3 integration by using the :ref:`t3tcaref:start`. You just can
 start indexing TYPO3.
 
 The indexer will use the TCA to fetch all necessary information like relations. Currently the
