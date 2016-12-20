@@ -1,55 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dataset>
     <tt_content>
-        <uid>9</uid>
+        <uid>1</uid>
         <pid>1</pid>
-        <tstamp>1480686370</tstamp>
-        <crdate>1480686370</crdate>
-        <hidden>0</hidden>
-        <sorting>72</sorting>
         <CType>header</CType>
         <header>Record with relation to multiple sys category record</header>
-        <bodytext>some content</bodytext>
-        <media>0</media>
-        <layout>0</layout>
         <deleted>0</deleted>
-        <cols>0</cols>
-        <starttime>0</starttime>
-        <endtime>0</endtime>
-        <colPos>0</colPos>
         <categories>3</categories>
-        <filelink_sorting>0</filelink_sorting>
-    </tt_content>
-
-    <tt_content>
-        <uid>10</uid>
-        <pid>1</pid>
-        <tstamp>1480686370</tstamp>
-        <crdate>1480686370</crdate>
-        <hidden>0</hidden>
-        <sorting>72</sorting>
-        <CType>header</CType>
-        <header>Record with relation to a single sys category record</header>
-        <bodytext>some content</bodytext>
-        <media>0</media>
-        <layout>0</layout>
-        <deleted>0</deleted>
-        <cols>0</cols>
-        <starttime>0</starttime>
-        <endtime>0</endtime>
-        <colPos>0</colPos>
-        <categories>1</categories>
-        <filelink_sorting>0</filelink_sorting>
     </tt_content>
 
     <sys_category>
         <uid>1</uid>
         <pid>1</pid>
-        <tstamp>1480686370</tstamp>
-        <crdate>1480686370</crdate>
         <deleted>0</deleted>
-        <starttime>0</starttime>
-        <endtime>0</endtime>
         <sorting>1</sorting>
         <title>Category 1</title>
         <description>Category for testing</description>
@@ -60,11 +23,7 @@
     <sys_category>
         <uid>2</uid>
         <pid>1</pid>
-        <tstamp>1480686370</tstamp>
-        <crdate>1480686370</crdate>
         <deleted>0</deleted>
-        <starttime>0</starttime>
-        <endtime>0</endtime>
         <sorting>1</sorting>
         <title>Category 2</title>
         <description>Another category for testing</description>
@@ -75,11 +34,7 @@
     <sys_category>
         <uid>3</uid>
         <pid>1</pid>
-        <tstamp>1480686370</tstamp>
-        <crdate>1480686370</crdate>
         <deleted>1</deleted>
-        <starttime>0</starttime>
-        <endtime>0</endtime>
         <sorting>1</sorting>
         <title>Deleted category</title>
         <description></description>
@@ -89,7 +44,7 @@
 
     <sys_category_record_mm>
         <uid_local>1</uid_local>
-        <uid_foreign>9</uid_foreign>
+        <uid_foreign>1</uid_foreign>
         <tablenames>tt_content</tablenames>
         <fieldname>categories</fieldname>
         <sorting>2</sorting>
@@ -97,7 +52,7 @@
     </sys_category_record_mm>
     <sys_category_record_mm>
         <uid_local>2</uid_local>
-        <uid_foreign>9</uid_foreign>
+        <uid_foreign>1</uid_foreign>
         <tablenames>tt_content</tablenames>
         <fieldname>categories</fieldname>
         <sorting>1</sorting>
@@ -105,19 +60,10 @@
     </sys_category_record_mm>
     <sys_category_record_mm>
         <uid_local>3</uid_local>
-        <uid_foreign>9</uid_foreign>
+        <uid_foreign>1</uid_foreign>
         <tablenames>tt_content</tablenames>
         <fieldname>categories</fieldname>
         <sorting>3</sorting>
         <sorting_foreign>3</sorting_foreign>
-    </sys_category_record_mm>
-
-    <sys_category_record_mm>
-        <uid_local>2</uid_local>
-        <uid_foreign>10</uid_foreign>
-        <tablenames>tt_content</tablenames>
-        <fieldname>categories</fieldname>
-        <sorting>1</sorting>
-        <sorting_foreign>1</sorting_foreign>
     </sys_category_record_mm>
 </dataset>

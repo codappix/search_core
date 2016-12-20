@@ -22,6 +22,7 @@ namespace Leonmrni\SearchCore\Domain\Index\TcaIndexer;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Resolves relations from TCA using TCA.
@@ -64,11 +65,7 @@ class RelationResolver implements Singleton
                 continue;
             }
 
-            $record[$column] = $this->resolveValue(
-                $preprocessedData[$column],
-                $config,
-                $column
-            );
+            $record[$column] = $this->resolveValue($preprocessedData[$column], $config);
         }
     }
 
@@ -82,24 +79,44 @@ class RelationResolver implements Singleton
      * exactly that we need to tackle this place.
      *
      * @param string $value The value from FormEngine to resolve.
+     * @param array $config The tca config of the relation.
      *
      * @return array<String>|string
      */
-    protected function resolveValue($value)
+    protected function resolveValue($value, array $config)
     {
         $newValue = [];
         if ($value === '' || $value === '0') {
             return '';
         }
 
-        if (strpos($value, '|') === false) {
-            return $value;
+        // Select
+        if (strpos($value, '|') !== false) {
+            foreach (\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $value) as $value) {
+                $value = substr($value, strpos($value, '|') + 1);
+                $value = rawurldecode($value);
+                $newValue[] = $value;
+            }
+
+            return $newValue;
         }
 
-        foreach (\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $value) as $value) {
-            $value = substr($value, strpos($value, '|') + 1);
-            $value = rawurldecode($value);
-            $newValue[] = $value;
+        // Inline
+        if (strpos($value, ',') !== false) {
+            foreach ($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $config['foreign_table'], 'uid in (' . $value . ')') as $record) {
+                $newValue[] = BackendUtility::getRecordTitle($config['foreign_table'], $record);
+            }
+
+            return $newValue;
+        }
+
+        // Static select items
+        if ($config['type'] === 'select' && is_array($config['items'])) {
+            foreach ($config['items'] as $item) {
+                if ($item[1] === $value) {
+                    return LocalizationUtility::translate($item[0], '');
+                }
+            }
         }
 
         return $newValue;

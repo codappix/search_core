@@ -25,9 +25,9 @@
         <crdate>1480686370</crdate>
         <hidden>0</hidden>
         <sorting>72</sorting>
-        <CType>textmedia</CType>
+        <CType>header</CType>
         <header>indexed content element</header>
-        <bodytext>this is the content of textmedia content element that should get indexed</bodytext>
+        <bodytext>this is the content of header content element that should get indexed</bodytext>
         <media>0</media>
         <layout>0</layout>
         <deleted>0</deleted>
@@ -45,9 +45,9 @@
         <crdate>1480686370</crdate>
         <hidden>0</hidden>
         <sorting>72</sorting>
-        <CType>textmedia</CType>
+        <CType>header</CType>
         <header>indexed content element</header>
-        <bodytext>this is the content of textmedia content element that should get indexed</bodytext>
+        <bodytext>this is the content of header content element that should get indexed</bodytext>
         <media>0</media>
         <layout>0</layout>
         <deleted>0</deleted>
@@ -65,7 +65,7 @@
         <crdate>1480686370</crdate>
         <hidden>0</hidden>
         <sorting>72</sorting>
-        <CType>textmedia</CType>
+        <CType>header</CType>
         <header>This content should not be indexed due to root line contraints</header>
         <bodytext></bodytext>
         <media>0</media>
@@ -85,7 +85,7 @@
         <crdate>1480686370</crdate>
         <hidden>0</hidden>
         <sorting>72</sorting>
-        <CType>textmedia</CType>
+        <CType>header</CType>
         <header>This content should not be indexed due to root line contraints</header>
         <bodytext></bodytext>
         <media>0</media>
