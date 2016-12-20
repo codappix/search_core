@@ -29,3 +29,11 @@ The tables have to be white listed through :ref:`allowedTables` option.
 .. note::
 
   Not all hook operations are supported yet, see :issue:`27`.
+
+.. _usage_searching:
+
+Searching / Frontend Plugin
+---------------------------
+
+To provide a search interface you can insert the frontend Plugin as normal content element of type
+plugin. The plugin is named *Search Core*.
