@@ -27,13 +27,11 @@ uploadCodeCoverage: uploadCodeCoverageToScrutinizer uploadCodeCoverageToCodacy
 
 uploadCodeCoverageToScrutinizer:
 	wget https://scrutinizer-ci.com/ocular.phar && \
-	php ocular.phar code-coverage:upload --format=php-clover .Build/report/unit/clover/coverage && \
 	php ocular.phar code-coverage:upload --format=php-clover .Build/report/functional/clover/coverage
 
 uploadCodeCoverageToCodacy:
 	composer require -vv --dev codacy/coverage && \
 	git checkout composer.json && \
-	php .Build/bin/codacycoverage clover .Build/report/unit/clover/coverage && \
 	php .Build/bin/codacycoverage clover .Build/report/functional/clover/coverage
 
 clean:
