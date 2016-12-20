@@ -1,13 +1,17 @@
 plugin {
     tx_searchcore {
         settings {
-            connection {
-                host = localhost
-                port = 9200
+            connections {
+                elasticsearch {
+                    host = localhost
+                    port = 9200
+                }
             }
 
-            index {
-                allowedTables = tt_content
+            indexer {
+                tca {
+                    allowedTables = tt_content
+                }
             }
         }
     }

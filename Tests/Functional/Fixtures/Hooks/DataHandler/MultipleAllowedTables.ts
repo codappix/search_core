@@ -1,8 +1,10 @@
 plugin {
     tx_searchcore {
         settings {
-            index {
-                allowedTables = tt_content, fe_user
+            indexer {
+                tca {
+                    allowedTables = tt_content, fe_user
+                }
             }
         }
     }

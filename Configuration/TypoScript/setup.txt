@@ -1,20 +1,24 @@
 plugin {
     tx_searchcore {
         settings {
-            connection {
-                host = localhost
-                port = 9200
+            connections {
+                elasticsearch {
+                    host = localhost
+                    port = 9200
+                }
             }
 
-            index {
-                # Pages are not supported yet, see
-                # https://github.com/DanielSiepmann/search_core/issues/24 but
-                # should also be added, together with additionalWhereClause
-                # based on doktypes
-                allowedTables = tt_content
+            indexer {
+                tca {
+                    # Pages are not supported yet, see
+                    # https://github.com/DanielSiepmann/search_core/issues/24 but
+                    # should also be added, together with additionalWhereClause
+                    # based on doktypes
+                    allowedTables = tt_content
 
-                tt_content {
-                    additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu')
+                    tt_content {
+                        additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu')
+                    }
                 }
             }
         }
