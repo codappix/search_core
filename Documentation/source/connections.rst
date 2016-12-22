@@ -22,11 +22,15 @@ The connection is configurable through the following options:
 
 * :ref:`port`
 
+The connection also provides basic mapping capabilities based on TCA fields indicated as *boolean*
+and *date* are converted and mapped while indexing, independent of indexer at the moment.
+If further indexer are provided there need to be a mechanism in the future.
+
+Mapping is done using the TCA at the moment, see :ref:`concepts_mapper`.
+
 .. todo:: 
 
     * Document facet configuration
-
-    * Document mapping configuration
 
 .. _elastic Elasticsearch: https://www.elastic.co/products/elasticsearch
 .. _elastica: http://elastica.io/

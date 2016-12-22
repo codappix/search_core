@@ -22,26 +22,21 @@ namespace Leonmrni\SearchCore\Connection\Elasticsearch;
 
 use Leonmrni\SearchCore\Connection\Elasticsearch\TypeMapper;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /**
- * Factory to get indexes.
- *
- * The factory will take care of configuration and creation of index if necessary.
+ * Factory to get types.
  */
 class TypeFactory implements Singleton
 {
     /**
-     * @var \Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface
-     * @inject
+     * @var MapperFactory
      */
-    protected $configuration;
+    protected $mapperFactory;
 
-    /**
-     * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
-     * @inject
-     */
-    protected $objectManager;
+    public function __construct(MapperFactory $mapperFactory)
+    {
+        $this->mapperFactory = $mapperFactory;
+    }
 
     /**
      * Get an index bases on TYPO3 table name.
@@ -55,25 +50,9 @@ class TypeFactory implements Singleton
     {
         $type = $index->getType($documentType);
 
-        $mapper = $this->getMapper($type);
-        if ($mapper !== null) {
-            $this->mapType($type, $mapper);
-        }
+        $this->mapType($type, $this->mapperFactory->getMapper($documentType));
 
         return $type;
-    }
-
-    /**
-     * Returns the mapper for given type.
-     *
-     * @param \Elastica\Type $type
-     * @return TypeMapper\MapperInterface
-     */
-    protected function getMapper(\Elastica\Type $type)
-    {
-        // Currently we onlye have one mapper, but this is the place to use
-        // configuration in future.
-        return $this->objectManager->get(TypeMapper\TcaMapper::class, $type->getName());
     }
 
     /**
@@ -86,7 +65,7 @@ class TypeFactory implements Singleton
     {
         $mapping = new \Elastica\Type\Mapping();
         $mapping->setType($type);
-        $mapping->setProperties($mapper->getMapping());
+        $mapping->setProperties($mapper->getPropertyMapping());
         $mapping->send();
     }
 }

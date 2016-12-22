@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Connection\Elasticsearch\TypeMapper;
+namespace Leonmrni\SearchCore\Connection\Elasticsearch;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,27 +20,31 @@ namespace Leonmrni\SearchCore\Connection\Elasticsearch\TypeMapper;
  * 02110-1301, USA.
  */
 
-interface MapperInterface
+use Leonmrni\SearchCore\Connection\Elasticsearch\TypeMapper;
+use TYPO3\CMS\Core\SingletonInterface as Singleton;
+
+/**
+ * Factory to get mappers.
+ */
+class MapperFactory implements Singleton
 {
     /**
-     * @param string $typeName
+     * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+     * @inject
      */
-    public function __construct($typeName);
+    protected $objectManager;
 
     /**
-     * Returns ready to use mapping for \Elastica\Type\Mapping->setProperties
+     * Get an mapper bases on document type.
      *
-     * @return array
+     * @param string $documentType
+     *
+     * @return TypeMapper\MapperInterface
      */
-    public function getPropertyMapping();
-
-    /**
-     * Applies the necessary mapping to the raw array that is used to build the
-     * document afterwards.
-     *
-     * The document should be received as reference.
-     *
-     * @param array &$document
-     */
-    public function applyMappingToDocument(array &$document);
+    public function getMapper($documentType)
+    {
+        // Currently we only have one mapper, but this is the place to use
+        // configuration in future.
+        return $this->objectManager->get(TypeMapper\TcaMapper::class, $documentType);
+    }
 }

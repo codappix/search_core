@@ -36,8 +36,12 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
         $this->setUpBackendUserFromFixture(1);
         \TYPO3\CMS\Core\Core\Bootstrap::getInstance()->initializeLanguageObject();
 
-        foreach ($this->getDataSets() as $dataSet) {
-            $this->importDataSet($dataSet);
+        foreach ($this->getDataSets() as $fixture) {
+            $this->importDataSet($fixture);
+        }
+
+        foreach ($this->getPhpFixtures() as $fixture) {
+            $this->loadPhpFixture($fixture);
         }
 
         $this->setUpFrontendRootPage(1, $this->getTypoScriptFilesForFrontendRootPage());
@@ -58,6 +62,18 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
     /**
      * Overwrite to import different files.
      *
+     * Defines which PHP Files should be imported.
+     *
+     * @return array<String>
+     */
+    protected function getPhpFixtures()
+    {
+        return [];
+    }
+
+    /**
+     * Overwrite to import different files.
+     *
      * Defines which TypoScript Files should be imported.
      *
      * @return array<String>
@@ -65,5 +81,24 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
     protected function getTypoScriptFilesForFrontendRootPage()
     {
         return ['EXT:search_core/Tests/Functional/Fixtures/BasicSetup.ts'];
+    }
+
+    /**
+     * Requires the given PHP file as fixture.
+     *
+     * @param string $phpFixture The file name relative to extension root.
+     */
+    protected function loadPhpFixture($phpFixture)
+    {
+        $fileToLoad = realpath(__DIR__ . '/../..') . '/' . $phpFixture;
+
+        if (!is_file($fileToLoad)) {
+            throw new \Exception(
+                'PHP Fixture not found: "' . $phpFixture . '", tried to require file: "' . $fileToLoad . '".',
+                1482418436
+            );
+        }
+
+        require $phpFixture;
     }
 }

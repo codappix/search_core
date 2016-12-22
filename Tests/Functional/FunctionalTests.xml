@@ -3,7 +3,6 @@
     backupStaticAttributes="false"
     bootstrap="../../.Build/vendor/typo3/cms/typo3/sysext/core/Build/FunctionalTestsBootstrap.php"
 
-    colors="true"
     convertErrorsToExceptions="false"
     convertWarningsToExceptions="false"
     forceCoversAnnotation="false"

@@ -30,11 +30,6 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 class IgnoresUnkownOperationTest extends AbstractDataHandlerTest
 {
     /**
-     * @var DataHandlerService|\PHPUnit_Framework_MockObject_MockObject|AccessibleObjectInterface
-     */
-    protected $subject;
-
-    /**
      * @test
      */
     public function dataHandlerCommandSomethingIsIgnored()

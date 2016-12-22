@@ -24,7 +24,6 @@ use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
 use Leonmrni\SearchCore\Domain\Service\DataHandler as DataHandlerService;
 use Leonmrni\SearchCore\Hook\DataHandler as DataHandlerHook;
 use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
-use TYPO3\CMS\Core\DataHandling\DataHandler as Typo3DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 

@@ -29,11 +29,6 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class NonAllowedTablesTest extends AbstractDataHandlerTest
 {
-    /**
-     * @var DataHandlerService|\PHPUnit_Framework_MockObject_MockObject|AccessibleObjectInterface
-     */
-    protected $subject;
-
     protected function getDataSets()
     {
         return array_merge(

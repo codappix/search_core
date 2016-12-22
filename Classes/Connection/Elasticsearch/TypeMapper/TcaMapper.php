@@ -24,7 +24,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
- *
+ * Provides mapping for Elasticsearch based on TCA.
  */
 class TcaMapper implements MapperInterface
 {
@@ -43,7 +43,7 @@ class TcaMapper implements MapperInterface
         )->get(TcaMapper\TcaTableService::class, $tableName);
     }
 
-    public function getMapping()
+    public function getPropertyMapping()
     {
         $mappings = [];
         foreach ($this->tcaTableService->getColumns() as $column) {
@@ -54,6 +54,25 @@ class TcaMapper implements MapperInterface
         }
 
         return $mappings;
+    }
+
+    public function applyMappingToDocument(array &$document)
+    {
+        foreach ($document as $field => $content) {
+            if (in_array($field, ['uid', 'pid'])) {
+                $document[$field] = (int) $content;
+                continue;
+            }
+            if ($this->tcaTableService->isColumnBool($field)) {
+                $document[$field] = (bool) $content;
+                continue;
+            }
+            if ($this->tcaTableService->isColumnDate($field)) {
+                $document[$field] = (new \DateTime('@' . $content))
+                    ->format('c');
+                continue;
+            }
+        }
     }
 
     protected function getColumnMapping($column)

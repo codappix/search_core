@@ -21,7 +21,7 @@ namespace Leonmrni\SearchCore\Connection\Elasticsearch\TypeMapper\TcaMapper;
  */
 
 /**
- *
+ * Encapsulates TCA structure for use in other classes like TcaMapper.
  */
 class TcaTableService
 {
@@ -64,17 +64,17 @@ class TcaTableService
             || $this->tca['ctrl']['crdate'] === $column
             || $this->tca['ctrl']['tstamp'] === $column
             || (
-                isset($this->tca['ctrl']['columns'][$columns]['config']['eval'])
-                && stripos($this->tca['ctrl']['columns'][$columns]['config']['eval'], 'datetime') !== false
-                )
+                isset($this->tca['columns'][$column]['config']['eval'])
+                && stripos($this->tca['columns'][$column]['config']['eval'], 'datetime') !== false
+            )
             || (
-                isset($this->tca['ctrl']['columns'][$columns]['config']['eval'])
-                && stripos($this->tca['ctrl']['columns'][$columns]['config']['eval'], 'date') !== false
-                )
+                isset($this->tca['columns'][$column]['config']['eval'])
+                && stripos($this->tca['columns'][$column]['config']['eval'], 'date') !== false
+            )
             || (
-                isset($this->tca['ctrl']['columns'][$columns]['config']['eval'])
-                && stripos($this->tca['ctrl']['columns'][$columns]['config']['eval'], 'time') !== false
-                )
+                isset($this->tca['columns'][$column]['config']['eval'])
+                && stripos($this->tca['columns'][$column]['config']['eval'], 'time') !== false
+            )
         ;
     }
 
