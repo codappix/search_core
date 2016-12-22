@@ -12,6 +12,7 @@
         <pid>0</pid>
         <file>1</file>
         <title>Metadata title 1</title>
+        <l10n_diffsource></l10n_diffsource>
     </sys_file_metadata>
 
     <sys_file_metadata>
@@ -19,6 +20,7 @@
         <pid>0</pid>
         <file>1</file>
         <title>Metadata title 2</title>
+        <l10n_diffsource></l10n_diffsource>
     </sys_file_metadata>
 
     <sys_file_metadata>
@@ -26,5 +28,6 @@
         <pid>0</pid>
         <file>2</file>
         <title>Metadata title with no relation</title>
+        <l10n_diffsource></l10n_diffsource>
     </sys_file_metadata>
 </dataset>

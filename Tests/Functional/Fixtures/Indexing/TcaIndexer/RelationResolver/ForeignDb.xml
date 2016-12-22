@@ -7,6 +7,7 @@
         <records>2,3</records>
         <header>Record 1</header>
         <deleted>0</deleted>
+        <filelink_sorting>0</filelink_sorting>
     </tt_content>
     <tt_content>
         <uid>2</uid>
@@ -14,6 +15,7 @@
         <CType>header</CType>
         <header>Record 2</header>
         <deleted>0</deleted>
+        <filelink_sorting>0</filelink_sorting>
     </tt_content>
     <tt_content>
         <uid>3</uid>
@@ -21,5 +23,6 @@
         <CType>header</CType>
         <header>Record 3</header>
         <deleted>0</deleted>
+        <filelink_sorting>0</filelink_sorting>
     </tt_content>
 </dataset>

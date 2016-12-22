@@ -7,6 +7,7 @@
         <header>Record with relation to multiple sys category record</header>
         <deleted>0</deleted>
         <categories>3</categories>
+        <filelink_sorting>0</filelink_sorting>
     </tt_content>
 
     <sys_category>
@@ -18,6 +19,7 @@
         <description>Category for testing</description>
         <parent>0</parent>
         <items>1</items>
+        <l10n_diffsource></l10n_diffsource>
     </sys_category>
 
     <sys_category>
@@ -29,6 +31,7 @@
         <description>Another category for testing</description>
         <parent>1</parent>
         <items>1</items>
+        <l10n_diffsource></l10n_diffsource>
     </sys_category>
 
     <sys_category>
@@ -40,6 +43,7 @@
         <description></description>
         <parent>0</parent>
         <items>1</items>
+        <l10n_diffsource></l10n_diffsource>
     </sys_category>
 
     <sys_category_record_mm>
