@@ -135,50 +135,6 @@ class TcaTableService
         if (isset($record[$this->tca['ctrl']['label']]) && !isset($record['search_title'])) {
             $record['search_title'] = $record[$this->tca['ctrl']['label']];
         }
-
-        foreach ($record as $field => $content) {
-            if (in_array($field, ['uid', 'pid'])) {
-                $record[$field] = (int) $content;
-                continue;
-            }
-            if ($this->isColumnBool($column)) {
-                $record[$field] = (bool) $content;
-                continue;
-            }
-            if ($this->isColumnDate($field)) {
-                $record[$field] = (new \DateTime('@' . $content))
-                    ->format('c');
-                continue;
-            }
-        }
-    }
-
-    public function isColumnBool($column)
-    {
-        return $this->tca['ctrl']['delete'] === $column
-            || $this->tca['ctrl']['enablecolumns']['disabled'] === $column
-        ;
-    }
-
-    public function isColumnDate($column)
-    {
-        return $this->tca['ctrl']['enablecolumns']['starttime'] === $column
-            || $this->tca['ctrl']['enablecolumns']['endtime'] === $column
-            || $this->tca['ctrl']['crdate'] === $column
-            || $this->tca['ctrl']['tstamp'] === $column
-            || (
-                isset($this->tca['ctrl']['columns'][$columns]['config']['eval'])
-                && stripos($this->tca['ctrl']['columns'][$columns]['config']['eval'], 'datetime') !== false
-                )
-            || (
-                isset($this->tca['ctrl']['columns'][$columns]['config']['eval'])
-                && stripos($this->tca['ctrl']['columns'][$columns]['config']['eval'], 'date') !== false
-                )
-            || (
-                isset($this->tca['ctrl']['columns'][$columns]['config']['eval'])
-                && stripos($this->tca['ctrl']['columns'][$columns]['config']['eval'], 'time') !== false
-                )
-        ;
     }
 
     /**

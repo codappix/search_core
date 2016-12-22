@@ -53,6 +53,23 @@ class DocumentFactory implements Singleton
     public function getDocument($documentType, array $document)
     {
         // TODO: Use DocumentType for further configuration.
+        // Together with typefactory to build mappable document
+
+//         foreach ($record as $field => $content) {
+//             if (in_array($field, ['uid', 'pid'])) {
+//                 $record[$field] = (int) $content;
+//                 continue;
+//             }
+//             if ($this->isColumnBool($column)) {
+//                 $record[$field] = (bool) $content;
+//                 continue;
+//             }
+//             if ($this->isColumnDate($field)) {
+//                 $record[$field] = (new \DateTime('@' . $content))
+//                     ->format('c');
+//                 continue;
+//             }
+//         }
 
         if (!isset($document['search_identifier'])) {
              throw new \Exception('No search_identifier provided for document.', 1481194385);

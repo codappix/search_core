@@ -20,6 +20,7 @@ namespace Leonmrni\SearchCore\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
+use Leonmrni\SearchCore\Connection\Elasticsearch\TypeMapper;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
@@ -62,21 +63,26 @@ class TypeFactory implements Singleton
         return $type;
     }
 
+    /**
+     * Returns the mapper for given type.
+     *
+     * @param \Elastica\Type $type
+     * @return TypeMapper\MapperInterface
+     */
     protected function getMapper(\Elastica\Type $type)
     {
-        $config = $this->configuration->getIfExists('connections.elasticsearch.types.' . $type->getName() . '.mapping');
-        if ($config === null) {
-            return null;
-        }
-
-        if (class_exists($config)) {
-            return $this->objectManager->get($config, $type->getName());
-        }
-
-        return null;
+        // Currently we onlye have one mapper, but this is the place to use
+        // configuration in future.
+        return $this->objectManager->get(TypeMapper\TcaMapper::class, $type->getName());
     }
 
-    protected function mapType(\Elastica\Type $type, $mapper)
+    /**
+     * Creates or update mapping for given type using the given mapper.
+     *
+     * @param \Elastica\Type $type
+     * @param TypeMapper\MapperInterface @mapper
+     */
+    protected function mapType(\Elastica\Type $type, TypeMapper\MapperInterface $mapper)
     {
         $mapping = new \Elastica\Type\Mapping();
         $mapping->setType($type);

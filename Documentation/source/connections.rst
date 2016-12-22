@@ -12,15 +12,21 @@ The extension provides the following connections out of the box:
 Elasticsearch
 -------------
 
-Integrates `elastic Elasticsearch`_ using `elastica`_ into TYPO3.
+Integrates `Elasticsearch`_ using `elastica`_ into TYPO3.
 
-Provides basic support like indexing without mappings and full text search at the moment.
+Provides basic support like indexing with mappings, facets, full text search at the moment.
 
 The connection is configurable through the following options:
 
 * :ref:`host`
 
 * :ref:`port`
+
+.. todo:: 
+
+    * Document facet configuration
+
+    * Document mapping configuration
 
 .. _elastic Elasticsearch: https://www.elastic.co/products/elasticsearch
 .. _elastica: http://elastica.io/

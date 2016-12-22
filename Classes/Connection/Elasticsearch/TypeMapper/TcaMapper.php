@@ -26,7 +26,7 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 /**
  *
  */
-class TcaMapper
+class TcaMapper implements MapperInterface
 {
     /**
      * @var TcaMapper\TcaTableService
