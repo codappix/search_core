@@ -48,6 +48,9 @@ class ConfigurationContainer implements ConfigurationContainerInterface
             'SearchCore',
             'search'
         );
+        if ($this->settings === null) {
+            $this->settings = [];
+        }
     }
 
     /**
