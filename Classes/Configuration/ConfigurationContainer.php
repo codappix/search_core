@@ -40,6 +40,7 @@ class ConfigurationContainer implements ConfigurationContainerInterface
      * Inject settings via ConfigurationManager.
      *
      * @param ConfigurationManagerInterface $configurationManager
+     * @throws NoConfigurationException
      */
     public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
     {
@@ -49,7 +50,7 @@ class ConfigurationContainer implements ConfigurationContainerInterface
             'search'
         );
         if ($this->settings === null) {
-            $this->settings = [];
+            throw new NoConfigurationException('Could not fetch configuration.', 1484226842);
         }
     }
 
