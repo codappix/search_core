@@ -151,9 +151,9 @@ class TcaTableService
             . ' AND pages.no_search = 0'
             ;
 
-        $userDefinedWhere = $this->configuration->getIfExists('indexer.tca.' . $this->tableName);
+        $userDefinedWhere = $this->configuration->getIfExists('indexer.tca.' . $this->tableName . '.additionalWhereClause');
         if (is_string($userDefinedWhere)) {
-            $whereClause .= $userDefinedWhere;
+            $whereClause .= ' AND ' . $userDefinedWhere;
         }
 
         if ($this->isBlacklistedRootLineConfigured()) {
@@ -236,20 +236,26 @@ class TcaTableService
      * Checks whether the given record was blacklisted by root line.
      * This can be configured by typoscript as whole root lines can be black listed.
      *
+     * NOTE: Does not support pages yet. We have to add a switch once we
+     * support them to use uid instead.
+     *
      * @param array &$record
      * @return bool
      */
     protected function isRecordBlacklistedByRootline(array &$record)
     {
-        // NOTE: Does not support pages yet. We have to add a switch once we
-        // support them to use uid instead.
-        if (! $this->isBlackListedRootLineConfigured()) {
-            return false;
+        // If no rootline exists, the record is on a unreachable page and therefore blacklisted.
+        $rootline = BackendUtility::BEgetRootLine($record['pid']);
+        if (!isset($rootline[0])) {
+            return true;
         }
 
-        foreach (BackendUtility::BEgetRootLine($record['uid']) as $pageInRootLine) {
-            if (in_array($pageInRootLine['uid'], $this->getBlackListedRootLine())) {
-                return true;
+        // Check configured black list if present.
+        if ($this->isBlackListedRootLineConfigured()) {
+            foreach ($rootline as $pageInRootLine) {
+                if (in_array($pageInRootLine['uid'], $this->getBlackListedRootLine())) {
+                    return true;
+                }
             }
         }
 

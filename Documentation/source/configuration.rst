@@ -15,14 +15,16 @@ mode of TYPO3. Do so by placing the following line at the end::
 
    We will use references inside the extension to make the above unnecessary in the future.
 
-Currently no constants are available, but this will change in the near future to make configuration
-easier.
-
 The structure is following TYPO3 Extbase conventions. All settings are placed inside of::
 
     plugin.tx_searchcore.settings
 
-Here is the example default configuration that's provided through static setup:
+Here is the example default configuration that's provided through static include:
+
+.. literalinclude:: ../../Configuration/TypoScript/constants.txt
+   :language: typoscript
+   :linenos:
+   :caption: Static TypoScript Constants
 
 .. literalinclude:: ../../Configuration/TypoScript/setup.txt
    :language: typoscript
@@ -145,7 +147,7 @@ The following settings are available. For each setting its documented which inde
     The page attribute *No Search* is also taken into account to prevent indexing records from only one
     page without recursion.
 
-    Contains a comma separated list of table names. Spaces are trimmed.
+    Contains a comma separated list of page uids. Spaces are trimmed.
 
     Example::
 
