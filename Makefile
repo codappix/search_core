@@ -3,7 +3,7 @@ current_dir := $(dir $(mkfile_path))
 
 TYPO3_WEB_DIR := $(current_dir).Build/Web
 # Allow different versions on travis
-TYPO3_VERSION ?= ~6.2
+TYPO3_VERSION ?= ~7.6
 typo3DatabaseName ?= "searchcore_test"
 typo3DatabaseUsername ?= "dev"
 typo3DatabasePassword ?= "dev"

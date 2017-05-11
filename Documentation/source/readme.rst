@@ -23,8 +23,6 @@ This is still a very early alpha version. More information can be taken from Git
 
 We are also focusing on Code Quality and Testing through `travis ci`_, `scrutinizer`_ and `codacy`_.
 
-TYPO3 7 is not supported yet, see :project:`1`.
-
 .. _current issues: https://github.com/DanielSiepmann/search_core/issues
 .. _current projects: https://github.com/DanielSiepmann/search_core/projects
 .. _travis ci: https://travis-ci.org/DanielSiepmann/search_core
