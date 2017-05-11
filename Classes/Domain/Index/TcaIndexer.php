@@ -82,7 +82,11 @@ class TcaIndexer implements IndexerInterface
     public function indexDocument($identifier)
     {
         $this->logger->info('Start indexing single record.', [$identifier]);
-        $this->connection->addDocument($this->tcaTableService->getTableName(), $this->getRecord($identifier));
+        try {
+            $this->connection->addDocument($this->tcaTableService->getTableName(), $this->getRecord($identifier));
+        } catch (NoRecordFoundException $e) {
+            $this->logger->info('Could not index document.', [$e->getMessage()]);
+        }
         $this->logger->info('Finish indexing');
     }
 
@@ -116,8 +120,11 @@ class TcaIndexer implements IndexerInterface
             '',
             (int) $offset . ',' . (int) $limit
         );
-        $this->tcaTableService->filterRecordsByRootLineBlacklist($records);
+        if ($records === null) {
+            return null;
+        }
 
+        $this->tcaTableService->filterRecordsByRootLineBlacklist($records);
         foreach ($records as &$record) {
             $this->tcaTableService->prepareRecord($record);
         }
@@ -128,6 +135,7 @@ class TcaIndexer implements IndexerInterface
     /**
      * @param int $identifier
      * @return array
+     * @throws NoRecordFoundException If record could not be found.
      */
     protected function getRecord($identifier)
     {
@@ -137,6 +145,13 @@ class TcaIndexer implements IndexerInterface
             $this->tcaTableService->getWhereClause()
                 . ' AND ' . $this->tcaTableService->getTableName() . '.uid = ' . (int) $identifier
         );
+
+        if ($record === false || $record === null) {
+            throw new NoRecordFoundException(
+                'Record could not be fetched from database: "' . $identifier . '". Perhaps record is not active.',
+                1484225364
+            );
+        }
         $this->tcaTableService->prepareRecord($record);
 
         return $record;

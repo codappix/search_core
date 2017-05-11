@@ -20,6 +20,8 @@ namespace Leonmrni\SearchCore\Hook;
  * 02110-1301, USA.
  */
 
+use Leonmrni\SearchCore\Configuration\NoConfigurationException;
+use Leonmrni\SearchCore\Domain\Service\DataHandler as OwnDataHandler;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler as CoreDataHandler;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -27,7 +29,6 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use Leonmrni\SearchCore\Domain\Service\DataHandler as OwnDataHandler;
 
 /**
  * Wrapper for TYPO3 Hooks to internal API.
@@ -55,8 +56,13 @@ class DataHandler implements Singleton
     {
         $this->dataHandler = $dataHandler;
         if ($this->dataHandler === null) {
-            $this->dataHandler = GeneralUtility::makeInstance(ObjectManager::class)
-                ->get(OwnDataHandler::class);
+            try {
+                $this->dataHandler = GeneralUtility::makeInstance(ObjectManager::class)
+                    ->get(OwnDataHandler::class);
+            } catch (NoConfigurationException $e) {
+                // We have no configuration. That's fine, hooks will not be
+                // executed due to check for existing DataHandler.
+            }
         }
 
         $this->logger = $logger;
@@ -76,8 +82,8 @@ class DataHandler implements Singleton
      */
     public function processCmdmap_deleteAction($table, $uid)
     {
-        if (! $this->shouldProcessTable($table)) {
-            $this->logger->debug('Delete not processed, cause table is not allowed.', [$table]);
+        if (! $this->shouldProcessHookForTable($table)) {
+            $this->logger->debug('Delete not processed.', [$table, $uid]);
             return false;
         }
 
@@ -98,8 +104,8 @@ class DataHandler implements Singleton
      */
     public function processDatamap_afterDatabaseOperations($status, $table, $uid, array $fieldArray, CoreDataHandler $dataHandler)
     {
-        if (! $this->shouldProcessTable($table)) {
-            $this->logger->debug('Database update not processed, cause table is not allowed.', [$table]);
+        if (! $this->shouldProcessHookForTable($table)) {
+            $this->logger->debug('Database update not processed.', [$table, $uid]);
             return false;
         }
 
@@ -122,6 +128,24 @@ class DataHandler implements Singleton
             [$status, $table, $uid, $fieldArray]
         );
         return false;
+    }
+
+    /**
+     * @param string $table
+     * @return bool
+     */
+    protected function shouldProcessHookForTable($table)
+    {
+        if ($this->dataHandler === null) {
+            $this->logger->debug('Datahandler could not be setup.');
+            return false;
+        }
+        if (! $this->shouldProcessTable($table)) {
+            $this->logger->debug('Table is not allowed.', [$table]);
+            return false;
+        }
+
+        return true;
     }
 
     /**

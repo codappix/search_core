@@ -3,21 +3,17 @@ plugin {
         settings {
             connections {
                 elasticsearch {
-                    host = localhost
-                    port = 9200
+                    host = {$plugin.tx_searchcore.settings.connections.elasticsearch.host}
+                    port = {$plugin.tx_searchcore.settings.connections.elasticsearch.port}
                 }
             }
 
             indexer {
                 tca {
-                    # Pages are not supported yet, see
-                    # https://github.com/DanielSiepmann/search_core/issues/24 but
-                    # should also be added, together with additionalWhereClause
-                    # based on doktypes
-                    allowedTables = tt_content
+                    allowedTables = {$plugin.tx_searchcore.settings.indexer.tca.allowedTables}
 
                     tt_content {
-                        additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu')
+                        additionalWhereClause = {$plugin.tx_searchcore.settings.indexer.tca.tt_content.additionalWhereClause}
                     }
                 }
             }

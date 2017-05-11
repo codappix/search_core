@@ -92,12 +92,16 @@ class Elasticsearch implements Singleton, ConnectionInterface
 
     public function deleteDocument($documentType, $identifier)
     {
-        $this->withType(
-            $documentType,
-            function ($type) use ($identifier) {
-                $type->deleteById($identifier);
-            }
-        );
+        try {
+            $this->withType(
+                $documentType,
+                function ($type) use ($identifier) {
+                    $type->deleteById($identifier);
+                }
+            );
+        } catch (\Elastica\Exception\NotFoundException $exception) {
+            $this->logger->debug('Tried to delete document in index, which does not exist.', [$documentType, $identifier]);
+        }
     }
 
     public function updateDocument($documentType, array $document)
