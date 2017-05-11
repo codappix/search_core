@@ -98,7 +98,10 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
      */
     public function indexingRespectsUserWhereClause()
     {
-        $this->setUpFrontendRootPage(1, ['EXT:search_core/Tests/Functional/Fixtures/Indexing/UserWhereClause.ts']);
+        $this->setUpFrontendRootPage(1, array_merge(
+            parent::getTypoScriptFilesForFrontendRootPage(),
+            ['EXT:search_core/Tests/Functional/Fixtures/Indexing/UserWhereClause.ts']
+        ));
         $this->importDataSet('Tests/Functional/Fixtures/Indexing/UserWhereClause.xml');
 
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
@@ -147,7 +150,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
             ['_source' => [
                 'uid' => '9',
                 'CType' => 'Header', // Testing items
-                'categories' => ['Category 2', 'Category 1'], // Testing mm (with sorting)
+                'categories' => ['Category 1', 'Category 2'], // Testing mm (with sorting)
             ]],
             $response->getData()['hits']['hits'][0],
             false,
