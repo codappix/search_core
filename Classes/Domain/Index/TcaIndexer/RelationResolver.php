@@ -44,13 +44,14 @@ class RelationResolver implements Singleton
      */
     public function resolveRelationsForRecord(TcaTableService $service, array &$record)
     {
-        $formData = GeneralUtility::makeInstance(FormDataCompiler::class, GeneralUtility::makeInstance(TcaDatabaseRecord::class))
-            ->compile([
-                'tableName' => $service->getTableName(),
-                'vanillaUid' => (int)$record['uid'],
-                'command' => 'edit',
-            ]);
-
+        $formData = GeneralUtility::makeInstance(
+            FormDataCompiler::class,
+            GeneralUtility::makeInstance(TcaDatabaseRecord::class)
+        )->compile([
+            'tableName' => $service->getTableName(),
+            'vanillaUid' => (int)$record['uid'],
+            'command' => 'edit',
+        ]);
         $record = $formData['databaseRow'];
 
         foreach (array_keys($record) as $column) {
