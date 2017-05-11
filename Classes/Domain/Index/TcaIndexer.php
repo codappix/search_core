@@ -146,7 +146,7 @@ class TcaIndexer implements IndexerInterface
                 . ' AND ' . $this->tcaTableService->getTableName() . '.uid = ' . (int) $identifier
         );
 
-        if ($record === false) {
+        if ($record === false || $record === null) {
             throw new NoRecordFoundException(
                 'Record could not be fetched from database: "' . $identifier . '". Perhaps record is not active.',
                 1484225364
