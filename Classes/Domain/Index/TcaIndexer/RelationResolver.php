@@ -25,6 +25,9 @@ use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
+use TYPO3\CMS\Backend\Form\FormDataCompiler;
+use TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord;
+
 /**
  * Resolves relations from TCA using TCA.
  *
@@ -34,12 +37,6 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 class RelationResolver implements Singleton
 {
     /**
-     * @var \TYPO3\CMS\Backend\Form\DataPreprocessor
-     * @inject
-     */
-    protected $formEngine;
-
-    /**
      * Resolve relations for the given record.
      *
      * @param TcaTableService $service
@@ -47,12 +44,14 @@ class RelationResolver implements Singleton
      */
     public function resolveRelationsForRecord(TcaTableService $service, array &$record)
     {
-        $preprocessedData = $this->formEngine->renderRecordRaw(
-            $service->getTableName(),
-            $record['uid'],
-            $record['pid'],
-            $record
-        );
+        $formData = GeneralUtility::makeInstance(FormDataCompiler::class, GeneralUtility::makeInstance(TcaDatabaseRecord::class))
+            ->compile([
+                'tableName' => $service->getTableName(),
+                'vanillaUid' => (int)$record['uid'],
+                'command' => 'edit',
+            ]);
+
+        $record = $formData['databaseRow'];
 
         foreach (array_keys($record) as $column) {
             try {
@@ -62,41 +61,35 @@ class RelationResolver implements Singleton
                 continue;
             }
 
-            if (! $this->isRelation($config)) {
+            if (! $this->isRelation($config) || !is_array($formData['processedTca']['columns'][$column])) {
                 continue;
             }
 
-            $record[$column] = $this->resolveValue($preprocessedData[$column], $config);
+            $record[$column] = $this->resolveValue($record[$column], $formData['processedTca']['columns'][$column]);
         }
     }
 
     /**
      * Resolve the given value from TYPO3 API response.
      *
-     * As FormEngine uses an internal format, we resolve it to a usable format
-     * for indexing.
-     *
-     * TODO: Unittest to break as soon as TYPO3 api has changed, so we know
-     * exactly that we need to tackle this place.
-     *
      * @param string $value The value from FormEngine to resolve.
-     * @param array $config The tca config of the relation.
+     * @param array $tcaColumn The tca config of the relation.
      *
      * @return array<String>|string
      */
-    protected function resolveValue($value, array $config)
+    protected function resolveValue($value, array $tcaColumn)
     {
         if ($value === '' || $value === '0') {
             return '';
         }
-        if (strpos($value, '|') !== false) {
-            return $this->resolveSelectValue($value);
+        if ($tcaColumn['config']['type'] === 'select') {
+            return $this->resolveSelectValue($value, $tcaColumn);
         }
-        if (strpos($value, ',') !== false) {
-            return $this->resolveInlineValue($value, $config['foreign_table']);
+        if ($tcaColumn['config']['type'] === 'group' && strpos($value, '|') !== false) {
+            return $this->resolveForeignDbValue($value);
         }
-        if ($config['type'] === 'select' && is_array($config['items'])) {
-            return $this->resolveSelectItemValue($value, $config['items']);
+        if ($tcaColumn['config']['type'] === 'inline') {
+            return $this->resolveInlineValue($tcaColumn);
         }
 
         return '';
@@ -117,62 +110,55 @@ class RelationResolver implements Singleton
     /**
      * Resolves internal representation of select to array of labels.
      *
-     * @param string $value
+     * @param array $value
+     * @param array $tcaColumn
      * @return array
      */
-    protected function resolveSelectValue($value)
+    protected function resolveSelectValue(array $values, array $tcaColumn)
     {
-        $newValue = [];
+        $resolvedValues = [];
 
-        foreach (GeneralUtility::trimExplode(',', $value) as $value) {
-            $value = substr($value, strpos($value, '|') + 1);
-            $value = rawurldecode($value);
-            $newValue[] = $value;
-        }
-
-        return $newValue;
-    }
-
-    /**
-     * @param string $value
-     * @param string $table
-     *
-     * @return array
-     */
-    protected function resolveInlineValue($value, $table)
-    {
-        $newValue = [];
-        $records = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $table, 'uid in (' . $value . ')');
-        if ($records === null) {
-            return $newValue;
-        }
-
-        foreach ($records as $record) {
-            $newValue[] = BackendUtility::getRecordTitle($table, $record);
-        }
-
-        return $newValue;
-    }
-
-    /**
-     * @param string $value
-     * @param array $items
-     *
-     * @return string
-     */
-    protected function resolveSelectItemValue($value, array $items)
-    {
-        foreach ($items as $item) {
-            if ($item[1] === $value) {
-                $newValue = LocalizationUtility::translate($item[0], '');
-
-                if ($newValue === null) {
-                    return '';
-                }
-                return $newValue;
+        foreach ($tcaColumn['config']['items'] as $item) {
+            if (in_array($item[1], $values)) {
+                $resolvedValues[] = $item[0];
             }
         }
 
-        return '';
+        if ($tcaColumn['config']['renderType'] === 'selectSingle' || $tcaColumn['config']['maxitems'] === 1) {
+            return current($resolvedValues);
+        }
+
+        return $resolvedValues;
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return array
+     */
+    protected function resolveForeignDbValue($value)
+    {
+        $titles = [];
+
+        foreach (explode(',', urldecode($value)) as $title) {
+            $titles[] = explode('|', $title)[1];
+        }
+
+        return $titles;
+    }
+
+    /**
+     * @param array $tcaColumn
+     * @return array
+     */
+    protected function resolveInlineValue(array $tcaColumn)
+    {
+        $titles = [];
+
+        foreach ($tcaColumn['children'] as $selected) {
+            $titles[] = $selected['recordTitle'];
+        }
+
+        return $titles;
     }
 }
