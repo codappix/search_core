@@ -34,7 +34,7 @@ class ConfigurationContainer implements ConfigurationContainerInterface
      *
      * @var array
      */
-    protected $settings;
+    protected $settings = [];
 
     /**
      * Inject settings via ConfigurationManager.
