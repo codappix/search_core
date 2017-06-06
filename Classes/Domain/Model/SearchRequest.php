@@ -76,7 +76,7 @@ class SearchRequest implements SearchRequestInterface
      */
     public function hasFilter()
     {
-        return count($this->filter);
+        return count($this->filter) > 0;
     }
 
     /**
