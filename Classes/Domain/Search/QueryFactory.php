@@ -56,15 +56,9 @@ class QueryFactory
                 ],
             ],
         ];
-        $queryFilter = [];
 
         if ($searchRequest->hasFilter()) {
-            foreach ($searchRequest->getFilter() as $field => $value) {
-                $queryFilter[$field] = $value;
-            }
-            $query['bool']['filter'] = [
-                'term' => $queryFilter,
-            ];
+            $query['bool']['filter'] = ['term' => $searchRequest->getFilter()];
         }
 
         return new \Elastica\Query(['query' => $query]);
