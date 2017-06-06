@@ -146,12 +146,35 @@ class Elasticsearch implements Singleton, ConnectionInterface
     {
         $this->logger->debug('Search for', [$searchRequest->getSearchTerm()]);
 
+        $query = [
+            'bool' => [
+                'must' => [
+                    [
+                        'match' => [
+                            '_all' => $searchRequest->getSearchTerm()
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        if ($searchRequest->hasFilter()) {
+            $queryFilter = [];
+            foreach ($searchRequest->getFilter() as $field => $value) {
+                $queryFilter[$field] = $value;
+            }
+
+            $query['bool']['filter'] = [
+                'term' => $queryFilter,
+            ];
+        }
+
         $search = new \Elastica\Search($this->connection->getClient());
         $search->addIndex('typo3content');
-
+        $search->setQuery(new \Elastica\Query(['query' => $query]));
         // TODO: Return wrapped result to implement our interface.
         // Also update php doc to reflect the change.
-        return $search->search('"' . $searchRequest->getSearchTerm() . '"');
+        return $search->search();
     }
 
     /**
