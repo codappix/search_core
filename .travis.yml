@@ -53,7 +53,9 @@ services:
 
 install: make install
 
-script: make functionalTests
+script:
+  - make unitTests
+  - make functionalTests
 
 after_script:
   - make uploadCodeCoverage

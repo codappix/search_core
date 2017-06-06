@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Connection;
+namespace Leonmrni\SearchCore\Tests\Unit;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,25 +20,8 @@ namespace Leonmrni\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
-/**
- *
- */
-interface SearchRequestInterface
+use TYPO3\CMS\Core\Tests\UnitTestCase as CoreTestCase;
+
+abstract class AbstractUnitTestCase extends CoreTestCase
 {
-    /**
-     * Returns the actual string the user searched for.
-     *
-     * @return string
-     */
-    public function getSearchTerm();
-
-    /**
-     * @return bool
-     */
-    public function hasFilter();
-
-    /**
-     * @return array
-     */
-    public function getFilter();
 }
