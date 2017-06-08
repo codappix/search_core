@@ -53,4 +53,47 @@ class QueryFactoryTest extends AbstractUnitTestCase
             'Factory did not create the expected instance.'
         );
     }
+
+    /**
+     * @test
+     */
+    public function filterIsAddedToQuery()
+    {
+        $connection = $this->getMockBuilder(Connection\Elasticsearch::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $searchRequest = new SearchRequest('SearchWord');
+        $searchRequest->setFilter(['field' => 'content']);
+
+        $query = $this->subject->create($connection, $searchRequest);
+        $this->assertSame(
+            ['field' => 'content'],
+            $query->toArray()['query']['bool']['filter']['term'],
+            'Filter was not added to query.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function userInputIsAlwaysString()
+    {
+        $connection = $this->getMockBuilder(Connection\Elasticsearch::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $searchRequest = new SearchRequest(10);
+        $searchRequest->setFilter(['field' => 20]);
+
+        $query = $this->subject->create($connection, $searchRequest);
+        $this->assertSame(
+            '10',
+            $query->toArray()['query']['bool']['must'][0]['match']['_all'],
+            'Search word was not escaped as expected.'
+        );
+        $this->assertSame(
+            '20',
+            $query->toArray()['query']['bool']['filter']['term']['field'],
+            'Search word was not escaped as expected.'
+        );
+    }
 }

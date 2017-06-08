@@ -44,7 +44,7 @@ class SearchRequest implements SearchRequestInterface
      */
     public function __construct($query)
     {
-        $this->query = $query;
+        $this->query = (string) $query;
     }
 
     /**
@@ -68,7 +68,7 @@ class SearchRequest implements SearchRequestInterface
      */
     public function setFilter(array $filter)
     {
-        $this->filter = $filter;
+        $this->filter = array_map('strval', $filter);
     }
 
     /**
