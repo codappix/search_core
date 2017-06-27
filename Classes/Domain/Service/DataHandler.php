@@ -21,6 +21,7 @@ namespace Leonmrni\SearchCore\Domain\Service;
  */
 
 use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
+use Leonmrni\SearchCore\Domain\Index\TcaIndexer;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -86,7 +87,17 @@ class DataHandler implements Singleton
      */
     public function getAllowedTablesForIndexing()
     {
-        return GeneralUtility::trimExplode(',', $this->configuration->get('indexer.tca.allowedTables'));
+        $tables = [];
+        foreach ($this->configuration->get('indexing') as $tableName => $indexConfiguration) {
+            if ($indexConfiguration['indexer'] === TcaIndexer::class) {
+                $tables[] = $tableName;
+                continue;
+            }
+            // TODO: Support custom indexer.
+            // Define "interface" / option which is used.
+        }
+
+        return $tables;
     }
 
     /**

@@ -57,6 +57,9 @@ class IndexCommandController extends CommandController
     {
         // TODO: Allow to index multiple tables at once?
         // TODO: Also allow to index everything?
+
+        // TODO: There is no test yet!
+        // TODO: Add test, adjust config path
         if (! in_array($table, GeneralUtility::trimExplode(',', $this->configuration->get('indexer.tca.allowedTables')))) {
             $this->outputLine('Table is not allowed for indexing.');
             $this->quit(1);

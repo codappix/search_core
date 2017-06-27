@@ -8,9 +8,9 @@ plugin {
                 }
             }
 
-            indexer {
-                tca {
-                    allowedTables = tt_content
+            indexing {
+                tt_content {
+                    indexer = Leonmrni\SearchCore\Domain\Index\TcaIndexer
                 }
             }
         }

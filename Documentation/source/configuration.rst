@@ -38,7 +38,7 @@ Options
 
 The following section contains the different options, e.g. for :ref:`connections` and
 :ref:`indexer`: ``plugin.tx_searchcore.settings.connection`` or
-``plugin.tx_searchcore.settings.index``.
+``plugin.tx_searchcore.settings.indexing``.
 
 .. _configuration_options_connection:
 
@@ -106,8 +106,9 @@ Configured as::
     plugin {
         tx_searchcore {
             settings {
-                indexer {
-                    indexerName {
+                indexing {
+                    identifier {
+                        indexer = Fully Qualified Classname
                         // the settings
                     }
                 }
@@ -115,25 +116,9 @@ Configured as::
         }
     }
 
-Where ``indexerName`` is one of the available :ref:`indexer`.
+Where ``identifier`` is up to you, but should match table names to make :ref:`TcaIndexer` work.
 
 The following settings are available. For each setting its documented which indexer consumes it.
-
-.. _allowedTables:
-
-``allowedTables``
-"""""""""""""""""
-
-    Used by: :ref:`TcaIndexer`.
-
-    Defines which TYPO3 tables are allowed to be indexed. Only white listed tables will be processed
-    through Command Line Interface and Hooks.
-
-    Contains a comma separated list of table names. Spaces are trimmed.
-
-    Example::
-
-        plugin.tx_searchcore.settings.indexer.tca.allowedTables = tt_content, fe_users
 
 .. _rootLineBlacklist:
 
@@ -151,7 +136,7 @@ The following settings are available. For each setting its documented which inde
 
     Example::
 
-        plugin.tx_searchcore.settings.index.tca.rootLineBlacklist = 3, 10, 100
+        plugin.tx_searchcore.settings.indexing.<identifier>.rootLineBlacklist = 3, 10, 100
 
 Also it's possible to define some behaviour for the different document types. In context of TYPO3
 tables are used as document types 1:1. It's possible to configure different tables. The following
@@ -170,7 +155,7 @@ options are available:
 
     Example::
 
-        plugin.tx_searchcore.settings.index.tca.tt_content.additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu')
+        plugin.tx_searchcore.settings.indexing.<identifier>.additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu')
 
     .. attention::
 

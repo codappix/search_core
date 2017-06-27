@@ -25,6 +25,6 @@ Indexing
 --------
 
 The indexing is done by one of the available indexer. It should be possible to define the indexer to
-use for certein document types. Also it should be possible to write custom indexer to use.
+use for certain document types. Also it should be possible to write custom indexer to use.
 
 Currently only the :ref:`TcaIndexer` is provided.

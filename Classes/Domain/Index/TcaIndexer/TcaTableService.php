@@ -151,7 +151,8 @@ class TcaTableService
             . ' AND pages.no_search = 0'
             ;
 
-        $userDefinedWhere = $this->configuration->getIfExists('indexer.tca.' . $this->tableName . '.additionalWhereClause');
+        // TODO: There is no test covering this option yet?
+        $userDefinedWhere = $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.additionalWhereClause');
         if (is_string($userDefinedWhere)) {
             $whereClause .= ' AND ' . $userDefinedWhere;
         }
@@ -269,7 +270,7 @@ class TcaTableService
      */
     protected function isBlackListedRootLineConfigured()
     {
-        return (bool) $this->configuration->getIfExists('indexer.tca.rootLineBlacklist');
+        return (bool) $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist');
     }
 
     /**
@@ -279,6 +280,6 @@ class TcaTableService
      */
     protected function getBlackListedRootLine()
     {
-        return GeneralUtility::intExplode(',', $this->configuration->getIfExists('indexer.tca.rootLineBlacklist'));
+        return GeneralUtility::intExplode(',', $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist'));
     }
 }
