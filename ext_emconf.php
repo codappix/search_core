@@ -18,7 +18,7 @@ $EM_CONF[$_EXTKEY] = [
     ],
     'state' => 'alpha',
     'clearCacheOnLoad' => 1,
-    'author' => 'Justus Leon Moroni',
-    'author_email' => 'developer@leonmrni.com',
+    'author' => 'Daniel Siepmann',
+    'author_email' => 'coding@daniel-siepmann.de',
     'version' => '1.0.0',
 ];
