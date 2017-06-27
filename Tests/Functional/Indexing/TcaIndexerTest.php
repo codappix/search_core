@@ -44,15 +44,11 @@ class TcaIndexerTest extends AbstractFunctionalTestCase
             $objectManager->get(RelationResolver::class),
             $objectManager->get(ConfigurationContainerInterface::class)
         );
-        $connection = $this->getAccessibleMock(
-            Elasticsearch::class,
-            [
-                'addDocuments',
-            ],
-            [],
-            '',
-            false
-        );
+
+        $connection = $this->getMockBuilder(Elasticsearch::class)
+            ->setMethods(['addDocuments'])
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $connection->expects($this->once())
             ->method('addDocuments')

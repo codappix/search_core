@@ -41,15 +41,10 @@ abstract class AbstractDataHandlerTest extends AbstractFunctionalTestCase
 
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 
-        $this->subject = $this->getAccessibleMock(
-            DataHandlerService::class,
-            [
-                'add',
-                'update',
-                'delete',
-            ],
-            [$objectManager->get(ConfigurationContainerInterface::class)]
-        );
+        $this->subject = $this->getMockBuilder(DataHandlerService::class)
+            ->setConstructorArgs([$objectManager->get(ConfigurationContainerInterface::class)])
+            ->setMethods(['add', 'update', 'delete'])
+            ->getMock();
 
         // This way TYPO3 will use our mock instead of a new instance.
         $GLOBALS['T3_VAR']['getUserObj']['&' . DataHandlerHook::class] = new DataHandlerHook($this->subject);

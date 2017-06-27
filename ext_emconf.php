@@ -6,7 +6,7 @@ $EM_CONF[$_EXTKEY] = [
     'category' => 'be',
     'constraints' => [
         'depends' => [
-            'typo3' => '6.2.0-6.2.99',
+            'typo3' => '7.6.0-7.6.99',
             'php' => '5.6.0-7.99.99'
         ],
         'conflicts' => [],
@@ -18,7 +18,7 @@ $EM_CONF[$_EXTKEY] = [
     ],
     'state' => 'alpha',
     'clearCacheOnLoad' => 1,
-    'author' => 'Justus Leon Moroni',
-    'author_email' => 'developer@leonmrni.com',
+    'author' => 'Daniel Siepmann',
+    'author_email' => 'coding@daniel-siepmann.de',
     'version' => '1.0.0',
 ];
