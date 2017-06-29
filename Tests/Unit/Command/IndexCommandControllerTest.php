@@ -40,6 +40,11 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
      */
     protected $indexerFactory;
 
+    /**
+     * @var ConfigurationContainerInterface
+     */
+    protected $configuration;
+
     public function setUp()
     {
         parent::setUp();
@@ -47,20 +52,16 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
         $this->indexerFactory = $this->getMockBuilder(IndexerFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)
+        $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $configuration->expects($this->once())
-            ->method('get')
-            ->with('indexer.tca.allowedTables')
-            ->will($this->returnValue('allowedTable, anotherTable,YetAnotherTable'));
 
         $this->subject = $this->getMockBuilder(IndexCommandController::class)
             ->disableOriginalConstructor()
             ->setMethods(['quit', 'outputLine'])
             ->getMock();
         $this->subject->injectIndexerFactory($this->indexerFactory);
-        $this->inject($this->subject, 'configuration', $configuration);
+        $this->inject($this->subject, 'configuration', $this->configuration);
     }
 
     /**
@@ -80,6 +81,10 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
         $this->indexerFactory->expects($this->never())
             ->method('getIndexer');
 
+        $this->configuration->expects($this->once())
+            ->method('getIfExists')
+            ->with('indexing.nonAllowedTable')
+            ->will($this->returnValue(null));
         $this->subject->indexCommand('nonAllowedTable');
     }
 
@@ -101,6 +106,12 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
             ->with('allowedTable')
             ->will($this->returnValue($indexerMock));
 
+        $this->configuration->expects($this->once())
+            ->method('getIfExists')
+            ->with('indexing.allowedTable')
+            ->will($this->returnValue([
+                'indexer' => 'Leonmrni\SearchCore\Domain\Index\TcaIndexer',
+            ]));
         $this->subject->indexCommand('allowedTable');
     }
 }
