@@ -27,6 +27,9 @@ use Leonmrni\SearchCore\Tests\Unit\AbstractUnitTestCase;
 
 class QueryFactoryTest extends AbstractUnitTestCase
 {
+    /**
+     * @var QueryFactory
+     */
     protected $subject;
 
     public function setUp()
