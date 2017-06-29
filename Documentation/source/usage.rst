@@ -37,3 +37,30 @@ Searching / Frontend Plugin
 
 To provide a search interface you can insert the frontend Plugin as normal content element of type
 plugin. The plugin is named *Search Core*.
+
+Please provide your own template, the extension will not deliver a useful template for now.
+
+The extbase mapping is used, this way you can create a form:
+
+.. code-block:: html
+
+   <f:form name="searchRequest" object="{searchRequest}">
+       <f:form.textfield property="query" />
+       <f:form.submit value="search" />
+   </f:form>
+
+.. _usage_searching_filter:
+
+Filter
+""""""
+
+Thanks to extbase mapping, filter are added to the form:
+
+.. code-block:: html
+   :emphasize-lines: 3
+
+   <f:form name="searchRequest" object="{searchRequest}">
+       <f:form.textfield property="query" />
+       <f:form.textfield property="filter.exampleName" value="the value to match" />
+       <f:form.submit value="search" />
+   </f:form>

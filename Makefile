@@ -23,6 +23,11 @@ functionalTests:
 		.Build/bin/phpunit --colors --debug -v \
 			-c Tests/Functional/FunctionalTests.xml
 
+unitTests:
+	TYPO3_PATH_WEB=$(TYPO3_WEB_DIR) \
+		.Build/bin/phpunit --colors --debug -v \
+		-c Tests/Unit/UnitTests.xml
+
 uploadCodeCoverage: uploadCodeCoverageToScrutinizer uploadCodeCoverageToCodacy
 
 uploadCodeCoverageToScrutinizer:

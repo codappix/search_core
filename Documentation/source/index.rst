@@ -7,6 +7,7 @@ Table of Contents
    :maxdepth: 1
    :glob:
 
+   features
    installation
    configuration
    usage

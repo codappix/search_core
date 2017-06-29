@@ -21,6 +21,7 @@ namespace Leonmrni\SearchCore\Connection;
  */
 
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use Leonmrni\SearchCore\Domain\Search\QueryFactory;
 
 /**
  * Outer wrapper to elasticsearch.
@@ -48,6 +49,11 @@ class Elasticsearch implements Singleton, ConnectionInterface
     protected $documentFactory;
 
     /**
+     * @var QueryFactory
+     */
+    protected $queryFactory;
+
+    /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
@@ -67,17 +73,20 @@ class Elasticsearch implements Singleton, ConnectionInterface
      * @param Elasticsearch\IndexFactory $indexFactory
      * @param Elasticsearch\TypeFactory $typeFactory
      * @param Elasticsearch\DocumentFactory $documentFactory
+     * @param QueryFactory $queryFactory
      */
     public function __construct(
         Elasticsearch\Connection $connection,
         Elasticsearch\IndexFactory $indexFactory,
         Elasticsearch\TypeFactory $typeFactory,
-        Elasticsearch\DocumentFactory $documentFactory
+        Elasticsearch\DocumentFactory $documentFactory,
+        QueryFactory $queryFactory
     ) {
         $this->connection = $connection;
         $this->indexFactory = $indexFactory;
         $this->typeFactory = $typeFactory;
         $this->documentFactory = $documentFactory;
+        $this->queryFactory = $queryFactory;
     }
 
     public function addDocument($documentType, array $document)
@@ -148,10 +157,11 @@ class Elasticsearch implements Singleton, ConnectionInterface
 
         $search = new \Elastica\Search($this->connection->getClient());
         $search->addIndex('typo3content');
+        $search->setQuery($this->queryFactory->create($this, $searchRequest));
 
         // TODO: Return wrapped result to implement our interface.
         // Also update php doc to reflect the change.
-        return $search->search('"' . $searchRequest->getSearchTerm() . '"');
+        return $search->search();
     }
 
     /**
