@@ -32,14 +32,19 @@ class SearchRequest implements SearchRequestInterface
      *
      * @var string
      */
-    protected $query;
+    protected $query = '';
+
+    /**
+     * @var array
+     */
+    protected $filter = [];
 
     /**
      * @param string $query
      */
     public function __construct($query)
     {
-        $this->query = $query;
+        $this->query = (string) $query;
     }
 
     /**
@@ -56,5 +61,29 @@ class SearchRequest implements SearchRequestInterface
     public function getSearchTerm()
     {
         return $this->query;
+    }
+
+    /**
+     * @param array $filter
+     */
+    public function setFilter(array $filter)
+    {
+        $this->filter = array_map('strval', $filter);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasFilter()
+    {
+        return count($this->filter) > 0;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFilter()
+    {
+        return $this->filter;
     }
 }

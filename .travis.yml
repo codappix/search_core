@@ -1,3 +1,12 @@
+sudo: true
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-set-default
+before_install:
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.0.deb && sudo dpkg -i --force-confnew elasticsearch-5.2.0.deb && sudo service elasticsearch start
+
 language: php
 
 php:
@@ -23,11 +32,12 @@ matrix:
 
 services:
   - mysql
-  - elasticsearch
 
 install: make install
 
-script: make functionalTests
+script:
+  - make unitTests
+  - make functionalTests
 
 after_script:
   - make uploadCodeCoverage

@@ -43,11 +43,18 @@ abstract class AbstractFunctionalTestCase extends BaseFunctionalTestCase
             'host' => getenv('ES_HOST') ?: \Elastica\Connection::DEFAULT_HOST,
             'port' => getenv('ES_PORT') ?: \Elastica\Connection::DEFAULT_PORT,
         ]);
+
+        $this->cleanUp();
     }
 
     public function tearDown()
     {
         // Delete everything so next test starts clean.
+        $this->cleanUp();
+    }
+
+    protected function cleanUp()
+    {
         $this->client->getIndex('_all')->delete();
         $this->client->getIndex('_all')->clearCache();
     }
