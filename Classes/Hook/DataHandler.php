@@ -21,6 +21,7 @@ namespace Leonmrni\SearchCore\Hook;
  */
 
 use Leonmrni\SearchCore\Configuration\NoConfigurationException;
+use Leonmrni\SearchCore\Domain\Index\NoMatchingIndexerException;
 use Leonmrni\SearchCore\Domain\Service\DataHandler as OwnDataHandler;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler as CoreDataHandler;
@@ -140,21 +141,12 @@ class DataHandler implements Singleton
             $this->logger->debug('Datahandler could not be setup.');
             return false;
         }
-        if (! $this->shouldProcessTable($table)) {
+        if (! $this->dataHandler->canHandle($table)) {
             $this->logger->debug('Table is not allowed.', [$table]);
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * @param string $table
-     * @return bool
-     */
-    protected function shouldProcessTable($table)
-    {
-        return in_array($table, $this->dataHandler->getAllowedTablesForIndexing());
     }
 
     /**

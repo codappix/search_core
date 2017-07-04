@@ -21,6 +21,7 @@ namespace Leonmrni\SearchCore\Command;
  */
 
 use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
+use Leonmrni\SearchCore\Domain\Index\NoMatchingIndexerException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
@@ -35,12 +36,6 @@ class IndexCommandController extends CommandController
     protected $indexerFactory;
 
     /**
-     * @var \Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface
-     * @inject
-     */
-    protected $configuration;
-
-    /**
      * @param IndexerFactory $factory
      */
     public function injectIndexerFactory(IndexerFactory $factory)
@@ -49,19 +44,18 @@ class IndexCommandController extends CommandController
     }
 
     /**
-     * Will index the given table or everything.
+     * Will index the given identifier.
      *
-     * @param string $table
+     * @param string $identifier
      */
-    public function indexCommand($table)
+    public function indexCommand($identifier)
     {
-        // TODO: Allow to index multiple tables at once?
         // TODO: Also allow to index everything?
-        if ($this->configuration->getIfExists('indexing.' . $table) === null) {
-            $this->outputLine('Table is not allowed for indexing.');
-            $this->quit(1);
+        try {
+            $this->indexerFactory->getIndexer($identifier)->indexAllDocuments();
+            $this->outputLine($identifier . ' was indexed.');
+        } catch (NoMatchingIndexerException $e) {
+            $this->outputLine('No indexer found for: ' . $identifier);
         }
-        $this->indexerFactory->getIndexer($table)->indexAllDocuments();
-        $this->outputLine('Table was indexed.');
     }
 }

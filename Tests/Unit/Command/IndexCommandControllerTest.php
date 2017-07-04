@@ -21,8 +21,8 @@ namespace Leonmrni\SearchCore\Tests\Unit\Command;
  */
 
 use Leonmrni\SearchCore\Command\IndexCommandController;
-use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
 use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
+use Leonmrni\SearchCore\Domain\Index\NoMatchingIndexerException;
 use Leonmrni\SearchCore\Domain\Index\TcaIndexer;
 use Leonmrni\SearchCore\Tests\Unit\AbstractUnitTestCase;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
@@ -40,19 +40,11 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
      */
     protected $indexerFactory;
 
-    /**
-     * @var ConfigurationContainerInterface
-     */
-    protected $configuration;
-
     public function setUp()
     {
         parent::setUp();
 
         $this->indexerFactory = $this->getMockBuilder(IndexerFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -61,7 +53,6 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
             ->setMethods(['quit', 'outputLine'])
             ->getMock();
         $this->subject->injectIndexerFactory($this->indexerFactory);
-        $this->inject($this->subject, 'configuration', $this->configuration);
     }
 
     /**
@@ -69,22 +60,14 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
      */
     public function indexerStopsForNonAllowedTable()
     {
-        $this->expectException(StopActionException::class);
-        $this->subject->expects($this->once())
-            ->method('quit')
-            ->with(1)
-            ->will($this->throwException(new StopActionException));
-
         $this->subject->expects($this->once())
             ->method('outputLine')
-            ->with('Table is not allowed for indexing.');
-        $this->indexerFactory->expects($this->never())
-            ->method('getIndexer');
+            ->with('No indexer found for: nonAllowedTable');
+        $this->indexerFactory->expects($this->once())
+            ->method('getIndexer')
+            ->with('nonAllowedTable')
+            ->will($this->throwException(new NoMatchingIndexerException));
 
-        $this->configuration->expects($this->once())
-            ->method('getIfExists')
-            ->with('indexing.nonAllowedTable')
-            ->will($this->returnValue(null));
         $this->subject->indexCommand('nonAllowedTable');
     }
 
@@ -100,18 +83,12 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
             ->method('quit');
         $this->subject->expects($this->once())
             ->method('outputLine')
-            ->with('Table was indexed.');
+            ->with('allowedTable was indexed.');
         $this->indexerFactory->expects($this->once())
             ->method('getIndexer')
             ->with('allowedTable')
             ->will($this->returnValue($indexerMock));
 
-        $this->configuration->expects($this->once())
-            ->method('getIfExists')
-            ->with('indexing.allowedTable')
-            ->will($this->returnValue([
-                'indexer' => 'Leonmrni\SearchCore\Domain\Index\TcaIndexer',
-            ]));
         $this->subject->indexCommand('allowedTable');
     }
 }

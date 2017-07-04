@@ -21,6 +21,8 @@ namespace Leonmrni\SearchCore\Domain\Service;
  */
 
 use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
+use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
+use Leonmrni\SearchCore\Domain\Index\NoMatchingIndexerException;
 use Leonmrni\SearchCore\Domain\Index\TcaIndexer;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -47,8 +49,7 @@ class DataHandler implements Singleton
     protected $connection;
 
     /**
-     * @var \Leonmrni\SearchCore\Domain\Index\IndexerFactory
-     * @inject
+     * @var IndexerFactory
      */
     protected $indexerFactory;
 
@@ -74,30 +75,12 @@ class DataHandler implements Singleton
 
     /**
      * @param ConfigurationContainerInterface $configuration
+     * @param IndexerFactory $indexerFactory
      */
-    public function __construct(ConfigurationContainerInterface $configuration)
+    public function __construct(ConfigurationContainerInterface $configuration, IndexerFactory $indexerFactory)
     {
         $this->configuration = $configuration;
-    }
-
-    /**
-     * Get all tables that are allowed for indexing.
-     *
-     * @return array<String>
-     */
-    public function getAllowedTablesForIndexing()
-    {
-        $tables = [];
-        foreach ($this->configuration->get('indexing') as $tableName => $indexConfiguration) {
-            if ($indexConfiguration['indexer'] === TcaIndexer::class) {
-                $tables[] = $tableName;
-                continue;
-            }
-            // TODO: Support custom indexer.
-            // Define "interface" / option which is used.
-        }
-
-        return $tables;
+        $this->indexerFactory = $indexerFactory;
     }
 
     /**
@@ -107,7 +90,7 @@ class DataHandler implements Singleton
     public function add($table, array $record)
     {
         $this->logger->debug('Record received for add.', [$table, $record]);
-        $this->indexerFactory->getIndexer($table)->indexDocument($record['uid']);
+        $this->getIndexer($table)->indexDocument($record['uid']);
     }
 
     /**
@@ -116,7 +99,7 @@ class DataHandler implements Singleton
     public function update($table, array $record)
     {
         $this->logger->debug('Record received for update.', [$table, $record]);
-        $this->indexerFactory->getIndexer($table)->indexDocument($record['uid']);
+        $this->getIndexer($table)->indexDocument($record['uid']);
     }
 
     /**
@@ -127,5 +110,32 @@ class DataHandler implements Singleton
     {
         $this->logger->debug('Record received for delete.', [$table, $identifier]);
         $this->connection->deleteDocument($table, $identifier);
+    }
+
+    /**
+     * @param string $table
+     * @return IndexerInterface
+     *
+     * @throws NoMatchingIndexerException
+     */
+    protected function getIndexer($table)
+    {
+        return $this->indexerFactory->getIndexer($table);
+    }
+
+    /**
+     * @param string $table
+     * @return bool
+     */
+    public function canHandle($table)
+    {
+        try {
+            $this->getIndexer($table);
+            return true;
+        } catch (NoMatchingIndexerException $e) {
+            return false;
+        }
+
+        return false;
     }
 }

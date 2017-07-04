@@ -21,6 +21,7 @@ namespace Leonmrni\SearchCore\Tests\Functional\Hooks\DataHandler;
  */
 
 use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
+use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
 use Leonmrni\SearchCore\Domain\Service\DataHandler as DataHandlerService;
 use Leonmrni\SearchCore\Hook\DataHandler as DataHandlerHook;
 use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
@@ -42,7 +43,10 @@ abstract class AbstractDataHandlerTest extends AbstractFunctionalTestCase
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 
         $this->subject = $this->getMockBuilder(DataHandlerService::class)
-            ->setConstructorArgs([$objectManager->get(ConfigurationContainerInterface::class)])
+            ->setConstructorArgs([
+                $objectManager->get(ConfigurationContainerInterface::class),
+                $objectManager->get(IndexerFactory::class)
+            ])
             ->setMethods(['add', 'update', 'delete'])
             ->getMock();
 
