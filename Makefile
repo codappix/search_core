@@ -1,10 +1,11 @@
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(dir $(mkfile_path))
 
-TYPO3_WEB_DIR := $(current_dir).Build/Web
+TYPO3_WEB_DIR := $(current_dir).Build/web
+TYPO3_PATH_ROOT := $(current_dir).Build/web
 # Allow different versions on travis
-TYPO3_VERSION ?= ~7.6
-typo3DatabaseName ?= "searchcore_test"
+TYPO3_VERSION ?= ~8.2
+typo3DatabaseName ?= "searchcore_test2"
 typo3DatabaseUsername ?= "dev"
 typo3DatabasePassword ?= "dev"
 typo3DatabaseHost ?= "127.0.0.1"
@@ -21,6 +22,7 @@ functionalTests:
 		typo3DatabaseHost=$(typo3DatabaseHost) \
 		TYPO3_PATH_WEB=$(TYPO3_WEB_DIR) \
 		.Build/bin/phpunit --colors --debug -v \
+			--stop-on-error \
 			-c Tests/Functional/FunctionalTests.xml
 
 uploadCodeCoverage: uploadCodeCoverageToScrutinizer uploadCodeCoverageToCodacy

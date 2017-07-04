@@ -112,7 +112,7 @@ class TcaIndexer implements IndexerInterface
      */
     protected function getRecords($offset, $limit)
     {
-        $records = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+        $records = $this->getDatabaseConnection()->exec_SELECTgetRows(
             $this->tcaTableService->getFields(),
             $this->tcaTableService->getTableClause(),
             $this->tcaTableService->getWhereClause(),
@@ -139,7 +139,7 @@ class TcaIndexer implements IndexerInterface
      */
     protected function getRecord($identifier)
     {
-        $record = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
+        $record = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
             $this->tcaTableService->getFields(),
             $this->tcaTableService->getTableClause(),
             $this->tcaTableService->getWhereClause()
@@ -155,5 +155,11 @@ class TcaIndexer implements IndexerInterface
         $this->tcaTableService->prepareRecord($record);
 
         return $record;
+    }
+
+    protected function getDatabaseConnection()
+    {
+        return GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionByName('Default');
     }
 }
