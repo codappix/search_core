@@ -151,7 +151,6 @@ class TcaTableService
             . ' AND pages.no_search = 0'
             ;
 
-        // TODO: There is no test covering this option yet?
         $userDefinedWhere = $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.additionalWhereClause');
         if (is_string($userDefinedWhere)) {
             $whereClause .= ' AND ' . $userDefinedWhere;
