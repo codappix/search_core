@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Domain\Model;
+namespace Codappix\SearchCore\Domain\Model;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,8 +20,8 @@ namespace Leonmrni\SearchCore\Domain\Model;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Connection\FacetRequestInterface;
-use Leonmrni\SearchCore\Connection\SearchRequestInterface;
+use Codappix\SearchCore\Connection\FacetRequestInterface;
+use Codappix\SearchCore\Connection\SearchRequestInterface;
 
 /**
  * Represents a search request used to process an actual search.

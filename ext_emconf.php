@@ -14,7 +14,7 @@ $EM_CONF[$_EXTKEY] = [
     ],
     'autoload' => [
         'psr-4' => [
-            'Leonmrni\\SearchCore\\' => 'Classes',
+            'Codappix\\SearchCore\\' => 'Classes',
         ],
     ],
     'state' => 'beta',

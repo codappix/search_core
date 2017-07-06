@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Functional\Connection\Elasticsearch;
+namespace Codappix\SearchCore\Tests\Functional\Connection\Elasticsearch;
 
 /*
  * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,9 +20,9 @@ namespace Leonmrni\SearchCore\Tests\Functional\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
-use Leonmrni\SearchCore\Domain\Model\SearchRequest;
-use Leonmrni\SearchCore\Domain\Search\SearchService;
+use Codappix\SearchCore\Domain\Index\IndexerFactory;
+use Codappix\SearchCore\Domain\Model\SearchRequest;
+use Codappix\SearchCore\Domain\Search\SearchService;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class FilterTest extends AbstractFunctionalTestCase

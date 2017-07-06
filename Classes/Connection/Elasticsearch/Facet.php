@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Connection\Elasticsearch;
+namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 /*
  * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,8 +20,8 @@ namespace Leonmrni\SearchCore\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
-use Leonmrni\SearchCore\Connection\FacetInterface;
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Connection\FacetInterface;
 
 class Facet implements FacetInterface
 {

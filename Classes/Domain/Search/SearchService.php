@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Domain\Search;
+namespace Codappix\SearchCore\Domain\Search;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,12 +20,12 @@ namespace Leonmrni\SearchCore\Domain\Search;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
-use Leonmrni\SearchCore\Configuration\InvalidArgumentException;
-use Leonmrni\SearchCore\Connection\ConnectionInterface;
-use Leonmrni\SearchCore\Connection\SearchRequestInterface;
-use Leonmrni\SearchCore\Connection\SearchResultInterface;
-use Leonmrni\SearchCore\Domain\Model\FacetRequest;
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\InvalidArgumentException;
+use Codappix\SearchCore\Connection\ConnectionInterface;
+use Codappix\SearchCore\Connection\SearchRequestInterface;
+use Codappix\SearchCore\Connection\SearchResultInterface;
+use Codappix\SearchCore\Domain\Model\FacetRequest;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 /**

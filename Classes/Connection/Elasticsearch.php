@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Connection;
+namespace Codappix\SearchCore\Connection;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,8 +20,8 @@ namespace Leonmrni\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Connection\Elasticsearch\SearchResult;
-use Leonmrni\SearchCore\Domain\Search\QueryFactory;
+use Codappix\SearchCore\Connection\Elasticsearch\SearchResult;
+use Codappix\SearchCore\Domain\Search\QueryFactory;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 

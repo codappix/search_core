@@ -10,7 +10,7 @@ plugin {
 
             indexing {
                 tt_content {
-                    indexer = Leonmrni\SearchCore\Domain\Index\TcaIndexer
+                    indexer = Codappix\SearchCore\Domain\Index\TcaIndexer
                     additionalWhereClause = {$plugin.tx_searchcore.settings.indexing.tt_content.additionalWhereClause}
                 }
             }

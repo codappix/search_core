@@ -1,17 +1,17 @@
 {
-    "name": "leonmrni/search_core",
+    "name": "codappix/search_core",
     "type": "typo3-cms-extension",
-    "description": "Leonmrni Search Core.",
-    "homepage": "http://www.leonmrni.com",
+    "description": "Codappix Search Core.",
+    "homepage": "https://github.com/Codappix/search_core",
     "license": ["GPL-2.0+"],
     "autoload": {
         "psr-4": {
-            "Leonmrni\\SearchCore\\": "Classes"
+            "Codappix\\SearchCore\\": "Classes"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Leonmrni\\SearchCore\\Tests\\": "Tests/",
+            "Codappix\\SearchCore\\Tests\\": "Tests/",
             "TYPO3\\CMS\\Core\\Tests\\": ".Build/vendor/typo3/cms/typo3/sysext/core/Tests/"
         }
     },

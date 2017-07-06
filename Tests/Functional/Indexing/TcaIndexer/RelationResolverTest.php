@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Indexing\TcaIndexer;
+namespace Codappix\SearchCore\Tests\Indexing\TcaIndexer;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,8 +20,8 @@ namespace Leonmrni\SearchCore\Tests\Indexing\TcaIndexer;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
-use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
+use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;

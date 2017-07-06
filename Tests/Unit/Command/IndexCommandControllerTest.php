@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Unit\Command;
+namespace Codappix\SearchCore\Tests\Unit\Command;
 
 /*
  * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,11 +20,11 @@ namespace Leonmrni\SearchCore\Tests\Unit\Command;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Command\IndexCommandController;
-use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
-use Leonmrni\SearchCore\Domain\Index\NoMatchingIndexerException;
-use Leonmrni\SearchCore\Domain\Index\TcaIndexer;
-use Leonmrni\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use Codappix\SearchCore\Command\IndexCommandController;
+use Codappix\SearchCore\Domain\Index\IndexerFactory;
+use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
+use Codappix\SearchCore\Domain\Index\TcaIndexer;
+use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 

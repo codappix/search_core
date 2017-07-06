@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Domain\Search;
+namespace Codappix\SearchCore\Domain\Search;
 
 /*
  * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,9 +20,9 @@ namespace Leonmrni\SearchCore\Domain\Search;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Connection\ConnectionInterface;
-use Leonmrni\SearchCore\Connection\Elasticsearch\Query;
-use Leonmrni\SearchCore\Connection\SearchRequestInterface;
+use Codappix\SearchCore\Connection\ConnectionInterface;
+use Codappix\SearchCore\Connection\Elasticsearch\Query;
+use Codappix\SearchCore\Connection\SearchRequestInterface;
 use TYPO3\CMS\Extbase\Utility\ArrayUtility;
 
 class QueryFactory

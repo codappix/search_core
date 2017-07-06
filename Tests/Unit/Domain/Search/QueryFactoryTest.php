@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Unit\Domain\Search;
+namespace Codappix\SearchCore\Tests\Unit\Domain\Search;
 
 /*
  * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,10 +20,10 @@ namespace Leonmrni\SearchCore\Tests\Unit\Domain\Search;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Domain\Model\FacetRequest;
-use Leonmrni\SearchCore\Domain\Model\SearchRequest;
-use Leonmrni\SearchCore\Domain\Search\QueryFactory;
-use Leonmrni\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use Codappix\SearchCore\Domain\Model\FacetRequest;
+use Codappix\SearchCore\Domain\Model\SearchRequest;
+use Codappix\SearchCore\Domain\Search\QueryFactory;
+use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
 
 class QueryFactoryTest extends AbstractUnitTestCase
 {

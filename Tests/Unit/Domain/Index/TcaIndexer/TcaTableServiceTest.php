@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Unit\Domain\Index\TcaIndexer;
+namespace Codappix\SearchCore\Tests\Unit\Domain\Index\TcaIndexer;
 
 /*
  * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,9 +20,9 @@ namespace Leonmrni\SearchCore\Tests\Unit\Domain\Index\TcaIndexer;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
-use Leonmrni\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
-use Leonmrni\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
+use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
 
 class TcaTableServiceTest extends AbstractUnitTestCase
 {

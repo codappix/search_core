@@ -10,7 +10,7 @@ plugin {
 
             indexing {
                 tt_content {
-                    indexer = Leonmrni\SearchCore\Domain\Index\TcaIndexer
+                    indexer = Codappix\SearchCore\Domain\Index\TcaIndexer
 
                     mapping {
                         CType {

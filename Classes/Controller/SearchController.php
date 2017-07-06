@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Controller;
+namespace Codappix\SearchCore\Controller;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,8 +20,8 @@ namespace Leonmrni\SearchCore\Controller;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Domain\Model\SearchRequest;
-use Leonmrni\SearchCore\Domain\Search\SearchService;
+use Codappix\SearchCore\Domain\Model\SearchRequest;
+use Codappix\SearchCore\Domain\Search\SearchService;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**

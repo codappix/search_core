@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Domain\Index;
+namespace Codappix\SearchCore\Domain\Index;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,11 +20,11 @@ namespace Leonmrni\SearchCore\Domain\Index;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
-use Leonmrni\SearchCore\Configuration\InvalidArgumentException;
-use Leonmrni\SearchCore\Domain\Index\IndexerInterface;
-use Leonmrni\SearchCore\Domain\Index\TcaIndexer;
-use Leonmrni\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\InvalidArgumentException;
+use Codappix\SearchCore\Domain\Index\IndexerInterface;
+use Codappix\SearchCore\Domain\Index\TcaIndexer;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 

@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Unit;
+namespace Codappix\SearchCore\Tests\Unit;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>

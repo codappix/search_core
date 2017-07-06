@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Connection;
+namespace Codappix\SearchCore\Connection;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
