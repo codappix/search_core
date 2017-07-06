@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Domain\Index;
+namespace Codappix\SearchCore\Domain\Index;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>

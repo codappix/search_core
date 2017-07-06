@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Domain\Index;
+namespace Codappix\SearchCore\Domain\Index;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -21,7 +21,7 @@ namespace Leonmrni\SearchCore\Domain\Index;
  */
 
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
-use Leonmrni\SearchCore\Connection\ConnectionInterface;
+use Codappix\SearchCore\Connection\ConnectionInterface;
 
 /**
  * Will index the given table using configuration from TCA.

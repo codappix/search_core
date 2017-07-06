@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Functional\Connection\Elasticsearch;
+namespace Codappix\SearchCore\Tests\Functional\Connection\Elasticsearch;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,7 +20,7 @@ namespace Leonmrni\SearchCore\Tests\Functional\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase as BaseFunctionalTestCase;
+use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase as BaseFunctionalTestCase;
 
 /**
  * All functional tests should extend this base class.

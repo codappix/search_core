@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Command;
+namespace Codappix\SearchCore\Command;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,7 +20,7 @@ namespace Leonmrni\SearchCore\Command;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Domain\Index\IndexerFactory;
+use Codappix\SearchCore\Domain\Index\IndexerFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
@@ -35,7 +35,7 @@ class IndexCommandController extends CommandController
     protected $indexerFactory;
 
     /**
-     * @var \Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface
+     * @var \Codappix\SearchCore\Configuration\ConfigurationContainerInterface
      * @inject
      */
     protected $configuration;

@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Domain\Service;
+namespace Codappix\SearchCore\Domain\Service;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,7 +20,7 @@ namespace Leonmrni\SearchCore\Domain\Service;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -40,13 +40,13 @@ class DataHandler implements Singleton
     /**
      * TODO: Only inject on first use?!
      *
-     * @var \Leonmrni\SearchCore\Connection\ConnectionInterface
+     * @var \Codappix\SearchCore\Connection\ConnectionInterface
      * @inject
      */
     protected $connection;
 
     /**
-     * @var \Leonmrni\SearchCore\Domain\Index\IndexerFactory
+     * @var \Codappix\SearchCore\Domain\Index\IndexerFactory
      * @inject
      */
     protected $indexerFactory;

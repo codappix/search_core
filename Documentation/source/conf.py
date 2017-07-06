@@ -120,7 +120,7 @@ html_theme = 'alabaster'
 # documentation.
 html_theme_options = {
     'description': 'TYPO3 Extension to integrate search services.',
-    'github_user': 'DanielSiepmann',
+    'github_user': 'Codappix',
     'github_repo': 'search_core',
     'github_button': True,
     'github_banner': True,
@@ -306,7 +306,7 @@ intersphinx_mapping = {
     't3tcaref': ('https://docs.typo3.org/typo3cms/TCAReference/', None),
 }
 extlinks = {
-    'project': ('https://github.com/DanielSiepmann/search_core/projects/%s', 'Github project: '),
-    'pr': ('https://github.com/DanielSiepmann/search_core/pull/%s', 'Github pull request: '),
-    'issue': ('https://github.com/DanielSiepmann/search_core/issues/%s', 'Github issue: '),
+    'project': ('https://github.com/Codappix/search_core/projects/%s', 'Github project: '),
+    'pr': ('https://github.com/Codappix/search_core/pull/%s', 'Github pull request: '),
+    'issue': ('https://github.com/Codappix/search_core/issues/%s', 'Github issue: '),
 }

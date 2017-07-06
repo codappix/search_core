@@ -11,15 +11,15 @@ call_user_func(
                 'SC_OPTIONS' => [
                     'extbase' => [
                         'commandControllers' => [
-                            Leonmrni\SearchCore\Command\IndexCommandController::class,
+                            Codappix\SearchCore\Command\IndexCommandController::class,
                         ],
                     ],
                     't3lib/class.t3lib_tcemain.php' => [
                         'processCmdmapClass' => [
-                            $extensionKey => '&' . \Leonmrni\SearchCore\Hook\DataHandler::class,
+                            $extensionKey => '&' . \Codappix\SearchCore\Hook\DataHandler::class,
                         ],
                         'processDatamapClass' => [
-                            $extensionKey => '&' . \Leonmrni\SearchCore\Hook\DataHandler::class,
+                            $extensionKey => '&' . \Codappix\SearchCore\Hook\DataHandler::class,
                         ],
                     ],
                 ],
@@ -27,7 +27,7 @@ call_user_func(
         );
 
         TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-            'Leonmrni.' . $extensionKey,
+            'Codappix.' . $extensionKey,
             'search',
             [
                 'Search' => 'search'
@@ -39,8 +39,8 @@ call_user_func(
 
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\Container\Container')
             ->registerImplementation(
-                'Leonmrni\SearchCore\Connection\ConnectionInterface',
-                'Leonmrni\SearchCore\Connection\Elasticsearch'
+                'Codappix\SearchCore\Connection\ConnectionInterface',
+                'Codappix\SearchCore\Connection\Elasticsearch'
             );
     },
     $_EXTKEY

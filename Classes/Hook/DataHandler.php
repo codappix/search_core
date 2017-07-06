@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Hook;
+namespace Codappix\SearchCore\Hook;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,8 +20,8 @@ namespace Leonmrni\SearchCore\Hook;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Configuration\NoConfigurationException;
-use Leonmrni\SearchCore\Domain\Service\DataHandler as OwnDataHandler;
+use Codappix\SearchCore\Configuration\NoConfigurationException;
+use Codappix\SearchCore\Domain\Service\DataHandler as OwnDataHandler;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler as CoreDataHandler;
 use TYPO3\CMS\Core\Log\LogManager;
