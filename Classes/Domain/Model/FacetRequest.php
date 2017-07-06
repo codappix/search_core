@@ -35,6 +35,10 @@ class FacetRequest implements FacetRequestInterface
     protected $field = '';
 
     /**
+     * TODO: Add validation / exception?
+     * As the facets come from configuration this might be a good idea to help
+     * integrators find issues.
+     *
      * @param string $identifier
      * @param string $field
      */

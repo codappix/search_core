@@ -41,24 +41,13 @@ class TcaTableServiceTest extends AbstractUnitTestCase
         parent::setUp();
 
         $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)->getMock();
-        $logger = $this->getMockBuilder(\TYPO3\CMS\Core\Log\LogManager::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getLogger'])
-            ->getMock();
-        $logger->expects($this->once())
-            ->method('getLogger')
-            ->will($this->returnValue(
-                $this->getMockBuilder(\TYPO3\CMS\Core\Log\Logger::class)
-                    ->disableOriginalConstructor()
-                    ->getMock()
-            ));
 
         $this->subject = $this->getMockBuilder(TcaTableService::class)
             ->disableOriginalConstructor()
             ->setMethodsExcept(['getWhereClause', 'injectLogger', 'getTableName'])
             ->getMock();
         $this->inject($this->subject, 'configuration', $this->configuration);
-        $this->inject($this->subject, 'logger', $logger);
+        $this->inject($this->subject, 'logger', $this->getMockedLogger());
         $this->inject($this->subject, 'tableName', 'table');
     }
 

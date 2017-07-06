@@ -67,7 +67,6 @@ class QueryFactory
         $this->addFilter($searchRequest);
         $this->addFacets($searchRequest);
 
-        // TODO: Add logging here.
         $this->logger->debug('Generated elasticsearch query.', [$this->query]);
         return new \Elastica\Query($this->query);
     }
