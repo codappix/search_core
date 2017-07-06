@@ -11,6 +11,20 @@ plugin {
             indexing {
                 tt_content {
                     indexer = Leonmrni\SearchCore\Domain\Index\TcaIndexer
+
+                    mapping {
+                        CType {
+                            type = keyword
+                        }
+                    }
+                }
+            }
+
+            searching {
+                facets {
+                    contentTypes {
+                        field = CType
+                    }
                 }
             }
         }

@@ -44,12 +44,13 @@ abstract class AbstractFunctionalTestCase extends BaseFunctionalTestCase
             'port' => getenv('ES_PORT') ?: \Elastica\Connection::DEFAULT_PORT,
         ]);
 
+        // Start with clean system for test.
         $this->cleanUp();
     }
 
     public function tearDown()
     {
-        // Delete everything so next test starts clean.
+        // Make system clean again.
         $this->cleanUp();
     }
 
