@@ -44,12 +44,12 @@ class ResultItem implements ResultItemInterface
         return $this->data[$offset];
     }
 
-    public function offsetSet()
+    public function offsetSet($offset, $value)
     {
         throw new \BadMethodCallException('It\'s not possible to change the search result.', 1499179077);
     }
 
-    public function offsetUnset()
+    public function offsetUnset($offset)
     {
         throw new \BadMethodCallException('It\'s not possible to change the search result.', 1499179077);
     }
