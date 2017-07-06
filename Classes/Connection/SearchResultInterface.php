@@ -36,4 +36,20 @@ interface SearchResultInterface extends \Iterator, \Countable
      * @return array<FacetIterface>
      */
     public function getFacets();
+
+    /**
+     * Returns the total sum of matching results.
+     *
+     * @return int
+     */
+    public function getTotalCount();
+
+    // Countable - Interface
+
+    /**
+     * Returns the total sum of results contained in this result.
+     *
+     * @return int
+     */
+    public function count();
 }
