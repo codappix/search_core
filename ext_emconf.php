@@ -4,6 +4,7 @@ $EM_CONF[$_EXTKEY] = [
     'title' => 'Search Core',
     'description' => 'Search core for implementing various search types.',
     'category' => 'be',
+    'clearCacheOnLoad' => 1,
     'constraints' => [
         'depends' => [
             'typo3' => '7.6.0-7.6.99',
@@ -16,9 +17,8 @@ $EM_CONF[$_EXTKEY] = [
             'Leonmrni\\SearchCore\\' => 'Classes',
         ],
     ],
-    'state' => 'alpha',
-    'clearCacheOnLoad' => 1,
+    'state' => 'beta',
+    'version' => '1.0.0',
     'author' => 'Daniel Siepmann',
     'author_email' => 'coding@daniel-siepmann.de',
-    'version' => '1.0.0',
 ];

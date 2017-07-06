@@ -18,7 +18,7 @@ reindexing.
 Current state
 -------------
 
-This is still a very early alpha version. More information can be taken from Github at
+This is still a very early beta version. More information can be taken from Github at
 `current issues`_ and `current projects`_.
 
 We are also focusing on Code Quality and Testing through `travis ci`_, `scrutinizer`_ and `codacy`_.

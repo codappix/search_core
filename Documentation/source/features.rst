@@ -13,7 +13,7 @@ Indexing
 Indexing data to Elasticsearch is provided. The extension delivers an indexer for TCA with zero
 configuration needs. Still it's possible to configure the indexer.
 
-Own indexer are not possible yet, but will.
+Also custom classes can be used as indexers.
 
 .. _features_search:
 
@@ -24,6 +24,9 @@ Currently all fields are searched for a single search input.
 
 Also multiple filter are supported. Filtering results by fields for string contents.
 
+Even facets / aggregates are now possible. Therefore a mapping has to be defined in TypoScript for
+indexing, and the facets itself while searching.
+
 .. _features_planned:
 
 Planned
@@ -31,11 +34,5 @@ Planned
 
 The following features are currently planned and will be integrated:
 
-#. Mapping Configuration
-   Allowing to configure the whole mapping, to define type of input, e.g. integer, keyword.
-
-
-#. Facets / Aggregates
-   Based on the mapping configuration, facets will be configurable and fetched. Therefore mapping is
-   required and we will adjust the result set to be of a custom model providing all information in a
-   more clean way.
+#. Pagination
+   Add a pagination to search results, to allow users to walk through all results.

@@ -96,8 +96,8 @@ The following settings are available. For each setting its documented which conn
 
 .. _configuration_options_index:
 
-index
-^^^^^
+Indexing
+^^^^^^^^
 
 Holds settings regarding the indexing, e.g. of TYPO3 records, to search services.
 
@@ -108,7 +108,7 @@ Configured as::
             settings {
                 indexing {
                     identifier {
-                        indexer = Fully Qualified Classname
+                        indexer = FullyQualifiedClassname
                         // the settings
                     }
                 }
@@ -161,3 +161,51 @@ options are available:
 
         Make sure to prefix all fields with the corresponding table name. The selection from
         database will contain joins and can lead to SQL errors if a field exists in multiple tables.
+
+.. _mapping:
+
+``mapping``
+"""""""""""
+
+    Used by: Elasticsearch connection while indexing.
+
+    Define mapping for Elasticsearch, have a look at the official docs: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/mapping.html
+    You are able to define the mapping for each property / columns.
+
+    Example::
+
+        plugin.tx_searchcore.settings.indexing.tt_content.mapping {
+            CType {
+                type = keyword
+            }
+        }
+
+    The above example will define the ``CType`` field of ``tt_content`` as ``type: keyword``. This
+    makes building a facet possible.
+
+
+.. _configuration_options_search:
+
+Searching
+^^^^^^^^^
+
+.. _facets:
+
+``facets``
+"""""""""""
+
+    Used by: Elasticsearch connection while building search query.
+
+    Define aggregations for Elasticsearch, have a look at the official docs: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/search-aggregations-bucket-terms-aggregation.html
+    Currently only the term facet is provided.
+
+    Example::
+
+        plugin.tx_searchcore.settings.searching.facets {
+            contentTypes {
+                field = CType
+            }
+        }
+
+    The above example will provide a facet with options for all found ``CType`` results together
+    with a count.

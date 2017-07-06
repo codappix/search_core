@@ -24,7 +24,7 @@ Currently only :ref:`Elasticsearch` is provided.
 Indexing
 --------
 
-The indexing is done by one of the available indexer. It should be possible to define the indexer to
-use for certain document types. Also it should be possible to write custom indexer to use.
+The indexing is done by one of the available indexer. For each identifier it's possible to define
+the indexer to use. Also it's possible to write custom indexer to use.
 
 Currently only the :ref:`TcaIndexer` is provided.

@@ -32,9 +32,10 @@ Then setup your system::
 
     git clone git@github.com:DanielSiepmann/search_core.git \
         && cd search_core \
-        && export typo3DatabaseName="searchcoretest62" \
-        && export TYPO3_VERSION="~6.2" \
+        && export typo3DatabaseName="searchcoretest76" \
+        && export TYPO3_VERSION="~7.6" \
         && make install \
+        && make unitTests \
         && make functionalTests
 
 If all tests are okay, start your work.
@@ -42,8 +43,8 @@ If all tests are okay, start your work.
 If you are working with multiple TYPO3 versions make sure to export `typo3DatabaseName` and
 `TYPO3_VERSION` in your environment like::
 
-    export typo3DatabaseName="searchcoretest76"
-    export TYPO3_VERSION="~7.6"
+    export typo3DatabaseName="searchcoretest62"
+    export TYPO3_VERSION="~6.2"
 
 Also run the install command for each version before running any tests. Only this will make sure you
 are testing against the actual TYPO3 Version and database scheme.
