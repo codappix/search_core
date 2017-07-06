@@ -2,7 +2,7 @@
 namespace Leonmrni\SearchCore\Connection;
 
 /*
- * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
+ * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,19 +21,22 @@ namespace Leonmrni\SearchCore\Connection;
  */
 
 /**
- * A search result.
+ * Used to request facets / aggregates from connection.
  */
-interface SearchResultInterface extends \Iterator, \Countable
+interface FacetRequestInterface
 {
     /**
-     * @return array<ResultItemInterface>
+     * The identifier of the facet, used as key in arrays and to get the facet
+     * from search request, etc.
+     *
+     * @return string
      */
-    public function getResults();
+    public function getIdentifier();
 
     /**
-     * Return all facets, if any.
+     * The field to use for facet building.
      *
-     * @return array<FacetIterface>
+     * @return string
      */
-    public function getFacets();
+    public function getField();
 }

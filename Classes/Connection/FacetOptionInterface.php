@@ -21,19 +21,22 @@ namespace Leonmrni\SearchCore\Connection;
  */
 
 /**
- * A search result.
+ * A single possible option of a facet.
  */
-interface SearchResultInterface extends \Iterator, \Countable
+interface FacetOptionInterface
 {
     /**
-     * @return array<ResultItemInterface>
+     * Returns the name of this option. Equivalent
+     * to value used for filtering.
+     *
+     * @return string
      */
-    public function getResults();
+    public function getName();
 
     /**
-     * Return all facets, if any.
+     * Returns the number of found results for this option.
      *
-     * @return array<FacetIterface>
+     * @return int
      */
-    public function getFacets();
+    public function getCount();
 }

@@ -45,6 +45,7 @@ class IndexerFactory implements Singleton
 
     /**
      * @param ObjectManagerInterface $objectManager
+     * @param ConfigurationContainerInterface $configuration
      */
     public function __construct(
         ObjectManagerInterface $objectManager,

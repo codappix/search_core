@@ -1,8 +1,8 @@
 <?php
-namespace Leonmrni\SearchCore\Connection;
+namespace Leonmrni\SearchCore\Domain\Model;
 
 /*
- * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
+ * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +20,43 @@ namespace Leonmrni\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
-/**
- * A search result.
- */
-interface SearchResultInterface extends \Iterator, \Countable
+use Leonmrni\SearchCore\Connection\FacetRequestInterface;
+
+class FacetRequest implements FacetRequestInterface
 {
     /**
-     * @return array<ResultItemInterface>
+     * @var string
      */
-    public function getResults();
+    protected $identifier = '';
 
     /**
-     * Return all facets, if any.
-     *
-     * @return array<FacetIterface>
+     * @var string
      */
-    public function getFacets();
+    protected $field = '';
+
+    /**
+     * @param string $identifier
+     * @param string $field
+     */
+    public function __construct($identifier, $field)
+    {
+        $this->identifier = $identifier;
+        $this->field = $field;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    /**
+     * @return string
+     */
+    public function getField()
+    {
+        return $this->field;
+    }
 }

@@ -1,8 +1,8 @@
 <?php
-namespace Leonmrni\SearchCore\Connection;
+namespace Leonmrni\SearchCore\Connection\Elasticsearch;
 
 /*
- * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
+ * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +20,42 @@ namespace Leonmrni\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
-/**
- * A search result.
- */
-interface SearchResultInterface extends \Iterator, \Countable
+use Leonmrni\SearchCore\Connection\FacetOptionInterface;
+
+class FacetOption implements FacetOptionInterface
 {
     /**
-     * @return array<ResultItemInterface>
+     * @var string
      */
-    public function getResults();
+    protected $name = '';
 
     /**
-     * Return all facets, if any.
-     *
-     * @return array<FacetIterface>
+     * @var int
      */
-    public function getFacets();
+    protected $count = 0;
+
+    /**
+     * @param array $bucket
+     */
+    public function __construct(array $bucket)
+    {
+        $this->name = $bucket['key'];
+        $this->count = $bucket['doc_count'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCount()
+    {
+        return $this->count;
+    }
 }

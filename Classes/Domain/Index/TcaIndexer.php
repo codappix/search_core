@@ -20,7 +20,6 @@ namespace Leonmrni\SearchCore\Domain\Index;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use Leonmrni\SearchCore\Connection\ConnectionInterface;
 
 /**

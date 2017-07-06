@@ -2,7 +2,7 @@
 namespace Leonmrni\SearchCore\Connection;
 
 /*
- * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
+ * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,19 +21,9 @@ namespace Leonmrni\SearchCore\Connection;
  */
 
 /**
- * A search result.
+ * Use ArrayAccess to enable retrieval of information in fluid.
  */
-interface SearchResultInterface extends \Iterator, \Countable
+interface ResultItemInterface extends \ArrayAccess
 {
-    /**
-     * @return array<ResultItemInterface>
-     */
-    public function getResults();
 
-    /**
-     * Return all facets, if any.
-     *
-     * @return array<FacetIterface>
-     */
-    public function getFacets();
 }

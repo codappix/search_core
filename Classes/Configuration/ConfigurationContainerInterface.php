@@ -34,6 +34,8 @@ interface ConfigurationContainerInterface extends Singleton
      *
      * @param string $path In dot notation. E.g. indexer.tca.allowedTables
      * @return mixed
+     *
+     * @throws InvalidArgumentException
      */
     public function get($path);
 

@@ -20,10 +20,13 @@ namespace Leonmrni\SearchCore\Domain\Search;
  * 02110-1301, USA.
  */
 
+use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
+use Leonmrni\SearchCore\Configuration\InvalidArgumentException;
 use Leonmrni\SearchCore\Connection\ConnectionInterface;
 use Leonmrni\SearchCore\Connection\SearchRequestInterface;
 use Leonmrni\SearchCore\Connection\SearchResultInterface;
-use Leonmrni\SearchCore\Domain\Model\SearchRequest;
+use Leonmrni\SearchCore\Domain\Model\FacetRequest;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 /**
  * Service to process a search request.
@@ -36,11 +39,28 @@ class SearchService
     protected $connection;
 
     /**
-     * @param ConnectionInterface $connection
+     * @var ConfigurationContainerInterface
      */
-    public function __construct(ConnectionInterface $connection)
-    {
+    protected $configuration;
+
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    /**
+     * @param ConnectionInterface $connection
+     * @param ConfigurationContainerInterface $configuration
+     * @param ObjectManagerInterface $objectManager
+     */
+    public function __construct(
+        ConnectionInterface $connection,
+        ConfigurationContainerInterface $configuration,
+        ObjectManagerInterface $objectManager
+    ) {
         $this->connection = $connection;
+        $this->configuration = $configuration;
+        $this->objectManager = $objectManager;
     }
 
     /**
@@ -49,6 +69,34 @@ class SearchService
      */
     public function search(SearchRequestInterface $searchRequest)
     {
+        $this->addConfiguredFacets($searchRequest);
+
         return $this->connection->search($searchRequest);
+    }
+
+    /**
+     * Add facets from configuration to request.
+     *
+     * @param SearchRequestInterface $searchRequest
+     */
+    protected function addConfiguredFacets(SearchRequestInterface $searchRequest)
+    {
+        $facetsConfig = $this->configuration->getIfExists('searching.facets');
+        if ($facetsConfig === null) {
+            return;
+        }
+
+        foreach ($facetsConfig as $identifier => $facetConfig) {
+            if (!isset($facetConfig['field']) || trim($facetConfig['field']) === '') {
+                // TODO: Finish throw
+                throw new \Exception('message', 1499171142);
+            }
+
+            $searchRequest->addFacet($this->objectManager->get(
+                FacetRequest::class,
+                $identifier,
+                $facetConfig['field']
+            ));
+        }
     }
 }

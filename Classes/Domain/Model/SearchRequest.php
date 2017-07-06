@@ -20,6 +20,7 @@ namespace Leonmrni\SearchCore\Domain\Model;
  * 02110-1301, USA.
  */
 
+use Leonmrni\SearchCore\Connection\FacetRequestInterface;
 use Leonmrni\SearchCore\Connection\SearchRequestInterface;
 
 /**
@@ -38,6 +39,11 @@ class SearchRequest implements SearchRequestInterface
      * @var array
      */
     protected $filter = [];
+
+    /**
+     * @var array
+     */
+    protected $facets = [];
 
     /**
      * @param string $query
@@ -68,7 +74,7 @@ class SearchRequest implements SearchRequestInterface
      */
     public function setFilter(array $filter)
     {
-        $this->filter = array_map('strval', $filter);
+        $this->filter = array_filter(array_map('strval', $filter));
     }
 
     /**
@@ -85,5 +91,25 @@ class SearchRequest implements SearchRequestInterface
     public function getFilter()
     {
         return $this->filter;
+    }
+
+    /**
+     * Add a facet to gather in this search request.
+     *
+     * @param FacetRequestInterface $facet
+     */
+    public function addFacet(FacetRequestInterface $facet)
+    {
+        $this->facets[$facet->getIdentifier()] = $facet;
+    }
+
+    /**
+     * Returns all configured facets to fetch in this search request.
+     *
+     * @return array
+     */
+    public function getFacets()
+    {
+        return $this->facets;
     }
 }
