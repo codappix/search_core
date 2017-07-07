@@ -14,10 +14,7 @@ plugin {
                 # should also be added, together with additionalWhereClause
                 # based on doktypes
                 tt_content {
-                    additionalWhereClause (
-                        pages.doktype NOT IN (3, 199)
-                        AND tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu', 'shortcut', 'search', 'login')
-                    )
+                    additionalWhereClause = pages.doktype NOT IN (3, 199) AND tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu', 'shortcut', 'search', 'login')
                 }
             }
         }
