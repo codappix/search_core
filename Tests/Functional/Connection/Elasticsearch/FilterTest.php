@@ -55,7 +55,7 @@ class FilterTest extends AbstractFunctionalTestCase
 
         $searchRequest->setFilter(['CType' => 'HTML']);
         $result = $searchService->search($searchRequest);
-        $this->assertSame('5', $result->getResults()[0]['uid'], 'Did not get the expected result entry.');
+        $this->assertSame(5, $result->getResults()[0]['uid'], 'Did not get the expected result entry.');
         $this->assertSame(1, count($result), 'Did not receive the single filtered element.');
     }
 

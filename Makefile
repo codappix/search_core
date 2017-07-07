@@ -22,7 +22,6 @@ functionalTests:
 		typo3DatabaseHost=$(typo3DatabaseHost) \
 		TYPO3_PATH_WEB=$(TYPO3_WEB_DIR) \
 		.Build/bin/phpunit --colors --debug -v \
-			--stop-on-error \
 			-c Tests/Functional/FunctionalTests.xml
 
 unitTests:

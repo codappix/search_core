@@ -21,6 +21,8 @@ namespace Codappix\SearchCore\Domain\Index;
  */
 
 use Codappix\SearchCore\Connection\ConnectionInterface;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Will index the given table using configuration from TCA.
@@ -51,14 +53,22 @@ class TcaIndexer extends AbstractIndexer
      */
     protected function getRecords($offset, $limit)
     {
-        $records = $this->getDatabaseConnection()->exec_SELECTgetRows(
-            $this->tcaTableService->getFields(),
-            $this->tcaTableService->getTableClause(),
-            $this->tcaTableService->getWhereClause(),
-            '',
-            '',
-            (int) $offset . ',' . (int) $limit
-        );
+        $queryBuilder = $this->getDatabaseConnection()->getQueryBuilderForTable($this->tcaTableService->getTableName());
+        $where = $this->tcaTableService->getWhereClause();
+        $query = $queryBuilder->select(... $this->tcaTableService->getFields())
+            ->from($this->tcaTableService->getTableClause())
+            ->where($where->getStatement())
+            ->setParameters($where->getParameters())
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        foreach ($this->tcaTableService->getJoins() as $join) {
+            $query->from($join->getTable());
+            $query->andWhere($join->getCondition());
+        }
+
+        $records = $query->execute()->fetchAll();
+
         if ($records === null) {
             return null;
         }
@@ -106,7 +116,6 @@ class TcaIndexer extends AbstractIndexer
 
     protected function getDatabaseConnection()
     {
-        return GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionByName('Default');
+        return GeneralUtility::makeInstance(ConnectionPool::class);
     }
 }
