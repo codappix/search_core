@@ -22,6 +22,7 @@ namespace Codappix\SearchCore\Domain\Index;
 
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -53,21 +54,11 @@ class TcaIndexer extends AbstractIndexer
      */
     protected function getRecords($offset, $limit)
     {
-        $queryBuilder = $this->getDatabaseConnection()->getQueryBuilderForTable($this->tcaTableService->getTableName());
-        $where = $this->tcaTableService->getWhereClause();
-        $query = $queryBuilder->select(... $this->tcaTableService->getFields())
-            ->from($this->tcaTableService->getTableClause())
-            ->where($where->getStatement())
-            ->setParameters($where->getParameters())
+        $records = $this->getQuery()
             ->setFirstResult($offset)
-            ->setMaxResults($limit);
-
-        foreach ($this->tcaTableService->getJoins() as $join) {
-            $query->from($join->getTable());
-            $query->andWhere($join->getCondition());
-        }
-
-        $records = $query->execute()->fetchAll();
+            ->setMaxResults($limit)
+            ->execute()
+            ->fetchAll();
 
         if ($records === null) {
             return null;
@@ -88,12 +79,7 @@ class TcaIndexer extends AbstractIndexer
      */
     protected function getRecord($identifier)
     {
-        $record = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
-            $this->tcaTableService->getFields(),
-            $this->tcaTableService->getTableClause(),
-            $this->tcaTableService->getWhereClause()
-                . ' AND ' . $this->tcaTableService->getTableName() . '.uid = ' . (int) $identifier
-        );
+        $record = $this->getQuery()->execute()->fetch();
 
         if ($record === false || $record === null) {
             throw new NoRecordFoundException(
@@ -112,6 +98,23 @@ class TcaIndexer extends AbstractIndexer
     protected function getDocumentName()
     {
         return $this->tcaTableService->getTableName();
+    }
+
+    protected function getQuery() : QueryBuilder
+    {
+        $queryBuilder = $this->getDatabaseConnection()->getQueryBuilderForTable($this->tcaTableService->getTableName());
+        $where = $this->tcaTableService->getWhereClause();
+        $query = $queryBuilder->select(... $this->tcaTableService->getFields())
+            ->from($this->tcaTableService->getTableClause())
+            ->where($where->getStatement())
+            ->setParameters($where->getParameters());
+
+        foreach ($this->tcaTableService->getJoins() as $join) {
+            $query->from($join->getTable());
+            $query->andWhere($join->getCondition());
+        }
+
+        return $query;
     }
 
     protected function getDatabaseConnection()
