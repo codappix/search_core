@@ -60,6 +60,9 @@ class TcaTableServiceTest extends AbstractUnitTestCase
             ->method('getIfExists')
             ->withConsecutive(['indexing.table.additionalWhereClause'], ['indexing.table.rootLineBlacklist'])
             ->will($this->onConsecutiveCalls(null, false));
+        $this->subject->expects($this->once())
+            ->method('getSystemWhereClause')
+            ->will($this->returnValue('1=1 AND pages.no_search = 0'));
 
         $this->assertSame(
             '1=1 AND pages.no_search = 0',
@@ -76,6 +79,9 @@ class TcaTableServiceTest extends AbstractUnitTestCase
             ->method('getIfExists')
             ->withConsecutive(['indexing.table.additionalWhereClause'], ['indexing.table.rootLineBlacklist'])
             ->will($this->onConsecutiveCalls('table.field = "someValue"', false));
+        $this->subject->expects($this->once())
+            ->method('getSystemWhereClause')
+            ->will($this->returnValue('1=1 AND pages.no_search = 0'));
 
         $this->assertSame(
             '1=1 AND pages.no_search = 0 AND table.field = "someValue"',
