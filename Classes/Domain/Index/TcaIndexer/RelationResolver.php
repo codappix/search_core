@@ -73,12 +73,15 @@ class RelationResolver implements Singleton
      */
     protected function resolveValue($value, array $tcaColumn)
     {
-        if ($value === '' || $value === '0') {
+        if ($value === '') {
             return '';
         }
 
-        if ($tcaColumn['type'] === 'select' || $tcaColumn['type'] === 'group') {
+        if ($tcaColumn['type'] === 'select') {
             return $this->resolveForeignDbValue($value);
+        }
+        if ($tcaColumn['type'] === 'inline' || $tcaColumn['type'] === 'group') {
+            return $this->resolveInlineValue($value);
         }
 
         return '';
@@ -107,5 +110,10 @@ class RelationResolver implements Singleton
             return [];
         }
         return array_map('trim', explode(';', $value));
+    }
+
+    protected function resolveInlineValue(string $value) : array
+    {
+        return array_map('trim', explode(',', $value));
     }
 }

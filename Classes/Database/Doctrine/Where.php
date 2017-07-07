@@ -20,9 +20,6 @@ namespace Codappix\SearchCore\Database\Doctrine;
  * 02110-1301, USA.
  */
 
-/**
- *
- */
 class Where
 {
     /**
