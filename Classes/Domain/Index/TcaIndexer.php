@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Domain\Index;
+namespace Codappix\SearchCore\Domain\Index;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,38 +20,17 @@ namespace Leonmrni\SearchCore\Domain\Index;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
-use Leonmrni\SearchCore\Connection\ConnectionInterface;
+use Codappix\SearchCore\Connection\ConnectionInterface;
 
 /**
  * Will index the given table using configuration from TCA.
  */
-class TcaIndexer implements IndexerInterface
+class TcaIndexer extends AbstractIndexer
 {
-    /**
-     * @var ConnectionInterface
-     */
-    protected $connection;
-
     /**
      * @var TcaIndexer\TcaTableService
      */
     protected $tcaTableService;
-
-    /**
-     * @var \TYPO3\CMS\Core\Log\Logger
-     */
-    protected $logger;
-
-    /**
-     * Inject log manager to get concrete logger from it.
-     *
-     * @param \TYPO3\CMS\Core\Log\LogManager $logManager
-     */
-    public function injectLogger(\TYPO3\CMS\Core\Log\LogManager $logManager)
-    {
-        $this->logger = $logManager->getLogger(__CLASS__);
-    }
 
     /**
      * @param TcaIndexer\TcaTableService $tcaTableService
@@ -63,46 +42,6 @@ class TcaIndexer implements IndexerInterface
     ) {
         $this->tcaTableService = $tcaTableService;
         $this->connection = $connection;
-    }
-
-    public function indexAllDocuments()
-    {
-        $this->logger->info('Start indexing');
-        foreach ($this->getRecordGenerator() as $records) {
-            $this->logger->debug('Index records.', [$records]);
-            if ($records === null) {
-                break;
-            }
-
-            $this->connection->addDocuments($this->tcaTableService->getTableName(), $records);
-        }
-        $this->logger->info('Finish indexing');
-    }
-
-    public function indexDocument($identifier)
-    {
-        $this->logger->info('Start indexing single record.', [$identifier]);
-        try {
-            $this->connection->addDocument($this->tcaTableService->getTableName(), $this->getRecord($identifier));
-        } catch (NoRecordFoundException $e) {
-            $this->logger->info('Could not index document.', [$e->getMessage()]);
-        }
-        $this->logger->info('Finish indexing');
-    }
-
-    /**
-     * @return \Generator
-     */
-    protected function getRecordGenerator()
-    {
-        $offset = 0;
-        // TODO: Make configurable.
-        $limit = 50;
-
-        while (($records = $this->getRecords($offset, $limit)) !== []) {
-            yield $records;
-            $offset += $limit;
-        }
     }
 
     /**
@@ -155,6 +94,14 @@ class TcaIndexer implements IndexerInterface
         $this->tcaTableService->prepareRecord($record);
 
         return $record;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDocumentName()
+    {
+        return $this->tcaTableService->getTableName();
     }
 
     protected function getDatabaseConnection()

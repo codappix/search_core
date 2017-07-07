@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Connection;
+namespace Codappix\SearchCore\Connection;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,7 +20,10 @@ namespace Leonmrni\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Connection\Elasticsearch\SearchResult;
+use Codappix\SearchCore\Domain\Search\QueryFactory;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 /**
  * Outer wrapper to elasticsearch.
@@ -43,14 +46,29 @@ class Elasticsearch implements Singleton, ConnectionInterface
     protected $typeFactory;
 
     /**
+     * @var Elasticsearch\MappingFactory
+     */
+    protected $mappingFactory;
+
+    /**
      * @var Elasticsearch\DocumentFactory
      */
     protected $documentFactory;
 
     /**
+     * @var QueryFactory
+     */
+    protected $queryFactory;
+
+    /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
+
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
 
     /**
      * Inject log manager to get concrete logger from it.
@@ -63,21 +81,35 @@ class Elasticsearch implements Singleton, ConnectionInterface
     }
 
     /**
+     * @param ObjectManagerInterface $objectManager
+     */
+    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
+
+    /**
      * @param Elasticsearch\Connection $connection
      * @param Elasticsearch\IndexFactory $indexFactory
      * @param Elasticsearch\TypeFactory $typeFactory
+     * @param Elasticsearch\MappingFactory $mappingFactory
      * @param Elasticsearch\DocumentFactory $documentFactory
+     * @param QueryFactory $queryFactory
      */
     public function __construct(
         Elasticsearch\Connection $connection,
         Elasticsearch\IndexFactory $indexFactory,
         Elasticsearch\TypeFactory $typeFactory,
-        Elasticsearch\DocumentFactory $documentFactory
+        Elasticsearch\MappingFactory $mappingFactory,
+        Elasticsearch\DocumentFactory $documentFactory,
+        QueryFactory $queryFactory
     ) {
         $this->connection = $connection;
         $this->indexFactory = $indexFactory;
         $this->typeFactory = $typeFactory;
+        $this->mappingFactory = $mappingFactory;
         $this->documentFactory = $documentFactory;
+        $this->queryFactory = $queryFactory;
     }
 
     public function addDocument($documentType, array $document)
@@ -133,6 +165,13 @@ class Elasticsearch implements Singleton, ConnectionInterface
     protected function withType($documentType, callable $callback)
     {
         $type = $this->getType($documentType);
+        // TODO: Check whether it's to heavy to send it so often e.g. for every single document.
+        // Perhaps add command controller to submit mapping?!
+        // Also it's not possible to change mapping without deleting index first.
+        // Mattes told about a solution.
+        // So command looks like the best way so far, except we manage mattes solution.
+        // Still then this should be done once. So perhaps singleton which tracks state and does only once?
+        $this->mappingFactory->getMapping($type)->send();
         $callback($type);
         $type->getIndex()->refresh();
     }
@@ -140,7 +179,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
     /**
      * @param SearchRequestInterface $searchRequest
      *
-     * @return \Elastica\ResultSet
+     * @return SearchResultInterface
      */
     public function search(SearchRequestInterface $searchRequest)
     {
@@ -148,10 +187,9 @@ class Elasticsearch implements Singleton, ConnectionInterface
 
         $search = new \Elastica\Search($this->connection->getClient());
         $search->addIndex('typo3content');
+        $search->setQuery($this->queryFactory->create($searchRequest));
 
-        // TODO: Return wrapped result to implement our interface.
-        // Also update php doc to reflect the change.
-        return $search->search('"' . $searchRequest->getSearchTerm() . '"');
+        return $this->objectManager->get(SearchResult::class, $search->search());
     }
 
     /**

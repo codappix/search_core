@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Functional\Connection\Elasticsearch;
+namespace Codappix\SearchCore\Tests\Functional\Connection\Elasticsearch;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,7 +20,7 @@ namespace Leonmrni\SearchCore\Tests\Functional\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase as BaseFunctionalTestCase;
+use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase as BaseFunctionalTestCase;
 
 /**
  * All functional tests should extend this base class.
@@ -43,11 +43,19 @@ abstract class AbstractFunctionalTestCase extends BaseFunctionalTestCase
             'host' => getenv('ES_HOST') ?: \Elastica\Connection::DEFAULT_HOST,
             'port' => getenv('ES_PORT') ?: \Elastica\Connection::DEFAULT_PORT,
         ]);
+
+        // Start with clean system for test.
+        $this->cleanUp();
     }
 
     public function tearDown()
     {
-        // Delete everything so next test starts clean.
+        // Make system clean again.
+        $this->cleanUp();
+    }
+
+    protected function cleanUp()
+    {
         $this->client->getIndex('_all')->delete();
         $this->client->getIndex('_all')->clearCache();
     }

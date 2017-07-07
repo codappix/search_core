@@ -8,9 +8,23 @@ plugin {
                 }
             }
 
-            indexer {
-                tca {
-                    allowedTables = tt_content
+            indexing {
+                tt_content {
+                    indexer = Codappix\SearchCore\Domain\Index\TcaIndexer
+
+                    mapping {
+                        CType {
+                            type = keyword
+                        }
+                    }
+                }
+            }
+
+            searching {
+                facets {
+                    contentTypes {
+                        field = CType
+                    }
                 }
             }
         }

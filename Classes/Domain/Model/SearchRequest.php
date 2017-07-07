@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Domain\Model;
+namespace Codappix\SearchCore\Domain\Model;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,7 +20,8 @@ namespace Leonmrni\SearchCore\Domain\Model;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Connection\SearchRequestInterface;
+use Codappix\SearchCore\Connection\FacetRequestInterface;
+use Codappix\SearchCore\Connection\SearchRequestInterface;
 
 /**
  * Represents a search request used to process an actual search.
@@ -32,14 +33,24 @@ class SearchRequest implements SearchRequestInterface
      *
      * @var string
      */
-    protected $query;
+    protected $query = '';
+
+    /**
+     * @var array
+     */
+    protected $filter = [];
+
+    /**
+     * @var array
+     */
+    protected $facets = [];
 
     /**
      * @param string $query
      */
     public function __construct($query)
     {
-        $this->query = $query;
+        $this->query = (string) $query;
     }
 
     /**
@@ -56,5 +67,49 @@ class SearchRequest implements SearchRequestInterface
     public function getSearchTerm()
     {
         return $this->query;
+    }
+
+    /**
+     * @param array $filter
+     */
+    public function setFilter(array $filter)
+    {
+        $this->filter = array_filter(array_map('strval', $filter));
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasFilter()
+    {
+        return count($this->filter) > 0;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFilter()
+    {
+        return $this->filter;
+    }
+
+    /**
+     * Add a facet to gather in this search request.
+     *
+     * @param FacetRequestInterface $facet
+     */
+    public function addFacet(FacetRequestInterface $facet)
+    {
+        $this->facets[$facet->getIdentifier()] = $facet;
+    }
+
+    /**
+     * Returns all configured facets to fetch in this search request.
+     *
+     * @return array
+     */
+    public function getFacets()
+    {
+        return $this->facets;
     }
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Functional\Hooks\DataHandler;
+namespace Codappix\SearchCore\Tests\Functional\Hooks\DataHandler;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>

@@ -8,13 +8,10 @@ plugin {
                 }
             }
 
-            indexer {
-                tca {
-                    allowedTables = {$plugin.tx_searchcore.settings.indexer.tca.allowedTables}
-
-                    tt_content {
-                        additionalWhereClause = {$plugin.tx_searchcore.settings.indexer.tca.tt_content.additionalWhereClause}
-                    }
+            indexing {
+                tt_content {
+                    indexer = Codappix\SearchCore\Domain\Index\TcaIndexer
+                    additionalWhereClause = {$plugin.tx_searchcore.settings.indexing.tt_content.additionalWhereClause}
                 }
             }
         }

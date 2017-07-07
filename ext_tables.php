@@ -7,7 +7,7 @@
 );
 
 TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
-    'Leonmrni.' . $_EXTKEY,
+    'Codappix.' . $_EXTKEY,
     'search',
     'Search Core'
 );

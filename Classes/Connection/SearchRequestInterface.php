@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Connection;
+namespace Codappix\SearchCore\Connection;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -31,4 +31,14 @@ interface SearchRequestInterface
      * @return string
      */
     public function getSearchTerm();
+
+    /**
+     * @return bool
+     */
+    public function hasFilter();
+
+    /**
+     * @return array
+     */
+    public function getFilter();
 }
