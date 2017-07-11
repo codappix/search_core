@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Unit;
+namespace Codappix\SearchCore\Tests\Unit;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -24,4 +24,23 @@ use TYPO3\CMS\Core\Tests\UnitTestCase as CoreTestCase;
 
 abstract class AbstractUnitTestCase extends CoreTestCase
 {
+    /**
+     * @return \TYPO3\CMS\Core\Log\LogManager
+     */
+    protected function getMockedLogger()
+    {
+        $logger = $this->getMockBuilder(\TYPO3\CMS\Core\Log\LogManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getLogger'])
+            ->getMock();
+        $logger->expects($this->once())
+            ->method('getLogger')
+            ->will($this->returnValue(
+                $this->getMockBuilder(\TYPO3\CMS\Core\Log\Logger::class)
+                    ->disableOriginalConstructor()
+                    ->getMock()
+            ));
+
+        return $logger;
+    }
 }

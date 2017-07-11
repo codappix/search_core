@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Domain\Search;
+namespace Codappix\SearchCore\Domain\Search;
 
 /*
  * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,47 +20,119 @@ namespace Leonmrni\SearchCore\Domain\Search;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Connection\ConnectionInterface;
-use Leonmrni\SearchCore\Connection\Elasticsearch\Query;
-use Leonmrni\SearchCore\Connection\SearchRequestInterface;
+use Codappix\SearchCore\Connection\ConnectionInterface;
+use Codappix\SearchCore\Connection\Elasticsearch\Query;
+use Codappix\SearchCore\Connection\SearchRequestInterface;
+use TYPO3\CMS\Extbase\Utility\ArrayUtility;
 
 class QueryFactory
 {
     /**
-     * @param ConnectionInterface $connection
+     * @var \TYPO3\CMS\Core\Log\Logger
+     */
+    protected $logger;
+
+    /**
+     * @var array
+     */
+    protected $query = [];
+
+    /**
+     * @param \TYPO3\CMS\Core\Log\LogManager $logManager
+     */
+    public function __construct(\TYPO3\CMS\Core\Log\LogManager $logManager)
+    {
+        $this->logger = $logManager->getLogger(__CLASS__);
+    }
+
+    /**
      * @param SearchRequestInterface $searchRequest
      *
      * @return \Elastica\Query
      */
-    public function create(
-        ConnectionInterface $connection,
-        SearchRequestInterface $searchRequest
-    ) {
+    public function create(SearchRequestInterface $searchRequest)
+    {
         return $this->createElasticaQuery($searchRequest);
     }
 
     /**
      * @param SearchRequestInterface $searchRequest
+     *
+     * TODO: This is not in scope Elasticsearch, therefore should not return elastica.
      * @return \Elastica\Query
      */
     protected function createElasticaQuery(SearchRequestInterface $searchRequest)
     {
-        $query = [
-            'bool' => [
-                'must' => [
-                    [
-                        'match' => [
-                            '_all' => $searchRequest->getSearchTerm()
+        $this->addSearch($searchRequest);
+        $this->addFilter($searchRequest);
+        $this->addFacets($searchRequest);
+
+        $this->logger->debug('Generated elasticsearch query.', [$this->query]);
+        return new \Elastica\Query($this->query);
+    }
+
+    /**
+     * @param SearchRequestInterface $searchRequest
+     */
+    protected function addSearch(SearchRequestInterface $searchRequest)
+    {
+        $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
+            'query' => [
+                'bool' => [
+                    'must' => [
+                        [
+                            'match' => [
+                                '_all' => $searchRequest->getSearchTerm()
+                            ],
                         ],
                     ],
                 ],
             ],
-        ];
+        ]);
+    }
 
-        if ($searchRequest->hasFilter()) {
-            $query['bool']['filter'] = ['term' => $searchRequest->getFilter()];
+    /**
+     * @param SearchRequestInterface $searchRequest
+     */
+    protected function addFilter(SearchRequestInterface $searchRequest)
+    {
+        if (! $searchRequest->hasFilter()) {
+            return;
         }
 
-        return new \Elastica\Query(['query' => $query]);
+        $terms = [];
+        foreach ($searchRequest->getFilter() as $name => $value) {
+            $terms[] = [
+                'term' => [
+                    $name => $value,
+                ],
+            ];
+        }
+
+        $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
+            'query' => [
+                'bool' => [
+                    'filter' => $terms,
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * @param SearchRequestInterface $searchRequest
+     */
+    protected function addFacets(SearchRequestInterface $searchRequest)
+    {
+        foreach ($searchRequest->getFacets() as $facet) {
+            $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
+                'aggs' => [
+                    $facet->getIdentifier() => [
+                        'terms' => [
+                            'field' => $facet->getField(),
+                        ],
+                    ],
+                ],
+            ]);
+        }
     }
 }

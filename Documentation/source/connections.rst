@@ -22,5 +22,9 @@ The connection is configurable through the following options:
 
 * :ref:`port`
 
+* :ref:`mapping`
+
+* :ref:`facets`
+
 .. _elastic Elasticsearch: https://www.elastic.co/products/elasticsearch
 .. _elastica: http://elastica.io/

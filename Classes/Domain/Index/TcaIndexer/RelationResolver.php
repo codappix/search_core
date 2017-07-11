@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Domain\Index\TcaIndexer;
+namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>

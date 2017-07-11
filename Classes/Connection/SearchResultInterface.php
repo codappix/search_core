@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Connection;
+namespace Codappix\SearchCore\Connection;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -21,9 +21,35 @@ namespace Leonmrni\SearchCore\Connection;
  */
 
 /**
- *
+ * A search result.
  */
-interface SearchResultInterface extends \Iterator, \Countable, \ArrayAccess
+interface SearchResultInterface extends \Iterator, \Countable
 {
+    /**
+     * @return array<ResultItemInterface>
+     */
+    public function getResults();
 
+    /**
+     * Return all facets, if any.
+     *
+     * @return array<FacetIterface>
+     */
+    public function getFacets();
+
+    /**
+     * Returns the total sum of matching results.
+     *
+     * @return int
+     */
+    public function getTotalCount();
+
+    // Countable - Interface
+
+    /**
+     * Returns the total sum of results contained in this result.
+     *
+     * @return int
+     */
+    public function count();
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Functional\Hooks\DataHandler;
+namespace Codappix\SearchCore\Tests\Functional\Hooks\DataHandler;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,10 +20,11 @@ namespace Leonmrni\SearchCore\Tests\Functional\Hooks\DataHandler;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
-use Leonmrni\SearchCore\Domain\Service\DataHandler as DataHandlerService;
-use Leonmrni\SearchCore\Hook\DataHandler as DataHandlerHook;
-use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Domain\Index\IndexerFactory;
+use Codappix\SearchCore\Domain\Service\DataHandler as DataHandlerService;
+use Codappix\SearchCore\Hook\DataHandler as DataHandlerHook;
+use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Core\DataHandling\DataHandler as Typo3DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
@@ -42,7 +43,10 @@ abstract class AbstractDataHandlerTest extends AbstractFunctionalTestCase
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 
         $this->subject = $this->getMockBuilder(DataHandlerService::class)
-            ->setConstructorArgs([$objectManager->get(ConfigurationContainerInterface::class)])
+            ->setConstructorArgs([
+                $objectManager->get(ConfigurationContainerInterface::class),
+                $objectManager->get(IndexerFactory::class)
+            ])
             ->setMethods(['add', 'update', 'delete'])
             ->getMock();
 

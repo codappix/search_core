@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Unit\Domain\Search;
+namespace Codappix\SearchCore\Tests\Unit\Domain\Search;
 
 /*
  * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,20 +20,23 @@ namespace Leonmrni\SearchCore\Tests\Unit\Domain\Search;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Connection;
-use Leonmrni\SearchCore\Domain\Model\SearchRequest;
-use Leonmrni\SearchCore\Domain\Search\QueryFactory;
-use Leonmrni\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use Codappix\SearchCore\Domain\Model\FacetRequest;
+use Codappix\SearchCore\Domain\Model\SearchRequest;
+use Codappix\SearchCore\Domain\Search\QueryFactory;
+use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
 
 class QueryFactoryTest extends AbstractUnitTestCase
 {
+    /**
+     * @var QueryFactory
+     */
     protected $subject;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->subject = new QueryFactory;
+        $this->subject = new QueryFactory($this->getMockedLogger());
     }
 
     /**
@@ -41,12 +44,9 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function creatonOfQueryWorksInGeneral()
     {
-        $connection = $this->getMockBuilder(Connection\Elasticsearch::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $searchRequest = new SearchRequest('SearchWord');
 
-        $query = $this->subject->create($connection, $searchRequest);
+        $query = $this->subject->create($searchRequest);
         $this->assertInstanceOf(
             \Elastica\Query::class,
             $query,
@@ -59,17 +59,41 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function filterIsAddedToQuery()
     {
-        $connection = $this->getMockBuilder(Connection\Elasticsearch::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setFilter(['field' => 'content']);
 
-        $query = $this->subject->create($connection, $searchRequest);
+        $query = $this->subject->create($searchRequest);
         $this->assertSame(
-            ['field' => 'content'],
-            $query->toArray()['query']['bool']['filter']['term'],
+            [
+                ['term' => ['field' => 'content']]
+            ],
+            $query->toArray()['query']['bool']['filter'],
             'Filter was not added to query.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function emptyFilterIsNotAddedToQuery()
+    {
+        $searchRequest = new SearchRequest('SearchWord');
+        $searchRequest->setFilter([
+            'field' => '',
+            'field1' => 0,
+            'field2' => false,
+        ]);
+
+        $this->assertFalse(
+            $searchRequest->hasFilter(),
+            'Search request contains filter even if it should not.'
+        );
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertSame(
+            null,
+            $query->toArray()['query']['bool']['filter'],
+            'Filter was added to query, even if no filter exists.'
         );
     }
 
@@ -78,13 +102,10 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function userInputIsAlwaysString()
     {
-        $connection = $this->getMockBuilder(Connection\Elasticsearch::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $searchRequest = new SearchRequest(10);
         $searchRequest->setFilter(['field' => 20]);
 
-        $query = $this->subject->create($connection, $searchRequest);
+        $query = $this->subject->create($searchRequest);
         $this->assertSame(
             '10',
             $query->toArray()['query']['bool']['must'][0]['match']['_all'],
@@ -92,8 +113,36 @@ class QueryFactoryTest extends AbstractUnitTestCase
         );
         $this->assertSame(
             '20',
-            $query->toArray()['query']['bool']['filter']['term']['field'],
+            $query->toArray()['query']['bool']['filter'][0]['term']['field'],
             'Search word was not escaped as expected.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function facetsAreAddedToQuery()
+    {
+        $searchRequest = new SearchRequest('SearchWord');
+        $searchRequest->addFacet(new FacetRequest('Identifier', 'FieldName'));
+        $searchRequest->addFacet(new FacetRequest('Identifier 2', 'FieldName 2'));
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertSame(
+            [
+                'Identifier' => [
+                    'terms' => [
+                        'field' => 'FieldName',
+                    ],
+                ],
+                'Identifier 2' => [
+                    'terms' => [
+                        'field' => 'FieldName 2',
+                    ],
+                ],
+            ],
+            $query->toArray()['aggs'],
+            'Facets were not added to query.'
         );
     }
 }

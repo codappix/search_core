@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Hook;
+namespace Codappix\SearchCore\Hook;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,8 +20,9 @@ namespace Leonmrni\SearchCore\Hook;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Configuration\NoConfigurationException;
-use Leonmrni\SearchCore\Domain\Service\DataHandler as OwnDataHandler;
+use Codappix\SearchCore\Configuration\NoConfigurationException;
+use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
+use Codappix\SearchCore\Domain\Service\DataHandler as OwnDataHandler;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler as CoreDataHandler;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -140,21 +141,12 @@ class DataHandler implements Singleton
             $this->logger->debug('Datahandler could not be setup.');
             return false;
         }
-        if (! $this->shouldProcessTable($table)) {
+        if (! $this->dataHandler->canHandle($table)) {
             $this->logger->debug('Table is not allowed.', [$table]);
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * @param string $table
-     * @return bool
-     */
-    protected function shouldProcessTable($table)
-    {
-        return in_array($table, $this->dataHandler->getAllowedTablesForIndexing());
     }
 
     /**

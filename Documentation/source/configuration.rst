@@ -38,7 +38,7 @@ Options
 
 The following section contains the different options, e.g. for :ref:`connections` and
 :ref:`indexer`: ``plugin.tx_searchcore.settings.connection`` or
-``plugin.tx_searchcore.settings.index``.
+``plugin.tx_searchcore.settings.indexing``.
 
 .. _configuration_options_connection:
 
@@ -96,8 +96,8 @@ The following settings are available. For each setting its documented which conn
 
 .. _configuration_options_index:
 
-index
-^^^^^
+Indexing
+^^^^^^^^
 
 Holds settings regarding the indexing, e.g. of TYPO3 records, to search services.
 
@@ -106,8 +106,9 @@ Configured as::
     plugin {
         tx_searchcore {
             settings {
-                indexer {
-                    indexerName {
+                indexing {
+                    identifier {
+                        indexer = FullyQualifiedClassname
                         // the settings
                     }
                 }
@@ -115,25 +116,9 @@ Configured as::
         }
     }
 
-Where ``indexerName`` is one of the available :ref:`indexer`.
+Where ``identifier`` is up to you, but should match table names to make :ref:`TcaIndexer` work.
 
 The following settings are available. For each setting its documented which indexer consumes it.
-
-.. _allowedTables:
-
-``allowedTables``
-"""""""""""""""""
-
-    Used by: :ref:`TcaIndexer`.
-
-    Defines which TYPO3 tables are allowed to be indexed. Only white listed tables will be processed
-    through Command Line Interface and Hooks.
-
-    Contains a comma separated list of table names. Spaces are trimmed.
-
-    Example::
-
-        plugin.tx_searchcore.settings.indexer.tca.allowedTables = tt_content, fe_users
 
 .. _rootLineBlacklist:
 
@@ -151,7 +136,7 @@ The following settings are available. For each setting its documented which inde
 
     Example::
 
-        plugin.tx_searchcore.settings.index.tca.rootLineBlacklist = 3, 10, 100
+        plugin.tx_searchcore.settings.indexing.<identifier>.rootLineBlacklist = 3, 10, 100
 
 Also it's possible to define some behaviour for the different document types. In context of TYPO3
 tables are used as document types 1:1. It's possible to configure different tables. The following
@@ -170,9 +155,57 @@ options are available:
 
     Example::
 
-        plugin.tx_searchcore.settings.index.tca.tt_content.additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu')
+        plugin.tx_searchcore.settings.indexing.<identifier>.additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu')
 
     .. attention::
 
         Make sure to prefix all fields with the corresponding table name. The selection from
         database will contain joins and can lead to SQL errors if a field exists in multiple tables.
+
+.. _mapping:
+
+``mapping``
+"""""""""""
+
+    Used by: Elasticsearch connection while indexing.
+
+    Define mapping for Elasticsearch, have a look at the official docs: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/mapping.html
+    You are able to define the mapping for each property / columns.
+
+    Example::
+
+        plugin.tx_searchcore.settings.indexing.tt_content.mapping {
+            CType {
+                type = keyword
+            }
+        }
+
+    The above example will define the ``CType`` field of ``tt_content`` as ``type: keyword``. This
+    makes building a facet possible.
+
+
+.. _configuration_options_search:
+
+Searching
+^^^^^^^^^
+
+.. _facets:
+
+``facets``
+"""""""""""
+
+    Used by: Elasticsearch connection while building search query.
+
+    Define aggregations for Elasticsearch, have a look at the official docs: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/search-aggregations-bucket-terms-aggregation.html
+    Currently only the term facet is provided.
+
+    Example::
+
+        plugin.tx_searchcore.settings.searching.facets {
+            contentTypes {
+                field = CType
+            }
+        }
+
+    The above example will provide a facet with options for all found ``CType`` results together
+    with a count.

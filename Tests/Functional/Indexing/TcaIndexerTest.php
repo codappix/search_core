@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Tests\Indexing;
+namespace Codappix\SearchCore\Tests\Indexing;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,12 +20,12 @@ namespace Leonmrni\SearchCore\Tests\Indexing;
  * 02110-1301, USA.
  */
 
-use Leonmrni\SearchCore\Configuration\ConfigurationContainerInterface;
-use Leonmrni\SearchCore\Connection\Elasticsearch;
-use Leonmrni\SearchCore\Domain\Index\TcaIndexer;
-use Leonmrni\SearchCore\Domain\Index\TcaIndexer\RelationResolver;
-use Leonmrni\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
-use Leonmrni\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Connection\Elasticsearch;
+use Codappix\SearchCore\Domain\Index\TcaIndexer;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\RelationResolver;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
+use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class TcaIndexerTest extends AbstractFunctionalTestCase

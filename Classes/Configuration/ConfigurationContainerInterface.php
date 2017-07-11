@@ -1,5 +1,5 @@
 <?php
-namespace Leonmrni\SearchCore\Configuration;
+namespace Codappix\SearchCore\Configuration;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -34,6 +34,8 @@ interface ConfigurationContainerInterface extends Singleton
      *
      * @param string $path In dot notation. E.g. indexer.tca.allowedTables
      * @return mixed
+     *
+     * @throws InvalidArgumentException
      */
     public function get($path);
 

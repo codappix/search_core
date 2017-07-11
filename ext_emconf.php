@@ -4,6 +4,7 @@ $EM_CONF[$_EXTKEY] = [
     'title' => 'Search Core',
     'description' => 'Search core for implementing various search types.',
     'category' => 'be',
+    'clearCacheOnLoad' => 1,
     'constraints' => [
         'depends' => [
             'typo3' => '6.2.0-6.2.99',
@@ -13,12 +14,11 @@ $EM_CONF[$_EXTKEY] = [
     ],
     'autoload' => [
         'psr-4' => [
-            'Leonmrni\\SearchCore\\' => 'Classes',
+            'Codappix\\SearchCore\\' => 'Classes',
         ],
     ],
-    'state' => 'alpha',
-    'clearCacheOnLoad' => 1,
+    'state' => 'beta',
+    'version' => '1.0.0',
     'author' => 'Daniel Siepmann',
     'author_email' => 'coding@daniel-siepmann.de',
-    'version' => '1.0.0',
 ];
