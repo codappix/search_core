@@ -22,36 +22,21 @@ namespace Codappix\SearchCore\Tests\Indexing;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\Elasticsearch;
-use Codappix\SearchCore\Domain\Index\TcaIndexer;
-use Codappix\SearchCore\Domain\Index\TcaIndexer\RelationResolver;
-use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
+use Codappix\SearchCore\Domain\Index\IndexerFactory;
 use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
-class TcaIndexerTest extends AbstractFunctionalTestCase
+class PagesIndexerTest extends AbstractFunctionalTestCase
 {
-    protected function getTypoScriptFilesForFrontendRootPage()
-    {
-        return array_merge(
-            parent::getTypoScriptFilesForFrontendRootPage(),
-            ['EXT:search_core/Tests/Functional/Fixtures/Indexing/TcaIndexer/RespectRootLineBlacklist.ts']
-        );
-    }
-
     /**
      * @test
      */
-    public function respectRootLineBlacklist()
+    public function pagesContainAllAdditionalInformation()
     {
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/TcaIndexer/RespectRootLineBlacklist.xml');
+        $this->importDataSet('Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml');
+
         $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
-        $tableName = 'tt_content';
-        $tableService = $objectManager->get(
-            TcaTableService::class,
-            $tableName,
-            $objectManager->get(RelationResolver::class),
-            $objectManager->get(ConfigurationContainerInterface::class)
-        );
+        $tableName = 'pages';
 
         $connection = $this->getMockBuilder(Elasticsearch::class)
             ->setMethods(['addDocuments'])
@@ -61,20 +46,19 @@ class TcaIndexerTest extends AbstractFunctionalTestCase
         $connection->expects($this->once())
             ->method('addDocuments')
             ->with(
-                $this->stringContains('tt_content'),
+                $this->stringContains($tableName),
                 $this->callback(function ($documents) {
-                    foreach ($documents as $document) {
-                        // Page uids 1 and 2 are allowed while 3 and 4 are not allowed.
-                        // Therefore only documents with page uid 1 and 2 should exist.
-                        if (! isset($document['pid']) || ! in_array($document['pid'], [1, 2])) {
-                            return false;
-                        }
-                    }
-
-                    return true;
+                    return count($documents) === 1
+                        && isset($documents[0]['content']) && $documents[0]['content'] ===
+                        'this is the content of header content element that should get indexed Some text in paragraph'
+                        && isset($documents[0]['search_abstract']) && $documents[0]['search_abstract'] ===
+                        'Used as abstract as no abstract is defined.'
+                        ;
                 })
             );
 
-        $objectManager->get(TcaIndexer::class, $tableService, $connection)->indexAllDocuments();
+        $indexer = $objectManager->get(IndexerFactory::class)->getIndexer($tableName);
+        $this->inject($indexer, 'connection', $connection);
+        $indexer->indexAllDocuments();
     }
 }

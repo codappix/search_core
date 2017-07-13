@@ -9,6 +9,15 @@ plugin {
             }
 
             indexing {
+                # Not for direct indexing therefore no indexer.
+                # Used to configure tt_content fetching while indexing pages
+                tt_content {
+                    additionalWhereClause (
+                        tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu', 'shortcut', 'search', 'login')
+                        AND tt_content.bodytext != ''
+                    )
+                }
+
                 pages {
                     indexer = Codappix\SearchCore\Domain\Index\TcaIndexer\PagesIndexer
                     additionalWhereClause = {$plugin.tx_searchcore.settings.indexing.pages.additionalWhereClause}
