@@ -102,6 +102,10 @@ class TcaTableService
      */
     public function getTableClause()
     {
+        if ($this->tableName === 'pages') {
+            return $this->tableName;
+        }
+
         return $this->tableName . ' LEFT JOIN pages on ' . $this->tableName . '.pid = pages.uid';
     }
 
@@ -145,11 +149,14 @@ class TcaTableService
         $whereClause = '1=1'
             . BackendUtility::BEenableFields($this->tableName)
             . BackendUtility::deleteClause($this->tableName)
-
-            . BackendUtility::BEenableFields('pages')
-            . BackendUtility::deleteClause('pages')
             . ' AND pages.no_search = 0'
             ;
+
+        if ($this->tableName !== 'pages') {
+            $whereClause .= BackendUtility::BEenableFields('pages')
+                . BackendUtility::deleteClause('pages')
+            ;
+        }
 
         $userDefinedWhere = $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.additionalWhereClause');
         if (is_string($userDefinedWhere)) {
