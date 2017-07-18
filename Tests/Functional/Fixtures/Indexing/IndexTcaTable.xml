@@ -67,7 +67,7 @@
         <crdate>1480686370</crdate>
         <hidden>0</hidden>
         <sorting>72</sorting>
-        <CType>list</CType>
+        <CType>div</CType>
         <header>not indexed due to ctype</header>
         <bodytext>this is the content of header content element that should not get indexed</bodytext>
         <media>0</media>
