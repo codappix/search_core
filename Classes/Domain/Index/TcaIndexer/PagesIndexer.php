@@ -57,8 +57,8 @@ class PagesIndexer extends TcaIndexer
      */
     protected function prepareRecord(array &$record)
     {
-        parent::prepareRecord($record);
         $record['content'] = $this->fetchContentForPage($record['uid']);
+        parent::prepareRecord($record);
     }
 
     /**
