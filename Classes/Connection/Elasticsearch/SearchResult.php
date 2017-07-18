@@ -140,7 +140,7 @@ class SearchResult implements SearchResultInterface
         }
 
         foreach ($this->result->getAggregations() as $aggregationName => $aggregation) {
-            $this->facets[] = $this->objectManager->get(Facet::class, $aggregationName, $aggregation);
+            $this->facets[$aggregationName] = $this->objectManager->get(Facet::class, $aggregationName, $aggregation);
         }
     }
 }
