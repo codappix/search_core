@@ -69,9 +69,21 @@ class SearchService
      */
     public function search(SearchRequestInterface $searchRequest)
     {
+        $this->addSize($searchRequest);
         $this->addConfiguredFacets($searchRequest);
 
         return $this->connection->search($searchRequest);
+    }
+
+    /**
+     * Add configured size of search result items to request.
+     *
+     * @param SearchRequestInterface $searchRequest
+     */
+    protected function addSize(SearchRequestInterface $searchRequest)
+    {
+        $size = $this->configuration->getIfExists('searching.size') ?: 10;
+        $searchRequest->setSize($size);
     }
 
     /**

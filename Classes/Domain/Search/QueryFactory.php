@@ -63,12 +63,24 @@ class QueryFactory
      */
     protected function createElasticaQuery(SearchRequestInterface $searchRequest)
     {
+        $this->addSize($searchRequest);
         $this->addSearch($searchRequest);
         $this->addFilter($searchRequest);
         $this->addFacets($searchRequest);
 
         $this->logger->debug('Generated elasticsearch query.', [$this->query]);
         return new \Elastica\Query($this->query);
+    }
+
+    /**
+     * @param SearchRequestInterface $searchRequest
+     */
+    protected function addSize(SearchRequestInterface $searchRequest)
+    {
+        $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
+            'from' => 0,
+            'size' => $searchRequest->getSize(),
+        ]);
     }
 
     /**
