@@ -82,8 +82,9 @@ class SearchService
      */
     protected function addSize(SearchRequestInterface $searchRequest)
     {
-        $size = $this->configuration->getIfExists('searching.size') ?: 10;
-        $searchRequest->setSize($size);
+        $searchRequest->setSize(
+            $this->configuration->getIfExists('searching.size') ?: 10
+        );
     }
 
     /**
