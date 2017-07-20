@@ -57,6 +57,14 @@ class PagesIndexer extends TcaIndexer
      */
     protected function prepareRecord(array &$record)
     {
+        $possibleTitleFields = ['nav_title', 'tx_tqseo_pagetitle_rel', 'title'];
+        foreach ($possibleTitleFields as $searchTitleField) {
+            if (isset($record[$searchTitleField]) && trim($record[$searchTitleField])) {
+                $record['search_title'] = trim($record[$searchTitleField]);
+                break;
+            }
+        }
+
         $record['content'] = $this->fetchContentForPage($record['uid']);
         parent::prepareRecord($record);
     }
