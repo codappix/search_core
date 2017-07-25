@@ -20,6 +20,7 @@ namespace Codappix\SearchCore\Tests\Unit\Domain\Search;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Domain\Model\FacetRequest;
 use Codappix\SearchCore\Domain\Model\SearchRequest;
 use Codappix\SearchCore\Domain\Search\QueryFactory;
@@ -32,11 +33,17 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     protected $subject;
 
+    /**
+     * @var ConfigurationContainerInterface
+     */
+    protected $configuration;
+
     public function setUp()
     {
         parent::setUp();
 
-        $this->subject = new QueryFactory($this->getMockedLogger());
+        $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)->getMock();
+        $this->subject = new QueryFactory($this->getMockedLogger(), $this->configuration);
     }
 
     /**
@@ -143,6 +150,46 @@ class QueryFactoryTest extends AbstractUnitTestCase
             ],
             $query->toArray()['aggs'],
             'Facets were not added to query.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function boostsAreAddedToQuery()
+    {
+        $searchRequest = new SearchRequest('SearchWord');
+
+        $this->configuration->expects($this->once())
+            ->method('get')
+            ->with('searching.boost')
+            ->willReturn([
+                'search_title' => 3,
+                'search_abstract' => 1.5,
+            ]);
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertSame(
+            [
+                [
+                    'match' => [
+                        'search_title' => [
+                            'query' => 'SearchWord',
+                            'boost' => 3,
+                        ],
+                    ],
+                ],
+                [
+                    'match' => [
+                        'search_abstract' => [
+                            'query' => 'SearchWord',
+                            'boost' => 1.5,
+                        ],
+                    ],
+                ],
+            ],
+            $query->toArray()['query']['bool']['should'],
+            'Boosts were not added to query.'
         );
     }
 }

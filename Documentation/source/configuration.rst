@@ -209,3 +209,22 @@ Searching
 
     The above example will provide a facet with options for all found ``CType`` results together
     with a count.
+
+.. _boost:
+
+``boost``
+"""""""""
+
+    Used by: Elasticsearch connection while building search query.
+
+    Define fields that should boost the score for results.
+
+    Example::
+
+        plugin.tx_searchcore.settings.searching.boost {
+            search_title = 3
+            search_abstract = 1.5
+        }
+
+    For further information take a look at
+    https://www.elastic.co/guide/en/elasticsearch/guide/2.x/_boosting_query_clauses.html
