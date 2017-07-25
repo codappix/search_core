@@ -81,12 +81,8 @@ class IndexFactoryTest extends AbstractUnitTestCase
                     'ngram4' => [
                         'type' => 'custom',
                         'tokenizer' => 'ngram4',
-                        'char_filter' => [
-                            'html_strip',
-                        ],
-                        'filter' => [
-                            'lowercase',
-                        ],
+                        'char_filter' => 'html_strip',
+                        'filter' => 'lowercase, ,  asciifolding',
                     ],
                 ],
                 'tokenizer' => [
@@ -99,6 +95,10 @@ class IndexFactoryTest extends AbstractUnitTestCase
             ],
         ];
 
+        $expectedConfiguration = $configuration;
+        $expectedConfiguration['analysis']['analyzer']['ngram4']['char_filter'] = ['html_strip'];
+        $expectedConfiguration['analysis']['analyzer']['ngram4']['filter'] = ['lowercase', 'asciifolding'];
+
         $indexMock = $this->getMockBuilder(\Elastica\Index::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -107,7 +107,7 @@ class IndexFactoryTest extends AbstractUnitTestCase
             ->willReturn(false);
         $indexMock->expects($this->once())
             ->method('create')
-            ->with($configuration);
+            ->with($expectedConfiguration);
         $clientMock = $this->getMockBuilder(\Elastica\Client::class)
             ->disableOriginalConstructor()
             ->getMock();

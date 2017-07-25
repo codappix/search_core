@@ -24,6 +24,7 @@ use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Elastica\Exception\ResponseException;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /**
@@ -67,14 +68,41 @@ class IndexFactory implements Singleton
 
     /**
      * @param string $documentType
+     *
      * @return array
      */
     protected function getConfigurationFor($documentType)
     {
         try {
-            return $this->configuration->get('indexing.' . $documentType . '.index');
+            $configuration = $this->configuration->get('indexing.' . $documentType . '.index');
+
+            if (isset($configuration['analysis']['analyzer'])) {
+                foreach ($configuration['analysis']['analyzer'] as $key => $analyzer) {
+                    $configuration['analysis']['analyzer'][$key] = $this->prepareAnalyzerConfiguration($analyzer);
+                }
+            }
+
+            return $configuration;
         } catch (InvalidArgumentException $e) {
             return [];
         }
+    }
+
+    /**
+     * @param array $analyzer
+     *
+     * @return array
+     */
+    protected function prepareAnalyzerConfiguration(array $analyzer)
+    {
+        $fieldsToExplode = ['char_filter', 'filter'];
+
+        foreach ($fieldsToExplode as $fieldToExplode) {
+            if (isset($analyzer[$fieldToExplode])) {
+                $analyzer[$fieldToExplode] = GeneralUtility::trimExplode(',', $analyzer[$fieldToExplode], true);
+            }
+        }
+
+        return $analyzer;
     }
 }

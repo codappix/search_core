@@ -201,13 +201,8 @@ options are available:
                     ngram4 {
                         type = custom
                         tokenizer = ngram4
-                        char_filter {
-                            html_strip
-                        }
-
-                        filter {
-                            lowercase
-                        }
+                        char_filter = html_strip
+                        filter = lowercase, asciifolding
                     }
                 }
 
@@ -220,6 +215,8 @@ options are available:
                 }
             }
         }
+
+    ``char_filter`` and ``filter`` are a comma separated list of options.
 
 .. _configuration_options_search:
 
