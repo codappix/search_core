@@ -87,7 +87,7 @@ class Facet implements FacetInterface
         }
 
         foreach ($this->buckets as $bucket) {
-            $this->options[] = new FacetOption($bucket);
+            $this->options[$bucket['key']] = new FacetOption($bucket);
         }
     }
 }

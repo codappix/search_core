@@ -95,19 +95,20 @@ class QueryFactory
      */
     protected function addSearch(SearchRequestInterface $searchRequest)
     {
-        $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
-            'query' => [
-                'bool' => [
-                    'must' => [
-                        [
-                            'match' => [
-                                '_all' => $searchRequest->getSearchTerm()
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ]);
+        $this->query = ArrayUtility::setValueByPath(
+            $this->query,
+            'query.bool.must.0.match._all.query',
+            $searchRequest->getSearchTerm()
+        );
+
+        $minimumShouldMatch = $this->configuration->getIfExists('searching.minimumShouldMatch');
+        if ($minimumShouldMatch) {
+            $this->query = ArrayUtility::setValueByPath(
+                $this->query,
+                'query.bool.must.0.match._all.minimum_should_match',
+                $minimumShouldMatch
+            );
+        }
     }
 
     /**

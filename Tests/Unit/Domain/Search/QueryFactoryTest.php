@@ -120,31 +120,6 @@ class QueryFactoryTest extends AbstractUnitTestCase
     /**
      * @test
      */
-    public function userInputIsAlwaysString()
-    {
-        $this->configuration->expects($this->any())
-            ->method('get')
-            ->will($this->throwException(new InvalidArgumentException));
-
-        $searchRequest = new SearchRequest(10);
-        $searchRequest->setFilter(['field' => 20]);
-
-        $query = $this->subject->create($searchRequest);
-        $this->assertSame(
-            '10',
-            $query->toArray()['query']['bool']['must'][0]['match']['_all'],
-            'Search word was not escaped as expected.'
-        );
-        $this->assertSame(
-            '20',
-            $query->toArray()['query']['bool']['filter'][0]['term']['field'],
-            'Search word was not escaped as expected.'
-        );
-    }
-
-    /**
-     * @test
-     */
     public function facetsAreAddedToQuery()
     {
         $this->configuration->expects($this->any())
@@ -170,6 +145,70 @@ class QueryFactoryTest extends AbstractUnitTestCase
             ],
             $query->toArray()['aggs'],
             'Facets were not added to query.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function searchTermIsAddedToQuery()
+    {
+        $searchRequest = new SearchRequest('SearchWord');
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->throwException(new InvalidArgumentException));
+        $query = $this->subject->create($searchRequest);
+
+        $this->assertSame(
+            [
+                'bool' => [
+                    'must' => [
+                        [
+                            'match' => [
+                                '_all' => [
+                                    'query' => 'SearchWord',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            $query->toArray()['query'],
+            'Search term was not added to query as expected.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function minimumShouldMatchIsAddedToQuery()
+    {
+        $searchRequest = new SearchRequest('SearchWord');
+        $this->configuration->expects($this->once())
+            ->method('getIfExists')
+            ->with('searching.minimumShouldMatch')
+            ->willReturn('50%');
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->throwException(new InvalidArgumentException));
+        $query = $this->subject->create($searchRequest);
+
+        $this->assertArraySubset(
+            [
+                'bool' => [
+                    'must' => [
+                        [
+                            'match' => [
+                                '_all' => [
+                                    'minimum_should_match' => '50%',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            $query->toArray()['query'],
+            'minimum_should_match was not added to query as configured.'
         );
     }
 
@@ -245,7 +284,9 @@ class QueryFactoryTest extends AbstractUnitTestCase
                             'must' => [
                                 [
                                     'match' => [
-                                        '_all' => 'SearchWord',
+                                        '_all' => [
+                                            'query' => 'SearchWord',
+                                        ],
                                     ],
                                 ],
                             ],
