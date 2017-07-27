@@ -135,6 +135,22 @@ class QueryFactoryTest extends AbstractUnitTestCase
     /**
      * @test
      */
+    public function sizeIsAddedToQuery()
+    {
+        $searchRequest = new SearchRequest('SearchWord');
+        $searchRequest->setSize(45);
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertSame(
+            45,
+            $query->toArray()['size'],
+            'Size was not added to query.'
+        );
+    }
+
+    /**
+     * @test
+     */
     public function searchTermIsAddedToQuery()
     {
         $searchRequest = new SearchRequest('SearchWord');
