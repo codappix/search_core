@@ -20,6 +20,7 @@ namespace Codappix\SearchCore\Domain\Search;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\Elasticsearch\Query;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
@@ -33,16 +34,25 @@ class QueryFactory
     protected $logger;
 
     /**
+     * @var ConfigurationContainerInterface
+     */
+    protected $configuration;
+
+    /**
      * @var array
      */
     protected $query = [];
 
     /**
      * @param \TYPO3\CMS\Core\Log\LogManager $logManager
+     * @param ConfigurationContainerInterface $configuration
      */
-    public function __construct(\TYPO3\CMS\Core\Log\LogManager $logManager)
-    {
+    public function __construct(
+        \TYPO3\CMS\Core\Log\LogManager $logManager,
+        ConfigurationContainerInterface $configuration
+    ) {
         $this->logger = $logManager->getLogger(__CLASS__);
+        $this->configuration = $configuration;
     }
 
     /**
@@ -88,19 +98,20 @@ class QueryFactory
      */
     protected function addSearch(SearchRequestInterface $searchRequest)
     {
-        $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
-            'query' => [
-                'bool' => [
-                    'must' => [
-                        [
-                            'match' => [
-                                '_all' => $searchRequest->getSearchTerm()
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ]);
+        $this->query = ArrayUtility::setValueByPath(
+            $this->query,
+            'query.bool.must.0.match._all.query',
+            $searchRequest->getSearchTerm()
+        );
+
+        $minimumShouldMatch = $this->configuration->getIfExists('searching.minimumShouldMatch');
+        if ($minimumShouldMatch) {
+            $this->query = ArrayUtility::setValueByPath(
+                $this->query,
+                'query.bool.must.0.match._all.minimum_should_match',
+                $minimumShouldMatch
+            );
+        }
     }
 
     /**
