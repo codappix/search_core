@@ -223,6 +223,21 @@ options are available:
 Searching
 ^^^^^^^^^
 
+.. _size:
+
+``size``
+""""""""
+
+    Used by: Elasticsearch connection while building search query.
+
+    Defined how many search results should be fetched to be available in search result.
+
+    Example::
+
+        plugin.tx_searchcore.settings.searching.size = 50
+
+    Default if not configured is 10.
+
 .. _facets:
 
 ``facets``

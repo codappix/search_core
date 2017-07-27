@@ -41,4 +41,11 @@ interface SearchRequestInterface
      * @return array
      */
     public function getFilter();
+
+    /**
+     * Defines how many results should be fetched.
+     *
+     * @return int
+     */
+    public function getSize();
 }
