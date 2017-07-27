@@ -184,6 +184,40 @@ options are available:
     makes building a facet possible.
 
 
+.. _index:
+
+``index``
+"""""""""
+
+    Used by: Elasticsearch connection while indexing.
+
+    Define index for Elasticsearch, have a look at the official docs: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/indices-create-index.html
+
+    Example::
+
+        plugin.tx_searchcore.settings.indexing.tt_content.index {
+            analysis {
+                analyzer {
+                    ngram4 {
+                        type = custom
+                        tokenizer = ngram4
+                        char_filter = html_strip
+                        filter = lowercase, asciifolding
+                    }
+                }
+
+                tokenizer {
+                    ngram4 {
+                        type = ngram
+                        min_gram = 4
+                        max_gram = 4
+                    }
+                }
+            }
+        }
+
+    ``char_filter`` and ``filter`` are a comma separated list of options.
+
 .. _configuration_options_search:
 
 Searching
@@ -209,3 +243,16 @@ Searching
 
     The above example will provide a facet with options for all found ``CType`` results together
     with a count.
+
+.. _minimumShouldMatch:
+
+``minimumShouldMatch``
+""""""""""""""""""""""
+
+    Used by: Elasticsearch connection while building search query.
+
+    Define the minimum match for Elasticsearch, have a look at the official docs: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/query-dsl-minimum-should-match.html
+
+    Example::
+
+        plugin.tx_searchcore.settings.searching.minimumShouldMatch = 50%
