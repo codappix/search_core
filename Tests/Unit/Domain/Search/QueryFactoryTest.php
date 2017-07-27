@@ -21,6 +21,7 @@ namespace Codappix\SearchCore\Tests\Unit\Domain\Search;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Domain\Model\FacetRequest;
 use Codappix\SearchCore\Domain\Model\SearchRequest;
 use Codappix\SearchCore\Domain\Search\QueryFactory;
@@ -53,6 +54,10 @@ class QueryFactoryTest extends AbstractUnitTestCase
     {
         $searchRequest = new SearchRequest('SearchWord');
 
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->throwException(new InvalidArgumentException));
+
         $query = $this->subject->create($searchRequest);
         $this->assertInstanceOf(
             \Elastica\Query::class,
@@ -66,6 +71,10 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function filterIsAddedToQuery()
     {
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->throwException(new InvalidArgumentException));
+
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setFilter(['field' => 'content']);
 
@@ -84,6 +93,10 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function emptyFilterIsNotAddedToQuery()
     {
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->throwException(new InvalidArgumentException));
+
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setFilter([
             'field' => '',
@@ -109,6 +122,10 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function userInputIsAlwaysString()
     {
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->throwException(new InvalidArgumentException));
+
         $searchRequest = new SearchRequest(10);
         $searchRequest->setFilter(['field' => 20]);
 
@@ -130,6 +147,9 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function facetsAreAddedToQuery()
     {
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->throwException(new InvalidArgumentException));
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->addFacet(new FacetRequest('Identifier', 'FieldName'));
         $searchRequest->addFacet(new FacetRequest('Identifier 2', 'FieldName 2'));
@@ -160,13 +180,16 @@ class QueryFactoryTest extends AbstractUnitTestCase
     {
         $searchRequest = new SearchRequest('SearchWord');
 
-        $this->configuration->expects($this->once())
+        $this->configuration->expects($this->exactly(2))
             ->method('get')
-            ->with('searching.boost')
-            ->willReturn([
-                'search_title' => 3,
-                'search_abstract' => 1.5,
-            ]);
+            ->withConsecutive(['searching.boost'], ['searching.fieldValueFactor'])
+            ->will($this->onConsecutiveCalls(
+                [
+                    'search_title' => 3,
+                    'search_abstract' => 1.5,
+                ],
+                $this->throwException(new InvalidArgumentException)
+            ));
 
         $query = $this->subject->create($searchRequest);
         $this->assertSame(
@@ -189,6 +212,49 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 ],
             ],
             $query->toArray()['query']['bool']['should'],
+            'Boosts were not added to query.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function factorBoostIsAddedToQuery()
+    {
+        $searchRequest = new SearchRequest('SearchWord');
+        $fieldConfig = [
+            'field' => 'rootlineLevel',
+            'modifier' => 'reciprocal',
+            'factor' => '2',
+            'missing' => '1',
+        ];
+        $this->configuration->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(['searching.boost'], ['searching.fieldValueFactor'])
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new InvalidArgumentException),
+                $fieldConfig
+            ));
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertSame(
+            [
+                'function_score' => [
+                    'query' => [
+                        'bool' => [
+                            'must' => [
+                                [
+                                    'match' => [
+                                        '_all' => 'SearchWord',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'field_value_factor' => $fieldConfig,
+                ],
+            ],
+            $query->toArray()['query'],
             'Boosts were not added to query.'
         );
     }

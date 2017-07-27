@@ -21,6 +21,7 @@ namespace Codappix\SearchCore\Domain\Search;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\Elasticsearch\Query;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
@@ -81,6 +82,10 @@ class QueryFactory
         $this->addFilter($searchRequest);
         $this->addFacets($searchRequest);
 
+        // Use last, as it might change structure of query.
+        // Better approach would be something like DQL to generate query and build result in the end.
+        $this->addFactorBoost();
+
         $this->logger->debug('Generated elasticsearch query.', [$this->query]);
         return new \Elastica\Query($this->query);
     }
@@ -112,9 +117,6 @@ class QueryFactory
     {
         try {
             $fields = $this->configuration->get('searching.boost');
-            if (!$fields) {
-                return;
-            }
         } catch (InvalidArgumentException $e) {
             return;
         }
@@ -139,6 +141,20 @@ class QueryFactory
                 ],
             ],
         ]);
+    }
+
+    protected function addFactorBoost()
+    {
+        try {
+            $this->query['query'] = [
+                'function_score' => [
+                    'query' => $this->query['query'],
+                    'field_value_factor' => $this->configuration->get('searching.fieldValueFactor'),
+                ],
+            ];
+        } catch (InvalidArgumentException $e) {
+            return;
+        }
     }
 
     /**
