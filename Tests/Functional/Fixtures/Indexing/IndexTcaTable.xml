@@ -69,7 +69,7 @@
         <sorting>72</sorting>
         <CType>div</CType>
         <header>not indexed due to ctype</header>
-        <bodytext>this is the content of header content element that should not get indexed</bodytext>
+        <bodytext>this is the content of div content element that should not get indexed</bodytext>
         <media>0</media>
         <layout>0</layout>
         <deleted>0</deleted>

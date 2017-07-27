@@ -40,7 +40,7 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * @var string
      */
-    protected $identifier;
+    protected $identifier = '';
 
     /**
      * @var \TYPO3\CMS\Core\Log\Logger

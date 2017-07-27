@@ -10,7 +10,7 @@ plugin {
 
             indexing {
                 pages {
-                    additionalWhereClause = pages.doktype NOT IN (3, 199, 6, 254, 255, 199)
+                    additionalWhereClause = pages.doktype NOT IN (3, 199, 6, 254, 255)
                     abstractFields = abstract, description, bodytext
                 }
             }
