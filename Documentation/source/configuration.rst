@@ -271,3 +271,41 @@ Searching
     Example::
 
         plugin.tx_searchcore.settings.searching.minimumShouldMatch = 50%
+
+.. _boost:
+
+``boost``
+"""""""""
+
+    Used by: Elasticsearch connection while building search query.
+
+    Define fields that should boost the score for results.
+
+    Example::
+
+        plugin.tx_searchcore.settings.searching.boost {
+            search_title = 3
+            search_abstract = 1.5
+        }
+
+    For further information take a look at
+    https://www.elastic.co/guide/en/elasticsearch/guide/2.x/_boosting_query_clauses.html
+
+.. _fieldValueFactor:
+
+``fieldValueFactor``
+""""""""""""""""""""
+
+    Used by: Elasticsearch connection while building search query.
+
+    Define a field to use as a factor for scoring. The configuration is passed through to elastic
+    search ``field_value_factor``, see: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/query-dsl-function-score-query.html#function-field-value-factor
+
+    Example::
+
+        plugin.tx_searchcore.settings.searching.field_value_factor {
+            field = rootlineLevel
+            modifier = reciprocal
+            factor = 2
+            missing = 1
+        }

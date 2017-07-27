@@ -21,6 +21,7 @@ namespace Codappix\SearchCore\Domain\Search;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\Elasticsearch\Query;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
@@ -56,6 +57,10 @@ class QueryFactory
     }
 
     /**
+     * TODO: This is not in scope Elasticsearch, therefore it should not return
+     * \Elastica\Query, but decide to use a more specific QueryFactory like
+     * ElasticaQueryFactory, once the second query is added?
+     *
      * @param SearchRequestInterface $searchRequest
      *
      * @return \Elastica\Query
@@ -68,15 +73,19 @@ class QueryFactory
     /**
      * @param SearchRequestInterface $searchRequest
      *
-     * TODO: This is not in scope Elasticsearch, therefore should not return elastica.
      * @return \Elastica\Query
      */
     protected function createElasticaQuery(SearchRequestInterface $searchRequest)
     {
         $this->addSize($searchRequest);
         $this->addSearch($searchRequest);
+        $this->addBoosts($searchRequest);
         $this->addFilter($searchRequest);
         $this->addFacets($searchRequest);
+
+        // Use last, as it might change structure of query.
+        // Better approach would be something like DQL to generate query and build result in the end.
+        $this->addFactorBoost();
 
         $this->logger->debug('Generated elasticsearch query.', [$this->query]);
         return new \Elastica\Query($this->query);
@@ -111,6 +120,53 @@ class QueryFactory
                 'query.bool.must.0.match._all.minimum_should_match',
                 $minimumShouldMatch
             );
+        }
+    }
+
+    /**
+     * @param SearchRequestInterface $searchRequest
+     */
+    protected function addBoosts(SearchRequestInterface $searchRequest)
+    {
+        try {
+            $fields = $this->configuration->get('searching.boost');
+        } catch (InvalidArgumentException $e) {
+            return;
+        }
+
+        $boostQueryParts = [];
+
+        foreach ($fields as $fieldName => $boostValue) {
+            $boostQueryParts[] = [
+                'match' => [
+                    $fieldName => [
+                        'query' => $searchRequest->getSearchTerm(),
+                        'boost' => $boostValue,
+                    ],
+                ],
+            ];
+        }
+
+        $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
+            'query' => [
+                'bool' => [
+                    'should' => $boostQueryParts,
+                ],
+            ],
+        ]);
+    }
+
+    protected function addFactorBoost()
+    {
+        try {
+            $this->query['query'] = [
+                'function_score' => [
+                    'query' => $this->query['query'],
+                    'field_value_factor' => $this->configuration->get('searching.fieldValueFactor'),
+                ],
+            ];
+        } catch (InvalidArgumentException $e) {
+            return;
         }
     }
 
