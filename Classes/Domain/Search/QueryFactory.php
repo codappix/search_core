@@ -20,6 +20,8 @@ namespace Codappix\SearchCore\Domain\Search;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\Elasticsearch\Query;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
@@ -33,19 +35,32 @@ class QueryFactory
     protected $logger;
 
     /**
+     * @var ConfigurationContainerInterface
+     */
+    protected $configuration;
+
+    /**
      * @var array
      */
     protected $query = [];
 
     /**
      * @param \TYPO3\CMS\Core\Log\LogManager $logManager
+     * @param ConfigurationContainerInterface $configuration
      */
-    public function __construct(\TYPO3\CMS\Core\Log\LogManager $logManager)
-    {
+    public function __construct(
+        \TYPO3\CMS\Core\Log\LogManager $logManager,
+        ConfigurationContainerInterface $configuration
+    ) {
         $this->logger = $logManager->getLogger(__CLASS__);
+        $this->configuration = $configuration;
     }
 
     /**
+     * TODO: This is not in scope Elasticsearch, therefore it should not return
+     * \Elastica\Query, but decide to use a more specific QueryFactory like
+     * ElasticaQueryFactory, once the second query is added?
+     *
      * @param SearchRequestInterface $searchRequest
      *
      * @return \Elastica\Query
@@ -58,14 +73,19 @@ class QueryFactory
     /**
      * @param SearchRequestInterface $searchRequest
      *
-     * TODO: This is not in scope Elasticsearch, therefore should not return elastica.
      * @return \Elastica\Query
      */
     protected function createElasticaQuery(SearchRequestInterface $searchRequest)
     {
+        $this->addSize($searchRequest);
         $this->addSearch($searchRequest);
+        $this->addBoosts($searchRequest);
         $this->addFilter($searchRequest);
         $this->addFacets($searchRequest);
+
+        // Use last, as it might change structure of query.
+        // Better approach would be something like DQL to generate query and build result in the end.
+        $this->addFactorBoost();
 
         $this->logger->debug('Generated elasticsearch query.', [$this->query]);
         return new \Elastica\Query($this->query);
@@ -74,21 +94,80 @@ class QueryFactory
     /**
      * @param SearchRequestInterface $searchRequest
      */
+    protected function addSize(SearchRequestInterface $searchRequest)
+    {
+        $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
+            'from' => 0,
+            'size' => $searchRequest->getSize(),
+        ]);
+    }
+
+    /**
+     * @param SearchRequestInterface $searchRequest
+     */
     protected function addSearch(SearchRequestInterface $searchRequest)
     {
+        $this->query = ArrayUtility::setValueByPath(
+            $this->query,
+            'query.bool.must.0.match._all.query',
+            $searchRequest->getSearchTerm()
+        );
+
+        $minimumShouldMatch = $this->configuration->getIfExists('searching.minimumShouldMatch');
+        if ($minimumShouldMatch) {
+            $this->query = ArrayUtility::setValueByPath(
+                $this->query,
+                'query.bool.must.0.match._all.minimum_should_match',
+                $minimumShouldMatch
+            );
+        }
+    }
+
+    /**
+     * @param SearchRequestInterface $searchRequest
+     */
+    protected function addBoosts(SearchRequestInterface $searchRequest)
+    {
+        try {
+            $fields = $this->configuration->get('searching.boost');
+        } catch (InvalidArgumentException $e) {
+            return;
+        }
+
+        $boostQueryParts = [];
+
+        foreach ($fields as $fieldName => $boostValue) {
+            $boostQueryParts[] = [
+                'match' => [
+                    $fieldName => [
+                        'query' => $searchRequest->getSearchTerm(),
+                        'boost' => $boostValue,
+                    ],
+                ],
+            ];
+        }
+
         $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
             'query' => [
                 'bool' => [
-                    'must' => [
-                        [
-                            'match' => [
-                                '_all' => $searchRequest->getSearchTerm()
-                            ],
-                        ],
-                    ],
+                    'should' => $boostQueryParts,
                 ],
             ],
         ]);
+    }
+
+    protected function addFactorBoost()
+    {
+        try {
+            $this->query['query'] = [
+                'function_score' => [
+                    'query' => $this->query['query'],
+                    'field_value_factor' => $this->configuration->get('searching.fieldValueFactor'),
+                ],
+            ];
+        } catch (InvalidArgumentException $e) {
+            return;
+        }
     }
 
     /**

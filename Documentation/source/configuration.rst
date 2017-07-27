@@ -204,10 +204,59 @@ options are available:
     makes building a facet possible.
 
 
+.. _index:
+
+``index``
+"""""""""
+
+    Used by: Elasticsearch connection while indexing.
+
+    Define index for Elasticsearch, have a look at the official docs: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/indices-create-index.html
+
+    Example::
+
+        plugin.tx_searchcore.settings.indexing.tt_content.index {
+            analysis {
+                analyzer {
+                    ngram4 {
+                        type = custom
+                        tokenizer = ngram4
+                        char_filter = html_strip
+                        filter = lowercase, asciifolding
+                    }
+                }
+
+                tokenizer {
+                    ngram4 {
+                        type = ngram
+                        min_gram = 4
+                        max_gram = 4
+                    }
+                }
+            }
+        }
+
+    ``char_filter`` and ``filter`` are a comma separated list of options.
+
 .. _configuration_options_search:
 
 Searching
 ^^^^^^^^^
+
+.. _size:
+
+``size``
+""""""""
+
+    Used by: Elasticsearch connection while building search query.
+
+    Defined how many search results should be fetched to be available in search result.
+
+    Example::
+
+        plugin.tx_searchcore.settings.searching.size = 50
+
+    Default if not configured is 10.
 
 .. _facets:
 
@@ -229,3 +278,54 @@ Searching
 
     The above example will provide a facet with options for all found ``CType`` results together
     with a count.
+
+.. _minimumShouldMatch:
+
+``minimumShouldMatch``
+""""""""""""""""""""""
+
+    Used by: Elasticsearch connection while building search query.
+
+    Define the minimum match for Elasticsearch, have a look at the official docs: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/query-dsl-minimum-should-match.html
+
+    Example::
+
+        plugin.tx_searchcore.settings.searching.minimumShouldMatch = 50%
+
+.. _boost:
+
+``boost``
+"""""""""
+
+    Used by: Elasticsearch connection while building search query.
+
+    Define fields that should boost the score for results.
+
+    Example::
+
+        plugin.tx_searchcore.settings.searching.boost {
+            search_title = 3
+            search_abstract = 1.5
+        }
+
+    For further information take a look at
+    https://www.elastic.co/guide/en/elasticsearch/guide/2.x/_boosting_query_clauses.html
+
+.. _fieldValueFactor:
+
+``fieldValueFactor``
+""""""""""""""""""""
+
+    Used by: Elasticsearch connection while building search query.
+
+    Define a field to use as a factor for scoring. The configuration is passed through to elastic
+    search ``field_value_factor``, see: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/query-dsl-function-score-query.html#function-field-value-factor
+
+    Example::
+
+        plugin.tx_searchcore.settings.searching.field_value_factor {
+            field = rootlineLevel
+            modifier = reciprocal
+            factor = 2
+            missing = 1
+        }

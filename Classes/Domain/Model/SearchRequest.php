@@ -36,6 +36,11 @@ class SearchRequest implements SearchRequestInterface
     protected $query = '';
 
     /**
+     * @var int
+     */
+    protected $size = 10;
+
+    /**
      * @var array
      */
     protected $filter = [];
@@ -111,5 +116,21 @@ class SearchRequest implements SearchRequestInterface
     public function getFacets()
     {
         return $this->facets;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+
+    /**
+     * @param int $size
+     */
+    public function setSize($size)
+    {
+        $this->size = (int) $size;
     }
 }

@@ -110,8 +110,7 @@ abstract class AbstractIndexer implements IndexerInterface
     protected function getRecordGenerator()
     {
         $offset = 0;
-        // TODO: Make configurable.
-        $limit = 50;
+        $limit = $this->getLimit();
 
         while (($records = $this->getRecords($offset, $limit)) !== []) {
             yield $records;
@@ -143,6 +142,17 @@ abstract class AbstractIndexer implements IndexerInterface
         } catch (InvalidArgumentException $e) {
             return;
         }
+    }
+
+    /**
+     * Returns the limit to use to fetch records.
+     *
+     * @return int
+     */
+    protected function getLimit()
+    {
+        // TODO: Make configurable.
+        return 50;
     }
 
     /**

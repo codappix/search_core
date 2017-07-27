@@ -53,7 +53,13 @@ class MappingFactory implements Singleton
     {
         $mapping = new \Elastica\Type\Mapping();
         $mapping->setType($type);
-        $mapping->setProperties($this->getConfiguration($type->getName()));
+
+        $configuration = $this->getConfiguration($type->getName());
+        if (isset($configuration['_all'])) {
+            $mapping->setAllField($configuration['_all']);
+            unset($configuration['_all']);
+        }
+        $mapping->setProperties($configuration);
 
         return $mapping;
     }
