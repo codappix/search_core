@@ -21,6 +21,7 @@ namespace Codappix\SearchCore\Domain\Index;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -125,18 +126,22 @@ abstract class AbstractIndexer implements IndexerInterface
     {
         $record['search_abstract'] = '';
 
-        $fieldsToUse = GeneralUtility::trimExplode(
-            ',',
-            $this->configuration->getIfExists('indexing.' . $this->identifier . '.abstractFields')
-        );
-        if (!$fieldsToUse) {
-            return;
-        }
-        foreach ($fieldsToUse as $fieldToUse) {
-            if (isset($record[$fieldToUse]) && trim($record[$fieldToUse])) {
-                $record['search_abstract'] = trim($record[$fieldToUse]);
-                break;
+        try {
+            $fieldsToUse = GeneralUtility::trimExplode(
+                ',',
+                $this->configuration->get('indexing.' . $this->identifier . '.abstractFields')
+            );
+            if (!$fieldsToUse) {
+                return;
             }
+            foreach ($fieldsToUse as $fieldToUse) {
+                if (isset($record[$fieldToUse]) && trim($record[$fieldToUse])) {
+                    $record['search_abstract'] = trim($record[$fieldToUse]);
+                    break;
+                }
+            }
+        } catch (InvalidArgumentException $e) {
+            return;
         }
     }
 
