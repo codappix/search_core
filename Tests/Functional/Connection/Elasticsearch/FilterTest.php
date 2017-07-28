@@ -78,16 +78,16 @@ class FilterTest extends AbstractFunctionalTestCase
 
         $this->assertSame(1, count($result->getFacets()), 'Did not receive the single defined facet.');
 
-        $facet = $result->getFacets()[0];
+        $facet = current($result->getFacets());
         $this->assertSame('contentTypes', $facet->getName(), 'Name of facet was not as expected.');
         $this->assertSame('CType', $facet->getField(), 'Field of facet was not expected.');
 
         $options = $facet->getOptions();
         $this->assertSame(2, count($options), 'Did not receive the expected number of possible options for facet.');
-        $option = $options[0];
+        $option = $options['HTML'];
         $this->assertSame('HTML', $option->getName(), 'Option did not have expected Name.');
         $this->assertSame(1, $option->getCount(), 'Option did not have expected count.');
-        $option = $options[1];
+        $option = $options['Header'];
         $this->assertSame('Header', $option->getName(), 'Option did not have expected Name.');
         $this->assertSame(1, $option->getCount(), 'Option did not have expected count.');
     }

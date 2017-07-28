@@ -20,8 +20,11 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Elastica\Exception\ResponseException;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /**
@@ -32,6 +35,19 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 class IndexFactory implements Singleton
 {
     /**
+     * @var ConfigurationContainerInterface
+     */
+    protected $configuration;
+
+    /**
+     * @param ConfigurationContainerInterface $configuration
+     */
+    public function __construct(ConfigurationContainerInterface $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
      * Get an index bases on TYPO3 table name.
      *
      * @param Connection $connection
@@ -41,19 +57,52 @@ class IndexFactory implements Singleton
      */
     public function getIndex(Connection $connection, $documentType)
     {
-        // TODO: Fetch index name from configuration, based on $documentType.
         $index = $connection->getClient()->getIndex('typo3content');
 
-        try {
-            // TODO: Provide configuration?!
-            // http://elastica.io/getting-started/storing-and-indexing-documents.html#section-analysis
-            $index->create();
-        } catch (ResponseException $exception) {
-            if (stripos($exception->getMessage(), 'already exists') === false) {
-                throw $exception;
-            }
+        if ($index->exists() === false) {
+            $index->create($this->getConfigurationFor($documentType));
         }
 
         return $index;
+    }
+
+    /**
+     * @param string $documentType
+     *
+     * @return array
+     */
+    protected function getConfigurationFor($documentType)
+    {
+        try {
+            $configuration = $this->configuration->get('indexing.' . $documentType . '.index');
+
+            if (isset($configuration['analysis']['analyzer'])) {
+                foreach ($configuration['analysis']['analyzer'] as $key => $analyzer) {
+                    $configuration['analysis']['analyzer'][$key] = $this->prepareAnalyzerConfiguration($analyzer);
+                }
+            }
+
+            return $configuration;
+        } catch (InvalidArgumentException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * @param array $analyzer
+     *
+     * @return array
+     */
+    protected function prepareAnalyzerConfiguration(array $analyzer)
+    {
+        $fieldsToExplode = ['char_filter', 'filter'];
+
+        foreach ($fieldsToExplode as $fieldToExplode) {
+            if (isset($analyzer[$fieldToExplode])) {
+                $analyzer[$fieldToExplode] = GeneralUtility::trimExplode(',', $analyzer[$fieldToExplode], true);
+            }
+        }
+
+        return $analyzer;
     }
 }
