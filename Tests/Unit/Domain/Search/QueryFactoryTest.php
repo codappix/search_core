@@ -50,7 +50,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
     /**
      * @test
      */
-    public function creatonOfQueryWorksInGeneral()
+    public function creationOfQueryWorksInGeneral()
     {
         $searchRequest = new SearchRequest('SearchWord');
 
@@ -238,7 +238,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
     {
         $searchRequest = new SearchRequest('SearchWord');
 
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(['searching.boost'], ['searching.fieldValueFactor'])
             ->will($this->onConsecutiveCalls(
@@ -286,7 +286,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
             'factor' => '2',
             'missing' => '1',
         ];
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(['searching.boost'], ['searching.fieldValueFactor'])
             ->will($this->onConsecutiveCalls(

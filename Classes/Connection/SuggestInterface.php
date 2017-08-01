@@ -21,42 +21,19 @@ namespace Codappix\SearchCore\Connection;
  */
 
 /**
- * A search result.
+ * A single suggest, e.g. spell check hints.
  */
-interface SearchResultInterface extends \Iterator, \Countable
+interface SuggestInterface
 {
     /**
-     * @return array<ResultItemInterface>
+     * @return string
      */
-    public function getResults();
+    public function getName();
 
     /**
-     * Return all facets, if any.
+     * Returns all possible options for this suggest.
      *
-     * @return array<FacetInterface>
+     * @return array<SuggestOptionInterface>
      */
-    public function getFacets();
-
-    /**
-     * Return all suggests, if any.
-     *
-     * @return array<SuggestInterface>
-     */
-    public function getSuggests();
-
-    /**
-     * Returns the total sum of matching results.
-     *
-     * @return int
-     */
-    public function getTotalCount();
-
-    // Countable - Interface
-
-    /**
-     * Returns the total sum of results contained in this result.
-     *
-     * @return int
-     */
-    public function count();
+    public function getOptions();
 }

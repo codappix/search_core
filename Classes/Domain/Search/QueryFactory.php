@@ -88,7 +88,10 @@ class QueryFactory
         $this->addFactorBoost();
 
         $this->logger->debug('Generated elasticsearch query.', [$this->query]);
-        return new \Elastica\Query($this->query);
+
+        $query = new \Elastica\Query($this->query);
+        $this->addSuggest($query, $searchRequest);
+        return $query;
     }
 
     /**
@@ -212,6 +215,43 @@ class QueryFactory
                     ],
                 ],
             ]);
+        }
+    }
+
+    /**
+     * @param \Elastica\Query $query
+     * @param SearchRequestInterface $searchRequest
+     */
+    protected function addSuggest(\Elastica\Query $query, SearchRequestInterface $searchRequest)
+    {
+        $suggests = [];
+        $suggests[] = $this->getSpellcheck($searchRequest);
+        $suggests = array_filter($suggests);
+
+        if (!$suggests) {
+            return;
+        }
+
+        $suggest = new \Elastica\Suggest();
+        foreach ($suggests as $suggestToAdd) {
+            $suggest->addSuggestion($suggestToAdd);
+        }
+        $query->setSuggest($suggest);
+    }
+
+    /**
+     * @param SearchRequestInterface $searchRequest
+     */
+    protected function getSpellcheck(SearchRequestInterface $searchRequest)
+    {
+        try {
+            $suggest = new \Elastica\Suggest\Phrase('spellcheck', $this->configuration->get('searching.spellcheck.field'));
+            $suggest->setText($searchRequest->getSearchTerm());
+            $suggest->setSize($this->configuration->getIfExists('searching.spellcheck.size') ?: 5);
+
+            return $suggest;
+        } catch (InvalidArgumentException $e) {
+            return;
         }
     }
 }

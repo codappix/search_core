@@ -38,6 +38,11 @@ class SearchResult implements SearchResultInterface
     protected $facets = [];
 
     /**
+     * @var array<SuggestInterface>
+     */
+    protected $suggests = [];
+
+    /**
      * @var array<ResultItemInterface>
      */
     protected $results = [];
@@ -66,13 +71,25 @@ class SearchResult implements SearchResultInterface
     /**
      * Return all facets, if any.
      *
-     * @return array<FacetIterface>
+     * @return array<FacetInterface>
      */
     public function getFacets()
     {
         $this->initFacets();
 
         return $this->facets;
+    }
+
+    /**
+     * Return all suggests, if any.
+     *
+     * @return array<SuggestInterface>
+     */
+    public function getSuggests()
+    {
+        $this->initSuggests();
+
+        return $this->suggests;
     }
 
     /**
@@ -141,6 +158,17 @@ class SearchResult implements SearchResultInterface
 
         foreach ($this->result->getAggregations() as $aggregationName => $aggregation) {
             $this->facets[$aggregationName] = $this->objectManager->get(Facet::class, $aggregationName, $aggregation);
+        }
+    }
+
+    protected function initSuggests()
+    {
+        if ($this->suggests !== [] || !$this->result->hasSuggests()) {
+            return;
+        }
+
+        foreach ($this->result->getSuggests() as $suggestName => $suggest) {
+            $this->suggests[$suggestName] = $this->objectManager->get(Suggest::class, $suggestName, $suggest);
         }
     }
 }
