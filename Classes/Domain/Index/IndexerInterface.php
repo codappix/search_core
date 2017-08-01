@@ -40,4 +40,13 @@ interface IndexerInterface
      * @return void
      */
     public function indexDocument($identifier);
+
+    /**
+     * Recieves the identifier of the indexer itself.
+     *
+     * @param string $identifier
+     *
+     * @return void
+     */
+    public function setIdentifier($identifier);
 }

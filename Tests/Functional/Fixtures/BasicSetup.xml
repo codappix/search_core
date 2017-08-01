@@ -4,5 +4,6 @@
         <uid>1</uid>
         <pid>0</pid>
         <title>Root page containing necessary TypoScript</title>
+        <description>Used as abstract as no abstract is defined.</description>
     </pages>
 </dataset>

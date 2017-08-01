@@ -60,4 +60,43 @@
         <filelink_sorting>0</filelink_sorting>
     </tt_content>
 
+    <tt_content>
+        <uid>9</uid>
+        <pid>1</pid>
+        <tstamp>1480686370</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>0</hidden>
+        <sorting>72</sorting>
+        <CType>div</CType>
+        <header>not indexed due to ctype</header>
+        <bodytext>this is the content of div content element that should not get indexed</bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
+
+    <tt_content>
+        <uid>10</uid>
+        <pid>1</pid>
+        <tstamp>1480686370</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>0</hidden>
+        <sorting>72</sorting>
+        <CType>html</CType>
+        <header>Indexed without html tags</header>
+        <bodytext><![CDATA[<p>Some text in paragraph</p>]]></bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
 </dataset>

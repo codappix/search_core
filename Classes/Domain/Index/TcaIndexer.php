@@ -20,6 +20,7 @@ namespace Codappix\SearchCore\Domain\Index;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 
 /**
@@ -35,13 +36,16 @@ class TcaIndexer extends AbstractIndexer
     /**
      * @param TcaIndexer\TcaTableService $tcaTableService
      * @param ConnectionInterface $connection
+     * @param ConfigurationContainerInterface $configuration
      */
     public function __construct(
         TcaIndexer\TcaTableService $tcaTableService,
-        ConnectionInterface $connection
+        ConnectionInterface $connection,
+        ConfigurationContainerInterface $configuration
     ) {
         $this->tcaTableService = $tcaTableService;
         $this->connection = $connection;
+        $this->configuration = $configuration;
     }
 
     /**

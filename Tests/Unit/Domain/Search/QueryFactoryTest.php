@@ -153,6 +153,9 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function sizeIsAddedToQuery()
     {
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->throwException(new InvalidArgumentException));
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setSize(45);
 
