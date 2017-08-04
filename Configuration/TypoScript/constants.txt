@@ -9,12 +9,12 @@ plugin {
             }
 
             indexing {
-                # Pages are not supported yet, see
-                # https://github.com/DanielSiepmann/search_core/issues/24 but
-                # should also be added, together with additionalWhereClause
-                # based on doktypes
                 tt_content {
-                    additionalWhereClause = pages.doktype NOT IN (3, 199) AND tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu', 'shortcut', 'search', 'login')
+                    additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu', 'shortcut', 'search', 'login')
+
+                pages {
+                    additionalWhereClause = pages.doktype NOT IN (3, 199, 6, 254, 255)
+                    abstractFields = abstract, description, bodytext
                 }
             }
         }

@@ -143,6 +143,7 @@ class TcaTableService
     {
         $parameters = [];
         $whereClause = $this->getSystemWhereClause();
+
         $userDefinedWhere = $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.additionalWhereClause');
         if (is_string($userDefinedWhere)) {
             $whereClause .= ' AND ' . $userDefinedWhere;
@@ -176,11 +177,14 @@ class TcaTableService
 
         $this->logger->debug('Generated fields.', [$this->tableName, $fields]);
         return $fields;
-        return implode(', ', $fields);
     }
 
     public function getJoins() : array
     {
+        if ($this->tableName === 'pages') {
+            return [];
+        }
+
         return [
             new Join('pages', 'pages.uid = ' . $this->tableName . '.pid'),
         ];
@@ -192,14 +196,19 @@ class TcaTableService
      */
     public function getSystemWhereClause() : string
     {
-        return '1=1'
+        $whereClause = '1=1'
             . BackendUtility::BEenableFields($this->tableName)
             . BackendUtility::deleteClause($this->tableName)
-
-            . BackendUtility::BEenableFields('pages')
-            . BackendUtility::deleteClause('pages')
             . ' AND pages.no_search = 0'
             ;
+
+        if ($this->tableName !== 'pages') {
+            $whereClause .= BackendUtility::BEenableFields('pages')
+                . BackendUtility::deleteClause('pages')
+            ;
+        }
+
+        return $whereClause;
     }
 
     /**

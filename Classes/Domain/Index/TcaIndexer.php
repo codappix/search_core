@@ -20,6 +20,7 @@ namespace Codappix\SearchCore\Domain\Index;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -38,13 +39,16 @@ class TcaIndexer extends AbstractIndexer
     /**
      * @param TcaIndexer\TcaTableService $tcaTableService
      * @param ConnectionInterface $connection
+     * @param ConfigurationContainerInterface $configuration
      */
     public function __construct(
         TcaIndexer\TcaTableService $tcaTableService,
-        ConnectionInterface $connection
+        ConnectionInterface $connection,
+        ConfigurationContainerInterface $configuration
     ) {
         $this->tcaTableService = $tcaTableService;
         $this->connection = $connection;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -100,16 +104,19 @@ class TcaIndexer extends AbstractIndexer
         return $this->tcaTableService->getTableName();
     }
 
-    protected function getQuery() : QueryBuilder
+    protected function getQuery($tcaTableService = null) : QueryBuilder
     {
-        $queryBuilder = $this->getDatabaseConnection()->getQueryBuilderForTable($this->tcaTableService->getTableName());
-        $where = $this->tcaTableService->getWhereClause();
-        $query = $queryBuilder->select(... $this->tcaTableService->getFields())
-            ->from($this->tcaTableService->getTableClause())
+        if ($tcaTableService === null) {
+            $tcaTableService = $this->tcaTableService;
+        }
+        $queryBuilder = $this->getDatabaseConnection()->getQueryBuilderForTable($tcaTableService->getTableName());
+        $where = $tcaTableService->getWhereClause();
+        $query = $queryBuilder->select(... $tcaTableService->getFields())
+            ->from($tcaTableService->getTableClause())
             ->where($where->getStatement())
             ->setParameters($where->getParameters());
 
-        foreach ($this->tcaTableService->getJoins() as $join) {
+        foreach ($tcaTableService->getJoins() as $join) {
             $query->from($join->getTable());
             $query->andWhere($join->getCondition());
         }
