@@ -23,10 +23,6 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-
-use TYPO3\CMS\Backend\Form\FormDataCompiler;
-use TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord;
 
 /**
  * Resolves relations from TCA using TCA.
@@ -36,12 +32,6 @@ use TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord;
  */
 class RelationResolver implements Singleton
 {
-    /**
-     * Resolve relations for the given record.
-     *
-     * @param TcaTableService $service
-     * @param array $record
-     */
     public function resolveRelationsForRecord(TcaTableService $service, array &$record) : void
     {
         foreach (array_keys($record) as $column) {
@@ -59,38 +49,27 @@ class RelationResolver implements Singleton
                 }
             } catch (InvalidArgumentException $e) {
                 // Column is not configured.
+                continue;
             }
         }
     }
 
-    /**
-     * Resolve the given value from TYPO3 API response.
-     *
-     * @param mixed $value The value from FormEngine to resolve.
-     * @param array $tcaColumn The tca config of the relation.
-     *
-     * @return array<String>|string
-     */
     protected function resolveValue($value, array $tcaColumn)
     {
-        if ($value === '') {
-            return '';
+        if ($value === '' || $value === 'N/A') {
+            return [];
         }
 
-        if ($tcaColumn['type'] === 'select') {
+        if ($tcaColumn['type'] === 'select' && strpos($value, ';') !== false) {
             return $this->resolveForeignDbValue($value);
         }
-        if ($tcaColumn['type'] === 'inline' || $tcaColumn['type'] === 'group') {
+        if (in_array($tcaColumn['type'], ['inline', 'group', 'select'])) {
             return $this->resolveInlineValue($value);
         }
 
-        return '';
+        return [];
     }
 
-    /**
-     * @param array Column config.
-     * @return bool
-     */
     protected function isRelation(array &$config) : bool
     {
         return isset($config['foreign_table'])
@@ -99,16 +78,8 @@ class RelationResolver implements Singleton
             ;
     }
 
-    /**
-     * @param string $value
-     *
-     * @return array
-     */
     protected function resolveForeignDbValue(string $value) : array
     {
-        if ($value === 'N/A') {
-            return [];
-        }
         return array_map('trim', explode(';', $value));
     }
 
