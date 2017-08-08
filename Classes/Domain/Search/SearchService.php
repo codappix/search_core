@@ -69,6 +69,7 @@ class SearchService
      */
     public function search(SearchRequestInterface $searchRequest)
     {
+        $searchRequest->setConnection($this->connection);
         $this->addSize($searchRequest);
         $this->addConfiguredFacets($searchRequest);
 
@@ -82,7 +83,7 @@ class SearchService
      */
     protected function addSize(SearchRequestInterface $searchRequest)
     {
-        $searchRequest->setSize(
+        $searchRequest->setLimit(
             $this->configuration->getIfExists('searching.size') ?: 10
         );
     }

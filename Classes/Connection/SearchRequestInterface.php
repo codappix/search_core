@@ -20,10 +20,9 @@ namespace Codappix\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
-/**
- *
- */
-interface SearchRequestInterface
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+
+interface SearchRequestInterface extends QueryInterface
 {
     /**
      * Returns the actual string the user searched for.
@@ -41,11 +40,4 @@ interface SearchRequestInterface
      * @return array
      */
     public function getFilter();
-
-    /**
-     * Defines how many results should be fetched.
-     *
-     * @return int
-     */
-    public function getSize();
 }

@@ -97,8 +97,8 @@ class QueryFactory
     protected function addSize(SearchRequestInterface $searchRequest)
     {
         $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
-            'from' => 0,
-            'size' => $searchRequest->getSize(),
+            'from' => $searchRequest->getOffset(),
+            'size' => $searchRequest->getLimit(),
         ]);
     }
 
@@ -151,8 +151,8 @@ class QueryFactory
             'query' => [
                 'bool' => [
                     'should' => $boostQueryParts,
-                ],
-            ],
+                            ],
+                        ],
         ]);
     }
 
@@ -163,7 +163,7 @@ class QueryFactory
                 'function_score' => [
                     'query' => $this->query['query'],
                     'field_value_factor' => $this->configuration->get('searching.fieldValueFactor'),
-                ],
+                    ],
             ];
         } catch (InvalidArgumentException $e) {
             return;
