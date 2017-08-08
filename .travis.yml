@@ -6,6 +6,7 @@ addons:
       - oracle-java8-set-default
 before_install:
   - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.0.deb && sudo dpkg -i --force-confnew elasticsearch-5.2.0.deb && sudo service elasticsearch start
+  - mysql -u root -e 'GRANT ALL ON `typo3_ci_ft%`.* TO travis@127.0.0.1;'
 
 language: php
 
@@ -29,12 +30,7 @@ env:
 
 matrix:
   fast_finish: true
-  exclude:
   allow_failures:
-    - env: TYPO3_VERSION="~8"
-      php: 7.0
-    - env: TYPO3_VERSION="~8"
-      php: 7.1
     - env: TYPO3_VERSION="dev-master"
       php: 7.0
     - env: TYPO3_VERSION="dev-master"
