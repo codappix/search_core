@@ -61,4 +61,33 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
         $this->inject($indexer, 'connection', $connection);
         $indexer->indexAllDocuments();
     }
+
+    /**
+     * @test
+     */
+    public function inheritedTimingIsRespectedDuringIndexing()
+    {
+        $this->importDataSet('Tests/Functional/Fixtures/Indexing/PagesIndexer/InheritedTiming.xml');
+
+        $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
+        $tableName = 'pages';
+
+        $connection = $this->getMockBuilder(Elasticsearch::class)
+            ->setMethods(['addDocuments'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $connection->expects($this->once())
+            ->method('addDocuments')
+            ->with(
+                $this->stringContains($tableName),
+                $this->callback(function ($documents) {
+                    return count($documents) === 2;
+                })
+            );
+
+        $indexer = $objectManager->get(IndexerFactory::class)->getIndexer($tableName);
+        $this->inject($indexer, 'connection', $connection);
+        $indexer->indexAllDocuments();
+    }
 }
