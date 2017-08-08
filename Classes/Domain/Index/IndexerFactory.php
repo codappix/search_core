@@ -83,17 +83,30 @@ class IndexerFactory implements Singleton
      */
     protected function buildIndexer($indexerClass, $identifier)
     {
-        if ($indexerClass === TcaIndexer::class) {
-            return $this->objectManager->get(
-                TcaIndexer::class,
+        $indexer = null;
+        if (is_subclass_of($indexerClass, TcaIndexer\PagesIndexer::class)
+            || $indexerClass === TcaIndexer\PagesIndexer::class
+        ) {
+            $indexer = $this->objectManager->get(
+                $indexerClass,
+                $this->objectManager->get(TcaTableService::class, $identifier),
+                $this->objectManager->get(TcaTableService::class, 'tt_content')
+            );
+        } elseif (is_subclass_of($indexerClass, TcaIndexer::class) || $indexerClass === TcaIndexer::class) {
+            $indexer = $this->objectManager->get(
+                $indexerClass,
                 $this->objectManager->get(TcaTableService::class, $identifier)
             );
+        } elseif (class_exists($indexerClass) && in_array(IndexerInterface::class, class_implements($indexerClass))) {
+            $indexer = $this->objectManager->get($indexerClass);
         }
 
-        if (class_exists($indexerClass) && in_array(IndexerInterface::class, class_implements($indexerClass))) {
-            return $this->objectManager->get($indexerClass);
+        if ($indexer === null) {
+            throw new NoMatchingIndexerException('Could not find indexer: ' . $indexerClass, 1497341442);
         }
 
-        throw new NoMatchingIndexerException('Could not find indexer: ' . $indexerClass, 1497341442);
+        $indexer->setIdentifier($identifier);
+
+        return $indexer;
     }
 }

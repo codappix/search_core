@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dataset>
     <tt_content>
-        <uid>9</uid>
+        <uid>11</uid>
         <pid>1</pid>
         <tstamp>1480686370</tstamp>
         <crdate>1480686370</crdate>
@@ -22,7 +22,7 @@
     </tt_content>
 
     <tt_content>
-        <uid>10</uid>
+        <uid>12</uid>
         <pid>1</pid>
         <tstamp>1480686370</tstamp>
         <crdate>1480686370</crdate>
@@ -92,7 +92,7 @@
 
     <sys_category_record_mm>
         <uid_local>1</uid_local>
-        <uid_foreign>9</uid_foreign>
+        <uid_foreign>11</uid_foreign>
         <tablenames>tt_content</tablenames>
         <fieldname>categories</fieldname>
         <sorting>2</sorting>
@@ -100,7 +100,7 @@
     </sys_category_record_mm>
     <sys_category_record_mm>
         <uid_local>2</uid_local>
-        <uid_foreign>9</uid_foreign>
+        <uid_foreign>11</uid_foreign>
         <tablenames>tt_content</tablenames>
         <fieldname>categories</fieldname>
         <sorting>1</sorting>
@@ -108,7 +108,7 @@
     </sys_category_record_mm>
     <sys_category_record_mm>
         <uid_local>3</uid_local>
-        <uid_foreign>9</uid_foreign>
+        <uid_foreign>11</uid_foreign>
         <tablenames>tt_content</tablenames>
         <fieldname>categories</fieldname>
         <sorting>3</sorting>
@@ -117,7 +117,7 @@
 
     <sys_category_record_mm>
         <uid_local>2</uid_local>
-        <uid_foreign>10</uid_foreign>
+        <uid_foreign>12</uid_foreign>
         <tablenames>tt_content</tablenames>
         <fieldname>categories</fieldname>
         <sorting>1</sorting>
