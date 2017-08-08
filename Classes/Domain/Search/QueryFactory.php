@@ -245,7 +245,10 @@ class QueryFactory
     protected function getSpellcheck(SearchRequestInterface $searchRequest)
     {
         try {
-            $suggest = new \Elastica\Suggest\Phrase('spellcheck', $this->configuration->get('searching.spellcheck.field'));
+            $suggest = new \Elastica\Suggest\Phrase(
+                'spellcheck',
+                $this->configuration->get('searching.spellcheck.field')
+            );
             $suggest->setText($searchRequest->getSearchTerm());
             $suggest->setSize($this->configuration->getIfExists('searching.spellcheck.size') ?: 5);
 

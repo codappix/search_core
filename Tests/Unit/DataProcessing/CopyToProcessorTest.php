@@ -23,7 +23,7 @@ namespace Codappix\SearchCore\Tests\Unit\DataProcessing;
 use Codappix\SearchCore\DataProcessing\CopyToProcessor;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
 
-class QueryFactoryTest extends AbstractUnitTestCase
+class CopyToProcessorTest extends AbstractUnitTestCase
 {
     /**
      * @test
