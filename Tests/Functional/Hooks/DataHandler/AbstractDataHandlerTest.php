@@ -50,6 +50,6 @@ abstract class AbstractDataHandlerTest extends AbstractFunctionalTestCase
             ->setMethods(['add', 'update', 'delete'])
             ->getMock();
 
-        GeneralUtility::setSingletonInstance(\Codappix\SearchCore\Hook\DataHandler::class, new DataHandlerHook($this->subject));
+        GeneralUtility::setSingletonInstance(DataHandlerHook::class, new DataHandlerHook($this->subject));
     }
 }

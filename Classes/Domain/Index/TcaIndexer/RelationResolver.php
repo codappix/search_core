@@ -39,7 +39,13 @@ class RelationResolver implements Singleton
             if ($column === 'pid') {
                 continue;
             }
-            $record[$column] = BackendUtility::getProcessedValueExtra($service->getTableName(), $column, $record[$column], 0, $record['uid']);
+            $record[$column] = BackendUtility::getProcessedValueExtra(
+                $service->getTableName(),
+                $column,
+                $record[$column],
+                0,
+                $record['uid']
+            );
 
             try {
                 $config = $service->getColumnConfig($column);
