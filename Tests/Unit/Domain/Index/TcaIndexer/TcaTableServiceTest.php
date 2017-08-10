@@ -64,7 +64,7 @@ class TcaTableServiceTest extends AbstractUnitTestCase
             ->method('getSystemWhereClause')
             ->will($this->returnValue('1=1 AND pages.no_search = 0'));
 
-        $whereClause =$this->subject->getWhereClause();
+        $whereClause = $this->subject->getWhereClause();
         $this->assertSame(
             '1=1 AND pages.no_search = 0',
             $whereClause->getStatement()
