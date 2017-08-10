@@ -275,7 +275,9 @@ class TcaTableService
 
         foreach ($rootline as $pageInRootLine) {
             // Check configured black list if present.
-            if ($this->isBlackListedRootLineConfigured() && in_array($pageInRootLine['uid'], $this->getBlackListedRootLine())) {
+            if ($this->isBlackListedRootLineConfigured()
+                && in_array($pageInRootLine['uid'], $this->getBlackListedRootLine())
+            ) {
                 return true;
             }
             if ($pageInRootLine['extendToSubpages'] && (
