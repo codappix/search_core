@@ -10,7 +10,8 @@ plugin {
 
             indexing {
                 tt_content {
-                    additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu', 'shortcut', 'search', 'login')
+                    additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu', 'shortcut', 'search', 'login') AND tt_content.bodytext != ''
+                }
 
                 pages {
                     additionalWhereClause = pages.doktype NOT IN (3, 199, 6, 254, 255)
