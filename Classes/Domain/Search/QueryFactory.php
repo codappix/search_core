@@ -150,8 +150,8 @@ class QueryFactory
             'query' => [
                 'bool' => [
                     'should' => $boostQueryParts,
-                            ],
-                        ],
+                ],
+            ],
         ]);
     }
 
@@ -165,7 +165,7 @@ class QueryFactory
                 'function_score' => [
                     'query' => $query['query'],
                     'field_value_factor' => $this->configuration->get('searching.fieldValueFactor'),
-                    ],
+                ],
             ];
         } catch (InvalidArgumentException $e) {
             return;
