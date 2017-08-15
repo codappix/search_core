@@ -26,6 +26,9 @@ env:
     - typo3DatabasePassword=""
     - TYPO3_VERSION="~7.6"
 
+matrix:
+  fast_finish: true
+
 services:
   - mysql
 
