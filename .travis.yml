@@ -23,15 +23,6 @@ env:
     - typo3DatabaseHost="127.0.0.1"
     - typo3DatabaseUsername="travis"
     - typo3DatabasePassword=""
-  matrix:
-    - TYPO3_VERSION="~8"
-    - TYPO3_VERSION="dev-master"
-
-matrix:
-  fast_finish: true
-  allow_failures:
-    - env: TYPO3_VERSION="dev-master"
-      php: 7.1
 
 matrix:
   fast_finish: true
