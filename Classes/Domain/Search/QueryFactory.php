@@ -93,7 +93,7 @@ class QueryFactory
      */
     protected function addSize(SearchRequestInterface $searchRequest, array &$query)
     {
-        $query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
+        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
             'from' => $searchRequest->getOffset(),
             'size' => $searchRequest->getLimit(),
         ]);
