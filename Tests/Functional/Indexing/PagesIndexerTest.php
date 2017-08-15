@@ -64,10 +64,12 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
 
     /**
      * @test
+     * @dataProvider rootLineDataSets
+     * @param string $dataSetPath
      */
-    public function inheritedTimingIsRespectedDuringIndexing()
+    public function rootLineIsRespectedDuringIndexing($dataSetPath)
     {
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/PagesIndexer/InheritedTiming.xml');
+        $this->importDataSet($dataSetPath);
 
         $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
         $tableName = 'pages';
@@ -89,5 +91,14 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
         $indexer = $objectManager->get(IndexerFactory::class)->getIndexer($tableName);
         $this->inject($indexer, 'connection', $connection);
         $indexer->indexAllDocuments();
+    }
+
+    public function rootLineDataSets()
+    {
+        return [
+            'Broken root line' => ['Tests/Functional/Fixtures/Indexing/PagesIndexer/BrokenRootLine.xml'],
+            'Recycler doktype' => ['Tests/Functional/Fixtures/Indexing/PagesIndexer/Recycler.xml'],
+            'Extended timing to sub pages' => ['Tests/Functional/Fixtures/Indexing/PagesIndexer/InheritedTiming.xml'],
+        ];
     }
 }

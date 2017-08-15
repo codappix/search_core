@@ -258,18 +258,27 @@ class TcaTableService
      * Checks whether the given record was blacklisted by root line.
      * This can be configured by typoscript as whole root lines can be black listed.
      *
+     * Also further TYPO3 mechanics are taken into account. Does a valid root
+     * line exist, is page inside a recycler, is inherited start- endtime
+     * excluded, etc.
+     *
      * @param array &$record
      * @return bool
      */
     protected function isRecordBlacklistedByRootline(array &$record)
     {
-        // If no rootline exists, the record is on a unreachable page and therefore blacklisted.
-        if ($record['pid'] == 0) {
-            return false;
+        $pageUid = $record['pid'];
+        if ($this->tableName === 'pages') {
+            $pageUid = $record['uid'];
         }
 
-        $rootline = $this->objectManager->get(RootlineUtility::class, $record['pid'])->get();
-        if (!isset($rootline[0])) {
+        try {
+            $rootline = $this->objectManager->get(RootlineUtility::class, $pageUid)->get();
+        } catch (\RuntimeException $e) {
+            $this->logger->notice(
+                sprintf('Could not fetch rootline for page %u, because: %s', $pageUid, $e->getMessage()),
+                [$record, $e]
+            );
             return true;
         }
 
@@ -278,12 +287,29 @@ class TcaTableService
             if ($this->isBlackListedRootLineConfigured()
                 && in_array($pageInRootLine['uid'], $this->getBlackListedRootLine())
             ) {
+                $this->logger->info(
+                    sprintf(
+                        'Record %u is black listed due to configured root line configuration of page %u.',
+                        $record['uid'],
+                        $pageInRootLine['uid']
+                    ),
+                    [$record, $pageInRootLine]
+                );
                 return true;
             }
+
             if ($pageInRootLine['extendToSubpages'] && (
                 ($pageInRootLine['endtime'] > 0 && $pageInRootLine['endtime'] <= time())
                 || ($pageInRootLine['starttime'] > 0 && $pageInRootLine['starttime'] >= time())
             )) {
+                $this->logger->info(
+                    sprintf(
+                        'Record %u is black listed due to configured timing of parent page %u.',
+                        $record['uid'],
+                        $pageInRootLine['uid']
+                    ),
+                    [$record, $pageInRootLine]
+                );
                 return true;
             }
         }
