@@ -244,6 +244,7 @@ class QueryFactory
 
     /**
      * @param SearchRequestInterface $searchRequest
+     * @return \Elastica\Suggest\Phrase|null
      */
     protected function getSpellcheck(SearchRequestInterface $searchRequest)
     {

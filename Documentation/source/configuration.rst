@@ -36,7 +36,7 @@ Here is the example default configuration that's provided through static include
 Options
 -------
 
-The following sections containsthe different options grouped by their applied area, e.g. for
+The following sections contains the different options grouped by their applied area, e.g. for
 :ref:`connections` and :ref:`indexer`: ``plugin.tx_searchcore.settings.connection`` or
 ``plugin.tx_searchcore.settings.indexing``:
 
