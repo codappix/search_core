@@ -20,13 +20,10 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\SingletonInterface as Singleton;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-
 use TYPO3\CMS\Backend\Form\FormDataCompiler;
 use TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord;
+use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Resolves relations from TCA using TCA.
@@ -81,7 +78,7 @@ class RelationResolver implements Singleton
     protected function resolveValue($value, array $tcaColumn)
     {
         if ($value === '' || $value === '0') {
-            return '';
+            return [];
         }
         if ($tcaColumn['config']['type'] === 'select') {
             return $this->resolveSelectValue($value, $tcaColumn);
@@ -93,7 +90,7 @@ class RelationResolver implements Singleton
             return $this->resolveInlineValue($tcaColumn);
         }
 
-        return '';
+        return [];
     }
 
     /**
