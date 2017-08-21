@@ -83,7 +83,10 @@ class TcaIndexer extends AbstractIndexer
      */
     protected function getRecord($identifier)
     {
-        $record = $this->getQuery()->execute()->fetch();
+        $query = $this->getQuery();
+        $query = $query->andWhere($this->tcaTableService->getTableName() . '.uid = ' . (int) $identifier);
+        $record = $query->execute()->fetch();
+
 
         if ($record === false || $record === null) {
             throw new NoRecordFoundException(
