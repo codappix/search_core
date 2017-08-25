@@ -87,7 +87,6 @@ class TcaIndexer extends AbstractIndexer
         $query = $query->andWhere($this->tcaTableService->getTableName() . '.uid = ' . (int) $identifier);
         $record = $query->execute()->fetch();
 
-
         if ($record === false || $record === null) {
             throw new NoRecordFoundException(
                 'Record could not be fetched from database: "' . $identifier . '". Perhaps record is not active.',
