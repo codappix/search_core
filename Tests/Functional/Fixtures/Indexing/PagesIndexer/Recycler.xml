@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <!-- DISABLED PAGES -->
+    <pages>
+        <uid>2</uid>
+        <pid>1</pid>
+        <title>Some disabled page due being recycler</title>
+        <doktype>255</doktype>
+    </pages>
+    <pages>
+        <uid>3</uid>
+        <pid>2</pid>
+        <title>Some disabled page due to parent page being recycler</title>
+    </pages>
+    <!-- ENABLED PAGES -->
+    <pages>
+        <uid>6</uid>
+        <pid>1</pid>
+        <title>Some enabled page due to no be below recycler</title>
+    </pages>
+</dataset>

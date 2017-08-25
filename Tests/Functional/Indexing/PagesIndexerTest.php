@@ -61,4 +61,44 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
         $this->inject($indexer, 'connection', $connection);
         $indexer->indexAllDocuments();
     }
+
+    /**
+     * @test
+     * @dataProvider rootLineDataSets
+     * @param string $dataSetPath
+     */
+    public function rootLineIsRespectedDuringIndexing($dataSetPath)
+    {
+        $this->importDataSet($dataSetPath);
+
+        $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
+        $tableName = 'pages';
+
+        $connection = $this->getMockBuilder(Elasticsearch::class)
+            ->setMethods(['addDocuments'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $connection->expects($this->once())
+            ->method('addDocuments')
+            ->with(
+                $this->stringContains($tableName),
+                $this->callback(function ($documents) {
+                    return count($documents) === 2;
+                })
+            );
+
+        $indexer = $objectManager->get(IndexerFactory::class)->getIndexer($tableName);
+        $this->inject($indexer, 'connection', $connection);
+        $indexer->indexAllDocuments();
+    }
+
+    public function rootLineDataSets()
+    {
+        return [
+            'Broken root line' => ['Tests/Functional/Fixtures/Indexing/PagesIndexer/BrokenRootLine.xml'],
+            'Recycler doktype' => ['Tests/Functional/Fixtures/Indexing/PagesIndexer/Recycler.xml'],
+            'Extended timing to sub pages' => ['Tests/Functional/Fixtures/Indexing/PagesIndexer/InheritedTiming.xml'],
+        ];
+    }
 }
