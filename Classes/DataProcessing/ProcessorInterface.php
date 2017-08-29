@@ -1,8 +1,8 @@
 <?php
-namespace Codappix\SearchCore\Connection;
+namespace Codappix\SearchCore\DataProcessing;
 
 /*
- * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
+ * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,36 +20,20 @@ namespace Codappix\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
-
 /**
- * A search result.
+ * All DataProcessing Processors should implement this interface, otherwise they
+ * will not be executed.
  */
-interface SearchResultInterface extends \Iterator, \Countable, QueryResultInterface
+interface ProcessorInterface
 {
     /**
-     * @return array<ResultItemInterface>
-     */
-    public function getResults();
-
-    /**
-     * Return all facets, if any.
+     * Processes the given record.
+     * Also retrieves the configuration for this processor instance.
      *
-     * @return array<FacetInterface>
-     */
-    public function getFacets();
-
-    /**
-     * Return all suggests, if any.
+     * @param array $record
+     * @param array $configuration
      *
-     * @return array<SuggestInterface>
+     * @return array
      */
-    public function getSuggests();
-
-    /**
-     * Returns the number of results in current result
-     *
-     * @return int
-     */
-    public function getCurrentCount();
+    public function processRecord(array $record, array $configuration);
 }

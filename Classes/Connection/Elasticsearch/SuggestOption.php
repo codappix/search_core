@@ -1,8 +1,8 @@
 <?php
-namespace Codappix\SearchCore\Connection;
+namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 /*
- * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
+ * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,36 +20,25 @@ namespace Codappix\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
+use Codappix\SearchCore\Connection\SuggestOptionInterface;
 
-/**
- * A search result.
- */
-interface SearchResultInterface extends \Iterator, \Countable, QueryResultInterface
+class SuggestOption implements SuggestOptionInterface
 {
     /**
-     * @return array<ResultItemInterface>
+     * @var string
      */
-    public function getResults();
+    protected $text = '';
 
     /**
-     * Return all facets, if any.
-     *
-     * @return array<FacetInterface>
+     * @param array $option
      */
-    public function getFacets();
+    public function __construct(array $option)
+    {
+        $this->text = $option['text'];
+    }
 
-    /**
-     * Return all suggests, if any.
-     *
-     * @return array<SuggestInterface>
-     */
-    public function getSuggests();
-
-    /**
-     * Returns the number of results in current result
-     *
-     * @return int
-     */
-    public function getCurrentCount();
+    public function getText()
+    {
+        return $this->text;
+    }
 }

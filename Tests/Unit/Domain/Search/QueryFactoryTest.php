@@ -50,7 +50,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
     /**
      * @test
      */
-    public function creatonOfQueryWorksInGeneral()
+    public function creationOfQueryWorksInGeneral()
     {
         $searchRequest = new SearchRequest('SearchWord');
 
@@ -244,7 +244,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
     {
         $searchRequest = new SearchRequest('SearchWord');
 
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(['searching.boost'], ['searching.fieldValueFactor'])
             ->will($this->onConsecutiveCalls(
@@ -292,7 +292,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
             'factor' => '2',
             'missing' => '1',
         ];
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(['searching.boost'], ['searching.fieldValueFactor'])
             ->will($this->onConsecutiveCalls(
@@ -322,6 +322,44 @@ class QueryFactoryTest extends AbstractUnitTestCase
             ],
             $query->toArray()['query'],
             'Boosts were not added to query.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function spellcheckIsAdded()
+    {
+        $searchRequest = new SearchRequest('SearchWord');
+        $this->configuration->expects($this->exactly(3))
+            ->method('get')
+            ->withConsecutive(['searching.boost'], ['searching.fieldValueFactor'], ['searching.spellcheck.field'])
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
+                'spellcheck_field'
+            ));
+        $this->configuration->expects($this->exactly(2))
+            ->method('getIfExists')
+            ->withConsecutive(['searching.minimumShouldMatch'], ['searching.spellcheck.size'])
+            ->will($this->onConsecutiveCalls(
+                null,
+                '10'
+            ));
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertSame(
+            [
+                'spellcheck' => [
+                    'phrase' => [
+                        'field' => 'spellcheck_field',
+                        'size' => '10',
+                    ],
+                    'text' => 'SearchWord',
+                ],
+            ],
+            $query->toArray()['suggest'],
+            'Spellcheck suggest was not added to query'
         );
     }
 }
