@@ -26,6 +26,8 @@ use Codappix\SearchCore\DataProcessing\ProcessorInterface;
 use Codappix\SearchCore\Domain\Index\IndexingException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\RootlineUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 /**
  * Encapsulate logik related to TCA configuration.
@@ -50,14 +52,19 @@ class TcaTableService
     protected $configuration;
 
     /**
+     * @var RelationResolver
+     */
+    protected $relationResolver;
+
+    /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
 
     /**
-     * @var RelationResolver
+     * @var ObjectManagerInterface
      */
-    protected $relationResolver;
+    protected $objectManager;
 
     /**
      * Inject log manager to get concrete logger from it.
@@ -67,6 +74,14 @@ class TcaTableService
     public function injectLogger(\TYPO3\CMS\Core\Log\LogManager $logManager)
     {
         $this->logger = $logManager->getLogger(__CLASS__);
+    }
+
+    /**
+     * @param ObjectManagerInterface $objectManager
+     */
+    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    {
+        $this->objectManager = $objectManager;
     }
 
     /**
@@ -256,26 +271,59 @@ class TcaTableService
      * Checks whether the given record was blacklisted by root line.
      * This can be configured by typoscript as whole root lines can be black listed.
      *
-     * NOTE: Does not support pages yet. We have to add a switch once we
-     * support them to use uid instead.
+     * Also further TYPO3 mechanics are taken into account. Does a valid root
+     * line exist, is page inside a recycler, is inherited start- endtime
+     * excluded, etc.
      *
      * @param array &$record
      * @return bool
      */
     protected function isRecordBlacklistedByRootline(array &$record)
     {
-        // If no rootline exists, the record is on a unreachable page and therefore blacklisted.
-        $rootline = BackendUtility::BEgetRootLine($record['pid']);
-        if (!isset($rootline[0])) {
+        $pageUid = $record['pid'];
+        if ($this->tableName === 'pages') {
+            $pageUid = $record['uid'];
+        }
+
+        try {
+            $rootline = $this->objectManager->get(RootlineUtility::class, $pageUid)->get();
+        } catch (\RuntimeException $e) {
+            $this->logger->notice(
+                sprintf('Could not fetch rootline for page %u, because: %s', $pageUid, $e->getMessage()),
+                [$record, $e]
+            );
             return true;
         }
 
-        // Check configured black list if present.
-        if ($this->isBlackListedRootLineConfigured()) {
-            foreach ($rootline as $pageInRootLine) {
-                if (in_array($pageInRootLine['uid'], $this->getBlackListedRootLine())) {
-                    return true;
-                }
+        foreach ($rootline as $pageInRootLine) {
+            // Check configured black list if present.
+            if ($this->isBlackListedRootLineConfigured()
+                && in_array($pageInRootLine['uid'], $this->getBlackListedRootLine())
+            ) {
+                $this->logger->info(
+                    sprintf(
+                        'Record %u is black listed due to configured root line configuration of page %u.',
+                        $record['uid'],
+                        $pageInRootLine['uid']
+                    ),
+                    [$record, $pageInRootLine]
+                );
+                return true;
+            }
+
+            if ($pageInRootLine['extendToSubpages'] && (
+                ($pageInRootLine['endtime'] > 0 && $pageInRootLine['endtime'] <= time())
+                || ($pageInRootLine['starttime'] > 0 && $pageInRootLine['starttime'] >= time())
+            )) {
+                $this->logger->info(
+                    sprintf(
+                        'Record %u is black listed due to configured timing of parent page %u.',
+                        $record['uid'],
+                        $pageInRootLine['uid']
+                    ),
+                    [$record, $pageInRootLine]
+                );
+                return true;
             }
         }
 

@@ -157,13 +157,19 @@ class QueryFactoryTest extends AbstractUnitTestCase
             ->method('get')
             ->will($this->throwException(new InvalidArgumentException));
         $searchRequest = new SearchRequest('SearchWord');
-        $searchRequest->setSize(45);
+        $searchRequest->setLimit(45);
+        $searchRequest->setOffset(35);
 
         $query = $this->subject->create($searchRequest);
         $this->assertSame(
             45,
             $query->toArray()['size'],
-            'Size was not added to query.'
+            'Limit was not added to query.'
+        );
+        $this->assertSame(
+            35,
+            $query->toArray()['from'],
+            'From was not added to query.'
         );
     }
 

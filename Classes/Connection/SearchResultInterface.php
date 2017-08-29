@@ -20,10 +20,12 @@ namespace Codappix\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
+
 /**
  * A search result.
  */
-interface SearchResultInterface extends \Iterator, \Countable
+interface SearchResultInterface extends \Iterator, \Countable, QueryResultInterface
 {
     /**
      * @return array<ResultItemInterface>
@@ -45,18 +47,9 @@ interface SearchResultInterface extends \Iterator, \Countable
     public function getSuggests();
 
     /**
-     * Returns the total sum of matching results.
+     * Returns the number of results in current result
      *
      * @return int
      */
-    public function getTotalCount();
-
-    // Countable - Interface
-
-    /**
-     * Returns the total sum of results contained in this result.
-     *
-     * @return int
-     */
-    public function count();
+    public function getCurrentCount();
 }
