@@ -5,7 +5,6 @@ addons:
     packages:
       - oracle-java8-set-default
 before_install:
-  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.0.deb && sudo dpkg -i --force-confnew elasticsearch-5.2.0.deb && sudo service elasticsearch start
   - mysql -u root -e 'GRANT ALL ON `typo3_ci_ft%`.* TO travis@127.0.0.1;'
 
 language: php
@@ -25,6 +24,24 @@ env:
     - typo3DatabaseUsername="travis"
     - typo3DatabasePassword=""
     - TYPO3_VERSION="~7.6"
+  matrix:
+    - ELASTICSEARCH_VERSION=5.5.2
+    - ELASTICSEARCH_VERSION=5.5.1
+    - ELASTICSEARCH_VERSION=5.5.0
+
+    - ELASTICSEARCH_VERSION=5.4.3
+    - ELASTICSEARCH_VERSION=5.4.2
+    - ELASTICSEARCH_VERSION=5.4.1
+    - ELASTICSEARCH_VERSION=5.4.0
+
+    - ELASTICSEARCH_VERSION=5.3.3
+    - ELASTICSEARCH_VERSION=5.3.2
+    - ELASTICSEARCH_VERSION=5.3.1
+    - ELASTICSEARCH_VERSION=5.3.0
+
+    - ELASTICSEARCH_VERSION=5.2.2
+    - ELASTICSEARCH_VERSION=5.2.1
+    - ELASTICSEARCH_VERSION=5.2.0
 
 matrix:
   fast_finish: true
@@ -32,7 +49,9 @@ matrix:
 services:
   - mysql
 
-install: make install
+install:
+  - curl -O "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$ELASTICSEARCH_VERSION.deb" && sudo dpkg -i --force-confnew "elasticsearch-$ELASTICSEARCH_VERSION.deb" && sudo service elasticsearch start
+  - make install
 
 script:
   - make unitTests
