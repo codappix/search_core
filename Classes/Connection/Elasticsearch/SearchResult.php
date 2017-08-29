@@ -102,7 +102,6 @@ class SearchResult implements SearchResultInterface
         return $this->suggests;
     }
 
-
     public function getCurrentCount()
     {
         return $this->result->count();
@@ -135,7 +134,7 @@ class SearchResult implements SearchResultInterface
         if ($this->suggests !== [] || !$this->result->hasSuggests()) {
             return;
         }
-        
+
         foreach ($this->result->getSuggests() as $suggestName => $suggest) {
             $this->suggests[$suggestName] = $this->objectManager->get(Suggest::class, $suggestName, $suggest);
         }
