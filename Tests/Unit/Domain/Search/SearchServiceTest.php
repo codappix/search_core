@@ -67,7 +67,7 @@ class SearchServiceTest extends AbstractUnitTestCase
         $this->connection->expects($this->once())
             ->method('search')
             ->with($this->callback(function ($searchRequest) {
-                return $searchRequest->getSize() === 45;
+                return $searchRequest->getLimit() === 45;
             }));
 
         $searchRequest = new SearchRequest('SearchWord');
@@ -86,7 +86,7 @@ class SearchServiceTest extends AbstractUnitTestCase
         $this->connection->expects($this->once())
             ->method('search')
             ->with($this->callback(function ($searchRequest) {
-                return $searchRequest->getSize() === 10;
+                return $searchRequest->getLimit() === 10;
             }));
 
         $searchRequest = new SearchRequest('SearchWord');
