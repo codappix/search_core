@@ -75,12 +75,7 @@ class PagesIndexer extends TcaIndexer
      */
     protected function fetchContentForPage($uid)
     {
-        $contentElements = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-            $this->contentTableService->getFields(),
-            $this->contentTableService->getTableClause(),
-            $this->contentTableService->getWhereClause() .
-                sprintf(' AND %s.pid = %u', $this->contentTableService->getTableName(), $uid)
-        );
+        $contentElements = $this->getQuery($this->contentTableService)->execute()->fetchAll();
 
         if ($contentElements === null) {
             $this->logger->debug('No content for page ' . $uid);

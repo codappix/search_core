@@ -20,8 +20,7 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Backend\Form\FormDataCompiler;
-use TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -33,130 +32,65 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RelationResolver implements Singleton
 {
-    /**
-     * Resolve relations for the given record.
-     *
-     * @param TcaTableService $service
-     * @param array $record
-     */
-    public function resolveRelationsForRecord(TcaTableService $service, array &$record)
+    public function resolveRelationsForRecord(TcaTableService $service, array &$record) : void
     {
-        $formData = GeneralUtility::makeInstance(
-            FormDataCompiler::class,
-            GeneralUtility::makeInstance(TcaDatabaseRecord::class)
-        )->compile([
-            'tableName' => $service->getTableName(),
-            'vanillaUid' => (int)$record['uid'],
-            'command' => 'edit',
-        ]);
-        $record = $formData['databaseRow'];
-
         foreach (array_keys($record) as $column) {
+            // TODO: Define / configure fields to exclude?!
+            if ($column === 'pid') {
+                continue;
+            }
+            $record[$column] = BackendUtility::getProcessedValueExtra(
+                $service->getTableName(),
+                $column,
+                $record[$column],
+                0,
+                $record['uid']
+            );
+
             try {
                 $config = $service->getColumnConfig($column);
+
+                if ($this->isRelation($config)) {
+                    $record[$column] = $this->resolveValue($record[$column], $config);
+                }
             } catch (InvalidArgumentException $e) {
                 // Column is not configured.
                 continue;
             }
-
-            if (! $this->isRelation($config) || !is_array($formData['processedTca']['columns'][$column])) {
-                continue;
-            }
-
-            $record[$column] = $this->resolveValue($record[$column], $formData['processedTca']['columns'][$column]);
         }
     }
 
-    /**
-     * Resolve the given value from TYPO3 API response.
-     *
-     * @param string $value The value from FormEngine to resolve.
-     * @param array $tcaColumn The tca config of the relation.
-     *
-     * @return array<String>|string
-     */
     protected function resolveValue($value, array $tcaColumn)
     {
-        if ($value === '' || $value === '0') {
+        if ($value === '' || $value === 'N/A') {
             return [];
         }
-        if ($tcaColumn['config']['type'] === 'select') {
-            return $this->resolveSelectValue($value, $tcaColumn);
-        }
-        if ($tcaColumn['config']['type'] === 'group' && strpos($value, '|') !== false) {
+
+        if ($tcaColumn['type'] === 'select' && strpos($value, ';') !== false) {
             return $this->resolveForeignDbValue($value);
         }
-        if ($tcaColumn['config']['type'] === 'inline') {
-            return $this->resolveInlineValue($tcaColumn);
+        if (in_array($tcaColumn['type'], ['inline', 'group', 'select'])) {
+            return $this->resolveInlineValue($value);
         }
 
         return [];
     }
 
-    /**
-     * @param array Column config.
-     * @return bool
-     */
-    protected function isRelation(array &$config)
+    protected function isRelation(array &$config) : bool
     {
         return isset($config['foreign_table'])
-            || (isset($config['items']) && is_array($config['items']))
+            || (isset($config['renderType']) && $config['renderType'] !== 'selectSingle')
             || (isset($config['internal_type']) && strtolower($config['internal_type']) === 'db')
             ;
     }
 
-    /**
-     * Resolves internal representation of select to array of labels.
-     *
-     * @param array $value
-     * @param array $tcaColumn
-     * @return array
-     */
-    protected function resolveSelectValue(array $values, array $tcaColumn)
+    protected function resolveForeignDbValue(string $value) : array
     {
-        $resolvedValues = [];
-
-        foreach ($tcaColumn['config']['items'] as $item) {
-            if (in_array($item[1], $values)) {
-                $resolvedValues[] = $item[0];
-            }
-        }
-
-        if ($tcaColumn['config']['renderType'] === 'selectSingle' || $tcaColumn['config']['maxitems'] === 1) {
-            return current($resolvedValues);
-        }
-
-        return $resolvedValues;
+        return array_map('trim', explode(';', $value));
     }
 
-    /**
-     * @param string $value
-     *
-     * @return array
-     */
-    protected function resolveForeignDbValue($value)
+    protected function resolveInlineValue(string $value) : array
     {
-        $titles = [];
-
-        foreach (explode(',', urldecode($value)) as $title) {
-            $titles[] = explode('|', $title)[1];
-        }
-
-        return $titles;
-    }
-
-    /**
-     * @param array $tcaColumn
-     * @return array
-     */
-    protected function resolveInlineValue(array $tcaColumn)
-    {
-        $titles = [];
-
-        foreach ($tcaColumn['children'] as $selected) {
-            $titles[] = $selected['recordTitle'];
-        }
-
-        return $titles;
+        return array_map('trim', explode(',', $value));
     }
 }

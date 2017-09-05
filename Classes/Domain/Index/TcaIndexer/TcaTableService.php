@@ -21,6 +21,8 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Database\Doctrine\Join;
+use Codappix\SearchCore\Database\Doctrine\Where;
 use Codappix\SearchCore\Domain\Index\IndexingException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -107,7 +109,7 @@ class TcaTableService
     /**
      * @return string
      */
-    public function getTableName()
+    public function getTableName() : string
     {
         return $this->tableName;
     }
@@ -115,13 +117,9 @@ class TcaTableService
     /**
      * @return string
      */
-    public function getTableClause()
+    public function getTableClause() : string
     {
-        if ($this->tableName === 'pages') {
-            return $this->tableName;
-        }
-
-        return $this->tableName . ' LEFT JOIN pages on ' . $this->tableName . '.pid = pages.uid';
+        return $this->tableName;
     }
 
     /**
@@ -130,7 +128,7 @@ class TcaTableService
      * @param array &$records
      * @return void
      */
-    public function filterRecordsByRootLineBlacklist(array &$records)
+    public function filterRecordsByRootLineBlacklist(array &$records) : void
     {
         $records = array_filter(
             $records,
@@ -144,7 +142,7 @@ class TcaTableService
      * Adjust record accordingly to configuration.
      * @param array &$record
      */
-    public function prepareRecord(array &$record)
+    public function prepareRecord(array &$record) : void
     {
         $this->relationResolver->resolveRelationsForRecord($this, $record);
 
@@ -156,22 +154,10 @@ class TcaTableService
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getWhereClause()
+    public function getWhereClause() : Where
     {
-        $whereClause = '1=1'
-            . BackendUtility::BEenableFields($this->tableName)
-            . BackendUtility::deleteClause($this->tableName)
-            . ' AND pages.no_search = 0'
-            ;
-
-        if ($this->tableName !== 'pages') {
-            $whereClause .= BackendUtility::BEenableFields('pages')
-                . BackendUtility::deleteClause('pages')
-            ;
-        }
+        $parameters = [];
+        $whereClause = $this->getSystemWhereClause();
 
         $userDefinedWhere = $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.additionalWhereClause');
         if (is_string($userDefinedWhere)) {
@@ -179,22 +165,16 @@ class TcaTableService
         }
 
         if ($this->isBlacklistedRootLineConfigured()) {
-            $whereClause .= ' AND pages.uid NOT IN ('
-                . implode(',', $this->getBlacklistedRootLine())
-                . ')'
-                . ' AND pages.pid NOT IN ('
-                . implode(',', $this->getBlacklistedRootLine())
-                . ')';
+            $parameters[':blacklistedRootLine'] = $this->getBlacklistedRootLine();
+            $whereClause .= ' AND pages.uid NOT IN (:blacklistedRootLine)'
+                . ' AND pages.pid NOT IN (:blacklistedRootLine)';
         }
 
         $this->logger->debug('Generated where clause.', [$this->tableName, $whereClause]);
-        return $whereClause;
+        return new Where($whereClause, $parameters);
     }
 
-    /**
-     * @return string
-     */
-    public function getFields()
+    public function getFields() : array
     {
         $fields = array_merge(
             ['uid','pid'],
@@ -211,14 +191,46 @@ class TcaTableService
         }
 
         $this->logger->debug('Generated fields.', [$this->tableName, $fields]);
-        return implode(',', $fields);
+        return $fields;
+    }
+
+    public function getJoins() : array
+    {
+        if ($this->tableName === 'pages') {
+            return [];
+        }
+
+        return [
+            new Join('pages', 'pages.uid = ' . $this->tableName . '.pid'),
+        ];
+    }
+
+    /**
+     * Generate SQL for TYPO3 as a system, to make sure only available records
+     * are fetched.
+     */
+    public function getSystemWhereClause() : string
+    {
+        $whereClause = '1=1'
+            . BackendUtility::BEenableFields($this->tableName)
+            . BackendUtility::deleteClause($this->tableName)
+            . ' AND pages.no_search = 0'
+            ;
+
+        if ($this->tableName !== 'pages') {
+            $whereClause .= BackendUtility::BEenableFields('pages')
+                . BackendUtility::deleteClause('pages')
+            ;
+        }
+
+        return $whereClause;
     }
 
     /**
      * @param string
      * @return bool
      */
-    protected function isSystemField($columnName)
+    protected function isSystemField($columnName) : bool
     {
         $systemFields = [
             // Versioning fields,
@@ -242,7 +254,7 @@ class TcaTableService
      * @return array
      * @throws InvalidArgumentException
      */
-    public function getColumnConfig($columnName)
+    public function getColumnConfig($columnName) : array
     {
         if (!isset($this->tca['columns'][$columnName])) {
             throw new InvalidArgumentException(
@@ -265,7 +277,7 @@ class TcaTableService
      * @param array &$record
      * @return bool
      */
-    protected function isRecordBlacklistedByRootline(array &$record)
+    protected function isRecordBlacklistedByRootline(array &$record) : bool
     {
         $pageUid = $record['pid'];
         if ($this->tableName === 'pages') {
@@ -322,7 +334,7 @@ class TcaTableService
      *
      * @return bool
      */
-    protected function isBlackListedRootLineConfigured()
+    protected function isBlackListedRootLineConfigured() : bool
     {
         return (bool) $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist');
     }
@@ -332,7 +344,7 @@ class TcaTableService
      *
      * @return array<Int>
      */
-    protected function getBlackListedRootLine()
+    protected function getBlackListedRootLine() : array
     {
         return GeneralUtility::intExplode(',', $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist'));
     }

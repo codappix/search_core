@@ -61,6 +61,29 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
 
     /**
      * @test
+     */
+    public function indexSingleBasicTtContent()
+    {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
+            ->get(IndexerFactory::class)
+            ->getIndexer('tt_content')
+            ->indexDocument(6)
+            ;
+
+        $response = $this->client->request('typo3content/_search?q=*:*');
+
+        $this->assertTrue($response->isOK(), 'Elastica did not answer with ok code.');
+        $this->assertSame($response->getData()['hits']['total'], 1, 'Not exactly 1 document was indexed.');
+        $this->assertArraySubset(
+            ['_source' => ['header' => 'indexed content element']],
+            $response->getData()['hits']['hits'][0],
+            false,
+            'Record was not indexed.'
+        );
+    }
+
+    /**
+     * @test
      * @expectedException \Codappix\SearchCore\Domain\Index\IndexingException
      */
     public function indexingNonConfiguredTableWillThrowException()
@@ -152,7 +175,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
             ['_source' => [
                 'uid' => '11',
                 'CType' => 'Header', // Testing items
-                'categories' => ['Category 1', 'Category 2'], // Testing mm (with sorting)
+                'categories' => ['Category 2', 'Category 1'], // Testing mm
             ]],
             $response->getData()['hits']['hits'][0],
             false,
