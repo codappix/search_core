@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <!-- DISABLED PAGES -->
+    <pages>
+        <uid>3</uid>
+        <pid>2</pid>
+        <title>Some disabled page due broken root line</title>
+    </pages>
+    <pages>
+        <uid>4</uid>
+        <pid>3</pid>
+        <title>Some disabled page due to parent pages root line being broken</title>
+    </pages>
+    <!-- ENABLED PAGES -->
+    <pages>
+        <uid>6</uid>
+        <pid>1</pid>
+        <title>Some enabled page due valid root line</title>
+    </pages>
+</dataset>
