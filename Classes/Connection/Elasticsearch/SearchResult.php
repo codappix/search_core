@@ -49,6 +49,13 @@ class SearchResult implements SearchResultInterface
     protected $results = [];
 
     /**
+     * For Iterator interface.
+     *
+     * @var int
+     */
+    protected $position = 0;
+
+    /**
      * @var ObjectManagerInterface
      */
     protected $objectManager;
@@ -121,27 +128,29 @@ class SearchResult implements SearchResultInterface
     // Iterator - Interface
     public function current()
     {
-        return $this->result->current();
+        return $this->getResults()[$this->position];
     }
 
     public function next()
     {
-        return $this->result->next();
+        ++$this->position;
+
+        return $this->current();
     }
 
     public function key()
     {
-        return $this->result->key();
+        return $this->position;
     }
 
     public function valid()
     {
-        return $this->result->valid();
+        return isset($this->getResults()[$this->position]);
     }
 
     public function rewind()
     {
-        $this->result->rewind();
+        $this->position = 0;
     }
 
     // Extbase QueryResultInterface - Implemented to support Pagination of Fluid.
