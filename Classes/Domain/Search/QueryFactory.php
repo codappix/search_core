@@ -89,7 +89,7 @@ class QueryFactory
 
     /**
      * @param SearchRequestInterface $searchRequest
-     * @param array &$query
+     * @param array $query
      */
     protected function addSize(SearchRequestInterface $searchRequest, array &$query)
     {
@@ -101,7 +101,7 @@ class QueryFactory
 
     /**
      * @param SearchRequestInterface $searchRequest
-     * @param array &$query
+     * @param array $query
      */
     protected function addSearch(SearchRequestInterface $searchRequest, array &$query)
     {
@@ -123,7 +123,7 @@ class QueryFactory
 
     /**
      * @param SearchRequestInterface $searchRequest
-     * @param array &$query
+     * @param array $query
      */
     protected function addBoosts(SearchRequestInterface $searchRequest, array &$query)
     {
@@ -156,7 +156,7 @@ class QueryFactory
     }
 
     /**
-     * @param array &$query
+     * @param array $query
      */
     protected function addFactorBoost(array &$query)
     {
@@ -174,7 +174,7 @@ class QueryFactory
 
     /**
      * @param SearchRequestInterface $searchRequest
-     * @param array &$query
+     * @param array $query
      */
     protected function addFilter(SearchRequestInterface $searchRequest, array &$query)
     {
@@ -202,7 +202,7 @@ class QueryFactory
 
     /**
      * @param SearchRequestInterface $searchRequest
-     * @param array &$query
+     * @param array $query
      */
     protected function addFacets(SearchRequestInterface $searchRequest, array &$query)
     {
