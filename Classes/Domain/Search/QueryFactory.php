@@ -105,6 +105,10 @@ class QueryFactory
      */
     protected function addSearch(SearchRequestInterface $searchRequest, array &$query)
     {
+        if (trim($searchRequest->getSearchTerm()) === '') {
+            return;
+        }
+
         $query = ArrayUtility::setValueByPath(
             $query,
             'query.bool.must.0.match._all.query',

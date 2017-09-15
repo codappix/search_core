@@ -324,4 +324,23 @@ class QueryFactoryTest extends AbstractUnitTestCase
             'Boosts were not added to query.'
         );
     }
+
+    /**
+     * @test
+     */
+    public function emptySearchStringWillNotAddSearchToQuery()
+    {
+        $searchRequest = new SearchRequest();
+
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->throwException(new InvalidArgumentException));
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertInstanceOf(
+            stdClass,
+            $query->toArray()['query']['match_all'],
+            'Empty search request does not create expected query.'
+        );
+    }
 }

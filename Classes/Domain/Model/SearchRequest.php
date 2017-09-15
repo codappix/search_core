@@ -66,7 +66,7 @@ class SearchRequest implements SearchRequestInterface
     /**
      * @param string $query
      */
-    public function __construct($query)
+    public function __construct($query = '')
     {
         $this->query = (string) $query;
     }
