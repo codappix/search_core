@@ -49,9 +49,12 @@ class SearchController extends ActionController
         if (isset($this->settings['searching']['mode']) && $this->settings['searching']['mode'] === 'filter'
             && $this->request->hasArgument('searchRequest') === false
         ) {
-            $this->request->setArguments([
-                'searchRequest' => $this->objectManager->get(SearchRequest::class),
-            ]);
+            $this->request->setArguments(array_merge(
+                $this->request->getArguments(),
+                [
+                    'searchRequest' => $this->objectManager->get(SearchRequest::class),
+                ]
+            ));
         }
     }
 

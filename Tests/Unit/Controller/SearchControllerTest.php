@@ -86,6 +86,35 @@ class SearchControllerTest extends AbstractUnitTestCase
     /**
      * @test
      */
+    public function searchRequestArgumentIsAddedToExistingArguments()
+    {
+        $this->request->setArguments([
+            '@widget_0' => [
+                'currentPage' => '7',
+            ]
+        ]);
+        $this->inject($this->subject, 'settings', [
+            'searching' => [
+                'mode' => 'filter',
+            ]
+        ]);
+
+        $this->subject->initializeSearchAction();
+        $this->assertInstanceOf(
+            SearchRequest::class,
+            $this->request->getArgument('searchRequest'),
+            'Search request was not created.'
+        );
+        $this->assertSame(
+            ['currentPage' => '7'],
+            $this->request->getArgument('@widget_0'),
+            'Existing arguments were not kept.'
+        );
+    }
+
+    /**
+     * @test
+     */
     public function searchRequestArgumentIsNotAddedIfModeIsNotFilter()
     {
         $this->inject($this->subject, 'settings', ['searching' => []]);
