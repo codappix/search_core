@@ -279,6 +279,23 @@ Searching
     The above example will provide a facet with options for all found ``CType`` results together
     with a count.
 
+.. _filter:
+
+``filter``
+"""""""""""
+
+    Used by: While building search request.
+
+    Define filter that should be set for all requests.
+
+    Example::
+
+        plugin.tx_searchcore.settings.searching.filter {
+            property = value
+        }
+
+    For Elasticsearch the fields have to be filterable, e.g. need a mapping as ``keyword``.
+
 .. _minimumShouldMatch:
 
 ``minimumShouldMatch``

@@ -21,6 +21,7 @@ namespace Copyright\SearchCore\Tests\Unit\Domain\Search;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Domain\Model\SearchRequest;
 use Codappix\SearchCore\Domain\Search\SearchService;
@@ -64,6 +65,10 @@ class SearchServiceTest extends AbstractUnitTestCase
             ->method('getIfExists')
             ->withConsecutive(['searching.size'], ['searching.facets'])
             ->will($this->onConsecutiveCalls(45, null));
+        $this->configuration->expects($this->exactly(1))
+            ->method('get')
+            ->with('searching.filter')
+            ->will($this->throwException(new InvalidArgumentException));
         $this->connection->expects($this->once())
             ->method('search')
             ->with($this->callback(function ($searchRequest) {
@@ -83,6 +88,10 @@ class SearchServiceTest extends AbstractUnitTestCase
             ->method('getIfExists')
             ->withConsecutive(['searching.size'], ['searching.facets'])
             ->will($this->onConsecutiveCalls(null, null));
+        $this->configuration->expects($this->exactly(1))
+            ->method('get')
+            ->with('searching.filter')
+            ->will($this->throwException(new InvalidArgumentException));
         $this->connection->expects($this->once())
             ->method('search')
             ->with($this->callback(function ($searchRequest) {
@@ -90,6 +99,83 @@ class SearchServiceTest extends AbstractUnitTestCase
             }));
 
         $searchRequest = new SearchRequest('SearchWord');
+        $this->subject->search($searchRequest);
+    }
+
+    /**
+     * @test
+     */
+    public function configuredFilterAreAddedToRequestWithoutAnyFilter()
+    {
+        $this->configuration->expects($this->exactly(2))
+            ->method('getIfExists')
+            ->withConsecutive(['searching.size'], ['searching.facets'])
+            ->will($this->onConsecutiveCalls(null, null));
+        $this->configuration->expects($this->exactly(1))
+            ->method('get')
+            ->with('searching.filter')
+            ->willReturn(['property' => 'something']);
+
+        $this->connection->expects($this->once())
+            ->method('search')
+            ->with($this->callback(function ($searchRequest) {
+                return $searchRequest->getFilter() === ['property' => 'something'];
+            }));
+
+        $searchRequest = new SearchRequest('SearchWord');
+        $this->subject->search($searchRequest);
+    }
+
+    /**
+     * @test
+     */
+    public function configuredFilterAreAddedToRequestWithExistingFilter()
+    {
+        $this->configuration->expects($this->exactly(2))
+            ->method('getIfExists')
+            ->withConsecutive(['searching.size'], ['searching.facets'])
+            ->will($this->onConsecutiveCalls(null, null));
+        $this->configuration->expects($this->exactly(1))
+            ->method('get')
+            ->with('searching.filter')
+            ->willReturn(['property' => 'something']);
+
+        $this->connection->expects($this->once())
+            ->method('search')
+            ->with($this->callback(function ($searchRequest) {
+                return $searchRequest->getFilter() === [
+                    'anotherProperty' => 'anything',
+                    'property' => 'something',
+                ];
+            }));
+
+        $searchRequest = new SearchRequest('SearchWord');
+        $searchRequest->setFilter(['anotherProperty' => 'anything']);
+        $this->subject->search($searchRequest);
+    }
+
+    /**
+     * @test
+     */
+    public function nonConfiguredFilterIsNotChangingRequestWithExistingFilter()
+    {
+        $this->configuration->expects($this->exactly(2))
+            ->method('getIfExists')
+            ->withConsecutive(['searching.size'], ['searching.facets'])
+            ->will($this->onConsecutiveCalls(null, null));
+        $this->configuration->expects($this->exactly(1))
+            ->method('get')
+            ->with('searching.filter')
+            ->will($this->throwException(new InvalidArgumentException));
+
+        $this->connection->expects($this->once())
+            ->method('search')
+            ->with($this->callback(function ($searchRequest) {
+                return $searchRequest->getFilter() === ['anotherProperty' => 'anything'];
+            }));
+
+        $searchRequest = new SearchRequest('SearchWord');
+        $searchRequest->setFilter(['anotherProperty' => 'anything']);
         $this->subject->search($searchRequest);
     }
 }

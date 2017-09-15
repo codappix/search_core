@@ -72,6 +72,7 @@ class SearchService
         $searchRequest->setConnection($this->connection);
         $this->addSize($searchRequest);
         $this->addConfiguredFacets($searchRequest);
+        $this->addConfiguredFilters($searchRequest);
 
         return $this->connection->search($searchRequest);
     }
@@ -111,6 +112,23 @@ class SearchService
                 $identifier,
                 $facetConfig['field']
             ));
+        }
+    }
+
+    /**
+     * Add filters from configuration, e.g. flexform or TypoScript.
+     *
+     * @param SearchRequestInterface $searchRequest
+     */
+    protected function addConfiguredFilters(SearchRequestInterface $searchRequest)
+    {
+        try {
+            $searchRequest->setFilter(array_merge(
+                $searchRequest->getFilter(),
+                $this->configuration->get('searching.filter')
+            ));
+        } catch (InvalidArgumentException $e) {
+            // Nothing todo, no filter configured.
         }
     }
 }
