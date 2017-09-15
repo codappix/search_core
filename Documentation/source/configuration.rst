@@ -346,3 +346,20 @@ Searching
             factor = 2
             missing = 1
         }
+
+.. _mode:
+
+``mode``
+""""""""
+
+    Used by: Controller while preparing action.
+
+    Define to switch from search to filter mode.
+
+    Example::
+
+        plugin.tx_searchcore.settings.searching {
+            mode = filter
+        }
+
+    Only ``filter`` is allowed as value. Will submit an empty query to switch to filter mode.
