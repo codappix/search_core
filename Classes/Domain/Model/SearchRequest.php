@@ -92,7 +92,22 @@ class SearchRequest implements SearchRequestInterface
      */
     public function setFilter(array $filter)
     {
-        $this->filter = array_filter(array_map('strval', $filter));
+        $this->filter = array_filter($filter);
+
+        $this->mapGeoDistanceFilter();
+    }
+
+    public function mapGeoDistanceFilter()
+    {
+        if (isset($this->filter['geo_distance'])) {
+            foreach (array_keys($this->filter['geo_distance']) as $config) {
+                if (strpos($config, '_') !== false) {
+                    $newKey = str_replace('_', '.', $config);
+                    $this->filter['geo_distance'][$newKey] = $this->filter['geo_distance'][$config];
+                    unset($this->filter['geo_distance'][$config]);
+                }
+            }
+        }
     }
 
     /**

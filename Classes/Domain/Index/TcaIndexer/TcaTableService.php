@@ -21,6 +21,7 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\DataProcessing\ProcessorInterface;
 use Codappix\SearchCore\Database\Doctrine\Join;
 use Codappix\SearchCore\Database\Doctrine\Where;
 use Codappix\SearchCore\Domain\Index\IndexingException;
@@ -146,6 +147,17 @@ class TcaTableService
     {
         $this->relationResolver->resolveRelationsForRecord($this, $record);
 
+        try {
+            foreach ($this->configuration->get('indexing.' . $this->tableName . '.dataProcessing') as $configuration) {
+                $dataProcessor = GeneralUtility::makeInstance($configuration['_typoScriptNodeValue']);
+                if ($dataProcessor instanceof ProcessorInterface) {
+                    $record = $dataProcessor->processRecord($record, $configuration);
+                }
+            }
+        } catch (InvalidConfigurationArgumentException $e) {
+            // Nothing to do.
+        }
+
         if (isset($record['uid']) && !isset($record['search_identifier'])) {
             $record['search_identifier'] = $record['uid'];
         }
@@ -181,7 +193,7 @@ class TcaTableService
             array_filter(
                 array_keys($this->tca['columns']),
                 function ($columnName) {
-                    return !$this->isSystemField($columnName);
+                    return !$this->isSystemField($columnName) && !$this->isUserField($columnName);
                 }
             )
         );
@@ -247,6 +259,12 @@ class TcaTableService
         ];
 
         return in_array($columnName, $systemFields);
+    }
+
+    protected function isUserField(string $columnName) : bool
+    {
+        $config = $this->getColumnConfig($columnName);
+        return isset($config['type']) && $config['type'] === 'user';
     }
 
     /**

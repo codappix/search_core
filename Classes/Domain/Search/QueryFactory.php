@@ -164,6 +164,17 @@ class QueryFactory
      */
     protected function addFactorBoost(array &$query)
     {
+        $query['sort'] = [
+            '_geo_distance' => [
+                'location' => [
+                    'lat' => 51.2014392,
+                    'lon' => 6.4302962,
+                ],
+                'order' => 'asc',
+                'unit' => 'km',
+                'distance_type' => 'plane',
+            ]
+        ];
         try {
             $query['query'] = [
                 'function_score' => [
@@ -186,22 +197,31 @@ class QueryFactory
             return;
         }
 
-        $terms = [];
+        $filter = [];
         foreach ($searchRequest->getFilter() as $name => $value) {
-            $terms[] = [
-                'term' => [
-                    $name => $value,
-                ],
-            ];
+            $filter[] = $this->buildFilter($name, $value);
         }
 
         $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
             'query' => [
                 'bool' => [
-                    'filter' => $terms,
+                    'filter' => $filter,
                 ],
             ],
         ]);
+    }
+
+    protected function buildFilter(string $name, $value) : array
+    {
+        if ($name === 'geo_distance') {
+            return [$name => $value];
+        }
+
+        return [
+            'term' => [
+                $name => $value,
+            ],
+        ];
     }
 
     /**
