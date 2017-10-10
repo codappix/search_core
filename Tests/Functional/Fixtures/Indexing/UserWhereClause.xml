@@ -9,7 +9,7 @@
         <sorting>72</sorting>
         <CType>header</CType>
         <header>Also indexable record</header>
-        <bodytext></bodytext>
+        <bodytext>Some content</bodytext>
         <media>0</media>
         <layout>0</layout>
         <deleted>0</deleted>
@@ -29,7 +29,7 @@
         <sorting>72</sorting>
         <CType>div</CType>
         <header>Not indexed by user where ctype condition</header>
-        <bodytext></bodytext>
+        <bodytext>Some content</bodytext>
         <media>0</media>
         <layout>0</layout>
         <deleted>0</deleted>

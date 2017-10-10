@@ -37,10 +37,6 @@ class RelationResolverTest extends AbstractFunctionalTestCase
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $table = 'sys_file';
 
-        // Only by adding the field to showitem, it will be processed by FormEngine.
-        // We use this field to test inline relations, as there is only one alternative.
-        $GLOBALS['TCA']['sys_file']['types'][1]['showitem'] .= ',metadata';
-
         $subject = $objectManager->get(TcaTableService::class, $table);
         $record = BackendUtility::getRecord($table, 1);
         $subject->prepareRecord($record);

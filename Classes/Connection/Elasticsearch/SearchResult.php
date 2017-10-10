@@ -22,11 +22,17 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 use Codappix\SearchCore\Connection\FacetInterface;
 use Codappix\SearchCore\Connection\ResultItemInterface;
+use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 class SearchResult implements SearchResultInterface
 {
+    /**
+     * @var SearchRequestInterface
+     */
+    protected $searchRequest;
+
     /**
      * @var \Elastica\ResultSet
      */
@@ -43,12 +49,23 @@ class SearchResult implements SearchResultInterface
     protected $results = [];
 
     /**
+     * For Iterator interface.
+     *
+     * @var int
+     */
+    protected $position = 0;
+
+    /**
      * @var ObjectManagerInterface
      */
     protected $objectManager;
 
-    public function __construct(\Elastica\ResultSet $result, ObjectManagerInterface $objectManager)
-    {
+    public function __construct(
+        SearchRequestInterface $searchRequest,
+        \Elastica\ResultSet $result,
+        ObjectManagerInterface $objectManager
+    ) {
+        $this->searchRequest = $searchRequest;
         $this->result = $result;
         $this->objectManager = $objectManager;
     }
@@ -75,51 +92,9 @@ class SearchResult implements SearchResultInterface
         return $this->facets;
     }
 
-    /**
-     * Returns the total sum of matching results.
-     *
-     * @return int
-     */
-    public function getTotalCount()
-    {
-        return $this->result->getTotalHits();
-    }
-
-    // Countable - Interface
-    /**
-     * Returns the total sum of results contained in this result.
-     *
-     * @return int
-     */
-    public function count()
+    public function getCurrentCount()
     {
         return $this->result->count();
-    }
-
-    // Iterator - Interface
-    public function current()
-    {
-        return $this->result->current();
-    }
-
-    public function next()
-    {
-        return $this->result->next();
-    }
-
-    public function key()
-    {
-        return $this->result->key();
-    }
-
-    public function valid()
-    {
-        return $this->result->valid();
-    }
-
-    public function rewind()
-    {
-        $this->result->rewind();
     }
 
     protected function initResults()
@@ -142,5 +117,77 @@ class SearchResult implements SearchResultInterface
         foreach ($this->result->getAggregations() as $aggregationName => $aggregation) {
             $this->facets[$aggregationName] = $this->objectManager->get(Facet::class, $aggregationName, $aggregation);
         }
+    }
+
+    // Countable - Interface
+    public function count()
+    {
+        return $this->result->getTotalHits();
+    }
+
+    // Iterator - Interface
+    public function current()
+    {
+        return $this->getResults()[$this->position];
+    }
+
+    public function next()
+    {
+        ++$this->position;
+
+        return $this->current();
+    }
+
+    public function key()
+    {
+        return $this->position;
+    }
+
+    public function valid()
+    {
+        return isset($this->getResults()[$this->position]);
+    }
+
+    public function rewind()
+    {
+        $this->position = 0;
+    }
+
+    // Extbase QueryResultInterface - Implemented to support Pagination of Fluid.
+
+    public function getQuery()
+    {
+        return $this->searchRequest;
+    }
+
+    public function getFirst()
+    {
+        throw new \BadMethodCallException('Method is not implemented yet.', 1502195121);
+    }
+
+    public function toArray()
+    {
+        throw new \BadMethodCallException('Method is not implemented yet.', 1502195135);
+    }
+
+    public function offsetExists($offset)
+    {
+        // Return false to allow Fluid to use appropriate getter methods.
+        return false;
+    }
+
+    public function offsetGet($offset)
+    {
+        throw new \BadMethodCallException('Use getter to fetch properties.', 1502196933);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        throw new \BadMethodCallException('You are not allowed to modify the result.', 1502196934);
+    }
+
+    public function offsetUnset($offset)
+    {
+        throw new \BadMethodCallException('You are not allowed to modify the result.', 1502196936);
     }
 }

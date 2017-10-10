@@ -47,7 +47,8 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
      */
     public function deletionWillBeTriggeredForTtContent()
     {
-        $this->subject->expects($this->exactly(1))->method('delete')
+        $this->subject->expects($this->exactly(1))
+            ->method('delete')
             ->with($this->equalTo('tt_content'), $this->equalTo('1'));
 
         $tce = GeneralUtility::makeInstance(Typo3DataHandler::class);
@@ -71,9 +72,9 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
             ->with(
                 $this->equalTo('tt_content'),
                 $this->callback(function ($record) {
-                    return isset($record['uid']) && $record['uid'] === '1'
-                        && isset($record['pid']) && $record['pid'] === '1'
-                        && isset($record['colPos']) && $record['colPos'] === '1'
+                    return isset($record['uid']) && $record['uid'] == 1
+                        && isset($record['pid']) && $record['pid'] == 1
+                        && isset($record['colPos']) && $record['colPos'] == 1
                         ;
                 })
             );
@@ -99,9 +100,9 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
             ->with(
                 $this->equalTo('tt_content'),
                 $this->callback(function ($record) {
-                    return isset($record['uid']) && $record['uid'] === 2
-                        && isset($record['pid']) && $record['pid'] === 1
-                        && isset($record['header']) && $record['header'] === 'a new record'
+                    return isset($record['uid']) && $record['uid'] == 2
+                        && isset($record['pid']) && $record['pid'] == 1
+                        && isset($record['header']) && $record['header'] == 'a new record'
                         ;
                 })
             );

@@ -157,13 +157,19 @@ class QueryFactoryTest extends AbstractUnitTestCase
             ->method('get')
             ->will($this->throwException(new InvalidArgumentException));
         $searchRequest = new SearchRequest('SearchWord');
-        $searchRequest->setSize(45);
+        $searchRequest->setLimit(45);
+        $searchRequest->setOffset(35);
 
         $query = $this->subject->create($searchRequest);
         $this->assertSame(
             45,
             $query->toArray()['size'],
-            'Size was not added to query.'
+            'Limit was not added to query.'
+        );
+        $this->assertSame(
+            35,
+            $query->toArray()['from'],
+            'From was not added to query.'
         );
     }
 
@@ -316,6 +322,25 @@ class QueryFactoryTest extends AbstractUnitTestCase
             ],
             $query->toArray()['query'],
             'Boosts were not added to query.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function emptySearchStringWillNotAddSearchToQuery()
+    {
+        $searchRequest = new SearchRequest();
+
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->throwException(new InvalidArgumentException));
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertInstanceOf(
+            stdClass,
+            $query->toArray()['query']['match_all'],
+            'Empty search request does not create expected query.'
         );
     }
 }

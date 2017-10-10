@@ -189,7 +189,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         $search->addIndex('typo3content');
         $search->setQuery($this->queryFactory->create($searchRequest));
 
-        return $this->objectManager->get(SearchResult::class, $search->search());
+        return $this->objectManager->get(SearchResult::class, $searchRequest, $search->search());
     }
 
     /**

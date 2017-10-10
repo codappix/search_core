@@ -40,11 +40,6 @@ class QueryFactory
     protected $configuration;
 
     /**
-     * @var array
-     */
-    protected $query = [];
-
-    /**
      * @param \TYPO3\CMS\Core\Log\LogManager $logManager
      * @param ConfigurationContainerInterface $configuration
      */
@@ -77,46 +72,53 @@ class QueryFactory
      */
     protected function createElasticaQuery(SearchRequestInterface $searchRequest)
     {
-        $this->addSize($searchRequest);
-        $this->addSearch($searchRequest);
-        $this->addBoosts($searchRequest);
-        $this->addFilter($searchRequest);
-        $this->addFacets($searchRequest);
+        $query = [];
+        $this->addSize($searchRequest, $query);
+        $this->addSearch($searchRequest, $query);
+        $this->addBoosts($searchRequest, $query);
+        $this->addFilter($searchRequest, $query);
+        $this->addFacets($searchRequest, $query);
 
         // Use last, as it might change structure of query.
         // Better approach would be something like DQL to generate query and build result in the end.
-        $this->addFactorBoost();
+        $this->addFactorBoost($query);
 
-        $this->logger->debug('Generated elasticsearch query.', [$this->query]);
-        return new \Elastica\Query($this->query);
+        $this->logger->debug('Generated elasticsearch query.', [$query]);
+        return new \Elastica\Query($query);
     }
 
     /**
      * @param SearchRequestInterface $searchRequest
+     * @param array $query
      */
-    protected function addSize(SearchRequestInterface $searchRequest)
+    protected function addSize(SearchRequestInterface $searchRequest, array &$query)
     {
-        $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
-            'from' => 0,
-            'size' => $searchRequest->getSize(),
+        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+            'from' => $searchRequest->getOffset(),
+            'size' => $searchRequest->getLimit(),
         ]);
     }
 
     /**
      * @param SearchRequestInterface $searchRequest
+     * @param array $query
      */
-    protected function addSearch(SearchRequestInterface $searchRequest)
+    protected function addSearch(SearchRequestInterface $searchRequest, array &$query)
     {
-        $this->query = ArrayUtility::setValueByPath(
-            $this->query,
+        if (trim($searchRequest->getSearchTerm()) === '') {
+            return;
+        }
+
+        $query = ArrayUtility::setValueByPath(
+            $query,
             'query.bool.must.0.match._all.query',
             $searchRequest->getSearchTerm()
         );
 
         $minimumShouldMatch = $this->configuration->getIfExists('searching.minimumShouldMatch');
         if ($minimumShouldMatch) {
-            $this->query = ArrayUtility::setValueByPath(
-                $this->query,
+            $query = ArrayUtility::setValueByPath(
+                $query,
                 'query.bool.must.0.match._all.minimum_should_match',
                 $minimumShouldMatch
             );
@@ -125,8 +127,9 @@ class QueryFactory
 
     /**
      * @param SearchRequestInterface $searchRequest
+     * @param array $query
      */
-    protected function addBoosts(SearchRequestInterface $searchRequest)
+    protected function addBoosts(SearchRequestInterface $searchRequest, array &$query)
     {
         try {
             $fields = $this->configuration->get('searching.boost');
@@ -147,7 +150,7 @@ class QueryFactory
             ];
         }
 
-        $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
+        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
             'query' => [
                 'bool' => [
                     'should' => $boostQueryParts,
@@ -156,12 +159,15 @@ class QueryFactory
         ]);
     }
 
-    protected function addFactorBoost()
+    /**
+     * @param array $query
+     */
+    protected function addFactorBoost(array &$query)
     {
         try {
-            $this->query['query'] = [
+            $query['query'] = [
                 'function_score' => [
-                    'query' => $this->query['query'],
+                    'query' => $query['query'],
                     'field_value_factor' => $this->configuration->get('searching.fieldValueFactor'),
                 ],
             ];
@@ -172,8 +178,9 @@ class QueryFactory
 
     /**
      * @param SearchRequestInterface $searchRequest
+     * @param array $query
      */
-    protected function addFilter(SearchRequestInterface $searchRequest)
+    protected function addFilter(SearchRequestInterface $searchRequest, array &$query)
     {
         if (! $searchRequest->hasFilter()) {
             return;
@@ -188,7 +195,7 @@ class QueryFactory
             ];
         }
 
-        $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
+        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
             'query' => [
                 'bool' => [
                     'filter' => $terms,
@@ -199,11 +206,12 @@ class QueryFactory
 
     /**
      * @param SearchRequestInterface $searchRequest
+     * @param array $query
      */
-    protected function addFacets(SearchRequestInterface $searchRequest)
+    protected function addFacets(SearchRequestInterface $searchRequest, array &$query)
     {
         foreach ($searchRequest->getFacets() as $facet) {
-            $this->query = ArrayUtility::arrayMergeRecursiveOverrule($this->query, [
+            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
                 'aggs' => [
                     $facet->getIdentifier() => [
                         'terms' => [

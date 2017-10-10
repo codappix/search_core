@@ -30,14 +30,14 @@
     },
     "scripts": {
         "post-autoload-dump": [
-            "mkdir -p .Build/Web/typo3conf/ext/",
-            "[ -L .Build/Web/typo3conf/ext/search_core ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/search_core"
+            "mkdir -p .Build/web/typo3conf/ext/",
+            "[ -L .Build/web/typo3conf/ext/search_core ] || ln -snvf ../../../../. .Build/web/typo3conf/ext/search_core"
         ]
     },
     "extra": {
         "typo3/cms": {
             "cms-package-dir": "{$vendor-dir}/typo3/cms",
-            "web-dir": ".Build/Web"
+            "web-dir": ".Build/web"
         }
     },
     "authors": [

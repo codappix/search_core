@@ -50,7 +50,6 @@ abstract class AbstractDataHandlerTest extends AbstractFunctionalTestCase
             ->setMethods(['add', 'update', 'delete'])
             ->getMock();
 
-        // This way TYPO3 will use our mock instead of a new instance.
-        $GLOBALS['T3_VAR']['getUserObj']['&' . DataHandlerHook::class] = new DataHandlerHook($this->subject);
+        GeneralUtility::setSingletonInstance(DataHandlerHook::class, new DataHandlerHook($this->subject));
     }
 }
