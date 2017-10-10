@@ -35,6 +35,12 @@ class PagesIndexer extends TcaIndexer
     protected $contentTableService;
 
     /**
+     * @var \TYPO3\CMS\Core\Resource\FileRepository
+     * @inject
+     */
+    protected $fileRepository;
+
+    /**
      * @param TcaTableService $tcaTableService
      * @param TcaTableService $tcaTableService
      * @param ConnectionInterface $connection
@@ -65,7 +71,9 @@ class PagesIndexer extends TcaIndexer
             }
         }
 
-        $record['content'] = $this->fetchContentForPage($record['uid']);
+        $content = $this->fetchContentForPage($record['uid']);
+        $record['content'] = $content['content'];
+        $record['media'] = array_unique(array_merge($record['media'], $content['images']));
         parent::prepareRecord($record);
     }
 
@@ -88,14 +96,42 @@ class PagesIndexer extends TcaIndexer
         }
 
         $this->logger->debug('Fetched content for page ' . $uid);
+        $images = [];
         $content = [];
         foreach ($contentElements as $contentElement) {
+            $images = array_merge(
+                $images,
+                $this->getContentElementImages($contentElement['uid'])
+            );
             $content[] = $contentElement['bodytext'];
         }
 
-        // Remove Tags.
-        // Interpret escaped new lines and special chars.
-        // Trim, e.g. trailing or leading new lines.
-        return trim(stripcslashes(strip_tags(implode(' ', $content))));
+        return [
+            // Remove Tags.
+            // Interpret escaped new lines and special chars.
+            // Trim, e.g. trailing or leading new lines.
+            'content' => trim(stripcslashes(strip_tags(implode(' ', $content)))),
+            'images' => $images,
+        ];
+    }
+
+    /**
+     * @param int $uidOfContentElement
+     * @return array
+     */
+    protected function getContentElementImages($uidOfContentElement)
+    {
+        $imageRelationUids = [];
+        $imageRelations = $this->fileRepository->findByRelation(
+            'tt_content',
+            'image',
+            $uidOfContentElement
+        );
+
+        foreach ($imageRelations as $relation) {
+            $imageRelationUids[] = $relation->getUid();
+        }
+
+        return $imageRelationUids;
     }
 }

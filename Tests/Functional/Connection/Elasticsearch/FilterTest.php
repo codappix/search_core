@@ -48,7 +48,7 @@ class FilterTest extends AbstractFunctionalTestCase
 
         $searchService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(SearchService::class);
-        $searchRequest = new SearchRequest('Search Word');
+        $searchRequest = new SearchRequest();
 
         $result = $searchService->search($searchRequest);
         $this->assertSame(2, count($result), 'Did not receive both indexed elements without filter.');
@@ -73,7 +73,7 @@ class FilterTest extends AbstractFunctionalTestCase
         $searchService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(SearchService::class);
 
-        $searchRequest = new SearchRequest('Search Word');
+        $searchRequest = new SearchRequest();
         $result = $searchService->search($searchRequest);
 
         $this->assertSame(1, count($result->getFacets()), 'Did not receive the single defined facet.');

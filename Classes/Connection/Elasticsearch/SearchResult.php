@@ -83,7 +83,7 @@ class SearchResult implements SearchResultInterface
     /**
      * Return all facets, if any.
      *
-     * @return array<FacetIterface>
+     * @return array<FacetInterface>
      */
     public function getFacets()
     {

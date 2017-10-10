@@ -86,6 +86,9 @@ class RelationResolver implements Singleton
      */
     protected function resolveValue($value, array $config)
     {
+        if (isset($config['foreign_table']) && $config['foreign_table'] === 'sys_file_reference') {
+            return $this->resolveFalRelations($value);
+        }
         if ($value === '' || $value === '0') {
             return '';
         }
@@ -100,6 +103,17 @@ class RelationResolver implements Singleton
         }
 
         return '';
+    }
+
+    /**
+     * @param string $value
+     * @return array
+     */
+    protected function resolveFalRelations($value)
+    {
+        $files = GeneralUtility::trimExplode(',', $value);
+        $files = array_filter($files);
+        return array_map('intval', $files);
     }
 
     /**
