@@ -201,7 +201,10 @@ class TcaTableService
             array_filter(
                 array_keys($this->tca['columns']),
                 function ($columnName) {
-                    return !$this->isSystemField($columnName);
+                    return !$this->isSystemField($columnName)
+                        && !$this->isUserField($columnName)
+                        && !$this->isPassthroughField($columnName)
+                        ;
                 }
             )
         );
@@ -267,6 +270,18 @@ class TcaTableService
         ];
 
         return in_array($columnName, $systemFields);
+    }
+
+    protected function isUserField(string $columnName) : bool
+    {
+        $config = $this->getColumnConfig($columnName);
+        return isset($config['type']) && $config['type'] === 'user';
+    }
+
+    protected function isPassthroughField(string $columnName) : bool
+    {
+        $config = $this->getColumnConfig($columnName);
+        return isset($config['type']) && $config['type'] === 'passthrough';
     }
 
     /**

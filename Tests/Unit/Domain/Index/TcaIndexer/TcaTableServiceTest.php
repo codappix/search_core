@@ -104,6 +104,54 @@ class TcaTableServiceTest extends AbstractUnitTestCase
     /**
      * @test
      */
+    public function allConfiguredAndAllowedTcaColumnsAreReturnedAsFields()
+    {
+        $GLOBALS['TCA']['test_table'] = [
+            'ctrl' => [
+                'languageField' => 'sys_language',
+            ],
+            'columns' => [
+                'sys_language' => [],
+                't3ver_oid' => [],
+                'available_column' => [
+                    'config' => [
+                        'type' => 'input',
+                    ],
+                ],
+                'user_column' => [
+                    'config' => [
+                        'type' => 'user',
+                    ],
+                ],
+                'passthrough_column' => [
+                    'config' => [
+                        'type' => 'passthrough',
+                    ],
+                ],
+            ],
+        ];
+        $subject = new TcaTableService(
+            'test_table',
+            $this->getMockBuilder(RelationResolver::class)->getMock(),
+            $this->configuration
+        );
+        $this->inject($subject, 'logger', $this->getMockedLogger());
+
+        $this->assertSame(
+            [
+                'test_table.uid',
+                'test_table.pid',
+                'test_table.available_column',
+            ],
+            $subject->getFields(),
+            ''
+        );
+        unset($GLOBALS['TCA']['test_table']);
+    }
+
+    /**
+     * @test
+     */
     public function executesConfiguredDataProcessingWithConfiguration()
     {
         $this->configuration->expects($this->exactly(1))
