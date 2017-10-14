@@ -104,7 +104,7 @@ class TcaTableServiceTest extends AbstractUnitTestCase
     /**
      * @test
      */
-    public function executesConfiguredDataProcessing()
+    public function executesConfiguredDataProcessingWithConfiguration()
     {
         $this->configuration->expects($this->exactly(1))
             ->method('get')
@@ -132,6 +132,38 @@ class TcaTableServiceTest extends AbstractUnitTestCase
         $expectedRecord = $record;
         $expectedRecord['new_test_field'] = 'test';
         $expectedRecord['new_test_field2'] = 'test' . PHP_EOL . 'test';
+
+        $subject->prepareRecord($record);
+
+        $this->assertSame(
+            $expectedRecord,
+            $record,
+            'Dataprocessing is not executed by TcaTableService as expected.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function executesConfiguredDataProcessingWithoutConfiguration()
+    {
+        $this->configuration->expects($this->exactly(1))
+            ->method('get')
+            ->with('indexing.testTable.dataProcessing')
+            ->will($this->returnValue([CopyToProcessor::class]));
+
+        $subject = $this->getMockBuilder(TcaTableService::class)
+            ->disableOriginalConstructor()
+            ->setMethodsExcept(['prepareRecord'])
+            ->getMock();
+        $this->inject($subject, 'configuration', $this->configuration);
+        $this->inject($subject, 'tableName', 'testTable');
+        $this->inject($subject, 'relationResolver', $this->getMockBuilder(RelationResolver::class)->getMock());
+
+        $record = ['field 1' => 'test'];
+        $expectedRecord = $record;
+        $expectedRecord[''] = 'test';
+        $expectedRecord['search_title'] = 'test';
 
         $subject->prepareRecord($record);
 

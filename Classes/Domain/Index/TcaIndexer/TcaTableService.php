@@ -150,7 +150,14 @@ class TcaTableService
 
         try {
             foreach ($this->configuration->get('indexing.' . $this->tableName . '.dataProcessing') as $configuration) {
-                $dataProcessor = GeneralUtility::makeInstance($configuration['_typoScriptNodeValue']);
+                $className = '';
+                if (is_string($configuration)) {
+                    $className = $configuration;
+                    $configuration = [];
+                } else {
+                    $className = $configuration['_typoScriptNodeValue'];
+                }
+                $dataProcessor = GeneralUtility::makeInstance($className);
                 if ($dataProcessor instanceof ProcessorInterface) {
                     $record = $dataProcessor->processRecord($record, $configuration);
                 }
