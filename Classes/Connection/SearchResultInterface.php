@@ -35,7 +35,7 @@ interface SearchResultInterface extends \Iterator, \Countable, QueryResultInterf
     /**
      * Return all facets, if any.
      *
-     * @return array<FacetIterface>
+     * @return array<FacetInterface>
      */
     public function getFacets();
 

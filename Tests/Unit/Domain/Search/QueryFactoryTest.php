@@ -50,7 +50,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
     /**
      * @test
      */
-    public function creatonOfQueryWorksInGeneral()
+    public function creationOfQueryWorksInGeneral()
     {
         $searchRequest = new SearchRequest('SearchWord');
 
