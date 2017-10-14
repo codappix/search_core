@@ -24,7 +24,7 @@ Currently all fields are searched for a single search input.
 
 Also multiple filter are supported. Filtering results by fields for string contents.
 
-Even facets / aggregates are now possible. Therefore a mapping has to be defined in TypoScript for
+Facets / aggregates are also possible. Therefore a mapping has to be defined in TypoScript for
 indexing, and the facets itself while searching.
 
 .. _features_planned:

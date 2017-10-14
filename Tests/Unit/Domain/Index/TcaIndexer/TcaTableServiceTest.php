@@ -21,6 +21,8 @@ namespace Codappix\SearchCore\Tests\Unit\Domain\Index\TcaIndexer;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\DataProcessing\CopyToProcessor;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\RelationResolver;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
 
@@ -96,6 +98,47 @@ class TcaTableServiceTest extends AbstractUnitTestCase
         $this->assertSame(
             [],
             $whereClause->getParameters()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function executesConfiguredDataProcessing()
+    {
+        $this->configuration->expects($this->exactly(1))
+            ->method('get')
+            ->with('indexing.testTable.dataProcessing')
+            ->will($this->returnValue([
+                '1' => [
+                    '_typoScriptNodeValue' => CopyToProcessor::class,
+                    'to' => 'new_test_field',
+                ],
+                '2' => [
+                    '_typoScriptNodeValue' => CopyToProcessor::class,
+                    'to' => 'new_test_field2',
+                ],
+            ]));
+
+        $subject = $this->getMockBuilder(TcaTableService::class)
+            ->disableOriginalConstructor()
+            ->setMethodsExcept(['prepareRecord'])
+            ->getMock();
+        $this->inject($subject, 'configuration', $this->configuration);
+        $this->inject($subject, 'tableName', 'testTable');
+        $this->inject($subject, 'relationResolver', $this->getMockBuilder(RelationResolver::class)->getMock());
+
+        $record = ['field 1' => 'test'];
+        $expectedRecord = $record;
+        $expectedRecord['new_test_field'] = 'test';
+        $expectedRecord['new_test_field2'] = 'test' . PHP_EOL . 'test';
+
+        $subject->prepareRecord($record);
+
+        $this->assertSame(
+            $expectedRecord,
+            $record,
+            'Dataprocessing is not executed by TcaTableService as expected.'
         );
     }
 }

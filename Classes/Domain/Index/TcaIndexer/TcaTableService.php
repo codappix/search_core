@@ -21,6 +21,8 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\InvalidArgumentException as InvalidConfigurationArgumentException;
+use Codappix\SearchCore\DataProcessing\ProcessorInterface;
 use Codappix\SearchCore\Database\Doctrine\Join;
 use Codappix\SearchCore\Database\Doctrine\Where;
 use Codappix\SearchCore\Domain\Index\IndexingException;
@@ -145,6 +147,17 @@ class TcaTableService
     public function prepareRecord(array &$record) : void
     {
         $this->relationResolver->resolveRelationsForRecord($this, $record);
+
+        try {
+            foreach ($this->configuration->get('indexing.' . $this->tableName . '.dataProcessing') as $configuration) {
+                $dataProcessor = GeneralUtility::makeInstance($configuration['_typoScriptNodeValue']);
+                if ($dataProcessor instanceof ProcessorInterface) {
+                    $record = $dataProcessor->processRecord($record, $configuration);
+                }
+            }
+        } catch (InvalidConfigurationArgumentException $e) {
+            // Nothing to do.
+        }
 
         if (isset($record['uid']) && !isset($record['search_identifier'])) {
             $record['search_identifier'] = $record['uid'];

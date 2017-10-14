@@ -28,3 +28,13 @@ The indexing is done by one of the available indexer. For each identifier it's p
 the indexer to use. Also it's possible to write custom indexer to use.
 
 Currently only the :ref:`TcaIndexer` is provided.
+
+.. _concepts_indexing_dataprocessing:
+
+DataProcessing
+^^^^^^^^^^^^^^
+
+Before data is transfered to search service, it can be processed by "DataProcessors" like already
+known by :ref:`t3tsref:cobj-fluidtemplate-properties-dataprocessing` of :ref:`t3tsref:cobj-fluidtemplate`.
+
+Configuration is done through TypoScript, see :ref:`dataProcessing`.
