@@ -21,11 +21,17 @@ further stuff.
 
 The indexer is configurable through the following options:
 
-* :ref:`allowedTables`
-
 * :ref:`rootLineBlacklist`
 
 * :ref:`additionalWhereClause`
+
+* :ref:`abstractFields`
+
+* :ref:`mapping`
+
+* :ref:`index`
+
+* :ref:`dataProcessing`
 
 .. _PagesIndexer:
 
@@ -42,13 +48,17 @@ improve search.
 
 The indexer is configurable through the following options:
 
-* :ref:`allowedTables`
-
 * :ref:`rootLineBlacklist`
 
 * :ref:`additionalWhereClause`
 
 * :ref:`abstractFields`
+
+* :ref:`mapping`
+
+* :ref:`index`
+
+* :ref:`dataProcessing`
 
 .. note::
 

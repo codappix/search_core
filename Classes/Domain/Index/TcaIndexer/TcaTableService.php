@@ -21,6 +21,7 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\InvalidArgumentException as InvalidConfigurationArgumentException;
 use Codappix\SearchCore\DataProcessing\ProcessorInterface;
 use Codappix\SearchCore\Database\Doctrine\Join;
 use Codappix\SearchCore\Database\Doctrine\Where;
@@ -149,7 +150,14 @@ class TcaTableService
 
         try {
             foreach ($this->configuration->get('indexing.' . $this->tableName . '.dataProcessing') as $configuration) {
-                $dataProcessor = GeneralUtility::makeInstance($configuration['_typoScriptNodeValue']);
+                $className = '';
+                if (is_string($configuration)) {
+                    $className = $configuration;
+                    $configuration = [];
+                } else {
+                    $className = $configuration['_typoScriptNodeValue'];
+                }
+                $dataProcessor = GeneralUtility::makeInstance($className);
                 if ($dataProcessor instanceof ProcessorInterface) {
                     $record = $dataProcessor->processRecord($record, $configuration);
                 }
@@ -193,7 +201,10 @@ class TcaTableService
             array_filter(
                 array_keys($this->tca['columns']),
                 function ($columnName) {
-                    return !$this->isSystemField($columnName) && !$this->isUserField($columnName);
+                    return !$this->isSystemField($columnName)
+                        && !$this->isUserField($columnName)
+                        && !$this->isPassthroughField($columnName)
+                        ;
                 }
             )
         );
@@ -265,6 +276,12 @@ class TcaTableService
     {
         $config = $this->getColumnConfig($columnName);
         return isset($config['type']) && $config['type'] === 'user';
+    }
+
+    protected function isPassthroughField(string $columnName) : bool
+    {
+        $config = $this->getColumnConfig($columnName);
+        return isset($config['type']) && $config['type'] === 'passthrough';
     }
 
     /**
