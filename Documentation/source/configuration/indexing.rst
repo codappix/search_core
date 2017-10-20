@@ -175,8 +175,12 @@ dataProcessing
 
     The following Processor are available:
 
-        ``Codappix\SearchCore\DataProcessing\CopyToProcessor``
-            Will copy contents of fields to other fields
+    .. toctree::
+       :maxdepth: 1
+       :glob:
+
+       dataProcessing/CopyToProcessor
+       dataProcessing/GeoPointProcessor
 
     The following Processor are planned:
 

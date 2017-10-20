@@ -25,7 +25,7 @@ namespace Codappix\SearchCore\DataProcessing;
  */
 class CopyToProcessor implements ProcessorInterface
 {
-    public function processRecord(array $record, array $configuration)
+    public function processRecord(array $record, array $configuration) : array
     {
         $all = [];
 
@@ -36,10 +36,6 @@ class CopyToProcessor implements ProcessorInterface
         return $record;
     }
 
-    /**
-     * @param array &$target
-     * @param array $from
-     */
     protected function addArray(array &$target, array $from)
     {
         foreach ($from as $value) {
