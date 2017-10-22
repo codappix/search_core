@@ -70,8 +70,6 @@ class QueryFactory
         // Better approach would be something like DQL to generate query and build result in the end.
         $this->addFactorBoost($query);
 
-        \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($query, '$query', 8, false);die;
-
         $this->logger->debug('Generated elasticsearch query.', [$query]);
         return new \Elastica\Query($query);
     }
@@ -161,7 +159,7 @@ class QueryFactory
             $filter[] = $this->buildFilter(
                 $name,
                 $value,
-                $this->configuration->getIfExists('searching.filter.' . $name) ?: []
+                $this->configuration->getIfExists('searching.mapping.filter.' . $name) ?: []
             );
         }
 
@@ -201,13 +199,8 @@ class QueryFactory
 
         $filter = [];
 
-        \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($name, '$name', 8, false);
-        \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($value, '$value', 8, false);
-        \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($config, '$config', 8, false);die;
-
         if (isset($config['fields'])) {
             foreach ($config['fields'] as $elasticField => $inputField) {
-                \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($value, '$value', 8, false);die;
                 $filter[$elasticField] = $value[$inputField];
             }
         }
