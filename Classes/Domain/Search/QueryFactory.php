@@ -39,10 +39,6 @@ class QueryFactory
      */
     protected $configuration;
 
-    /**
-     * @param \TYPO3\CMS\Core\Log\LogManager $logManager
-     * @param ConfigurationContainerInterface $configuration
-     */
     public function __construct(
         \TYPO3\CMS\Core\Log\LogManager $logManager,
         ConfigurationContainerInterface $configuration
@@ -55,22 +51,13 @@ class QueryFactory
      * TODO: This is not in scope Elasticsearch, therefore it should not return
      * \Elastica\Query, but decide to use a more specific QueryFactory like
      * ElasticaQueryFactory, once the second query is added?
-     *
-     * @param SearchRequestInterface $searchRequest
-     *
-     * @return \Elastica\Query
      */
-    public function create(SearchRequestInterface $searchRequest)
+    public function create(SearchRequestInterface $searchRequest) : \Elastica\Query
     {
         return $this->createElasticaQuery($searchRequest);
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     *
-     * @return \Elastica\Query
-     */
-    protected function createElasticaQuery(SearchRequestInterface $searchRequest)
+    protected function createElasticaQuery(SearchRequestInterface $searchRequest) : \Elastica\Query
     {
         $query = [];
         $this->addSize($searchRequest, $query);
@@ -83,14 +70,12 @@ class QueryFactory
         // Better approach would be something like DQL to generate query and build result in the end.
         $this->addFactorBoost($query);
 
+        \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($query, '$query', 8, false);die;
+
         $this->logger->debug('Generated elasticsearch query.', [$query]);
         return new \Elastica\Query($query);
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     */
     protected function addSize(SearchRequestInterface $searchRequest, array &$query)
     {
         $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
@@ -99,10 +84,6 @@ class QueryFactory
         ]);
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     */
     protected function addSearch(SearchRequestInterface $searchRequest, array &$query)
     {
         if (trim($searchRequest->getSearchTerm()) === '') {
@@ -125,10 +106,6 @@ class QueryFactory
         }
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     */
     protected function addBoosts(SearchRequestInterface $searchRequest, array &$query)
     {
         try {
@@ -159,22 +136,8 @@ class QueryFactory
         ]);
     }
 
-    /**
-     * @param array $query
-     */
     protected function addFactorBoost(array &$query)
     {
-        $query['sort'] = [
-            '_geo_distance' => [
-                'location' => [
-                    'lat' => 51.2014392,
-                    'lon' => 6.4302962,
-                ],
-                'order' => 'asc',
-                'unit' => 'km',
-                'distance_type' => 'plane',
-            ]
-        ];
         try {
             $query['query'] = [
                 'function_score' => [
@@ -187,10 +150,6 @@ class QueryFactory
         }
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     */
     protected function addFilter(SearchRequestInterface $searchRequest, array &$query)
     {
         if (! $searchRequest->hasFilter()) {
@@ -199,7 +158,11 @@ class QueryFactory
 
         $filter = [];
         foreach ($searchRequest->getFilter() as $name => $value) {
-            $filter[] = $this->buildFilter($name, $value);
+            $filter[] = $this->buildFilter(
+                $name,
+                $value,
+                $this->configuration->getIfExists('searching.filter.' . $name) ?: []
+            );
         }
 
         $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
@@ -211,23 +174,6 @@ class QueryFactory
         ]);
     }
 
-    protected function buildFilter(string $name, $value) : array
-    {
-        if ($name === 'geo_distance') {
-            return [$name => $value];
-        }
-
-        return [
-            'term' => [
-                $name => $value,
-            ],
-        ];
-    }
-
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     */
     protected function addFacets(SearchRequestInterface $searchRequest, array &$query)
     {
         foreach ($searchRequest->getFacets() as $facet) {
@@ -241,5 +187,31 @@ class QueryFactory
                 ],
             ]);
         }
+    }
+
+    protected function buildFilter(string $name, $value, array $config) : array
+    {
+        if ($config === []) {
+            return [
+                'term' => [
+                    $name => $value,
+                ],
+            ];
+        }
+
+        $filter = [];
+
+        \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($name, '$name', 8, false);
+        \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($value, '$value', 8, false);
+        \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($config, '$config', 8, false);die;
+
+        if (isset($config['fields'])) {
+            foreach ($config['fields'] as $elasticField => $inputField) {
+                \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($value, '$value', 8, false);die;
+                $filter[$elasticField] = $value[$inputField];
+            }
+        }
+
+        return [$config['field'] => $filter];
     }
 }
