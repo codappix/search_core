@@ -65,6 +65,8 @@ class QueryFactory
         $this->addBoosts($searchRequest, $query);
         $this->addFilter($searchRequest, $query);
         $this->addFacets($searchRequest, $query);
+        $this->addFields($searchRequest, $query);
+        $this->addSort($searchRequest, $query);
 
         // Use last, as it might change structure of query.
         // Better approach would be something like DQL to generate query and build result in the end.
@@ -148,6 +150,44 @@ class QueryFactory
         }
     }
 
+    protected function addFields(SearchRequestInterface $searchRequest, array &$query)
+    {
+        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+            'stored_fields' => [ '_source' ],
+        ]);
+        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+            'script_fields' => [
+                'distance' => [
+                    'script' => [
+                        'params' => [
+                            'lat' => 51.168098,
+                            'lon' => 6.381384,
+                        ],
+                        'lang' => 'painless',
+                        'inline' => 'doc["location"].arcDistance(params.lat,params.lon) * 0.001',
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    protected function addSort(SearchRequestInterface $searchRequest, array &$query)
+    {
+        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+            'sort' => [
+                '_geo_distance' => [
+                    'location' => [
+                        'lat' => 51.168098,
+                        'lon' => 6.381384,
+                    ],
+                    'order' => 'asc',
+                    'unit' => 'km',
+                    'distance_type' => 'plane',
+                ],
+            ],
+        ]);
+    }
+
     protected function addFilter(SearchRequestInterface $searchRequest, array &$query)
     {
         if (! $searchRequest->hasFilter()) {
@@ -172,21 +212,6 @@ class QueryFactory
         ]);
     }
 
-    protected function addFacets(SearchRequestInterface $searchRequest, array &$query)
-    {
-        foreach ($searchRequest->getFacets() as $facet) {
-            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
-                'aggs' => [
-                    $facet->getIdentifier() => [
-                        'terms' => [
-                            'field' => $facet->getField(),
-                        ],
-                    ],
-                ],
-            ]);
-        }
-    }
-
     protected function buildFilter(string $name, $value, array $config) : array
     {
         if ($config === []) {
@@ -206,5 +231,20 @@ class QueryFactory
         }
 
         return [$config['field'] => $filter];
+    }
+
+    protected function addFacets(SearchRequestInterface $searchRequest, array &$query)
+    {
+        foreach ($searchRequest->getFacets() as $facet) {
+            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+                'aggs' => [
+                    $facet->getIdentifier() => [
+                        'terms' => [
+                            'field' => $facet->getField(),
+                        ],
+                    ],
+                ],
+            ]);
+        }
     }
 }
