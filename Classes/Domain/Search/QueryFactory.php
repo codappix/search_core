@@ -25,7 +25,9 @@ use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\Elasticsearch\Query;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ArrayUtility;
+use TYPO3\CMS\Fluid\View\StandaloneView;
 
 class QueryFactory
 {
@@ -152,40 +154,28 @@ class QueryFactory
 
     protected function addFields(SearchRequestInterface $searchRequest, array &$query)
     {
-        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
-            'stored_fields' => [ '_source' ],
-        ]);
-        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
-            'script_fields' => [
-                'distance' => [
-                    'script' => [
-                        'params' => [
-                            'lat' => 51.168098,
-                            'lon' => 6.381384,
-                        ],
-                        'lang' => 'painless',
-                        'inline' => 'doc["location"].arcDistance(params.lat,params.lon) * 0.001',
-                    ],
-                ],
-            ],
-        ]);
+        try {
+            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+                'stored_fields' => GeneralUtility::trimExplode(',', $this->configuration->get('searching.fields.stored_fields'), true),
+            ]);
+        } catch (InvalidArgumentException $e) {
+            // Nothing configured
+        }
+
+        try {
+            $scriptFields = $this->configuration->get('searching.fields.script_fields');
+            $scriptFields = $this->replaceArrayValuesWithRequestContent($searchRequest, $scriptFields);
+            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['script_fields' => $scriptFields]);
+        } catch (InvalidArgumentException $e) {
+            // Nothing configured
+        }
     }
 
     protected function addSort(SearchRequestInterface $searchRequest, array &$query)
     {
-        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
-            'sort' => [
-                '_geo_distance' => [
-                    'location' => [
-                        'lat' => 51.168098,
-                        'lon' => 6.381384,
-                    ],
-                    'order' => 'asc',
-                    'unit' => 'km',
-                    'distance_type' => 'plane',
-                ],
-            ],
-        ]);
+        $sorting = $this->configuration->getIfExists('searching.sort') ?: [];
+        $sorting = $this->replaceArrayValuesWithRequestContent($searchRequest, $sorting);
+        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['sort' => $sorting]);
     }
 
     protected function addFilter(SearchRequestInterface $searchRequest, array &$query)
@@ -246,5 +236,22 @@ class QueryFactory
                 ],
             ]);
         }
+    }
+
+    protected function replaceArrayValuesWithRequestContent(SearchRequestInterface $searchRequest, array $array) : array
+    {
+        array_walk_recursive($array, function (&$value, $key, SearchRequestInterface $searchRequest) {
+            $template = new StandaloneView();
+            $template->assign('request', $searchRequest);
+            $template->setTemplateSource($value);
+            $value = $template->render();
+
+            // As elasticsearch does need some doubles to be end as doubles.
+            if (is_numeric($value)) {
+                $value = (float) $value;
+            }
+        }, $searchRequest);
+
+        return $array;
     }
 }
