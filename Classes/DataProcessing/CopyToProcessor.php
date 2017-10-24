@@ -44,7 +44,7 @@ class CopyToProcessor implements ProcessorInterface
     {
         foreach ($from as $property => $value) {
             if (is_array($value)) {
-                $this->addArray($to, $value, $exclude);
+                $this->addArray($to, $value);
                 continue;
             }
 

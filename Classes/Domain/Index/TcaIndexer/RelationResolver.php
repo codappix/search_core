@@ -117,7 +117,7 @@ class RelationResolver implements Singleton
     }
 
     /**
-     * @param array Column config.
+     * @param array $config Column config.
      * @return bool
      */
     protected function isRelation(array &$config)

@@ -22,7 +22,6 @@ namespace Codappix\SearchCore\Domain\Search;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
-use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\Elasticsearch\Query;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

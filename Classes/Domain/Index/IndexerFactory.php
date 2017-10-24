@@ -22,8 +22,6 @@ namespace Codappix\SearchCore\Domain\Index;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
-use Codappix\SearchCore\Domain\Index\IndexerInterface;
-use Codappix\SearchCore\Domain\Index\TcaIndexer;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;

@@ -72,14 +72,16 @@ class PagesIndexer extends TcaIndexer
         }
 
         $content = $this->fetchContentForPage($record['uid']);
-        $record['content'] = $content['content'];
-        $record['media'] = array_unique(array_merge($record['media'], $content['images']));
+        if ($content !== []) {
+            $record['content'] = $content['content'];
+            $record['media'] = array_unique(array_merge($record['media'], $content['images']));
+        }
         parent::prepareRecord($record);
     }
 
     /**
      * @param int $uid
-     * @return string
+     * @return []
      */
     protected function fetchContentForPage($uid)
     {
@@ -92,7 +94,7 @@ class PagesIndexer extends TcaIndexer
 
         if ($contentElements === null) {
             $this->logger->debug('No content for page ' . $uid);
-            return '';
+            return [];
         }
 
         $this->logger->debug('Fetched content for page ' . $uid);
