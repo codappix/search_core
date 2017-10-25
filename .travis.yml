@@ -1,8 +1,16 @@
+sudo: true
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-set-default
+before_install:
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.0.deb && sudo dpkg -i --force-confnew elasticsearch-5.2.0.deb && sudo service elasticsearch start
+  - mysql -u root -e 'GRANT ALL ON `typo3_ci_ft%`.* TO travis@127.0.0.1;'
+
 language: php
 
 php:
-  - 5.6
-  - 7.0
   - 7.1
 
 env:
@@ -15,44 +23,18 @@ env:
     - typo3DatabaseHost="127.0.0.1"
     - typo3DatabaseUsername="travis"
     - typo3DatabasePassword=""
-  matrix:
-    - TYPO3_VERSION="~7.6"
-    - TYPO3_VERSION="~8"
-    - TYPO3_VERSION="dev-master"
 
 matrix:
   fast_finish: true
-  exclude:
-    # TYPO3 no longer supports 5.6
-    - env: TYPO3_VERSION="~7.6"
-      php: 5.6
-    - env: TYPO3_VERSION="~8"
-      php: 5.6
-    - env: TYPO3_VERSION="dev-master"
-      php: 5.6
-  allow_failures:
-    # 7 and 8 are not working due to current relation resolving.
-    # See: https://github.com/DanielSiepmann/search_core/projects/1
-    - env: TYPO3_VERSION="~7.6"
-      php: 7.0
-    - env: TYPO3_VERSION="~7.6"
-      php: 7.1
-    - env: TYPO3_VERSION="~8"
-      php: 7.0
-    - env: TYPO3_VERSION="~8"
-      php: 7.1
-    - env: TYPO3_VERSION="dev-master"
-      php: 7.0
-    - env: TYPO3_VERSION="dev-master"
-      php: 7.1
 
 services:
   - mysql
-  - elasticsearch
 
 install: make install
 
-script: make functionalTests
+script:
+  - make unitTests
+  - make functionalTests
 
 after_script:
   - make uploadCodeCoverage
