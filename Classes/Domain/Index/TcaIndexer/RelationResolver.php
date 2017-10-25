@@ -22,8 +22,6 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Resolves relations from TCA using TCA.
@@ -33,160 +31,65 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
  */
 class RelationResolver implements Singleton
 {
-    /**
-     * @var \TYPO3\CMS\Backend\Form\DataPreprocessor
-     * @inject
-     */
-    protected $formEngine;
-
-    /**
-     * Resolve relations for the given record.
-     *
-     * @param TcaTableService $service
-     * @param array $record
-     */
     public function resolveRelationsForRecord(TcaTableService $service, array &$record)
     {
-        $preprocessedData = $this->formEngine->renderRecordRaw(
-            $service->getTableName(),
-            $record['uid'],
-            $record['pid'],
-            $record
-        );
-
         foreach (array_keys($record) as $column) {
+            // TODO: Define / configure fields to exclude?!
+            if ($column === 'pid') {
+                continue;
+            }
+            $record[$column] = BackendUtility::getProcessedValueExtra(
+                $service->getTableName(),
+                $column,
+                $record[$column],
+                0,
+                $record['uid']
+            );
+
             try {
                 $config = $service->getColumnConfig($column);
+
+                if ($this->isRelation($config)) {
+                    $record[$column] = $this->resolveValue($record[$column], $config);
+                }
             } catch (InvalidArgumentException $e) {
                 // Column is not configured.
                 continue;
             }
-
-            if (! $this->isRelation($config)) {
-                continue;
-            }
-
-            $record[$column] = $this->resolveValue($preprocessedData[$column], $config);
         }
     }
 
-    /**
-     * Resolve the given value from TYPO3 API response.
-     *
-     * As FormEngine uses an internal format, we resolve it to a usable format
-     * for indexing.
-     *
-     * TODO: Unittest to break as soon as TYPO3 api has changed, so we know
-     * exactly that we need to tackle this place.
-     *
-     * @param string $value The value from FormEngine to resolve.
-     * @param array $config The tca config of the relation.
-     *
-     * @return array<String>|string
-     */
-    protected function resolveValue($value, array $config)
+    protected function resolveValue($value, array $tcaColumn)
     {
-        if (isset($config['foreign_table']) && $config['foreign_table'] === 'sys_file_reference') {
-            return $this->resolveFalRelations($value);
-        }
-        if ($value === '' || $value === '0') {
-            return '';
-        }
-        if (strpos($value, '|') !== false) {
-            return $this->resolveSelectValue($value);
-        }
-        if (strpos($value, ',') !== false) {
-            return $this->resolveInlineValue($value, $config['foreign_table']);
-        }
-        if ($config['type'] === 'select' && is_array($config['items'])) {
-            return $this->resolveSelectItemValue($value, $config['items']);
+        if ($value === '' || $value === 'N/A') {
+            return [];
         }
 
-        return '';
+        if ($tcaColumn['type'] === 'select' && strpos($value, ';') !== false) {
+            return $this->resolveForeignDbValue($value);
+        }
+        if (in_array($tcaColumn['type'], ['inline', 'group', 'select'])) {
+            return $this->resolveInlineValue($value);
+        }
+
+        return [];
     }
 
-    /**
-     * @param string $value
-     * @return array
-     */
-    protected function resolveFalRelations($value)
-    {
-        $files = GeneralUtility::trimExplode(',', $value);
-        $files = array_filter($files);
-        return array_map('intval', $files);
-    }
-
-    /**
-     * @param array $config Column config.
-     * @return bool
-     */
     protected function isRelation(array &$config)
     {
         return isset($config['foreign_table'])
-            || (isset($config['items']) && is_array($config['items']))
+            || (isset($config['renderType']) && $config['renderType'] !== 'selectSingle')
             || (isset($config['internal_type']) && strtolower($config['internal_type']) === 'db')
             ;
     }
 
-    /**
-     * Resolves internal representation of select to array of labels.
-     *
-     * @param string $value
-     * @return array
-     */
-    protected function resolveSelectValue($value)
+    protected function resolveForeignDbValue($value)
     {
-        $newValue = [];
-
-        foreach (GeneralUtility::trimExplode(',', $value) as $value) {
-            $value = substr($value, strpos($value, '|') + 1);
-            $value = rawurldecode($value);
-            $newValue[] = $value;
-        }
-
-        return $newValue;
+        return array_map('trim', explode(';', $value));
     }
 
-    /**
-     * @param string $value
-     * @param string $table
-     *
-     * @return array
-     */
-    protected function resolveInlineValue($value, $table)
+    protected function resolveInlineValue($value)
     {
-        $newValue = [];
-        $records = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $table, 'uid in (' . $value . ')');
-        if ($records === null) {
-            return $newValue;
-        }
-
-        foreach ($records as $record) {
-            $newValue[] = BackendUtility::getRecordTitle($table, $record);
-        }
-
-        return $newValue;
-    }
-
-    /**
-     * @param string $value
-     * @param array $items
-     *
-     * @return string
-     */
-    protected function resolveSelectItemValue($value, array $items)
-    {
-        foreach ($items as $item) {
-            if ($item[1] === $value) {
-                $newValue = LocalizationUtility::translate($item[0], '');
-
-                if ($newValue === null) {
-                    return '';
-                }
-                return $newValue;
-            }
-        }
-
-        return '';
+        return array_map('trim', explode(',', $value));
     }
 }
