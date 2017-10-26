@@ -31,9 +31,6 @@ call_user_func(
             'search',
             [
                 'Search' => 'search'
-            ],
-            [
-                'Search' => 'search' // TODO: Enable caching. But submitting form results in previous result?!
             ]
         );
 
