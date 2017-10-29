@@ -31,6 +31,9 @@ call_user_func(
             'search',
             [
                 'Search' => 'search'
+            ],
+            [
+                'Search' => 'search'
             ]
         );
 
