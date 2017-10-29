@@ -26,6 +26,7 @@ use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
 use Codappix\SearchCore\Domain\Model\FacetRequest;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 /**
@@ -123,10 +124,16 @@ class SearchService
     protected function addConfiguredFilters(SearchRequestInterface $searchRequest)
     {
         try {
-            $searchRequest->setFilter(array_merge(
-                $searchRequest->getFilter(),
-                $this->configuration->get('searching.filter')
-            ));
+            $filter = $searchRequest->getFilter();
+
+            ArrayUtility::mergeRecursiveWithOverrule(
+                $filter,
+                $this->configuration->get('searching.filter'),
+                true,
+                false
+            );
+
+            $searchRequest->setFilter($filter);
         } catch (InvalidArgumentException $e) {
             // Nothing todo, no filter configured.
         }
