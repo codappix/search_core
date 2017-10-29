@@ -165,7 +165,10 @@ class QueryFactory
         try {
             $scriptFields = $this->configuration->get('searching.fields.script_fields');
             $scriptFields = $this->replaceArrayValuesWithRequestContent($searchRequest, $scriptFields);
-            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['script_fields' => $scriptFields]);
+            $scriptFields = $this->filterByCondition($scriptFields);
+            if ($scriptFields !== []) {
+                $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['script_fields' => $scriptFields]);
+            }
         } catch (InvalidArgumentException $e) {
             // Nothing configured
         }
@@ -175,7 +178,10 @@ class QueryFactory
     {
         $sorting = $this->configuration->getIfExists('searching.sort') ?: [];
         $sorting = $this->replaceArrayValuesWithRequestContent($searchRequest, $sorting);
-        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['sort' => $sorting]);
+        $sorting = $this->filterByCondition($sorting);
+        if ($sorting !== []) {
+            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['sort' => $sorting]);
+        }
     }
 
     protected function addFilter(SearchRequestInterface $searchRequest, array &$query)
@@ -253,5 +259,20 @@ class QueryFactory
         }, $searchRequest);
 
         return $array;
+    }
+
+    protected function filterByCondition(array $entries) : array
+    {
+        $entries = array_filter($entries, function ($entry) {
+            return !array_key_exists('condition', $entry) || (bool) $entry['condition'] === true;
+        });
+
+        foreach ($entries as $key => $entry) {
+            if (array_key_exists('condition', $entry)) {
+                unset($entries[$key]['condition']);
+            }
+        }
+
+        return $entries;
     }
 }
