@@ -21,6 +21,7 @@ namespace Codappix\SearchCore\Tests\Unit\Domain\Search;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\ConfigurationUtility;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Domain\Model\FacetRequest;
 use Codappix\SearchCore\Domain\Model\SearchRequest;
@@ -44,7 +45,8 @@ class QueryFactoryTest extends AbstractUnitTestCase
         parent::setUp();
 
         $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)->getMock();
-        $this->subject = new QueryFactory($this->getMockedLogger(), $this->configuration);
+        $configurationUtility = new ConfigurationUtility();
+        $this->subject = new QueryFactory($this->getMockedLogger(), $this->configuration, $configurationUtility);
     }
 
     /**

@@ -21,13 +21,13 @@ namespace Codappix\SearchCore\Domain\Search;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\ConfigurationUtility;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\Elasticsearch\Query;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ArrayUtility;
-use TYPO3\CMS\Fluid\View\StandaloneView;
 
 class QueryFactory
 {
@@ -41,12 +41,19 @@ class QueryFactory
      */
     protected $configuration;
 
+    /**
+     * @var ConfigurationUtility
+     */
+    protected $configurationUtility;
+
     public function __construct(
         \TYPO3\CMS\Core\Log\LogManager $logManager,
-        ConfigurationContainerInterface $configuration
+        ConfigurationContainerInterface $configuration,
+        ConfigurationUtility $configurationUtility
     ) {
         $this->logger = $logManager->getLogger(__CLASS__);
         $this->configuration = $configuration;
+        $this->configurationUtility = $configurationUtility;
     }
 
     /**
@@ -164,8 +171,8 @@ class QueryFactory
 
         try {
             $scriptFields = $this->configuration->get('searching.fields.script_fields');
-            $scriptFields = $this->replaceArrayValuesWithRequestContent($searchRequest, $scriptFields);
-            $scriptFields = $this->filterByCondition($scriptFields);
+            $scriptFields = $this->configurationUtility->replaceArrayValuesWithRequestContent($searchRequest, $scriptFields);
+            $scriptFields = $this->configurationUtility->filterByCondition($scriptFields);
             if ($scriptFields !== []) {
                 $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['script_fields' => $scriptFields]);
             }
@@ -177,8 +184,8 @@ class QueryFactory
     protected function addSort(SearchRequestInterface $searchRequest, array &$query)
     {
         $sorting = $this->configuration->getIfExists('searching.sort') ?: [];
-        $sorting = $this->replaceArrayValuesWithRequestContent($searchRequest, $sorting);
-        $sorting = $this->filterByCondition($sorting);
+        $sorting = $this->configurationUtility->replaceArrayValuesWithRequestContent($searchRequest, $sorting);
+        $sorting = $this->configurationUtility->filterByCondition($sorting);
         if ($sorting !== []) {
             $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['sort' => $sorting]);
         }
@@ -242,37 +249,5 @@ class QueryFactory
                 ],
             ]);
         }
-    }
-
-    protected function replaceArrayValuesWithRequestContent(SearchRequestInterface $searchRequest, array $array) : array
-    {
-        array_walk_recursive($array, function (&$value, $key, SearchRequestInterface $searchRequest) {
-            $template = new StandaloneView();
-            $template->assign('request', $searchRequest);
-            $template->setTemplateSource($value);
-            $value = $template->render();
-
-            // As elasticsearch does need some doubles to be end as doubles.
-            if (is_numeric($value)) {
-                $value = (float) $value;
-            }
-        }, $searchRequest);
-
-        return $array;
-    }
-
-    protected function filterByCondition(array $entries) : array
-    {
-        $entries = array_filter($entries, function ($entry) {
-            return !array_key_exists('condition', $entry) || (bool) $entry['condition'] === true;
-        });
-
-        foreach ($entries as $key => $entry) {
-            if (array_key_exists('condition', $entry)) {
-                unset($entries[$key]['condition']);
-            }
-        }
-
-        return $entries;
     }
 }
