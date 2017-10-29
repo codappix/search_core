@@ -100,8 +100,6 @@ class QueryFactoryTest extends AbstractUnitTestCase
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setFilter([
             'field' => '',
-            'field1' => 0,
-            'field2' => false,
         ]);
 
         $this->assertFalse(
@@ -209,10 +207,16 @@ class QueryFactoryTest extends AbstractUnitTestCase
     public function minimumShouldMatchIsAddedToQuery()
     {
         $searchRequest = new SearchRequest('SearchWord');
-        $this->configuration->expects($this->once())
+        $this->configuration->expects($this->any())
             ->method('getIfExists')
-            ->with('searching.minimumShouldMatch')
-            ->willReturn('50%');
+            ->withConsecutive(
+                ['searching.minimumShouldMatch'],
+                ['searching.sort']
+            )
+            ->will($this->onConsecutiveCalls(
+                '50%',
+                null
+            ));
         $this->configuration->expects($this->any())
             ->method('get')
             ->will($this->throwException(new InvalidArgumentException));
@@ -244,14 +248,21 @@ class QueryFactoryTest extends AbstractUnitTestCase
     {
         $searchRequest = new SearchRequest('SearchWord');
 
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->any())
             ->method('get')
-            ->withConsecutive(['searching.boost'], ['searching.fieldValueFactor'])
+            ->withConsecutive(
+                ['searching.boost'],
+                ['searching.fields.stored_fields'],
+                ['searching.fields.script_fields'],
+                ['searching.fieldValueFactor']
+            )
             ->will($this->onConsecutiveCalls(
                 [
                     'search_title' => 3,
                     'search_abstract' => 1.5,
                 ],
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException)
             ));
 
@@ -292,10 +303,17 @@ class QueryFactoryTest extends AbstractUnitTestCase
             'factor' => '2',
             'missing' => '1',
         ];
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->any())
             ->method('get')
-            ->withConsecutive(['searching.boost'], ['searching.fieldValueFactor'])
+            ->withConsecutive(
+                ['searching.boost'],
+                ['searching.fields.stored_fields'],
+                ['searching.fields.script_fields'],
+                ['searching.fieldValueFactor']
+            )
             ->will($this->onConsecutiveCalls(
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
                 $fieldConfig
             ));
