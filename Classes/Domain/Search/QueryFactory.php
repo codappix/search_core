@@ -21,10 +21,12 @@ namespace Codappix\SearchCore\Domain\Search;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\ConfigurationUtility;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\Elasticsearch\Query;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ArrayUtility;
 
 class QueryFactory
@@ -40,37 +42,31 @@ class QueryFactory
     protected $configuration;
 
     /**
-     * @param \TYPO3\CMS\Core\Log\LogManager $logManager
-     * @param ConfigurationContainerInterface $configuration
+     * @var ConfigurationUtility
      */
+    protected $configurationUtility;
+
     public function __construct(
         \TYPO3\CMS\Core\Log\LogManager $logManager,
-        ConfigurationContainerInterface $configuration
+        ConfigurationContainerInterface $configuration,
+        ConfigurationUtility $configurationUtility
     ) {
         $this->logger = $logManager->getLogger(__CLASS__);
         $this->configuration = $configuration;
+        $this->configurationUtility = $configurationUtility;
     }
 
     /**
      * TODO: This is not in scope Elasticsearch, therefore it should not return
      * \Elastica\Query, but decide to use a more specific QueryFactory like
      * ElasticaQueryFactory, once the second query is added?
-     *
-     * @param SearchRequestInterface $searchRequest
-     *
-     * @return \Elastica\Query
      */
-    public function create(SearchRequestInterface $searchRequest)
+    public function create(SearchRequestInterface $searchRequest) : \Elastica\Query
     {
         return $this->createElasticaQuery($searchRequest);
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     *
-     * @return \Elastica\Query
-     */
-    protected function createElasticaQuery(SearchRequestInterface $searchRequest)
+    protected function createElasticaQuery(SearchRequestInterface $searchRequest) : \Elastica\Query
     {
         $query = [];
         $this->addSize($searchRequest, $query);
@@ -78,6 +74,8 @@ class QueryFactory
         $this->addBoosts($searchRequest, $query);
         $this->addFilter($searchRequest, $query);
         $this->addFacets($searchRequest, $query);
+        $this->addFields($searchRequest, $query);
+        $this->addSort($searchRequest, $query);
 
         // Use last, as it might change structure of query.
         // Better approach would be something like DQL to generate query and build result in the end.
@@ -87,10 +85,6 @@ class QueryFactory
         return new \Elastica\Query($query);
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     */
     protected function addSize(SearchRequestInterface $searchRequest, array &$query)
     {
         $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
@@ -99,10 +93,6 @@ class QueryFactory
         ]);
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     */
     protected function addSearch(SearchRequestInterface $searchRequest, array &$query)
     {
         if (trim($searchRequest->getSearchTerm()) === '') {
@@ -125,10 +115,6 @@ class QueryFactory
         }
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     */
     protected function addBoosts(SearchRequestInterface $searchRequest, array &$query)
     {
         try {
@@ -159,9 +145,6 @@ class QueryFactory
         ]);
     }
 
-    /**
-     * @param array $query
-     */
     protected function addFactorBoost(array &$query)
     {
         try {
@@ -176,38 +159,83 @@ class QueryFactory
         }
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     */
+    protected function addFields(SearchRequestInterface $searchRequest, array &$query)
+    {
+        try {
+            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+                'stored_fields' => GeneralUtility::trimExplode(',', $this->configuration->get('searching.fields.stored_fields'), true),
+            ]);
+        } catch (InvalidArgumentException $e) {
+            // Nothing configured
+        }
+
+        try {
+            $scriptFields = $this->configuration->get('searching.fields.script_fields');
+            $scriptFields = $this->configurationUtility->replaceArrayValuesWithRequestContent($searchRequest, $scriptFields);
+            $scriptFields = $this->configurationUtility->filterByCondition($scriptFields);
+            if ($scriptFields !== []) {
+                $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['script_fields' => $scriptFields]);
+            }
+        } catch (InvalidArgumentException $e) {
+            // Nothing configured
+        }
+    }
+
+    protected function addSort(SearchRequestInterface $searchRequest, array &$query)
+    {
+        $sorting = $this->configuration->getIfExists('searching.sort') ?: [];
+        $sorting = $this->configurationUtility->replaceArrayValuesWithRequestContent($searchRequest, $sorting);
+        $sorting = $this->configurationUtility->filterByCondition($sorting);
+        if ($sorting !== []) {
+            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['sort' => $sorting]);
+        }
+    }
+
     protected function addFilter(SearchRequestInterface $searchRequest, array &$query)
     {
         if (! $searchRequest->hasFilter()) {
             return;
         }
 
-        $terms = [];
+        $filter = [];
         foreach ($searchRequest->getFilter() as $name => $value) {
-            $terms[] = [
+            $filter[] = $this->buildFilter(
+                $name,
+                $value,
+                $this->configuration->getIfExists('searching.mapping.filter.' . $name) ?: []
+            );
+        }
+
+        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+            'query' => [
+                'bool' => [
+                    'filter' => $filter,
+                ],
+            ],
+        ]);
+    }
+
+    protected function buildFilter(string $name, $value, array $config) : array
+    {
+        if ($config === []) {
+            return [
                 'term' => [
                     $name => $value,
                 ],
             ];
         }
 
-        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
-            'query' => [
-                'bool' => [
-                    'filter' => $terms,
-                ],
-            ],
-        ]);
+        $filter = [];
+
+        if (isset($config['fields'])) {
+            foreach ($config['fields'] as $elasticField => $inputField) {
+                $filter[$elasticField] = $value[$inputField];
+            }
+        }
+
+        return [$config['field'] => $filter];
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     */
     protected function addFacets(SearchRequestInterface $searchRequest, array &$query)
     {
         foreach ($searchRequest->getFacets() as $facet) {

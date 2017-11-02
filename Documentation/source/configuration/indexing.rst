@@ -29,18 +29,18 @@ The following settings are available. For each setting its documented which inde
 rootLineBlacklist
 -----------------
 
-    Used by: :ref:`TcaIndexer`, :ref:`PagesIndexer`.
+Used by: :ref:`TcaIndexer`, :ref:`PagesIndexer`.
 
-    Defines a blacklist of page uids. Records below any of these pages, or subpages, are not
-    indexed. This allows you to define areas that should not be indexed.
-    The page attribute *No Search* is also taken into account to prevent indexing records from only one
-    page without recursion.
+Defines a blacklist of page uids. Records below any of these pages, or subpages, are not
+indexed. This allows you to define areas that should not be indexed.
+The page attribute *No Search* is also taken into account to prevent indexing records from only one
+page without recursion.
 
-    Contains a comma separated list of page uids. Spaces are trimmed.
+Contains a comma separated list of page uids. Spaces are trimmed.
 
-    Example::
+Example::
 
-        plugin.tx_searchcore.settings.indexing.<identifier>.rootLineBlacklist = 3, 10, 100
+    plugin.tx_searchcore.settings.indexing.<identifier>.rootLineBlacklist = 3, 10, 100
 
 Also it's possible to define some behaviour for the different document types. In context of TYPO3
 tables are used as document types 1:1. It's possible to configure different tables. The following
@@ -51,152 +51,156 @@ options are available:
 additionalWhereClause
 ---------------------
 
-    Used by: :ref:`TcaIndexer`, :ref:`PagesIndexer`.
+Used by: :ref:`TcaIndexer`, :ref:`PagesIndexer`.
 
-    Add additional SQL to where clauses to determine indexable records from the table. This way you
-    can exclude specific records like ``tt_content`` records with specific ``CType`` values or
-    something else. E.g. you can add a new field to the table to exclude records from indexing.
+Add additional SQL to where clauses to determine indexable records from the table. This way you
+can exclude specific records like ``tt_content`` records with specific ``CType`` values or
+something else. E.g. you can add a new field to the table to exclude records from indexing.
 
-    Example::
+Example::
 
-        plugin.tx_searchcore.settings.indexing.<identifier>.additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu')
+    plugin.tx_searchcore.settings.indexing.<identifier>.additionalWhereClause = tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu')
 
-    .. attention::
+.. attention::
 
-        Make sure to prefix all fields with the corresponding table name. The selection from
-        database will contain joins and can lead to SQL errors if a field exists in multiple tables.
+    Make sure to prefix all fields with the corresponding table name. The selection from
+    database will contain joins and can lead to SQL errors if a field exists in multiple tables.
 
 .. _abstractFields:
 
 abstractFields
 --------------
 
-    Used by: :ref:`PagesIndexer`.
+Used by: :ref:`PagesIndexer`.
 
-    Define which field should be used to provide the auto generated field "search_abstract".
-    The fields have to exist in the record to be indexed. Therefore fields like ``content`` are also
-    possible.
+Define which field should be used to provide the auto generated field "search_abstract".
+The fields have to exist in the record to be indexed. Therefore fields like ``content`` are also
+possible.
 
-    Example::
+Example::
 
-        # As last fallback we use the content of the page
-        plugin.tx_searchcore.settings.indexing.<identifier>.abstractFields := addToList(content)
+    # As last fallback we use the content of the page
+    plugin.tx_searchcore.settings.indexing.<identifier>.abstractFields := addToList(content)
 
-    Default::
+Default::
 
-        abstract, description, bodytext
+    abstract, description, bodytext
 
 .. _mapping:
 
 mapping
 -------
 
-    Used by: Elasticsearch connection while indexing.
+Used by: Elasticsearch connection while indexing.
 
-    Define mapping for Elasticsearch, have a look at the official docs: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/mapping.html
-    You are able to define the mapping for each property / columns.
+Define mapping for Elasticsearch, have a look at the official docs: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/mapping.html
+You are able to define the mapping for each property / columns.
 
-    Example::
+Example::
 
-        plugin.tx_searchcore.settings.indexing.tt_content.mapping {
-            CType {
-                type = keyword
-            }
+    plugin.tx_searchcore.settings.indexing.tt_content.mapping {
+        CType {
+            type = keyword
         }
+    }
 
-    The above example will define the ``CType`` field of ``tt_content`` as ``type: keyword``. This
-    makes building a facet possible.
+The above example will define the ``CType`` field of ``tt_content`` as ``type: keyword``. This
+makes building a facet possible.
 
 .. _index:
 
 index
 -----
 
-    Used by: Elasticsearch connection while indexing.
+Used by: Elasticsearch connection while indexing.
 
-    Define index for Elasticsearch, have a look at the official docs: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/indices-create-index.html
+Define index for Elasticsearch, have a look at the official docs: https://www.elastic.co/guide/en/elasticsearch/reference/5.2/indices-create-index.html
 
-    Example::
+Example::
 
-        plugin.tx_searchcore.settings.indexing.tt_content.index {
-            analysis {
-                analyzer {
-                    ngram4 {
-                        type = custom
-                        tokenizer = ngram4
-                        char_filter = html_strip
-                        filter = lowercase, asciifolding
-                    }
+    plugin.tx_searchcore.settings.indexing.tt_content.index {
+        analysis {
+            analyzer {
+                ngram4 {
+                    type = custom
+                    tokenizer = ngram4
+                    char_filter = html_strip
+                    filter = lowercase, asciifolding
                 }
+            }
 
-                tokenizer {
-                    ngram4 {
-                        type = ngram
-                        min_gram = 4
-                        max_gram = 4
-                    }
+            tokenizer {
+                ngram4 {
+                    type = ngram
+                    min_gram = 4
+                    max_gram = 4
                 }
             }
         }
+    }
 
-    ``char_filter`` and ``filter`` are a comma separated list of options.
+``char_filter`` and ``filter`` are a comma separated list of options.
 
 .. _dataProcessing:
 
 dataProcessing
 --------------
 
-    Used by: All connections while indexing.
+Used by: All connections while indexing.
 
-    Configure modifications on each document before sending it to the configured connection. Same as
-    provided by TYPO3 for :ref:`t3tsref:cobj-fluidtemplate` through
-    :ref:`t3tsref:cobj-fluidtemplate-properties-dataprocessing`.
+Configure modifications on each document before sending it to the configured connection. Same as
+provided by TYPO3 for :ref:`t3tsref:cobj-fluidtemplate` through
+:ref:`t3tsref:cobj-fluidtemplate-properties-dataprocessing`.
 
-    All processors are applied in configured order. Allowing to work with already processed data.
+All processors are applied in configured order. Allowing to work with already processed data.
 
-    Example::
+Example::
 
-        plugin.tx_searchcore.settings.indexing.tt_content.dataProcessing {
-            1 = Codappix\SearchCore\DataProcessing\CopyToProcessor
-            1 {
-                to = search_spellcheck
-            }
-
-            2 = Codappix\SearchCore\DataProcessing\CopyToProcessor
-            2 {
-                to = search_all
-            }
+    plugin.tx_searchcore.settings.indexing.tt_content.dataProcessing {
+        1 = Codappix\SearchCore\DataProcessing\CopyToProcessor
+        1 {
+            to = search_spellcheck
         }
 
-    The above example will copy all existing fields to the field ``search_spellcheck``. Afterwards
-    all fields, including ``search_spellcheck`` will be copied to ``search_all``.
-    E.g. used to index all information into a field for :ref:`spellchecking` or searching with
-    different :ref:`mapping`.
+        2 = Codappix\SearchCore\DataProcessing\CopyToProcessor
+        2 {
+            to = search_all
+        }
+    }
 
-    The following Processor are available:
+The above example will copy all existing fields to the field ``search_spellcheck``. Afterwards
+all fields, including ``search_spellcheck`` will be copied to ``search_all``.
+E.g. used to index all information into a field for :ref:`spellchecking` or searching with
+different :ref:`mapping`.
 
-        ``Codappix\SearchCore\DataProcessing\CopyToProcessor``
-            Will copy contents of fields to other fields
+The following Processor are available:
 
-    The following Processor are planned:
+.. toctree::
+    :maxdepth: 1
+    :glob:
 
-        ``Codappix\SearchCore\DataProcessing\ReplaceProcessor``
-            Will execute a search and replace on configured fields.
+    dataProcessing/CopyToProcessor
+    dataProcessing/GeoPointProcessor
 
-        ``Codappix\SearchCore\DataProcessing\RootLevelProcessor``
-            Will attach the root level to the record.
+The following Processor are planned:
 
-        ``Codappix\SearchCore\DataProcessing\ChannelProcessor``
-            Will add a configurable channel to the record, e.g. if you have different areas in your
-            website like "products" and "infos".
+    ``Codappix\SearchCore\DataProcessing\ReplaceProcessor``
+        Will execute a search and replace on configured fields.
 
-        ``Codappix\SearchCore\DataProcessing\RelationResolverProcessor``
-            Resolves all relations using the TCA.
+    ``Codappix\SearchCore\DataProcessing\RootLevelProcessor``
+        Will attach the root level to the record.
 
-    Of course you are able to provide further processors. Just implement
-    ``Codappix\SearchCore\DataProcessing\ProcessorInterface`` and use the FQCN (=Fully qualified
-    class name) as done in the examples above.
+    ``Codappix\SearchCore\DataProcessing\ChannelProcessor``
+        Will add a configurable channel to the record, e.g. if you have different areas in your
+        website like "products" and "infos".
 
-    By implementing also the same interface as necessary for TYPO3
-    :ref:`t3tsref:cobj-fluidtemplate-properties-dataprocessing`, you are able to reuse the same code
-    also for Fluid to prepare the same record fetched from DB for your fluid.
+    ``Codappix\SearchCore\DataProcessing\RelationResolverProcessor``
+        Resolves all relations using the TCA.
+
+Of course you are able to provide further processors. Just implement
+``Codappix\SearchCore\DataProcessing\ProcessorInterface`` and use the FQCN (=Fully qualified
+class name) as done in the examples above.
+
+By implementing also the same interface as necessary for TYPO3
+:ref:`t3tsref:cobj-fluidtemplate-properties-dataprocessing`, you are able to reuse the same code
+also for Fluid to prepare the same record fetched from DB for your fluid.

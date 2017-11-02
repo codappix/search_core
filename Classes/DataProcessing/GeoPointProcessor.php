@@ -21,30 +21,39 @@ namespace Codappix\SearchCore\DataProcessing;
  */
 
 /**
- * Copies values from one field to another one.
+ * Adds a new fields, ready to use as GeoPoint field for Elasticsearch.
  */
-class CopyToProcessor implements ProcessorInterface
+class GeoPointProcessor implements ProcessorInterface
 {
     public function processRecord(array $record, array $configuration) : array
     {
-        $all = [];
+        if (! $this->canApply($record, $configuration)) {
+            return $record;
+        }
 
-        $this->addArray($all, $record);
-        $all = array_filter($all);
-        $record[$configuration['to']] = implode(PHP_EOL, $all);
+        $record[$configuration['to']] = [
+            'lat' => (float) $record[$configuration['lat']],
+            'lon' => (float) $record[$configuration['lon']],
+        ];
 
         return $record;
     }
 
-    protected function addArray(array &$target, array $from)
+    protected function canApply(array $record, array $configuration) : bool
     {
-        foreach ($from as $value) {
-            if (is_array($value)) {
-                $this->addArray($target, $value);
-                continue;
-            }
-
-            $target[] = (string) $value;
+        if (!isset($record[$configuration['lat']])
+            || !is_numeric($record[$configuration['lat']])
+            || trim($record[$configuration['lat']]) === ''
+        ) {
+            return false;
         }
+        if (!isset($record[$configuration['lon']])
+            || !is_numeric($record[$configuration['lon']])
+            || trim($record[$configuration['lon']]) === ''
+        ) {
+            return false;
+        }
+
+        return true;
     }
 }

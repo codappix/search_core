@@ -24,6 +24,21 @@ use TYPO3\CMS\Core\Tests\UnitTestCase as CoreTestCase;
 
 abstract class AbstractUnitTestCase extends CoreTestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+
+        // Disable caching backends to make TYPO3 parts work in unit test mode.
+
+        \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+            \TYPO3\CMS\Core\Cache\CacheManager::class
+        )->setCacheConfigurations([
+            'extbase_object' => [
+                'backend' => \TYPO3\CMS\Core\Cache\Backend\NullBackend::class,
+            ],
+        ]);
+    }
+
     /**
      * @return \TYPO3\CMS\Core\Log\LogManager
      */

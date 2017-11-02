@@ -29,27 +29,27 @@ The following settings are available. For each setting its documented which conn
 ``host``
 --------
 
-    Used by: :ref:`Elasticsearch`.
+Used by: :ref:`Elasticsearch`.
 
-    The host, e.g. ``localhost`` or an IP where the search service is reachable from TYPO3
-    installation.
+The host, e.g. ``localhost`` or an IP where the search service is reachable from TYPO3
+installation.
 
-    Example::
+Example::
 
-        plugin.tx_searchcore.settings.connections.elasticsearch.host = localhost
+    plugin.tx_searchcore.settings.connections.elasticsearch.host = localhost
 
 .. _port:
 
 ``port``
 --------
 
-    Used by: :ref:`Elasticsearch`.
+Used by: :ref:`Elasticsearch`.
 
-    The port where search service is reachable. E.g. default ``9200`` for Elasticsearch.
+The port where search service is reachable. E.g. default ``9200`` for Elasticsearch.
 
-    Example::
+Example::
 
-        plugin.tx_searchcore.settings.connections.elasticsearch.port = 9200
+    plugin.tx_searchcore.settings.connections.elasticsearch.port = 9200
 
 
 

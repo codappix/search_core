@@ -29,11 +29,6 @@ interface ProcessorInterface
     /**
      * Processes the given record.
      * Also retrieves the configuration for this processor instance.
-     *
-     * @param array $record
-     * @param array $configuration
-     *
-     * @return array
      */
-    public function processRecord(array $record, array $configuration);
+    public function processRecord(array $record, array $configuration) : array;
 }
