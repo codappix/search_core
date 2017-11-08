@@ -180,6 +180,7 @@ The following Processor are available:
     :glob:
 
     dataProcessing/CopyToProcessor
+    dataProcessing/RemoveProcessor
     dataProcessing/GeoPointProcessor
 
 The following Processor are planned:
