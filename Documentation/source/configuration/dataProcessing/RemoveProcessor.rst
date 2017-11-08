@@ -15,7 +15,7 @@ Example::
         1 {
             fields = description
         }
-        2 = Codappix\SearchCore\DataProcessing\CopyToProcessor
+        2 = Codappix\SearchCore\DataProcessing\RemoveProcessor
         2 {
             fields = description, another_field
         }
