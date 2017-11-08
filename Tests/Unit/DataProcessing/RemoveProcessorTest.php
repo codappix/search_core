@@ -117,6 +117,17 @@ class RemoveProcessorTest extends AbstractUnitTestCase
                     'field 1' => 'Some content like lorem',
                 ],
             ],
+            'Fields with "null" san be removed' => [
+                'record' => [
+                    'field 1' => null,
+                ],
+                'configuration' => [
+                    'fields' => 'field 1',
+                    '_typoScriptNodeValue' => 'Codappix\SearchCore\DataProcessing\RemoveProcessor',
+                ],
+                'expectedRecord' => [
+                ],
+            ],
         ];
     }
 }

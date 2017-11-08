@@ -34,7 +34,7 @@ class RemoveProcessor implements ProcessorInterface
         }
 
         foreach (GeneralUtility::trimExplode(',', $configuration['fields'], true) as $field) {
-            if (isset($record[$field])) {
+            if (array_key_exists($field, $record)) {
                 unset($record[$field]);
             }
         }
