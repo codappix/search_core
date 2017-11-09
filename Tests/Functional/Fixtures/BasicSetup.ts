@@ -37,6 +37,7 @@ plugin {
             }
 
             searching {
+                fields = search_title
                 facets {
                     contentTypes {
                         field = CType

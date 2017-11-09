@@ -22,9 +22,9 @@ namespace Codappix\SearchCore\Domain\Search;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
-use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\Elasticsearch\Query;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ArrayUtility;
 
 class QueryFactory
@@ -109,20 +109,18 @@ class QueryFactory
             return;
         }
 
-        $query = ArrayUtility::setValueByPath(
-            $query,
-            'query.bool.must.0.match._all.query',
-            $searchRequest->getSearchTerm()
-        );
+        $matchExpression = [
+            'type' => 'most_fields',
+            'query' => $searchRequest->getSearchTerm(),
+            'fields' => GeneralUtility::trimExplode(',', $this->configuration->get('searching.fields')),
+        ];
 
         $minimumShouldMatch = $this->configuration->getIfExists('searching.minimumShouldMatch');
         if ($minimumShouldMatch) {
-            $query = ArrayUtility::setValueByPath(
-                $query,
-                'query.bool.must.0.match._all.minimum_should_match',
-                $minimumShouldMatch
-            );
+            $matchExpression['minimum_should_match'] = $minimumShouldMatch;
         }
+
+        $query = ArrayUtility::setValueByPath($query, 'query.bool.must.0.multi_match', $matchExpression);
     }
 
     /**
@@ -150,13 +148,15 @@ class QueryFactory
             ];
         }
 
-        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
-            'query' => [
-                'bool' => [
-                    'should' => $boostQueryParts,
+        if (!empty($boostQueryParts)) {
+            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+                'query' => [
+                    'bool' => [
+                        'should' => $boostQueryParts,
+                    ],
                 ],
-            ],
-        ]);
+            ]);
+        }
     }
 
     /**

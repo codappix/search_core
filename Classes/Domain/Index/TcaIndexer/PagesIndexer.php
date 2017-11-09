@@ -35,6 +35,12 @@ class PagesIndexer extends TcaIndexer
     protected $contentTableService;
 
     /**
+     * @var \TYPO3\CMS\Core\Resource\FileRepository
+     * @inject
+     */
+    protected $fileRepository;
+
+    /**
      * @param TcaTableService $tcaTableService
      * @param TcaTableService $tcaTableService
      * @param ConnectionInterface $connection
@@ -65,32 +71,69 @@ class PagesIndexer extends TcaIndexer
             }
         }
 
-        $record['content'] = $this->fetchContentForPage($record['uid']);
+        $content = $this->fetchContentForPage($record['uid']);
+        if ($content !== []) {
+            $record['content'] = $content['content'];
+            $record['media'] = array_unique(array_merge($record['media'], $content['images']));
+        }
         parent::prepareRecord($record);
     }
 
     /**
      * @param int $uid
-     * @return string
+     * @return []
      */
     protected function fetchContentForPage($uid)
     {
-        $contentElements = $this->getQuery($this->contentTableService)->execute()->fetchAll();
+        $contentElements = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+            $this->contentTableService->getFields(),
+            $this->contentTableService->getTableClause(),
+            $this->contentTableService->getWhereClause() .
+                sprintf(' AND %s.pid = %u', $this->contentTableService->getTableName(), $uid)
+        );
 
         if ($contentElements === null) {
             $this->logger->debug('No content for page ' . $uid);
-            return '';
+            return [];
         }
 
         $this->logger->debug('Fetched content for page ' . $uid);
+        $images = [];
         $content = [];
         foreach ($contentElements as $contentElement) {
+            $images = array_merge(
+                $images,
+                $this->getContentElementImages($contentElement['uid'])
+            );
             $content[] = $contentElement['bodytext'];
         }
 
-        // Remove Tags.
-        // Interpret escaped new lines and special chars.
-        // Trim, e.g. trailing or leading new lines.
-        return trim(stripcslashes(strip_tags(implode(' ', $content))));
+        return [
+            // Remove Tags.
+            // Interpret escaped new lines and special chars.
+            // Trim, e.g. trailing or leading new lines.
+            'content' => trim(stripcslashes(strip_tags(implode(' ', $content)))),
+            'images' => $images,
+        ];
+    }
+
+    /**
+     * @param int $uidOfContentElement
+     * @return array
+     */
+    protected function getContentElementImages($uidOfContentElement)
+    {
+        $imageRelationUids = [];
+        $imageRelations = $this->fileRepository->findByRelation(
+            'tt_content',
+            'image',
+            $uidOfContentElement
+        );
+
+        foreach ($imageRelations as $relation) {
+            $imageRelationUids[] = $relation->getUid();
+        }
+
+        return $imageRelationUids;
     }
 }

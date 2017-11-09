@@ -22,7 +22,6 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Resolves relations from TCA using TCA.
@@ -32,7 +31,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RelationResolver implements Singleton
 {
-    public function resolveRelationsForRecord(TcaTableService $service, array &$record) : void
+    public function resolveRelationsForRecord(TcaTableService $service, array &$record)
     {
         foreach (array_keys($record) as $column) {
             // TODO: Define / configure fields to exclude?!
@@ -76,7 +75,7 @@ class RelationResolver implements Singleton
         return [];
     }
 
-    protected function isRelation(array &$config) : bool
+    protected function isRelation(array &$config)
     {
         return isset($config['foreign_table'])
             || (isset($config['renderType']) && $config['renderType'] !== 'selectSingle')
@@ -84,12 +83,12 @@ class RelationResolver implements Singleton
             ;
     }
 
-    protected function resolveForeignDbValue(string $value) : array
+    protected function resolveForeignDbValue($value)
     {
         return array_map('trim', explode(';', $value));
     }
 
-    protected function resolveInlineValue(string $value) : array
+    protected function resolveInlineValue($value)
     {
         return array_map('trim', explode(',', $value));
     }

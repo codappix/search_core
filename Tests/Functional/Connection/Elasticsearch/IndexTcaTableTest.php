@@ -175,7 +175,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
             ['_source' => [
                 'uid' => '11',
                 'CType' => 'Header', // Testing items
-                'categories' => ['Category 2', 'Category 1'], // Testing mm
+                'categories' => ['Category 2', 'Category 1'], // Testing mm (with sorting)
             ]],
             $response->getData()['hits']['hits'][0],
             false,

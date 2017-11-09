@@ -50,13 +50,11 @@ class QueryFactoryTest extends AbstractUnitTestCase
     /**
      * @test
      */
-    public function creatonOfQueryWorksInGeneral()
+    public function creationOfQueryWorksInGeneral()
     {
-        $searchRequest = new SearchRequest('SearchWord');
+        $this->mockConfiguration();
 
-        $this->configuration->expects($this->any())
-            ->method('get')
-            ->will($this->throwException(new InvalidArgumentException));
+        $searchRequest = new SearchRequest('SearchWord');
 
         $query = $this->subject->create($searchRequest);
         $this->assertInstanceOf(
@@ -71,9 +69,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function filterIsAddedToQuery()
     {
-        $this->configuration->expects($this->any())
-            ->method('get')
-            ->will($this->throwException(new InvalidArgumentException));
+        $this->mockConfiguration();
 
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setFilter(['field' => 'content']);
@@ -83,7 +79,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
             [
                 ['term' => ['field' => 'content']]
             ],
-            $query->toArray()['query']['bool']['filter'],
+            $query->toArray()['query']['function_score']['query']['bool']['filter'],
             'Filter was not added to query.'
         );
     }
@@ -93,9 +89,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function emptyFilterIsNotAddedToQuery()
     {
-        $this->configuration->expects($this->any())
-            ->method('get')
-            ->will($this->throwException(new InvalidArgumentException));
+        $this->mockConfiguration();
 
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setFilter([
@@ -112,7 +106,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
         $query = $this->subject->create($searchRequest);
         $this->assertSame(
             null,
-            $query->toArray()['query']['bool']['filter'],
+            $query->toArray()['query']['function_score']['query']['bool']['filter'],
             'Filter was added to query, even if no filter exists.'
         );
     }
@@ -122,9 +116,8 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function facetsAreAddedToQuery()
     {
-        $this->configuration->expects($this->any())
-            ->method('get')
-            ->will($this->throwException(new InvalidArgumentException));
+        $this->mockConfiguration();
+
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->addFacet(new FacetRequest('Identifier', 'FieldName'));
         $searchRequest->addFacet(new FacetRequest('Identifier 2', 'FieldName 2'));
@@ -153,9 +146,8 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function sizeIsAddedToQuery()
     {
-        $this->configuration->expects($this->any())
-            ->method('get')
-            ->will($this->throwException(new InvalidArgumentException));
+        $this->mockConfiguration();
+
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setLimit(45);
         $searchRequest->setOffset(35);
@@ -178,10 +170,9 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function searchTermIsAddedToQuery()
     {
+        $this->mockConfiguration();
+
         $searchRequest = new SearchRequest('SearchWord');
-        $this->configuration->expects($this->any())
-            ->method('get')
-            ->will($this->throwException(new InvalidArgumentException));
         $query = $this->subject->create($searchRequest);
 
         $this->assertSame(
@@ -189,16 +180,18 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 'bool' => [
                     'must' => [
                         [
-                            'match' => [
-                                '_all' => [
-                                    'query' => 'SearchWord',
+                            'multi_match' => [
+                                'type' => 'most_fields',
+                                'query' => 'SearchWord',
+                                'fields' => [
+                                    0 => 'test_field',
                                 ],
                             ],
                         ],
                     ],
                 ],
             ],
-            $query->toArray()['query'],
+            $query->toArray()['query']['function_score']['query'],
             'Search term was not added to query as expected.'
         );
     }
@@ -208,14 +201,13 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function minimumShouldMatchIsAddedToQuery()
     {
-        $searchRequest = new SearchRequest('SearchWord');
         $this->configuration->expects($this->once())
             ->method('getIfExists')
             ->with('searching.minimumShouldMatch')
             ->willReturn('50%');
-        $this->configuration->expects($this->any())
-            ->method('get')
-            ->will($this->throwException(new InvalidArgumentException));
+        $this->mockConfiguration();
+
+        $searchRequest = new SearchRequest('SearchWord');
         $query = $this->subject->create($searchRequest);
 
         $this->assertArraySubset(
@@ -223,16 +215,14 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 'bool' => [
                     'must' => [
                         [
-                            'match' => [
-                                '_all' => [
-                                    'minimum_should_match' => '50%',
-                                ],
+                            'multi_match' => [
+                                'minimum_should_match' => '50%',
                             ],
                         ],
                     ],
                 ],
             ],
-            $query->toArray()['query'],
+            $query->toArray()['query']['function_score']['query'],
             'minimum_should_match was not added to query as configured.'
         );
     }
@@ -244,10 +234,11 @@ class QueryFactoryTest extends AbstractUnitTestCase
     {
         $searchRequest = new SearchRequest('SearchWord');
 
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->exactly(3))
             ->method('get')
-            ->withConsecutive(['searching.boost'], ['searching.fieldValueFactor'])
+            ->withConsecutive(['searching.fields'], ['searching.boost'], ['searching.fieldValueFactor'])
             ->will($this->onConsecutiveCalls(
+                'test_field',
                 [
                     'search_title' => 3,
                     'search_abstract' => 1.5,
@@ -292,10 +283,11 @@ class QueryFactoryTest extends AbstractUnitTestCase
             'factor' => '2',
             'missing' => '1',
         ];
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->exactly(3))
             ->method('get')
-            ->withConsecutive(['searching.boost'], ['searching.fieldValueFactor'])
+            ->withConsecutive(['searching.fields'], ['searching.boost'], ['searching.fieldValueFactor'])
             ->will($this->onConsecutiveCalls(
+                'test_field',
                 $this->throwException(new InvalidArgumentException),
                 $fieldConfig
             ));
@@ -308,9 +300,11 @@ class QueryFactoryTest extends AbstractUnitTestCase
                         'bool' => [
                             'must' => [
                                 [
-                                    'match' => [
-                                        '_all' => [
-                                            'query' => 'SearchWord',
+                                    'multi_match' => [
+                                        'type' => 'most_fields',
+                                        'query' => 'SearchWord',
+                                        'fields' => [
+                                            0 => 'test_field',
                                         ],
                                     ],
                                 ],
@@ -330,17 +324,27 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function emptySearchStringWillNotAddSearchToQuery()
     {
+        $this->mockConfiguration();
+
         $searchRequest = new SearchRequest();
 
-        $this->configuration->expects($this->any())
-            ->method('get')
-            ->will($this->throwException(new InvalidArgumentException));
-
         $query = $this->subject->create($searchRequest);
-        $this->assertInstanceOf(
-            stdClass,
-            $query->toArray()['query']['match_all'],
+        $this->assertNull(
+            $query->toArray()['query']['function_score']['query'],
             'Empty search request does not create expected query.'
         );
+    }
+
+    protected function mockConfiguration()
+    {
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->returnCallback(function ($option) {
+                if ($option === 'searching.fields') {
+                    return 'test_field';
+                }
+
+                return $this->throwException(new InvalidArgumentException);
+            }));
     }
 }

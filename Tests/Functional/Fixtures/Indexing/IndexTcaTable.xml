@@ -29,7 +29,7 @@
         <sorting>72</sorting>
         <CType>header</CType>
         <header>endtime hidden record</header>
-        <bodytext></bodytext>
+        <bodytext>Some content</bodytext>
         <media>0</media>
         <layout>0</layout>
         <deleted>0</deleted>
@@ -49,7 +49,7 @@
         <sorting>72</sorting>
         <CType>header</CType>
         <header>Hidden record</header>
-        <bodytext></bodytext>
+        <bodytext>Some content</bodytext>
         <media>0</media>
         <layout>0</layout>
         <deleted>0</deleted>

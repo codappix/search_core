@@ -1,5 +1,5 @@
 <?php
-namespace Codappix\SearchCore\Database\Doctrine;
+namespace Codappix\SearchCore\DataProcessing;
 
 /*
  * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,31 +20,20 @@ namespace Codappix\SearchCore\Database\Doctrine;
  * 02110-1301, USA.
  */
 
-class Where
+/**
+ * All DataProcessing Processor should implement this interface, otherwise they
+ * will not be executed.
+ */
+interface ProcessorInterface
 {
     /**
-     * @var string
+     * Processes the given record.
+     * Also retrieves the configuration for this processor instance.
+     *
+     * @param array $record
+     * @param array $configuration
+     *
+     * @return array
      */
-    protected $statement = '';
-
-    /**
-     * @var array
-     */
-    protected $parameters = [];
-
-    public function __construct(string $statement, array $parameters)
-    {
-        $this->statement = $statement;
-        $this->parameters = $parameters;
-    }
-
-    public function getStatement() : string
-    {
-        return $this->statement;
-    }
-
-    public function getParameters() : array
-    {
-        return $this->parameters;
-    }
+    public function processRecord(array $record, array $configuration);
 }

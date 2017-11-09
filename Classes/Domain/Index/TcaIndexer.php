@@ -22,9 +22,6 @@ namespace Codappix\SearchCore\Domain\Index;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\ConnectionInterface;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Will index the given table using configuration from TCA.
@@ -58,12 +55,14 @@ class TcaIndexer extends AbstractIndexer
      */
     protected function getRecords($offset, $limit)
     {
-        $records = $this->getQuery()
-            ->setFirstResult($offset)
-            ->setMaxResults($limit)
-            ->execute()
-            ->fetchAll();
-
+        $records = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+            $this->tcaTableService->getFields(),
+            $this->tcaTableService->getTableClause(),
+            $this->tcaTableService->getWhereClause(),
+            '',
+            '',
+            (int) $offset . ',' . (int) $limit
+        );
         if ($records === null) {
             return null;
         }
@@ -83,9 +82,12 @@ class TcaIndexer extends AbstractIndexer
      */
     protected function getRecord($identifier)
     {
-        $query = $this->getQuery();
-        $query = $query->andWhere($this->tcaTableService->getTableName() . '.uid = ' . (int) $identifier);
-        $record = $query->execute()->fetch();
+        $record = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
+            $this->tcaTableService->getFields(),
+            $this->tcaTableService->getTableClause(),
+            $this->tcaTableService->getWhereClause()
+                . ' AND ' . $this->tcaTableService->getTableName() . '.uid = ' . (int) $identifier
+        );
 
         if ($record === false || $record === null) {
             throw new NoRecordFoundException(
@@ -104,30 +106,5 @@ class TcaIndexer extends AbstractIndexer
     protected function getDocumentName()
     {
         return $this->tcaTableService->getTableName();
-    }
-
-    protected function getQuery($tcaTableService = null) : QueryBuilder
-    {
-        if ($tcaTableService === null) {
-            $tcaTableService = $this->tcaTableService;
-        }
-        $queryBuilder = $this->getDatabaseConnection()->getQueryBuilderForTable($tcaTableService->getTableName());
-        $where = $tcaTableService->getWhereClause();
-        $query = $queryBuilder->select(... $tcaTableService->getFields())
-            ->from($tcaTableService->getTableClause())
-            ->where($where->getStatement())
-            ->setParameters($where->getParameters());
-
-        foreach ($tcaTableService->getJoins() as $join) {
-            $query->from($join->getTable());
-            $query->andWhere($join->getCondition());
-        }
-
-        return $query;
-    }
-
-    protected function getDatabaseConnection()
-    {
-        return GeneralUtility::makeInstance(ConnectionPool::class);
     }
 }

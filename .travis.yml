@@ -11,6 +11,8 @@ before_install:
 language: php
 
 php:
+  - 5.6
+  - 7.0
   - 7.1
 
 env:
@@ -23,6 +25,7 @@ env:
     - typo3DatabaseHost="127.0.0.1"
     - typo3DatabaseUsername="travis"
     - typo3DatabasePassword=""
+    - TYPO3_VERSION="~7.6"
 
 matrix:
   fast_finish: true
