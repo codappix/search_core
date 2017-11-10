@@ -43,6 +43,34 @@ The tables have to be configured via :ref:`configuration_options_index`.
 
   Not all hook operations are supported yet, see :issue:`27`.
 
+.. _usage_form_finisher:
+
+Form finisher
+-------------
+
+A form finisher is provided to integrate indexing into form extension.
+
+Add form finisher to your available finishers and configure it like:
+
+.. code-block:: yaml
+   :linenos:
+
+    -
+        identifier: SearchCoreIndexer
+        options:
+            action: 'delete'
+            indexIdentifier: 'fe_users'
+            recordUid: '{FeUser.user.uid}'
+
+All three options are necessary, where
+
+``action``
+    Is one of ``delete``, ``update`` or ``add``.
+``indexIdentifier``
+    Is a configured index identifier.
+``recordUid``
+    Has to be the uid of the record to index.
+
 .. _usage_searching:
 
 Searching / Frontend Plugin
