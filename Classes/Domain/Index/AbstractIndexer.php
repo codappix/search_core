@@ -99,7 +99,8 @@ abstract class AbstractIndexer implements IndexerInterface
 
             $this->connection->addDocument($this->getDocumentName(), $record);
         } catch (NoRecordFoundException $e) {
-            $this->logger->info('Could not index document.', [$e->getMessage()]);
+            $this->logger->info('Could not index document. Try to delete it therefore.', [$e->getMessage()]);
+            $this->connection->deleteDocument($this->getDocumentName(), $identifier);
         }
         $this->logger->info('Finish indexing');
     }
