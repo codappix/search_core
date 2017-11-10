@@ -15,6 +15,8 @@ configuration needs. Still it's possible to configure the indexer.
 
 Also custom classes can be used as indexers.
 
+Furthermore a finisher for TYPO3 Form-Extension is provided to integrate indexing.
+
 .. _features_search:
 
 Searching

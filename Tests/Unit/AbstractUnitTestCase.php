@@ -21,12 +21,22 @@ namespace Codappix\SearchCore\Tests\Unit;
  */
 
 use TYPO3\CMS\Core\Tests\UnitTestCase as CoreTestCase;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Form\Service\TranslationService;
 
 abstract class AbstractUnitTestCase extends CoreTestCase
 {
+    /**
+     * @var array A backup of registered singleton instances
+     */
+    protected $singletonInstances = [];
+
     public function setUp()
     {
         parent::setUp();
+
+        $this->singletonInstances = GeneralUtility::getSingletonInstances();
 
         // Disable caching backends to make TYPO3 parts work in unit test mode.
 
@@ -37,6 +47,12 @@ abstract class AbstractUnitTestCase extends CoreTestCase
                 'backend' => \TYPO3\CMS\Core\Cache\Backend\NullBackend::class,
             ],
         ]);
+    }
+
+    public function tearDown()
+    {
+        GeneralUtility::resetSingletonInstances($this->singletonInstances);
+        parent::tearDown();
     }
 
     /**
@@ -57,5 +73,26 @@ abstract class AbstractUnitTestCase extends CoreTestCase
             ));
 
         return $logger;
+    }
+
+    /**
+     * Configure translation service mock for Form Finisher.
+     *
+     * This way parseOption will always return the configured value.
+     */
+    protected function configureMockedTranslationService()
+    {
+        $translationService = $this->getMockBuilder(TranslationService::class)->getMock();
+        $translationService->expects($this->any())
+            ->method('translateFinisherOption')
+            ->willReturnCallback(function ($formRuntime, $finisherIdentifier, $optionKey, $optionValue) {
+                return $optionValue;
+            });
+        $objectManager = $this->getMockBuilder(ObjectManager::class)->getMock();
+        $objectManager->expects($this->any())
+            ->method('get')
+            ->with(TranslationService::class)
+            ->willReturn($translationService);
+        GeneralUtility::setSingletonInstance(ObjectManager::class, $objectManager);
     }
 }
