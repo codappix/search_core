@@ -205,4 +205,35 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
             'Record was indexed with resolved category relation, but should not have any.'
         );
     }
+
+    /**
+     * @test
+     */
+    public function indexingDeltedRecordIfRecordShouldBeIndexedButIsNoLongerAvailableAndWasAlreadyIndexed()
+    {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
+            ->get(IndexerFactory::class)
+            ->getIndexer('tt_content')
+            ->indexAllDocuments()
+            ;
+
+        $response = $this->client->request('typo3content/_search?q=*:*');
+        $this->assertSame($response->getData()['hits']['total'], 2, 'Not exactly 2 documents were indexed.');
+
+        $this->getConnectionPool()->getConnectionForTable('tt_content')
+            ->update(
+                'tt_content',
+                ['hidden' => true],
+                ['uid' => 10]
+            );
+
+        \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
+            ->get(IndexerFactory::class)
+            ->getIndexer('tt_content')
+            ->indexDocument(10)
+            ;
+
+        $response = $this->client->request('typo3content/_search?q=*:*');
+        $this->assertSame($response->getData()['hits']['total'], 1, 'Not exactly 1 document is in index.');
+    }
 }
