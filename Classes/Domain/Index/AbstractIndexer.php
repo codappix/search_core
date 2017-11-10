@@ -105,6 +105,13 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->logger->info('Finish indexing');
     }
 
+    public function delete()
+    {
+        $this->logger->info('Start deletion of index.');
+        $this->connection->deleteIndex($this->getDocumentName());
+        $this->logger->info('Finish deletion.');
+    }
+
     /**
      * @return \Generator
      */
