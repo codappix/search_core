@@ -18,6 +18,19 @@ This will index the table ``tt_content`` using the :ref:`TcaIndexer`.
 Only one index per call is available, to run multiple indexers, just make multiple calls.
 The indexers have to be defined in TypoScript via :ref:`configuration_options_index`.
 
+.. _usage_manual_deletion:
+
+Manual deletion
+---------------
+
+You can trigger deletion for a single index from CLI::
+
+    ./typo3/cli_dispatch.phpsh extbase index:delete --identifier 'tt_content'
+
+This will delete the index for the table ``tt_content``.
+
+Only one delete per call is available, to run multiple deletions, just make multiple calls.
+
 .. _usage_auto_indexing:
 
 Auto indexing

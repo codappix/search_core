@@ -50,10 +50,24 @@ class IndexCommandController extends CommandController
      */
     public function indexCommand($identifier)
     {
-        // TODO: Also allow to index everything?
         try {
             $this->indexerFactory->getIndexer($identifier)->indexAllDocuments();
             $this->outputLine($identifier . ' was indexed.');
+        } catch (NoMatchingIndexerException $e) {
+            $this->outputLine('No indexer found for: ' . $identifier);
+        }
+    }
+
+    /**
+     * Will delete the given identifier.
+     *
+     * @param string $identifier
+     */
+    public function deleteCommand($identifier)
+    {
+        try {
+            $this->indexerFactory->getIndexer($identifier)->delete();
+            $this->outputLine($identifier . ' was deleted.');
         } catch (NoMatchingIndexerException $e) {
             $this->outputLine('No indexer found for: ' . $identifier);
         }

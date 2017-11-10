@@ -77,4 +77,13 @@ interface ConnectionInterface
      * @return SearchResultInterface
      */
     public function search(SearchRequestInterface $searchRequest);
+
+    /**
+     * Will delete the whole index / db.
+     *
+     * @param string $documentType
+     *
+     * @return void
+     */
+    public function deleteIndex($documentType);
 }
