@@ -16,13 +16,13 @@
         }
     },
     "require" : {
-        "php": ">=7.1.0",
-        "typo3/cms": "~8.7",
+        "php": ">=5.6.0",
         "ruflin/elastica": "~3.2"
     },
     "require-dev": {
-        "typo3/testing-framework": "~1.1.0",
-        "phpunit/phpunit": "~6.2.0"
+        "phpunit/phpunit": "~5.7.0",
+        "squizlabs/php_codesniffer": "~3.1.1",
+        "typo3/cms": "~7.6"
     },
     "config": {
         "optimize-autoloader": true,
@@ -36,9 +36,6 @@
         ]
     },
     "extra": {
-        "branch-alias": {
-            "dev-develop": "1.0.x-dev"
-        },
         "typo3/cms": {
             "cms-package-dir": "{$vendor-dir}/typo3/cms",
             "web-dir": ".Build/web"

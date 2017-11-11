@@ -465,7 +465,6 @@ class QueryFactoryTest extends AbstractUnitTestCase
             $query->toArray()['script_fields'],
             'Script fields were not added to query as expected.'
         );
-
     }
 
     /**

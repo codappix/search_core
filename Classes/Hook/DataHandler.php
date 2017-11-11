@@ -103,8 +103,13 @@ class DataHandler implements Singleton
      *
      * @return bool False if hook was not processed.
      */
-    public function processDatamap_afterDatabaseOperations($status, $table, $uid, array $fieldArray, CoreDataHandler $dataHandler)
-    {
+    public function processDatamap_afterDatabaseOperations(
+        $status,
+        $table,
+        $uid,
+        array $fieldArray,
+        CoreDataHandler $dataHandler
+    ) {
         if (! $this->shouldProcessHookForTable($table)) {
             $this->logger->debug('Database update not processed.', [$table, $uid]);
             return false;
