@@ -7,14 +7,13 @@ filter:
     paths:
         - 'Classes/*'
 tools:
-
     php_cpd:
         enabled: true
 
     php_code_sniffer:
         enabled: true
         config:
-            standard: TYPO3CMS
+            standard: PSR2
 
     php_hhvm:
         enabled: true
@@ -25,6 +24,7 @@ tools:
         enabled: true
         config:
             controversial_rules:
+                # Due to TYPO3
                 superglobals: false
 
     php_pdepend:
@@ -36,3 +36,86 @@ tools:
     external_code_coverage:
       runs: 2
       timeout: 1200
+
+checks:
+    php:
+        align_assignments: false
+        avoid_multiple_statements_on_same_line: true
+        avoid_perl_style_comments: true
+        check_method_contracts:
+            verify_interface_like_constraints: true
+            verify_documented_constraints: true
+            verify_parent_constraints: true
+        classes_in_camel_caps: true
+        encourage_postdec_operator: true
+        encourage_single_quotes: true
+        fix_line_ending: true
+        fix_use_statements:
+            remove_unused: true
+            preserve_multiple: false
+            preserve_blanklines: false
+            order_alphabetically: true
+        function_in_camel_caps: true
+        more_specific_types_in_doc_comments: true
+        naming_conventions:
+            local_variable: '^[a-z][a-zA-Z0-9]*$'
+            abstract_class_name: ^Abstract|Factory$
+            utility_class_name: 'Utils?$'
+            constant_name: '^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*$'
+            property_name: '^[a-z][a-zA-Z0-9]*$'
+            method_name: '^(?:[a-z]|__)[a-zA-Z0-9]*$'
+            parameter_name: '^[a-z][a-zA-Z0-9]*$'
+            interface_name: '^[A-Z][a-zA-Z0-9]*Interface$'
+            type_name: '^[A-Z][a-zA-Z0-9]*$'
+            exception_name: '^[A-Z][a-zA-Z0-9]*Exception$'
+            isser_method_name: '^(?:is|has|should|may|supports|can)'
+        newline_at_end_of_file: true
+        no_goto: true
+        optional_parameters_at_the_end: true
+        param_doc_comment_if_not_inferrable: true
+        parameter_doc_comments: true
+        parameters_in_camelcaps: true
+        phpunit_assertions: true
+        prefer_while_loop_over_for_loop: true
+        properties_in_camelcaps: true
+        remove_extra_empty_lines: true
+        return_doc_comment_if_not_inferrable: true
+        return_doc_comments: true
+        simplify_boolean_return: true
+        uppercase_constants: true
+        use_self_instead_of_fqcn: true
+
+filter: {  }
+
+coding_style:
+    php:
+        spaces:
+            before_parentheses:
+                function_declaration: true
+                closure_definition: true
+            around_operators:
+                concatenation: true
+            within:
+                brackets: true
+        braces:
+            classes_functions:
+                class: new-line
+                function: new-line
+                closure: end-of-line
+            if:
+                opening: end-of-line
+            for:
+                opening: end-of-line
+            while:
+                opening: end-of-line
+            do_while:
+                opening: end-of-line
+            switch:
+                opening: end-of-line
+            try:
+                opening: end-of-line
+        upper_lower_casing:
+            keywords:
+                general: lower
+            constants:
+                true_false_null: lower
