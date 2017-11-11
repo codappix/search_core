@@ -165,7 +165,7 @@ abstract class AbstractIndexer implements IndexerInterface
                 ',',
                 $this->configuration->get('indexing.' . $this->identifier . '.abstractFields')
             );
-            if (!$fieldsToUse) {
+            if (empty($fieldsToUse)) {
                 return;
             }
             foreach ($fieldsToUse as $fieldToUse) {
