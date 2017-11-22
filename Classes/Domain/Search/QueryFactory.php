@@ -229,6 +229,10 @@ class QueryFactory
 
         if (isset($config['fields'])) {
             foreach ($config['fields'] as $elasticField => $inputField) {
+                if (! isset($value[$inputField])) {
+                    $value[$inputField] = '';
+                }
+
                 $filter[$elasticField] = $value[$inputField];
             }
         }
