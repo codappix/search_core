@@ -74,7 +74,7 @@ class PagesIndexer extends TcaIndexer
         $content = $this->fetchContentForPage($record['uid']);
         if ($content !== []) {
             $record['content'] = $content['content'];
-            $record['media'] = array_unique(array_merge($record['media'], $content['images']));
+            $record['media'] = array_values(array_unique(array_merge($record['media'], $content['images'])));
         }
         parent::prepareRecord($record);
     }
