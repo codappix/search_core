@@ -362,6 +362,54 @@ class QueryFactoryTest extends AbstractUnitTestCase
     /**
      * @test
      */
+    public function configuredQueryFieldsAreAddedToQuery()
+    {
+        $searchRequest = new SearchRequest('SearchWord');
+
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->withConsecutive(
+                ['searching.fields.query'],
+                ['searching.boost'],
+                ['searching.fields.stored_fields'],
+                ['searching.fields.script_fields'],
+                ['searching.fieldValueFactor']
+            )
+            ->will($this->onConsecutiveCalls(
+                '_all, field1, field2',
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException)
+            ));
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertArraySubset(
+            [
+                'bool' => [
+                    'must' => [
+                        [
+                            'multi_match' => [
+                                'type' => 'most_fields',
+                                'query' => 'SearchWord',
+                                'fields' => [
+                                    '_all',
+                                    'field1',
+                                    'field2',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            $query->toArray()['query'],
+            'Configured fields were not added to query as configured.'
+        );
+    }
+
+    /**
+     * @test
+     */
     public function storedFieldsAreAddedToQuery()
     {
         $searchRequest = new SearchRequest();
@@ -462,7 +510,6 @@ class QueryFactoryTest extends AbstractUnitTestCase
             $query->toArray()['script_fields'],
             'Script fields were not added to query as expected.'
         );
-
     }
 
     /**
