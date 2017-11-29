@@ -21,6 +21,12 @@ plugin {
                     abstractFields = {$plugin.tx_searchcore.settings.indexing.pages.abstractFields}
                 }
             }
+
+            searching {
+                fields {
+                    query = _all
+                }
+            }
         }
     }
 }
