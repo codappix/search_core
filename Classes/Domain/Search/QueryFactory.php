@@ -99,20 +99,18 @@ class QueryFactory
             return;
         }
 
-        $query = ArrayUtility::setValueByPath(
-            $query,
-            'query.bool.must.0.match._all.query',
-            $searchRequest->getSearchTerm()
-        );
+        $matchExpression = [
+            'type' => 'most_fields',
+            'query' => $searchRequest->getSearchTerm(),
+            'fields' => GeneralUtility::trimExplode(',', $this->configuration->get('searching.fields.query')),
+        ];
 
         $minimumShouldMatch = $this->configuration->getIfExists('searching.minimumShouldMatch');
         if ($minimumShouldMatch) {
-            $query = ArrayUtility::setValueByPath(
-                $query,
-                'query.bool.must.0.match._all.minimum_should_match',
-                $minimumShouldMatch
-            );
+            $matchExpression['minimum_should_match'] = $minimumShouldMatch;
         }
+
+        $query = ArrayUtility::setValueByPath($query, 'query.bool.must.0.multi_match', $matchExpression);
     }
 
     protected function addBoosts(SearchRequestInterface $searchRequest, array &$query)
