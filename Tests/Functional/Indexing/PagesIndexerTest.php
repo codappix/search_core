@@ -1,5 +1,5 @@
 <?php
-namespace Codappix\SearchCore\Tests\Indexing;
+namespace Codappix\SearchCore\Tests\Functional\Indexing;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
