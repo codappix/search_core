@@ -99,4 +99,71 @@
         <colPos>0</colPos>
         <filelink_sorting>0</filelink_sorting>
     </tt_content>
+
+    <pages>
+        <uid>2</uid>
+        <pid>1</pid>
+        <title>Example page with </title>
+        <description>Used as abstract as no abstract is defined.</description>
+        <media>2</media>
+    </pages>
+
+    <sys_file_reference>
+        <uid>1</uid>
+        <pid>1</pid>
+        <uid_local>1</uid_local>
+        <uid_foreign>2</uid_foreign>
+        <tablenames>pages</tablenames>
+        <fieldname>media</fieldname>
+        <sorting_foreign>2</sorting_foreign>
+        <table_local>sys_file</table_local>
+
+        <l10n_diffsource></l10n_diffsource>
+    </sys_file_reference>
+
+    <sys_file_reference>
+        <uid>10</uid>
+        <pid>1</pid>
+        <uid_local>2</uid_local>
+        <uid_foreign>2</uid_foreign>
+        <tablenames>pages</tablenames>
+        <fieldname>media</fieldname>
+        <sorting_foreign>1</sorting_foreign>
+        <table_local>sys_file</table_local>
+
+        <l10n_diffsource></l10n_diffsource>
+    </sys_file_reference>
+
+    <sys_file>
+        <uid>1</uid>
+        <pid>0</pid>
+        <storage>1</storage>
+        <type>2</type>
+        <identifier>full/file/path.png</identifier>
+        <identifier_hash>94dd1f9645114cf1344438ac7188db972768f59f</identifier_hash>
+        <folder_hash>67887283a03f465f1004d1d43a157ee1f1c59be5</folder_hash>
+        <extension>png</extension>
+        <mime_type>image/png</mime_type>
+        <name>path2.png</name>
+        <sha1>c1dd34eb34d651ee6ca6ac52dea595db75d8e9d2</sha1>
+        <size>3044</size>
+        <creation_date>1432306303</creation_date>
+        <modification_date>1432306303</modification_date>
+    </sys_file>
+    <sys_file>
+        <uid>2</uid>
+        <pid>0</pid>
+        <storage>1</storage>
+        <type>2</type>
+        <identifier>full/file/path2.png</identifier>
+        <identifier_hash>94dd1f9645114cf1344438ac7188db972768f59f</identifier_hash>
+        <folder_hash>67887283a03f465f1004d1d43a157ee1f1c59be5</folder_hash>
+        <extension>png</extension>
+        <mime_type>image/png</mime_type>
+        <name>path2.png</name>
+        <sha1>c1dd34eb34d651ee6ca6ac52dea595db75d8e9d2</sha1>
+        <size>3044</size>
+        <creation_date>1432306303</creation_date>
+        <modification_date>1432306303</modification_date>
+    </sys_file>
 </dataset>

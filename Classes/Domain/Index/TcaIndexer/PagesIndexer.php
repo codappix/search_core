@@ -71,6 +71,7 @@ class PagesIndexer extends TcaIndexer
             }
         }
 
+        $record['media'] = $this->fetchMediaForPage($record['uid']);
         $content = $this->fetchContentForPage($record['uid']);
         if ($content !== []) {
             $record['content'] = $content['content'];
@@ -128,6 +129,26 @@ class PagesIndexer extends TcaIndexer
             'tt_content',
             'image',
             $uidOfContentElement
+        );
+
+        foreach ($imageRelations as $relation) {
+            $imageRelationUids[] = $relation->getUid();
+        }
+
+        return $imageRelationUids;
+    }
+
+    /**
+     * @param int $uid
+     * @return []
+     */
+    protected function fetchMediaForPage($uid)
+    {
+        $imageRelationUids = [];
+        $imageRelations = $this->fileRepository->findByRelation(
+            'pages',
+            'media',
+            $uid
         );
 
         foreach ($imageRelations as $relation) {
