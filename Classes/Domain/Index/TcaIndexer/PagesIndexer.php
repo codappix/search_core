@@ -71,6 +71,7 @@ class PagesIndexer extends TcaIndexer
             }
         }
 
+        $record['media'] = $this->fetchMediaForPage($record['uid']);
         $content = $this->fetchContentForPage($record['uid']);
         if ($content !== []) {
             $record['content'] = $content['content'];
@@ -123,12 +124,28 @@ class PagesIndexer extends TcaIndexer
      */
     protected function getContentElementImages($uidOfContentElement)
     {
+        return $this->fetchSysFileReferenceUids($uidOfContentElement, 'tt_content', 'image');
+    }
+
+    /**
+     * @param int $uid
+     * @return []
+     */
+    protected function fetchMediaForPage($uid)
+    {
+        return $this->fetchSysFileReferenceUids($uid, 'pages', 'media');
+    }
+
+    /**
+     * @param int $uid
+     * @param string $tablename
+     * @param string $fieldname
+     * @return []
+     */
+    protected function fetchSysFileReferenceUids($uid, $tablename, $fieldname)
+    {
         $imageRelationUids = [];
-        $imageRelations = $this->fileRepository->findByRelation(
-            'tt_content',
-            'image',
-            $uidOfContentElement
-        );
+        $imageRelations = $this->fileRepository->findByRelation($tablename, $fieldname, $uid);
 
         foreach ($imageRelations as $relation) {
             $imageRelationUids[] = $relation->getUid();

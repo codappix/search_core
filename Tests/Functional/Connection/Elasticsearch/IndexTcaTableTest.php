@@ -205,4 +205,33 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
             'Record was indexed with resolved category relation, but should not have any.'
         );
     }
+
+    /**
+     * @test
+     */
+    public function indexPagesMedia()
+    {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
+            ->get(IndexerFactory::class)
+            ->getIndexer('pages')
+            ->indexAllDocuments()
+            ;
+
+        $response = $this->client->request('typo3content/_search?q=*:*');
+
+        $this->assertTrue($response->isOK(), 'Elastica did not answer with ok code.');
+        $this->assertSame($response->getData()['hits']['total'], 2, 'Not exactly 2 documents were indexed.');
+        $this->assertArraySubset(
+            [
+                '_source' => [
+                    'media' => [
+                        10, 1
+                    ]
+                ]
+            ],
+            $response->getData()['hits']['hits'][0],
+            false,
+            'Record was not indexed.'
+        );
+    }
 }
