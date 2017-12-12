@@ -124,18 +124,7 @@ class PagesIndexer extends TcaIndexer
      */
     protected function getContentElementImages($uidOfContentElement)
     {
-        $imageRelationUids = [];
-        $imageRelations = $this->fileRepository->findByRelation(
-            'tt_content',
-            'image',
-            $uidOfContentElement
-        );
-
-        foreach ($imageRelations as $relation) {
-            $imageRelationUids[] = $relation->getUid();
-        }
-
-        return $imageRelationUids;
+        return $this->fetchSysFileReferenceUids($uidOfContentElement, 'tt_content', 'image');
     }
 
     /**
@@ -144,12 +133,19 @@ class PagesIndexer extends TcaIndexer
      */
     protected function fetchMediaForPage($uid)
     {
+        return $this->fetchSysFileReferenceUids($uid, 'pages', 'media');
+    }
+
+    /**
+     * @param int $uid
+     * @param string $tablename
+     * @param string $fieldname
+     * @return []
+     */
+    protected function fetchSysFileReferenceUids($uid, $tablename, $fieldname)
+    {
         $imageRelationUids = [];
-        $imageRelations = $this->fileRepository->findByRelation(
-            'pages',
-            'media',
-            $uid
-        );
+        $imageRelations = $this->fileRepository->findByRelation($tablename, $fieldname, $uid);
 
         foreach ($imageRelations as $relation) {
             $imageRelationUids[] = $relation->getUid();
