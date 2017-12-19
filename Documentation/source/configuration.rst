@@ -162,26 +162,6 @@ options are available:
         Make sure to prefix all fields with the corresponding table name. The selection from
         database will contain joins and can lead to SQL errors if a field exists in multiple tables.
 
-.. _abstractFields:
-
-``abstractFields``
-"""""""""""""""""""""""""
-
-    Used by: :ref:`PagesIndexer`.
-
-    Define which field should be used to provide the auto generated field "search_abstract".
-    The fields have to exist in the record to be indexed. Therefore fields like ``content`` are also
-    possible.
-
-    Example::
-
-        # As last fallback we use the content of the page
-        plugin.tx_searchcore.settings.indexing.<identifier>.abstractFields := addToList(content)
-
-    Default::
-
-        abstract, description, bodytext
-
 .. _mapping:
 
 ``mapping``

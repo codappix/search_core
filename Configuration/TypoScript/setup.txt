@@ -18,7 +18,13 @@ plugin {
                 pages {
                     indexer = Codappix\SearchCore\Domain\Index\TcaIndexer\PagesIndexer
                     additionalWhereClause = {$plugin.tx_searchcore.settings.indexing.pages.additionalWhereClause}
-                    abstractFields = {$plugin.tx_searchcore.settings.indexing.pages.abstractFields}
+                    dataProcessing {
+                        0 = Codappix\SearchCore\DataProcessing\CopyToProcessor
+                        0 {
+                            from = {$plugin.tx_searchcore.settings.indexing.pages.abstractFields}
+                            to = search_abstract
+                        }
+                    }
                 }
             }
         }

@@ -26,11 +26,18 @@ plugin {
 
                 pages {
                     indexer = Codappix\SearchCore\Domain\Index\TcaIndexer\PagesIndexer
-                    abstractFields = abstract, description, bodytext
 
                     mapping {
                         CType {
                             type = keyword
+                        }
+                    }
+
+                    dataProcessing {
+                        0 = Codappix\SearchCore\DataProcessing\CopyToProcessor
+                        0 {
+                            from = abstract, description, bodytext
+                            to = search_abstract
                         }
                     }
                 }

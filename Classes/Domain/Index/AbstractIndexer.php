@@ -21,8 +21,9 @@ namespace Codappix\SearchCore\Domain\Index;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
-use Codappix\SearchCore\Configuration\InvalidArgumentException;
+use Codappix\SearchCore\Configuration\InvalidArgumentException as InvalidConfigurationArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
+use Codappix\SearchCore\DataProcessing\ProcessorInterface;
 use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractIndexer implements IndexerInterface
@@ -123,24 +124,15 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function prepareRecord(array &$record)
     {
-        $record['search_abstract'] = '';
-
         try {
-            $fieldsToUse = GeneralUtility::trimExplode(
-                ',',
-                $this->configuration->get('indexing.' . $this->identifier . '.abstractFields')
-            );
-            if (!$fieldsToUse) {
-                return;
-            }
-            foreach ($fieldsToUse as $fieldToUse) {
-                if (isset($record[$fieldToUse]) && trim($record[$fieldToUse])) {
-                    $record['search_abstract'] = trim($record[$fieldToUse]);
-                    break;
+            foreach ($this->configuration->get('indexing.' . $this->identifier . '.dataProcessing') as $configuration) {
+                $dataProcessor = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($configuration['_typoScriptNodeValue']);
+                if ($dataProcessor instanceof ProcessorInterface) {
+                    $record = $dataProcessor->processRecord($record, $configuration);
                 }
             }
-        } catch (InvalidArgumentException $e) {
-            return;
+        } catch (InvalidConfigurationArgumentException $e) {
+            // Nothing to do.
         }
     }
 

@@ -48,8 +48,6 @@ The indexer is configurable through the following options:
 
 * :ref:`additionalWhereClause`
 
-* :ref:`abstractFields`
-
 .. note::
 
   Not all relations are resolved yet, see :issue:`17` and :pr:`20`.
