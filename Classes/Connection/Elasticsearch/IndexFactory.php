@@ -94,7 +94,7 @@ class IndexFactory implements Singleton
         try {
             $configuration = $this->configuration->get('indexing.' . $documentType . '.index');
 
-            foreach (['analyzer', 'filter'] as $optionsToExpand) {
+            foreach (['analyzer', 'filter', 'char_filter'] as $optionsToExpand) {
                 if (isset($configuration['analysis'][$optionsToExpand])) {
                     foreach ($configuration['analysis'][$optionsToExpand] as $key => $options) {
                         $configuration['analysis'][$optionsToExpand][$key] = $this->prepareOptions($options);
