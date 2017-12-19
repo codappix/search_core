@@ -20,18 +20,30 @@ namespace Codappix\SearchCore\DataProcessing;
  * 02110-1301, USA.
  */
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Copies values from one field to another one.
  */
 class CopyToProcessor implements ProcessorInterface
 {
+    /**
+     * @var array
+     */
+    protected $keysToCopy = [];
+
     public function processRecord(array $record, array $configuration)
     {
-        $all = [];
+        $result = [];
+        $this->keysToCopy = array_keys($record);
 
-        $this->addArray($all, $record);
-        $all = array_filter($all);
-        $record[$configuration['to']] = implode(PHP_EOL, $all);
+        if (isset($configuration['from'])) {
+            $this->keysToCopy = GeneralUtility::trimExplode(',', $configuration['from']);
+        }
+
+        $this->addArray($result, $record);
+        $result = array_filter($result);
+        $record[$configuration['to']] = implode(PHP_EOL, $result);
 
         return $record;
     }
@@ -43,6 +55,9 @@ class CopyToProcessor implements ProcessorInterface
     protected function addArray(array &$to, array $from)
     {
         foreach ($from as $property => $value) {
+            if (!in_array($property, $this->keysToCopy)) {
+                continue;
+            }
             if (is_array($value)) {
                 $this->addArray($to, $value);
                 continue;
