@@ -238,6 +238,7 @@ class QueryFactory
                             'prefix' => $searchRequest->getSearchTerm(),
                             'completion' => [
                                 'field' => $suggest->getField(),
+                                'size' => $suggest->getSize(),
                             ],
                         ],
                     ],

@@ -35,17 +35,24 @@ class SuggestRequest implements SuggestRequestInterface
     protected $field = '';
 
     /**
+     * @var int
+     */
+    protected $size = 5;
+
+    /**
      * TODO: Add validation / exception?
      * As the suggests come from configuration this might be a good idea to
      * help integrators find issues.
      *
      * @param string $identifier
      * @param string $field
+     * @param int $size
      */
-    public function __construct($identifier, $field)
+    public function __construct($identifier, $field, $size)
     {
         $this->identifier = $identifier;
         $this->field = $field;
+        $this->size = (int) $size;
     }
 
     /**
@@ -62,5 +69,13 @@ class SuggestRequest implements SuggestRequestInterface
     public function getField()
     {
         return $this->field;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSize()
+    {
+        return $this->size;
     }
 }

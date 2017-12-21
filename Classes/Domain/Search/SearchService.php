@@ -138,7 +138,8 @@ class SearchService
             $searchRequest->addSuggest($this->objectManager->get(
                 SuggestRequest::class,
                 $identifier,
-                $suggestConfig['field']
+                $suggestConfig['field'],
+                $suggestConfig['size'] ?: 5
             ));
         }
     }

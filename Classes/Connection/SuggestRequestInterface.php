@@ -39,4 +39,11 @@ interface SuggestRequestInterface
      * @return string
      */
     public function getField();
+
+    /**
+     * Returns the number of results.
+     *
+     * @return int
+     */
+    public function getSize();
 }
