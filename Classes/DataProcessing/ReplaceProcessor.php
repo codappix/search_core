@@ -20,23 +20,21 @@ namespace Codappix\SearchCore\DataProcessing;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
 /**
- * Executes TYPO3's explode function on a certain field.
+ * Execute a regular expression replacement.
  */
-class ExplodeProcessor implements ProcessorInterface
+class ReplaceProcessor implements ProcessorInterface
 {
     public function processRecord(array $record, array $configuration)
     {
-        if (!isset($configuration['delimiter'])) {
-            $configuration['delimiter'] = ' ';
+        if (!isset($configuration['replacement'])) {
+            $configuration['replacement'] = ' ';
         }
 
-        $record[$configuration['field']] = GeneralUtility::trimExplode(
-            $configuration['delimiter'],
-            $record[$configuration['field']],
-            true
+        $record[$configuration['field']] = preg_replace(
+            $configuration['regularExpression'],
+            $configuration['replacement'],
+            $record[$configuration['field']]
         );
 
         return $record;

@@ -20,24 +20,14 @@ namespace Codappix\SearchCore\DataProcessing;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
 /**
- * Executes TYPO3's explode function on a certain field.
+ * Execute on a single field to make entries unique.
  */
-class ExplodeProcessor implements ProcessorInterface
+class UniqueProcessor implements ProcessorInterface
 {
     public function processRecord(array $record, array $configuration)
     {
-        if (!isset($configuration['delimiter'])) {
-            $configuration['delimiter'] = ' ';
-        }
-
-        $record[$configuration['field']] = GeneralUtility::trimExplode(
-            $configuration['delimiter'],
-            $record[$configuration['field']],
-            true
-        );
+        $record[$configuration['field']] = array_values(array_unique($record[$configuration['field']]));
 
         return $record;
     }
