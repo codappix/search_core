@@ -78,6 +78,7 @@ class QueryFactory
         $this->addBoosts($searchRequest, $query);
         $this->addFilter($searchRequest, $query);
         $this->addFacets($searchRequest, $query);
+        $this->addSuggest($searchRequest, $query);
 
         // Use last, as it might change structure of query.
         // Better approach would be something like DQL to generate query and build result in the end.
@@ -216,6 +217,28 @@ class QueryFactory
                     $facet->getIdentifier() => [
                         'terms' => [
                             'field' => $facet->getField(),
+                        ],
+                    ],
+                ],
+            ]);
+        }
+    }
+
+    /**
+     * @param SearchRequestInterface $searchRequest
+     * @param array $query
+     */
+    protected function addSuggest(SearchRequestInterface $searchRequest, array &$query)
+    {
+        foreach ($searchRequest->getSuggests() as $suggest) {
+            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+                'suggest' => [
+                    'suggest' => [
+                        $suggest->getIdentifier() => [
+                            'prefix' => $searchRequest->getSearchTerm(),
+                            'completion' => [
+                                'field' => $suggest->getField(),
+                            ],
                         ],
                     ],
                 ],

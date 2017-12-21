@@ -2,7 +2,7 @@
 namespace Codappix\SearchCore\Connection;
 
 /*
- * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
+ * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,36 +20,23 @@ namespace Codappix\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
-
 /**
- * A search result.
+ * Used to request suggest from connection.
  */
-interface SearchResultInterface extends \Iterator, \Countable, QueryResultInterface
+interface SuggestRequestInterface
 {
     /**
-     * @return array<ResultItemInterface>
+     * The identifier of the suggest, used as key in arrays and to get the
+     * suggest from search request, etc.
+     *
+     * @return string
      */
-    public function getResults();
+    public function getIdentifier();
 
     /**
-     * Return all facets, if any.
+     * The field to use for suggest building.
      *
-     * @return array<FacetInterface>
+     * @return string
      */
-    public function getFacets();
-
-    /**
-     * Return all suggests, if any.
-     *
-     * @return array<SuggestInterface>
-     */
-    public function getSuggests();
-
-    /**
-     * Returns the number of results in current result
-     *
-     * @return int
-     */
-    public function getCurrentCount();
+    public function getField();
 }

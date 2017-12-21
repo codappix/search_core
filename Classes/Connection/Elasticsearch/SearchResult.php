@@ -24,6 +24,7 @@ use Codappix\SearchCore\Connection\FacetInterface;
 use Codappix\SearchCore\Connection\ResultItemInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
+use Codappix\SearchCore\Connection\SuggestInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 class SearchResult implements SearchResultInterface
@@ -42,6 +43,11 @@ class SearchResult implements SearchResultInterface
      * @var array<FacetInterface>
      */
     protected $facets = [];
+
+    /**
+     * @var array<SuggestInterface>
+     */
+    protected $suggests = [];
 
     /**
      * @var array<ResultItemInterface>
@@ -92,6 +98,18 @@ class SearchResult implements SearchResultInterface
         return $this->facets;
     }
 
+    /**
+     * Return all suggests, if any.
+     *
+     * @return array<SuggestInterface>
+     */
+    public function getSuggests()
+    {
+        $this->initSuggests();
+
+        return $this->suggests;
+    }
+
     public function getCurrentCount()
     {
         return $this->result->count();
@@ -116,6 +134,17 @@ class SearchResult implements SearchResultInterface
 
         foreach ($this->result->getAggregations() as $aggregationName => $aggregation) {
             $this->facets[$aggregationName] = $this->objectManager->get(Facet::class, $aggregationName, $aggregation);
+        }
+    }
+
+    protected function initSuggests()
+    {
+        if ($this->suggests !== []) {
+            return;
+        }
+
+        foreach ($this->result->getSuggests() as $suggestName => $suggest) {
+            $this->suggests[$suggestName] = $this->objectManager->get(Suggest::class, $suggestName, $suggest);
         }
     }
 

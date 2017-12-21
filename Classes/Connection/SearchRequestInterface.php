@@ -32,6 +32,11 @@ interface SearchRequestInterface extends QueryInterface
     public function getSearchTerm();
 
     /**
+     * @param array $filter
+     */
+    public function setFilter(array $filter);
+
+    /**
      * @return bool
      */
     public function hasFilter();
@@ -40,4 +45,29 @@ interface SearchRequestInterface extends QueryInterface
      * @return array
      */
     public function getFilter();
+
+    /**
+     * @param FacetRequestInterface $facet
+     */
+    public function addFacet(FacetRequestInterface $facet);
+
+    /**
+     * @return array
+     */
+    public function getFacets();
+
+    /**
+     * @param SuggestRequestInterface $suggest
+     */
+    public function addSuggest(SuggestRequestInterface $suggest);
+
+    /**
+     * @return array
+     */
+    public function getSuggests();
+
+    /**
+     * @param ConnectionInterface $connection
+     */
+    public function setConnection(ConnectionInterface $connection);
 }

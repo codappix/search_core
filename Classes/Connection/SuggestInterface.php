@@ -20,36 +20,27 @@ namespace Codappix\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
-
 /**
- * A search result.
+ * A single suggest, e.g. autocomplete.
  */
-interface SearchResultInterface extends \Iterator, \Countable, QueryResultInterface
+interface SuggestInterface
 {
     /**
-     * @return array<ResultItemInterface>
+     * @return string
      */
-    public function getResults();
+    public function getName();
 
     /**
-     * Return all facets, if any.
+     * Returns all possible options for this suggest.
      *
-     * @return array<FacetInterface>
+     * @return array<SuggestOptionInterface>
      */
-    public function getFacets();
+    public function getOptions();
 
     /**
-     * Return all suggests, if any.
+     * Returns all possible options unique for this suggest.
      *
-     * @return array<SuggestInterface>
+     * @return array<SuggestOptionInterface>
      */
-    public function getSuggests();
-
-    /**
-     * Returns the number of results in current result
-     *
-     * @return int
-     */
-    public function getCurrentCount();
+    public function getUniqueOptions();
 }

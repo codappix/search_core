@@ -26,6 +26,7 @@ use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
 use Codappix\SearchCore\Domain\Model\FacetRequest;
+use Codappix\SearchCore\Domain\Model\SuggestRequest;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 /**
@@ -72,6 +73,7 @@ class SearchService
         $searchRequest->setConnection($this->connection);
         $this->addSize($searchRequest);
         $this->addConfiguredFacets($searchRequest);
+        $this->addConfiguredSuggests($searchRequest);
         $this->addConfiguredFilters($searchRequest);
 
         return $this->connection->search($searchRequest);
@@ -111,6 +113,32 @@ class SearchService
                 FacetRequest::class,
                 $identifier,
                 $facetConfig['field']
+            ));
+        }
+    }
+
+    /**
+     * Add suggests from configuration to request.
+     *
+     * @param SearchRequestInterface $searchRequest
+     */
+    protected function addConfiguredSuggests(SearchRequestInterface $searchRequest)
+    {
+        $suggestsConfig = $this->configuration->getIfExists('searching.suggests');
+        if ($suggestsConfig === null) {
+            return;
+        }
+
+        foreach ($suggestsConfig as $identifier => $suggestConfig) {
+            if (!isset($suggestConfig['field']) || trim($suggestConfig['field']) === '') {
+                // TODO: Finish throw
+                throw new \Exception('message', 1499171142);
+            }
+
+            $searchRequest->addSuggest($this->objectManager->get(
+                SuggestRequest::class,
+                $identifier,
+                $suggestConfig['field']
             ));
         }
     }

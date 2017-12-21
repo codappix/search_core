@@ -21,6 +21,7 @@ namespace Codappix\SearchCore\DataProcessing;
  */
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\ArrayUtility;
 
 /**
  * Copies values from one field to another one.
@@ -43,7 +44,7 @@ class CopyToProcessor implements ProcessorInterface
 
         $this->addArray($result, $record);
         $result = array_filter($result);
-        $record[$configuration['to']] = implode(PHP_EOL, $result);
+        $record = ArrayUtility::setValueByPath($record, $configuration['to'], implode(PHP_EOL, $result));
 
         return $record;
     }

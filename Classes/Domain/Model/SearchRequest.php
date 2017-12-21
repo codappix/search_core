@@ -23,6 +23,7 @@ namespace Codappix\SearchCore\Domain\Model;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\FacetRequestInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
+use Codappix\SearchCore\Connection\SuggestRequestInterface;
 
 /**
  * Represents a search request used to process an actual search.
@@ -45,6 +46,11 @@ class SearchRequest implements SearchRequestInterface
      * @var array
      */
     protected $facets = [];
+
+    /**
+     * @var array
+     */
+    protected $suggests = [];
 
     /**
      * @var int
@@ -129,6 +135,26 @@ class SearchRequest implements SearchRequestInterface
     public function getFacets()
     {
         return $this->facets;
+    }
+
+    /**
+     * Add a suggest to gather in this search request.
+     *
+     * @param SuggestRequestInterface $suggest
+     */
+    public function addSuggest(SuggestRequestInterface $suggest)
+    {
+        $this->suggests[$suggest->getIdentifier()] = $suggest;
+    }
+
+    /**
+     * Returns all configured suggests to fetch in this search request.
+     *
+     * @return array
+     */
+    public function getSuggests()
+    {
+        return $this->suggests;
     }
 
     /**
