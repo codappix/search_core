@@ -23,7 +23,6 @@ namespace Codappix\SearchCore\Domain\Search;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\ConfigurationUtility;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
-use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\Elasticsearch\Query;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -134,13 +133,15 @@ class QueryFactory
             ];
         }
 
-        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
-            'query' => [
-                'bool' => [
-                    'should' => $boostQueryParts,
+        if (!empty($boostQueryParts)) {
+            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+                'query' => [
+                    'bool' => [
+                        'should' => $boostQueryParts,
+                    ],
                 ],
-            ],
-        ]);
+            ]);
+        }
     }
 
     protected function addFactorBoost(array &$query)

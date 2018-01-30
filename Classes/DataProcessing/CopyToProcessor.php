@@ -36,15 +36,19 @@ class CopyToProcessor implements ProcessorInterface
         return $record;
     }
 
-    protected function addArray(array &$target, array $from)
+    /**
+     * @param array &$to
+     * @param array $from
+     */
+    protected function addArray(array &$to, array $from)
     {
         foreach ($from as $value) {
             if (is_array($value)) {
-                $this->addArray($target, $value);
+                $this->addArray($to, $value);
                 continue;
             }
 
-            $target[] = (string) $value;
+            $to[] = (string) $value;
         }
     }
 }

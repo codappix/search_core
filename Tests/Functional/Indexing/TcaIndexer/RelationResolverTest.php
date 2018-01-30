@@ -1,5 +1,5 @@
 <?php
-namespace Codappix\SearchCore\Tests\Indexing\TcaIndexer;
+namespace Codappix\SearchCore\Tests\Indexing\Functional\TcaIndexer;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>

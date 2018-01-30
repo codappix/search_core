@@ -48,14 +48,14 @@ class FilterTest extends AbstractFunctionalTestCase
 
         $searchService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(SearchService::class);
-        $searchRequest = new SearchRequest('Search Word');
+        $searchRequest = new SearchRequest();
 
         $result = $searchService->search($searchRequest);
         $this->assertSame(2, count($result), 'Did not receive both indexed elements without filter.');
 
         $searchRequest->setFilter(['CType' => 'HTML']);
         $result = $searchService->search($searchRequest);
-        $this->assertSame(5, $result->getResults()[0]['uid'], 'Did not get the expected result entry.');
+        $this->assertSame(5, (int) $result->getResults()[0]['uid'], 'Did not get the expected result entry.');
         $this->assertSame(1, count($result), 'Did not receive the single filtered element.');
     }
 
@@ -73,7 +73,7 @@ class FilterTest extends AbstractFunctionalTestCase
         $searchService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(SearchService::class);
 
-        $searchRequest = new SearchRequest('Search Word');
+        $searchRequest = new SearchRequest();
         $result = $searchService->search($searchRequest);
 
         $this->assertSame(1, count($result->getFacets()), 'Did not receive the single defined facet.');

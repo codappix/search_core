@@ -21,8 +21,8 @@ namespace Codappix\SearchCore\DataProcessing;
  */
 
 /**
- * All DataProcessing Processors should implement this interface, otherwise they
- * will not be executed.
+ * All DataProcessing Processors should implement this interface, otherwise
+ * they will not be executed.
  */
 interface ProcessorInterface
 {

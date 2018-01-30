@@ -28,4 +28,3 @@ We are also focusing on Code Quality and Testing through `travis ci`_, `scrutini
 .. _travis ci: https://travis-ci.org/Codappix/search_core
 .. _scrutinizer: https://scrutinizer-ci.com/g/Codappix/search_core/inspections
 .. _codacy: https://www.codacy.com/app/Codappix/search_core/dashboard
-

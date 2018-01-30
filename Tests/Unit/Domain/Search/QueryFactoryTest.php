@@ -106,7 +106,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
         $query = $this->subject->create($searchRequest);
         $this->assertSame(
             null,
-            $query->toArray()['query']['bool']['filter'],
+            $query->toArray()['query']['function_score']['query']['bool']['filter'],
             'Filter was added to query, even if no filter exists.'
         );
     }
@@ -181,7 +181,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                                 'type' => 'most_fields',
                                 'query' => 'SearchWord',
                                 'fields' => [
-                                    '_all',
+                                    0 => 'test_field',
                                 ],
                             ],
                         ],
@@ -212,7 +212,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
         $this->configureConfigurationMockWithDefault();
         $query = $this->subject->create($searchRequest);
 
-        $this->assertArraySubset(
+        $this->assertSame(
             [
                 'bool' => [
                     'must' => [
@@ -221,7 +221,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                                 'type' => 'most_fields',
                                 'query' => 'SearchWord',
                                 'fields' => [
-                                    '_all',
+                                    'test_field',
                                 ],
                                 'minimum_should_match' => '50%',
                             ],
@@ -251,7 +251,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 ['searching.fieldValueFactor']
             )
             ->will($this->onConsecutiveCalls(
-                '_all',
+                'test_field',
                 [
                     'search_title' => 3,
                     'search_abstract' => 1.5,
@@ -308,7 +308,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 ['searching.fieldValueFactor']
             )
             ->will($this->onConsecutiveCalls(
-                '_all',
+                'test_field',
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
@@ -327,7 +327,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                                         'type' => 'most_fields',
                                         'query' => 'SearchWord',
                                         'fields' => [
-                                            '_all',
+                                            0 => 'test_field',
                                         ],
                                     ],
                                 ],
@@ -376,7 +376,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 ['searching.fieldValueFactor']
             )
             ->will($this->onConsecutiveCalls(
-                '_all, field1, field2',
+                'test_field, field1, field2',
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
@@ -393,7 +393,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                                 'type' => 'most_fields',
                                 'query' => 'SearchWord',
                                 'fields' => [
-                                    '_all',
+                                    'test_field',
                                     'field1',
                                     'field2',
                                 ],
@@ -483,7 +483,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 ['searching.fieldValueFactor']
             )
             ->will($this->onConsecutiveCalls(
-                '_all',
+                'test_field',
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
                 [
@@ -616,7 +616,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
             ->method('get')
             ->will($this->returnCallback(function ($configName) {
                 if ($configName === 'searching.fields.query') {
-                    return '_all';
+                    return 'test_field';
                 }
 
                 throw new InvalidArgumentException();

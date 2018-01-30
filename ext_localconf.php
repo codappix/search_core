@@ -11,7 +11,7 @@ call_user_func(
                 'SC_OPTIONS' => [
                     'extbase' => [
                         'commandControllers' => [
-                            Codappix\SearchCore\Command\IndexCommandController::class,
+                            $extensionKey . '::index' => Codappix\SearchCore\Command\IndexCommandController::class,
                         ],
                     ],
                     't3lib/class.t3lib_tcemain.php' => [
