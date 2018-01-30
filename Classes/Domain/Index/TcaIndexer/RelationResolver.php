@@ -20,6 +20,7 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Utility\FrontendUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -39,13 +40,15 @@ class RelationResolver implements Singleton
             if ($column === 'pid') {
                 continue;
             }
-            $record[$column] = BackendUtility::getProcessedValueExtra(
-                $service->getTableName(),
-                $column,
-                $record[$column],
-                0,
-                $record['uid']
-            );
+
+            $record[$column] = GeneralUtility::makeInstance($this->getUtilityForMode())
+                ::getProcessedValueExtra(
+                    $service->getTableName(),
+                    $column,
+                    $record[$column],
+                    0,
+                    $record['uid']
+                );
 
             try {
                 $config = $service->getColumnConfig($column);
@@ -92,5 +95,14 @@ class RelationResolver implements Singleton
     protected function resolveInlineValue(string $value) : array
     {
         return array_map('trim', explode(',', $value));
+    }
+
+    protected function getUtilityForMode(): string
+    {
+        if (TYPO3_MODE === 'BE') {
+            return BackendUtility::class;
+        }
+
+        return FrontendUtility::class;
     }
 }
