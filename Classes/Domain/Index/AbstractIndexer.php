@@ -86,7 +86,7 @@ abstract class AbstractIndexer implements IndexerInterface
             }
 
             $this->logger->debug('Index records.', [$records]);
-            $this->connection->addDocuments($this->getDocumentName(), $records);
+            return $this->connection->addDocuments($this->getDocumentName(), $records);
         }
         $this->logger->info('Finish indexing');
     }
@@ -98,7 +98,7 @@ abstract class AbstractIndexer implements IndexerInterface
             $record = $this->getRecord($identifier);
             $this->prepareRecord($record);
 
-            $this->connection->addDocument($this->getDocumentName(), $record);
+            return $this->connection->addDocument($this->getDocumentName(), $record);
         } catch (NoRecordFoundException $e) {
             $this->logger->info('Could not index document. Try to delete it therefore.', [$e->getMessage()]);
             $this->connection->deleteDocument($this->getDocumentName(), $identifier);
@@ -109,7 +109,7 @@ abstract class AbstractIndexer implements IndexerInterface
     public function delete()
     {
         $this->logger->info('Start deletion of index.');
-        $this->connection->deleteIndex($this->getDocumentName());
+        return $this->connection->deleteIndex($this->getDocumentName());
         $this->logger->info('Finish deletion.');
     }
 
