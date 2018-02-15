@@ -158,10 +158,13 @@ class Elasticsearch implements Singleton, ConnectionInterface
 
     public function deleteIndex($documentType)
     {
-        $index = $this->connection->getClient()->getIndex('typo3content');
+        $index = $this->connection->getClient()->getIndex($this->indexFactory->getIndexName());
 
         if (! $index->exists()) {
-            $this->logger->notice('Index did not exist, therefore was not deleted.', [$documentType, 'typo3content']);
+            $this->logger->notice(
+                'Index did not exist, therefore was not deleted.',
+                [$documentType, $this->indexFactory->getIndexName()]
+            );
             return;
         }
 
@@ -198,7 +201,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         $this->logger->debug('Search for', [$searchRequest->getSearchTerm()]);
 
         $search = new \Elastica\Search($this->connection->getClient());
-        $search->addIndex('typo3content');
+        $search->addIndex($this->indexFactory->getIndexName());
         $search->setQuery($this->queryFactory->create($searchRequest));
 
         return $this->objectManager->get(SearchResult::class, $searchRequest, $search->search());

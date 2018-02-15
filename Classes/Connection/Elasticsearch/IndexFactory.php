@@ -48,6 +48,16 @@ class IndexFactory implements Singleton
     }
 
     /**
+     * Get the index name from the typoscript settings.
+     *
+     * @return string
+     */
+    public function getIndexName()
+    {
+        return $this->configuration->get('connections.elasticsearch.index');
+    }
+
+    /**
      * Get an index bases on TYPO3 table name.
      *
      * @param Connection $connection
@@ -57,7 +67,7 @@ class IndexFactory implements Singleton
      */
     public function getIndex(Connection $connection, $documentType)
     {
-        $index = $connection->getClient()->getIndex('typo3content');
+        $index = $connection->getClient()->getIndex($this->getIndexName());
 
         if ($index->exists() === false) {
             $index->create($this->getConfigurationFor($documentType));

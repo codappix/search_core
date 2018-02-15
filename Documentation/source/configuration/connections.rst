@@ -51,5 +51,18 @@ Example::
 
     plugin.tx_searchcore.settings.connections.elasticsearch.port = 9200
 
+.. _index:
+
+``index``
+--------
+
+Used by: :ref:`Elasticsearch`.
+
+The index where the documents are being indexed to. E.g. default ``typo3content`` for Elasticsearch.
+
+Example::
+
+    plugin.tx_searchcore.settings.connections.elasticsearch.index = typo3content
+
 
 

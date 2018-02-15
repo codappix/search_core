@@ -22,6 +22,8 @@ The connection is configurable through the following options:
 
 * :ref:`port`
 
+* :ref:`index`
+
 * :ref:`mapping`
 
 * :ref:`facets`
