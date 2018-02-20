@@ -26,6 +26,7 @@ use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\DataProcessing\CopyToProcessor;
 use Codappix\SearchCore\Domain\Index\AbstractIndexer;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 class AbstractIndexerTest extends AbstractUnitTestCase
 {
@@ -44,17 +45,25 @@ class AbstractIndexerTest extends AbstractUnitTestCase
      */
     protected $connection;
 
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
     public function setUp()
     {
         parent::setUp();
 
         $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)->getMock();
         $this->connection = $this->getMockBuilder(ConnectionInterface::class)->getMock();
+        $this->objectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
+
 
         $this->subject = $this->getMockForAbstractClass(AbstractIndexer::class, [
             $this->connection,
             $this->configuration
         ]);
+        $this->inject($this->subject, 'objectManager', $this->objectManager);
         $this->subject->injectLogger($this->getMockedLogger());
         $this->subject->setIdentifier('testTable');
         $this->subject->expects($this->any())
@@ -72,6 +81,11 @@ class AbstractIndexerTest extends AbstractUnitTestCase
         $expectedRecord['new_test_field'] = 'test';
         $expectedRecord['new_test_field2'] = 'test' . PHP_EOL . 'test';
         $expectedRecord['search_abstract'] = '';
+
+        $this->objectManager->expects($this->any())
+            ->method('get')
+            ->with(CopyToProcessor::class)
+            ->willReturn(new CopyToProcessor());
 
         $this->configuration->expects($this->exactly(2))
             ->method('get')

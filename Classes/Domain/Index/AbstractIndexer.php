@@ -49,6 +49,12 @@ abstract class AbstractIndexer implements IndexerInterface
     protected $logger;
 
     /**
+     * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+     * @inject
+     */
+    protected $objectManager;
+
+    /**
      * Inject log manager to get concrete logger from it.
      *
      * @param \TYPO3\CMS\Core\Log\LogManager $logManager
@@ -141,7 +147,8 @@ abstract class AbstractIndexer implements IndexerInterface
                 } else {
                     $className = $configuration['_typoScriptNodeValue'];
                 }
-                $dataProcessor = GeneralUtility::makeInstance($className);
+
+                $dataProcessor = $this->objectManager->get($className);
                 if ($dataProcessor instanceof ProcessorInterface) {
                     $record = $dataProcessor->processRecord($record, $configuration);
                 }
