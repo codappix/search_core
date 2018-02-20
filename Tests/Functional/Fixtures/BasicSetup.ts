@@ -43,6 +43,10 @@ plugin {
                         field = CType
                     }
                 }
+
+                fields {
+                    query = _all
+                }
             }
         }
     }

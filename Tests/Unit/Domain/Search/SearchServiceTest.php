@@ -178,4 +178,29 @@ class SearchServiceTest extends AbstractUnitTestCase
         $searchRequest->setFilter(['anotherProperty' => 'anything']);
         $this->subject->search($searchRequest);
     }
+
+    /**
+     * @test
+     */
+    public function emptyConfiguredFilterIsNotChangingRequestWithExistingFilter()
+    {
+        $this->configuration->expects($this->exactly(2))
+            ->method('getIfExists')
+            ->withConsecutive(['searching.size'], ['searching.facets'])
+            ->will($this->onConsecutiveCalls(null, null));
+        $this->configuration->expects($this->exactly(1))
+            ->method('get')
+            ->with('searching.filter')
+            ->willReturn(['anotherProperty' => '']);
+
+        $this->connection->expects($this->once())
+            ->method('search')
+            ->with($this->callback(function ($searchRequest) {
+                return $searchRequest->getFilter() === ['anotherProperty' => 'anything'];
+            }));
+
+        $searchRequest = new SearchRequest('SearchWord');
+        $searchRequest->setFilter(['anotherProperty' => 'anything']);
+        $this->subject->search($searchRequest);
+    }
 }

@@ -20,8 +20,10 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Utility\FrontendUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Resolves relations from TCA using TCA.
@@ -38,13 +40,15 @@ class RelationResolver implements Singleton
             if ($column === 'pid') {
                 continue;
             }
-            $record[$column] = BackendUtility::getProcessedValueExtra(
-                $service->getTableName(),
-                $column,
-                $record[$column],
-                0,
-                $record['uid']
-            );
+
+            $record[$column] = GeneralUtility::makeInstance($this->getUtilityForMode())
+                ::getProcessedValueExtra(
+                    $service->getTableName(),
+                    $column,
+                    $record[$column],
+                    0,
+                    $record['uid']
+                );
 
             try {
                 $config = $service->getColumnConfig($column);
@@ -75,7 +79,7 @@ class RelationResolver implements Singleton
         return [];
     }
 
-    protected function isRelation(array &$config)
+    protected function isRelation(array &$config) : bool
     {
         return isset($config['foreign_table'])
             || (isset($config['renderType']) && $config['renderType'] !== 'selectSingle')
@@ -83,13 +87,22 @@ class RelationResolver implements Singleton
             ;
     }
 
-    protected function resolveForeignDbValue($value)
+    protected function resolveForeignDbValue(string $value) : array
     {
         return array_map('trim', explode(';', $value));
     }
 
-    protected function resolveInlineValue($value)
+    protected function resolveInlineValue(string $value) : array
     {
         return array_map('trim', explode(',', $value));
+    }
+
+    protected function getUtilityForMode() : string
+    {
+        if (TYPO3_MODE === 'BE') {
+            return BackendUtility::class;
+        }
+
+        return FrontendUtility::class;
     }
 }

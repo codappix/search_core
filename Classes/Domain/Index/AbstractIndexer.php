@@ -23,7 +23,8 @@ namespace Codappix\SearchCore\Domain\Index;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
-use \TYPO3\CMS\Core\Utility\GeneralUtility;
+use Codappix\SearchCore\DataProcessing\ProcessorInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractIndexer implements IndexerInterface
 {
@@ -48,6 +49,11 @@ abstract class AbstractIndexer implements IndexerInterface
     protected $logger;
 
     /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    /**
      * Inject log manager to get concrete logger from it.
      *
      * @param \TYPO3\CMS\Core\Log\LogManager $logManager
@@ -62,10 +68,6 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->identifier = $identifier;
     }
 
-    /**
-     * @param ConnectionInterface $connection
-     * @param ConfigurationContainerInterface $configuration
-     */
     public function __construct(ConnectionInterface $connection, ConfigurationContainerInterface $configuration)
     {
         $this->connection = $connection;
@@ -99,9 +101,17 @@ abstract class AbstractIndexer implements IndexerInterface
 
             $this->connection->addDocument($this->getDocumentName(), $record);
         } catch (NoRecordFoundException $e) {
-            $this->logger->info('Could not index document.', [$e->getMessage()]);
+            $this->logger->info('Could not index document. Try to delete it therefore.', [$e->getMessage()]);
+            $this->connection->deleteDocument($this->getDocumentName(), $identifier);
         }
         $this->logger->info('Finish indexing');
+    }
+
+    public function delete()
+    {
+        $this->logger->info('Start deletion of index.');
+        $this->connection->deleteIndex($this->getDocumentName());
+        $this->logger->info('Finish deletion.');
     }
 
     /**
@@ -122,6 +132,33 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param array &$record
      */
     protected function prepareRecord(array &$record)
+    {
+        try {
+            foreach ($this->configuration->get('indexing.' . $this->identifier . '.dataProcessing') as $configuration) {
+                $className = '';
+                if (is_string($configuration)) {
+                    $className = $configuration;
+                    $configuration = [];
+                } else {
+                    $className = $configuration['_typoScriptNodeValue'];
+                }
+
+                $dataProcessor = GeneralUtility::makeInstance($className);
+                if ($dataProcessor instanceof ProcessorInterface) {
+                    $record = $dataProcessor->processRecord($record, $configuration);
+                }
+            }
+        } catch (InvalidArgumentException $e) {
+            // Nothing to do.
+        }
+
+        $this->handleAbstract($record);
+    }
+
+    /**
+     * @param array &$record
+     */
+    protected function handleAbstract(array &$record)
     {
         $record['search_abstract'] = '';
 

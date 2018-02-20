@@ -21,6 +21,7 @@ namespace Codappix\SearchCore\Tests\Unit\Domain\Search;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\ConfigurationUtility;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Domain\Model\FacetRequest;
 use Codappix\SearchCore\Domain\Model\SearchRequest;
@@ -44,7 +45,8 @@ class QueryFactoryTest extends AbstractUnitTestCase
         parent::setUp();
 
         $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)->getMock();
-        $this->subject = new QueryFactory($this->getMockedLogger(), $this->configuration);
+        $configurationUtility = new ConfigurationUtility();
+        $this->subject = new QueryFactory($this->getMockedLogger(), $this->configuration, $configurationUtility);
     }
 
     /**
@@ -52,9 +54,9 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function creationOfQueryWorksInGeneral()
     {
-        $this->mockConfiguration();
-
         $searchRequest = new SearchRequest('SearchWord');
+
+        $this->configureConfigurationMockWithDefault();
 
         $query = $this->subject->create($searchRequest);
         $this->assertInstanceOf(
@@ -69,7 +71,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function filterIsAddedToQuery()
     {
-        $this->mockConfiguration();
+        $this->configureConfigurationMockWithDefault();
 
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setFilter(['field' => 'content']);
@@ -79,7 +81,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
             [
                 ['term' => ['field' => 'content']]
             ],
-            $query->toArray()['query']['function_score']['query']['bool']['filter'],
+            $query->toArray()['query']['bool']['filter'],
             'Filter was not added to query.'
         );
     }
@@ -89,13 +91,11 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function emptyFilterIsNotAddedToQuery()
     {
-        $this->mockConfiguration();
+        $this->configureConfigurationMockWithDefault();
 
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setFilter([
             'field' => '',
-            'field1' => 0,
-            'field2' => false,
         ]);
 
         $this->assertFalse(
@@ -116,8 +116,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function facetsAreAddedToQuery()
     {
-        $this->mockConfiguration();
-
+        $this->configureConfigurationMockWithDefault();
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->addFacet(new FacetRequest('Identifier', 'FieldName'));
         $searchRequest->addFacet(new FacetRequest('Identifier 2', 'FieldName 2'));
@@ -146,8 +145,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function sizeIsAddedToQuery()
     {
-        $this->mockConfiguration();
-
+        $this->configureConfigurationMockWithDefault();
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setLimit(45);
         $searchRequest->setOffset(35);
@@ -170,9 +168,8 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function searchTermIsAddedToQuery()
     {
-        $this->mockConfiguration();
-
         $searchRequest = new SearchRequest('SearchWord');
+        $this->configureConfigurationMockWithDefault();
         $query = $this->subject->create($searchRequest);
 
         $this->assertSame(
@@ -191,7 +188,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                     ],
                 ],
             ],
-            $query->toArray()['query']['function_score']['query'],
+            $query->toArray()['query'],
             'Search term was not added to query as expected.'
         );
     }
@@ -201,28 +198,38 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function minimumShouldMatchIsAddedToQuery()
     {
-        $this->configuration->expects($this->once())
-            ->method('getIfExists')
-            ->with('searching.minimumShouldMatch')
-            ->willReturn('50%');
-        $this->mockConfiguration();
-
         $searchRequest = new SearchRequest('SearchWord');
+        $this->configuration->expects($this->any())
+            ->method('getIfExists')
+            ->withConsecutive(
+                ['searching.minimumShouldMatch'],
+                ['searching.sort']
+            )
+            ->will($this->onConsecutiveCalls(
+                '50%',
+                null
+            ));
+        $this->configureConfigurationMockWithDefault();
         $query = $this->subject->create($searchRequest);
 
-        $this->assertArraySubset(
+        $this->assertSame(
             [
                 'bool' => [
                     'must' => [
                         [
                             'multi_match' => [
+                                'type' => 'most_fields',
+                                'query' => 'SearchWord',
+                                'fields' => [
+                                    'test_field',
+                                ],
                                 'minimum_should_match' => '50%',
                             ],
                         ],
                     ],
                 ],
             ],
-            $query->toArray()['query']['function_score']['query'],
+            $query->toArray()['query'],
             'minimum_should_match was not added to query as configured.'
         );
     }
@@ -234,15 +241,23 @@ class QueryFactoryTest extends AbstractUnitTestCase
     {
         $searchRequest = new SearchRequest('SearchWord');
 
-        $this->configuration->expects($this->exactly(3))
+        $this->configuration->expects($this->any())
             ->method('get')
-            ->withConsecutive(['searching.fields'], ['searching.boost'], ['searching.fieldValueFactor'])
+            ->withConsecutive(
+                ['searching.fields.query'],
+                ['searching.boost'],
+                ['searching.fields.stored_fields'],
+                ['searching.fields.script_fields'],
+                ['searching.fieldValueFactor']
+            )
             ->will($this->onConsecutiveCalls(
                 'test_field',
                 [
                     'search_title' => 3,
                     'search_abstract' => 1.5,
                 ],
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException)
             ));
 
@@ -283,11 +298,19 @@ class QueryFactoryTest extends AbstractUnitTestCase
             'factor' => '2',
             'missing' => '1',
         ];
-        $this->configuration->expects($this->exactly(3))
+        $this->configuration->expects($this->any())
             ->method('get')
-            ->withConsecutive(['searching.fields'], ['searching.boost'], ['searching.fieldValueFactor'])
+            ->withConsecutive(
+                ['searching.fields.query'],
+                ['searching.boost'],
+                ['searching.fields.stored_fields'],
+                ['searching.fields.script_fields'],
+                ['searching.fieldValueFactor']
+            )
             ->will($this->onConsecutiveCalls(
                 'test_field',
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
                 $fieldConfig
             ));
@@ -324,27 +347,279 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     public function emptySearchStringWillNotAddSearchToQuery()
     {
-        $this->mockConfiguration();
-
         $searchRequest = new SearchRequest();
 
+        $this->configureConfigurationMockWithDefault();
+
         $query = $this->subject->create($searchRequest);
-        $this->assertNull(
-            $query->toArray()['query']['function_score']['query'],
+        $this->assertInstanceOf(
+            stdClass,
+            $query->toArray()['query']['match_all'],
             'Empty search request does not create expected query.'
         );
     }
 
-    protected function mockConfiguration()
+    /**
+     * @test
+     */
+    public function configuredQueryFieldsAreAddedToQuery()
+    {
+        $searchRequest = new SearchRequest('SearchWord');
+
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->withConsecutive(
+                ['searching.fields.query'],
+                ['searching.boost'],
+                ['searching.fields.stored_fields'],
+                ['searching.fields.script_fields'],
+                ['searching.fieldValueFactor']
+            )
+            ->will($this->onConsecutiveCalls(
+                'test_field, field1, field2',
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException)
+            ));
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertArraySubset(
+            [
+                'bool' => [
+                    'must' => [
+                        [
+                            'multi_match' => [
+                                'type' => 'most_fields',
+                                'query' => 'SearchWord',
+                                'fields' => [
+                                    'test_field',
+                                    'field1',
+                                    'field2',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            $query->toArray()['query'],
+            'Configured fields were not added to query as configured.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function storedFieldsAreAddedToQuery()
+    {
+        $searchRequest = new SearchRequest();
+
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->withConsecutive(
+                ['searching.boost'],
+                ['searching.fields.stored_fields'],
+                ['searching.fields.script_fields'],
+                ['searching.fieldValueFactor']
+            )
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new InvalidArgumentException),
+                '_source, something,nothing',
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException)
+            ));
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertSame(
+            ['_source', 'something', 'nothing'],
+            $query->toArray()['stored_fields'],
+            'Stored fields were not added to query as expected.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function storedFieldsAreNotAddedToQuery()
+    {
+        $searchRequest = new SearchRequest();
+
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->withConsecutive(
+                ['searching.boost'],
+                ['searching.fields.stored_fields'],
+                ['searching.fields.script_fields'],
+                ['searching.fieldValueFactor']
+            )
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException)
+            ));
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertFalse(
+            isset($query->toArray()['stored_fields']),
+            'Stored fields were added to query even if not configured.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function scriptFieldsAreAddedToQuery()
+    {
+        $searchRequest = new SearchRequest('query value');
+
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->withConsecutive(
+                ['searching.fields.query'],
+                ['searching.boost'],
+                ['searching.fields.stored_fields'],
+                ['searching.fields.script_fields'],
+                ['searching.fieldValueFactor']
+            )
+            ->will($this->onConsecutiveCalls(
+                'test_field',
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
+                [
+                    'field1' => [
+                        'config' => 'something',
+                    ],
+                    'field2' => [
+                        'config' => '{request.query}',
+                    ],
+                ],
+                $this->throwException(new InvalidArgumentException)
+            ));
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertSame(
+            [
+                'field1' => [
+                    'config' => 'something',
+                ],
+                'field2' => [
+                    'config' => 'query value',
+                ],
+            ],
+            $query->toArray()['script_fields'],
+            'Script fields were not added to query as expected.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function scriptFieldsAreNotAddedToQuery()
+    {
+        $searchRequest = new SearchRequest();
+
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->withConsecutive(
+                ['searching.boost'],
+                ['searching.fields.stored_fields'],
+                ['searching.fields.script_fields'],
+                ['searching.fieldValueFactor']
+            )
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException),
+                $this->throwException(new InvalidArgumentException)
+            ));
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertTrue(
+            !isset($query->toArray()['script_fields']),
+            'Script fields were added to query even if not configured.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function sortIsAddedToQuery()
+    {
+        $searchRequest = new SearchRequest('query value');
+
+        $this->configuration->expects($this->any())
+            ->method('getIfExists')
+            ->withConsecutive(
+                ['searching.minimumShouldMatch'],
+                ['searching.sort']
+            )
+            ->will($this->onConsecutiveCalls(
+                null,
+                [
+                    'field1' => [
+                        'config' => 'something',
+                    ],
+                    'field2' => [
+                        'config' => '{request.query}',
+                    ],
+                ]
+            ));
+
+        $this->configureConfigurationMockWithDefault();
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertSame(
+            [
+                'field1' => [
+                    'config' => 'something',
+                ],
+                'field2' => [
+                    'config' => 'query value',
+                ],
+            ],
+            $query->toArray()['sort'],
+            'Sort was not added to query as expected.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function sortIsNotAddedToQuery()
+    {
+        $searchRequest = new SearchRequest('query value');
+
+        $this->configuration->expects($this->any())
+            ->method('getIfExists')
+            ->withConsecutive(
+                ['searching.minimumShouldMatch'],
+                ['searching.sort']
+            )
+            ->will($this->onConsecutiveCalls(
+                null,
+                null
+            ));
+
+        $this->configureConfigurationMockWithDefault();
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertTrue(
+            !isset($query->toArray()['sort']),
+            'Sort was added to query even if not configured.'
+        );
+    }
+
+    protected function configureConfigurationMockWithDefault()
     {
         $this->configuration->expects($this->any())
             ->method('get')
-            ->will($this->returnCallback(function ($option) {
-                if ($option === 'searching.fields') {
+            ->will($this->returnCallback(function ($configName) {
+                if ($configName === 'searching.fields.query') {
                     return 'test_field';
                 }
 
-                return $this->throwException(new InvalidArgumentException);
+                throw new InvalidArgumentException();
             }));
     }
 }

@@ -56,6 +56,12 @@ class SearchController extends ActionController
                 ]
             ));
         }
+
+        if ($this->arguments->hasArgument('searchRequest')) {
+            $this->arguments->getArgument('searchRequest')->getPropertyMappingConfiguration()
+                ->allowAllProperties()
+                ;
+        }
     }
 
     /**

@@ -16,7 +16,7 @@
         }
     },
     "require" : {
-        "php": ">=5.6.0",
+        "php": ">=7.0",
         "typo3/cms": "~7.6",
         "ruflin/elastica": "~3.2"
     },
@@ -35,6 +35,9 @@
         ]
     },
     "extra": {
+        "branch-alias": {
+            "dev-develop": "1.0.x-dev"
+        },
         "typo3/cms": {
             "cms-package-dir": "{$vendor-dir}/typo3/cms",
             "web-dir": ".Build/web"

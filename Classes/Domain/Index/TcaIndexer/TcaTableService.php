@@ -22,7 +22,6 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException as InvalidConfigurationArgumentException;
-use Codappix\SearchCore\DataProcessing\ProcessorInterface;
 use Codappix\SearchCore\Domain\Index\IndexingException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -109,7 +108,7 @@ class TcaTableService
     /**
      * @return string
      */
-    public function getTableName()
+    public function getTableName() : string
     {
         return $this->tableName;
     }
@@ -117,7 +116,7 @@ class TcaTableService
     /**
      * @return string
      */
-    public function getTableClause()
+    public function getTableClause() : string
     {
         if ($this->tableName === 'pages') {
             return $this->tableName;
@@ -128,9 +127,6 @@ class TcaTableService
 
     /**
      * Filter the given records by root line blacklist settings.
-     *
-     * @param array &$records
-     * @return void
      */
     public function filterRecordsByRootLineBlacklist(array &$records)
     {
@@ -144,22 +140,10 @@ class TcaTableService
 
     /**
      * Adjust record accordingly to configuration.
-     * @param array &$record
      */
     public function prepareRecord(array &$record)
     {
         $this->relationResolver->resolveRelationsForRecord($this, $record);
-
-        try {
-            foreach ($this->configuration->get('indexing.' . $this->tableName . '.dataProcessing') as $configuration) {
-                $dataProcessor = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($configuration['_typoScriptNodeValue']);
-                if ($dataProcessor instanceof ProcessorInterface) {
-                    $record = $dataProcessor->processRecord($record, $configuration);
-                }
-            }
-        } catch (InvalidConfigurationArgumentException $e) {
-            // Nothing to do.
-        }
 
         if (isset($record['uid']) && !isset($record['search_identifier'])) {
             $record['search_identifier'] = $record['uid'];
@@ -169,10 +153,7 @@ class TcaTableService
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getWhereClause()
+    public function getWhereClause() : string
     {
         $whereClause = '1=1'
             . BackendUtility::BEenableFields($this->tableName)
@@ -204,17 +185,17 @@ class TcaTableService
         return $whereClause;
     }
 
-    /**
-     * @return string
-     */
-    public function getFields()
+    public function getFields() : string
     {
         $fields = array_merge(
             ['uid','pid'],
             array_filter(
                 array_keys($this->tca['columns']),
                 function ($columnName) {
-                    return !$this->isSystemField($columnName);
+                    return !$this->isSystemField($columnName)
+                        && !$this->isUserField($columnName)
+                        && !$this->isPassthroughField($columnName)
+                        ;
                 }
             )
         );
@@ -228,10 +209,27 @@ class TcaTableService
     }
 
     /**
-     * @param string
-     * @return bool
+     * Generate SQL for TYPO3 as a system, to make sure only available records
+     * are fetched.
      */
-    protected function isSystemField($columnName)
+    public function getSystemWhereClause() : string
+    {
+        $whereClause = '1=1'
+            . BackendUtility::BEenableFields($this->tableName)
+            . BackendUtility::deleteClause($this->tableName)
+            . ' AND pages.no_search = 0'
+            ;
+
+        if ($this->tableName !== 'pages') {
+            $whereClause .= BackendUtility::BEenableFields('pages')
+                . BackendUtility::deleteClause('pages')
+            ;
+        }
+
+        return $whereClause;
+    }
+
+    protected function isSystemField(string $columnName) : bool
     {
         $systemFields = [
             // Versioning fields,
@@ -250,12 +248,22 @@ class TcaTableService
         return in_array($columnName, $systemFields);
     }
 
+    protected function isUserField(string $columnName) : bool
+    {
+        $config = $this->getColumnConfig($columnName);
+        return isset($config['type']) && $config['type'] === 'user';
+    }
+
+    protected function isPassthroughField(string $columnName) : bool
+    {
+        $config = $this->getColumnConfig($columnName);
+        return isset($config['type']) && $config['type'] === 'passthrough';
+    }
+
     /**
-     * @param string $columnName
-     * @return array
      * @throws InvalidArgumentException
      */
-    public function getColumnConfig($columnName)
+    public function getColumnConfig(string $columnName) : array
     {
         if (!isset($this->tca['columns'][$columnName])) {
             throw new InvalidArgumentException(
@@ -274,11 +282,8 @@ class TcaTableService
      * Also further TYPO3 mechanics are taken into account. Does a valid root
      * line exist, is page inside a recycler, is inherited start- endtime
      * excluded, etc.
-     *
-     * @param array &$record
-     * @return bool
      */
-    protected function isRecordBlacklistedByRootline(array &$record)
+    protected function isRecordBlacklistedByRootline(array &$record) : bool
     {
         $pageUid = $record['pid'];
         if ($this->tableName === 'pages') {
@@ -332,20 +337,16 @@ class TcaTableService
 
     /**
      * Checks whether any page uids are black listed.
-     *
-     * @return bool
      */
-    protected function isBlackListedRootLineConfigured()
+    protected function isBlackListedRootLineConfigured() : bool
     {
         return (bool) $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist');
     }
 
     /**
      * Get the list of black listed root line page uids.
-     *
-     * @return array<Int>
      */
-    protected function getBlackListedRootLine()
+    protected function getBlackListedRootLine() : array
     {
         return GeneralUtility::intExplode(',', $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist'));
     }

@@ -1,8 +1,8 @@
 <?php
-namespace Codappix\SearchCore\DataProcessing;
+namespace Codappix\SearchCore\Utility;
 
 /*
- * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
+ * Copyright (C) 2018 Justus Moroni <developer@leonmrni.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,15 +20,20 @@ namespace Codappix\SearchCore\DataProcessing;
  * 02110-1301, USA.
  */
 
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+
 /**
- * All DataProcessing Processors should implement this interface, otherwise
- * they will not be executed.
+ * Overwrite BackendUtility to use in frontend.
+ * LanguageService was only usable in backend.
  */
-interface ProcessorInterface
+class FrontendUtility extends BackendUtility
 {
     /**
-     * Processes the given record.
-     * Also retrieves the configuration for this processor instance.
+     * @return TypoScriptFrontendController
      */
-    public function processRecord(array $record, array $configuration) : array;
+    protected static function getLanguageService()
+    {
+        return $GLOBALS['TSFE'];
+    }
 }

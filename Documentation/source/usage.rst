@@ -18,6 +18,19 @@ This will index the table ``tt_content`` using the :ref:`TcaIndexer`.
 Only one index per call is available, to run multiple indexers, just make multiple calls.
 The indexers have to be defined in TypoScript via :ref:`configuration_options_index`.
 
+.. _usage_manual_deletion:
+
+Manual deletion
+---------------
+
+You can trigger deletion for a single index from CLI::
+
+    ./typo3/cli_dispatch.phpsh extbase index:delete --identifier 'tt_content'
+
+This will delete the index for the table ``tt_content``.
+
+Only one delete per call is available, to run multiple deletions, just make multiple calls.
+
 .. _usage_auto_indexing:
 
 Auto indexing
@@ -29,6 +42,34 @@ The tables have to be configured via :ref:`configuration_options_index`.
 .. note::
 
   Not all hook operations are supported yet, see :issue:`27`.
+
+.. _usage_form_finisher:
+
+Form finisher
+-------------
+
+A form finisher is provided to integrate indexing into form extension.
+
+Add form finisher to your available finishers and configure it like:
+
+.. code-block:: yaml
+   :linenos:
+
+    -
+        identifier: SearchCoreIndexer
+        options:
+            action: 'delete'
+            indexIdentifier: 'fe_users'
+            recordUid: '{FeUser.user.uid}'
+
+All three options are necessary, where
+
+``action``
+    Is one of ``delete``, ``update`` or ``add``.
+``indexIdentifier``
+    Is a configured index identifier.
+``recordUid``
+    Has to be the uid of the record to index.
 
 .. _usage_searching:
 

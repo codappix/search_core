@@ -58,9 +58,6 @@ class PagesIndexer extends TcaIndexer
         $this->configuration = $configuration;
     }
 
-    /**
-     * @param array &$record
-     */
     protected function prepareRecord(array &$record)
     {
         $possibleTitleFields = ['nav_title', 'tx_tqseo_pagetitle_rel', 'title'];
@@ -80,11 +77,7 @@ class PagesIndexer extends TcaIndexer
         parent::prepareRecord($record);
     }
 
-    /**
-     * @param int $uid
-     * @return []
-     */
-    protected function fetchContentForPage($uid)
+    protected function fetchContentForPage(int $uid) : array
     {
         $contentElements = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
             $this->contentTableService->getFields(),
@@ -118,31 +111,17 @@ class PagesIndexer extends TcaIndexer
         ];
     }
 
-    /**
-     * @param int $uidOfContentElement
-     * @return array
-     */
-    protected function getContentElementImages($uidOfContentElement)
+    protected function getContentElementImages(int $uidOfContentElement) : array
     {
         return $this->fetchSysFileReferenceUids($uidOfContentElement, 'tt_content', 'image');
     }
 
-    /**
-     * @param int $uid
-     * @return []
-     */
-    protected function fetchMediaForPage($uid)
+    protected function fetchMediaForPage(int $uid) : array
     {
         return $this->fetchSysFileReferenceUids($uid, 'pages', 'media');
     }
 
-    /**
-     * @param int $uid
-     * @param string $tablename
-     * @param string $fieldname
-     * @return []
-     */
-    protected function fetchSysFileReferenceUids($uid, $tablename, $fieldname)
+    protected function fetchSysFileReferenceUids(int $uid, string $tablename, string $fieldname) : array
     {
         $imageRelationUids = [];
         $imageRelations = $this->fileRepository->findByRelation($tablename, $fieldname, $uid);

@@ -21,6 +21,8 @@ namespace Codappix\SearchCore\Tests\Unit\Domain\Index\TcaIndexer;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\DataProcessing\CopyToProcessor;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\RelationResolver;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
 
@@ -81,5 +83,49 @@ class TcaTableServiceTest extends AbstractUnitTestCase
             '1=1 AND pages.no_search = 0 AND table.field = "someValue"',
             $this->subject->getWhereClause()
         );
+    }
+
+    /**
+     * @test
+     */
+    public function allConfiguredAndAllowedTcaColumnsAreReturnedAsFields()
+    {
+        $GLOBALS['TCA']['test_table'] = [
+            'ctrl' => [
+                'languageField' => 'sys_language',
+            ],
+            'columns' => [
+                'sys_language' => [],
+                't3ver_oid' => [],
+                'available_column' => [
+                    'config' => [
+                        'type' => 'input',
+                    ],
+                ],
+                'user_column' => [
+                    'config' => [
+                        'type' => 'user',
+                    ],
+                ],
+                'passthrough_column' => [
+                    'config' => [
+                        'type' => 'passthrough',
+                    ],
+                ],
+            ],
+        ];
+        $subject = new TcaTableService(
+            'test_table',
+            $this->getMockBuilder(RelationResolver::class)->getMock(),
+            $this->configuration
+        );
+        $this->inject($subject, 'logger', $this->getMockedLogger());
+
+        $this->assertSame(
+            'test_table.uid,test_table.pid,test_table.available_column',
+            $subject->getFields(),
+            ''
+        );
+        unset($GLOBALS['TCA']['test_table']);
     }
 }

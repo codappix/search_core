@@ -1,5 +1,5 @@
 <?php
-namespace Codappix\SearchCore\DataProcessing;
+namespace Codappix\SearchCore\Database\Doctrine;
 
 /*
  * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,35 +20,31 @@ namespace Codappix\SearchCore\DataProcessing;
  * 02110-1301, USA.
  */
 
-/**
- * Copies values from one field to another one.
- */
-class CopyToProcessor implements ProcessorInterface
+class Join
 {
-    public function processRecord(array $record, array $configuration) : array
-    {
-        $all = [];
-
-        $this->addArray($all, $record);
-        $all = array_filter($all);
-        $record[$configuration['to']] = implode(PHP_EOL, $all);
-
-        return $record;
-    }
+    /**
+     * @var string
+     */
+    protected $table = '';
 
     /**
-     * @param array &$to
-     * @param array $from
+     * @var string
      */
-    protected function addArray(array &$to, array $from)
-    {
-        foreach ($from as $value) {
-            if (is_array($value)) {
-                $this->addArray($to, $value);
-                continue;
-            }
+    protected $condition = '';
 
-            $to[] = (string) $value;
-        }
+    public function __construct(string $table, string $condition)
+    {
+        $this->table = $table;
+        $this->condition = $condition;
+    }
+
+    public function getTable() : string
+    {
+        return $this->table;
+    }
+
+    public function getCondition() : string
+    {
+        return $this->condition;
     }
 }

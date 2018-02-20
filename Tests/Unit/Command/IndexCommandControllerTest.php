@@ -91,4 +91,41 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
 
         $this->subject->indexCommand('allowedTable');
     }
+
+    /**
+     * @test
+     */
+    public function deletionIsPossible()
+    {
+        $indexerMock = $this->getMockBuilder(TcaIndexer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->subject->expects($this->once())
+            ->method('outputLine')
+            ->with('allowedTable was deleted.');
+        $this->indexerFactory->expects($this->once())
+            ->method('getIndexer')
+            ->with('allowedTable')
+            ->will($this->returnValue($indexerMock));
+
+        $indexerMock->expects($this->once())
+            ->method('delete');
+        $this->subject->deleteCommand('allowedTable');
+    }
+
+    /**
+     * @test
+     */
+    public function deletionForNonExistingIndexerDoesNotWork()
+    {
+        $this->subject->expects($this->once())
+            ->method('outputLine')
+            ->with('No indexer found for: nonAllowedTable');
+        $this->indexerFactory->expects($this->once())
+            ->method('getIndexer')
+            ->with('nonAllowedTable')
+            ->will($this->throwException(new NoMatchingIndexerException));
+
+        $this->subject->deleteCommand('nonAllowedTable');
+    }
 }
