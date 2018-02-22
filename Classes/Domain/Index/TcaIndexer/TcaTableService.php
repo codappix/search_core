@@ -129,7 +129,7 @@ class TcaTableService
      * @param array &$records
      * @return void
      */
-    public function filterRecordsByRootLineBlacklist(array &$records) : void
+    public function filterRecordsByRootLineBlacklist(array &$records)
     {
         $records = array_filter(
             $records,
@@ -142,7 +142,7 @@ class TcaTableService
     /**
      * @param array &$record
      */
-    public function prepareRecord(array &$record) : void
+    public function prepareRecord(array &$record)
     {
         $this->relationResolver->resolveRelationsForRecord($this, $record);
 
