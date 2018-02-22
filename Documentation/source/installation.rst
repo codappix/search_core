@@ -19,4 +19,8 @@ In that case you need to install all dependencies yourself. Dependencies are:
 Afterwards you need to enable the extension through the extension manager and include the static
 TypoScript setup.
 
+If you **don't** want to use the included elasticsearch integration, you have to disable it in the
+extension manager configuration of the extension by checking the checkbox.
+It's currently enabled by default but will be moved into its own extension in the future.
+
 .. _downloading: https://github.com/DanielSiepmann/search_core/archive/master.zip
