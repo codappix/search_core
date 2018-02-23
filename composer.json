@@ -15,8 +15,8 @@
             "TYPO3\\CMS\\Core\\Tests\\": ".Build/vendor/typo3/cms/typo3/sysext/core/Tests/"
         }
     },
-    "require" : {
-        "php": ">=7.1.0",
+    "require": {
+        "php": ">=7.0.0",
         "typo3/cms": "~8.7",
         "ruflin/elastica": "~3.2"
     },
