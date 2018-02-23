@@ -92,42 +92,36 @@ class DataHandler implements Singleton
         return true;
     }
 
-    /**
-     * Called by CoreDataHandler on database operations, e.g. if new records were created or records were updated.
-     *
-     * @param string $status
-     * @param string $table
-     * @param string|int $uid
-     * @param array $fieldArray
-     * @param CoreDataHandler $dataHandler
-     *
-     * @return bool False if hook was not processed.
-     */
-    public function processDatamap_afterDatabaseOperations($status, $table, $uid, array $fieldArray, CoreDataHandler $dataHandler)
+    public function processDatamap_afterAllOperations(CoreDataHandler $dataHandler)
+    {
+        foreach ($dataHandler->datamap as $table => $record) {
+            $uid = key($record);
+            $fieldData = current($record);
+
+            if (isset($fieldArray['uid'])) {
+                $uid = $fieldArray['uid'];
+            } elseif (isset($dataHandler->substNEWwithIDs[$uid])) {
+                $uid = $dataHandler->substNEWwithIDs[$uid];
+            }
+
+            $this->processRecord($table, $uid);
+        }
+    }
+
+    protected function processRecord(string $table, int $uid) : bool
     {
         if (! $this->shouldProcessHookForTable($table)) {
-            $this->logger->debug('Database update not processed.', [$table, $uid]);
+            $this->logger->debug('Indexing of record not processed.', [$table, $uid]);
             return false;
         }
 
-        if ($status === 'new') {
-            $fieldArray['uid'] = $dataHandler->substNEWwithIDs[$uid];
-            $this->dataHandler->add($table, $fieldArray);
+        $record = $this->getRecord($table, $uid);
+        if ($record !== null) {
+            $this->dataHandler->update($table, $record);
             return true;
         }
 
-        if ($status === 'update') {
-            $record = $this->getRecord($table, $uid);
-            if ($record !== null) {
-                $this->dataHandler->update($table, $record);
-            }
-            return true;
-        }
-
-        $this->logger->debug(
-            'Database update not processed, cause status is unhandled.',
-            [$status, $table, $uid, $fieldArray]
-        );
+        $this->logger->debug('Indexing of record not processed, as he was not found in Database.', [$table, $uid]);
         return false;
     }
 

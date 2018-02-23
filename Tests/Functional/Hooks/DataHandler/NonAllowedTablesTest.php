@@ -64,7 +64,7 @@ class NonAllowedTablesTest extends AbstractDataHandlerTest
     /**
      * @test
      */
-    public function updateWillNotBeTriggeredForSysCategory()
+    public function updateWillNotBeTriggeredForExistingSysCategory()
     {
         $this->subject->expects($this->exactly(0))->method('update');
 
@@ -83,9 +83,9 @@ class NonAllowedTablesTest extends AbstractDataHandlerTest
     /**
      * @test
      */
-    public function addWillNotBeTriggeredForSysCategoy()
+    public function updateWillNotBeTriggeredForNewSysCategoy()
     {
-        $this->subject->expects($this->exactly(0))->method('add');
+        $this->subject->expects($this->exactly(0))->method('update');
 
         $tce = GeneralUtility::makeInstance(Typo3DataHandler::class);
         $tce->stripslashes_values = 0;
