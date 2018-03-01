@@ -44,6 +44,12 @@ abstract class AbstractIndexer implements IndexerInterface
     protected $identifier = '';
 
     /**
+     * @var \Codappix\SearchCore\DataProcessing\Service
+     * @inject
+     */
+    protected $dataProcessorService;
+
+    /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
@@ -134,17 +140,7 @@ abstract class AbstractIndexer implements IndexerInterface
     {
         try {
             foreach ($this->configuration->get('indexing.' . $this->identifier . '.dataProcessing') as $configuration) {
-                $className = '';
-                if (is_string($configuration)) {
-                    $className = $configuration;
-                    $configuration = [];
-                } else {
-                    $className = $configuration['_typoScriptNodeValue'];
-                }
-                $dataProcessor = GeneralUtility::makeInstance($className);
-                if ($dataProcessor instanceof ProcessorInterface) {
-                    $record = $dataProcessor->processRecord($record, $configuration);
-                }
+                $record = $this->dataProcessorService->executeDataProcessor($configuration, $record);
             }
         } catch (InvalidArgumentException $e) {
             // Nothing to do.
