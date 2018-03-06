@@ -22,6 +22,7 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\FacetInterface;
+use Codappix\SearchCore\Connection\FacetOptionInterface;
 
 class Facet implements FacetInterface
 {

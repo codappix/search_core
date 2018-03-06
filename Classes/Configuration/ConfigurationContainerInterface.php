@@ -37,7 +37,7 @@ interface ConfigurationContainerInterface extends Singleton
      *
      * @throws InvalidArgumentException
      */
-    public function get($path);
+    public function get(string $path);
 
     /**
      * Same as get but will not throw an exception but return null.
@@ -45,5 +45,5 @@ interface ConfigurationContainerInterface extends Singleton
      * @param string $path In dot notation.
      * @return mixed|null
      */
-    public function getIfExists($path);
+    public function getIfExists(string $path);
 }

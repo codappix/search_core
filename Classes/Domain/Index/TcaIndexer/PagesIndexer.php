@@ -36,7 +36,7 @@ class PagesIndexer extends TcaIndexer
 
     /**
      * @param TcaTableService $tcaTableService
-     * @param TcaTableService $tcaTableService
+     * @param TcaTableService $contentTableService
      * @param ConnectionInterface $connection
      * @param ConfigurationContainerInterface $configuration
      */
@@ -46,15 +46,10 @@ class PagesIndexer extends TcaIndexer
         ConnectionInterface $connection,
         ConfigurationContainerInterface $configuration
     ) {
-        $this->tcaTableService = $tcaTableService;
+        parent::__construct($tcaTableService, $connection, $configuration);
         $this->contentTableService = $contentTableService;
-        $this->connection = $connection;
-        $this->configuration = $configuration;
     }
 
-    /**
-     * @param array &$record
-     */
     protected function prepareRecord(array &$record)
     {
         $possibleTitleFields = ['nav_title', 'tx_tqseo_pagetitle_rel', 'title'];
@@ -69,11 +64,7 @@ class PagesIndexer extends TcaIndexer
         parent::prepareRecord($record);
     }
 
-    /**
-     * @param int $uid
-     * @return string
-     */
-    protected function fetchContentForPage($uid)
+    protected function fetchContentForPage(int $uid) : string
     {
         $contentElements = $this->getQuery($this->contentTableService)->execute()->fetchAll();
 

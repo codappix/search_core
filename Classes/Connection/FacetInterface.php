@@ -25,15 +25,12 @@ namespace Codappix\SearchCore\Connection;
  */
 interface FacetInterface
 {
-    /**
-     * @return string
-     */
-    public function getName();
+    public function getName() : string;
 
     /**
      * Returns all possible options for this facet.
      *
      * @return array<FacetOptionInterface>
      */
-    public function getOptions();
+    public function getOptions() : array;
 }

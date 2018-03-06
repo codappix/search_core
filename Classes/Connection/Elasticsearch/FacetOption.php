@@ -43,18 +43,12 @@ class FacetOption implements FacetOptionInterface
         $this->count = $bucket['doc_count'];
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
 
-    /**
-     * @return int
-     */
-    public function getCount()
+    public function getCount() : int
     {
         return $this->count;
     }

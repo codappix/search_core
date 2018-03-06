@@ -44,13 +44,8 @@ class DocumentFactory implements Singleton
 
     /**
      * Creates document from document.
-     *
-     * @param string $documentType
-     * @param array $document
-     *
-     * @return \Elastica\Document
      */
-    public function getDocument($documentType, array $document)
+    public function getDocument(string $documentType, array $document) : \Elastica\Document
     {
         // TODO: Use DocumentType for further configuration.
 
@@ -70,13 +65,8 @@ class DocumentFactory implements Singleton
 
     /**
      * Creates documents based on documents.
-     *
-     * @param string $documentType
-     * @param array $documents
-     *
-     * @return array
      */
-    public function getDocuments($documentType, array $documents)
+    public function getDocuments(string $documentType, array $documents) : array
     {
         foreach ($documents as &$document) {
             $document = $this->getDocument($documentType, $document);

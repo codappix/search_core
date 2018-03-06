@@ -20,6 +20,8 @@ namespace Codappix\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Connection\ConnectionInterface;
+use Codappix\SearchCore\Connection\FacetRequestInterface;
 use Codappix\SearchCore\Domain\Search\SearchService;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
@@ -27,20 +29,27 @@ interface SearchRequestInterface extends QueryInterface
 {
     /**
      * Returns the actual string the user searched for.
-     *
-     * @return string
      */
-    public function getSearchTerm();
+    public function getSearchTerm() : string;
+
+    public function hasFilter() : bool;
+
+    public function getFilter() : array;
+
+    public function setFilter(array $filter);
+
+    public function addFacet(FacetRequestInterface $facet);
 
     /**
-     * @return bool
+     * @return array<FacetRequestInterface>
      */
-    public function hasFilter();
+    public function getFacets() : array;
 
     /**
-     * @return array
+     * Workaround for paginate widget support which will
+     * use the request to build another search.
      */
-    public function getFilter();
+    public function setConnection(ConnectionInterface $connection);
 
     /**
      * Workaround for paginate widget support which will

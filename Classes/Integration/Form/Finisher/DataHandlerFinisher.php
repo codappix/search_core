@@ -62,7 +62,7 @@ class DataHandlerFinisher extends AbstractFinisher
                 $this->dataHandler->update($tableName, $record);
                 break;
             case 'delete':
-                $this->dataHandler->delete($tableName, $record['uid']);
+                $this->dataHandler->delete($tableName, (string) $record['uid']);
                 break;
         }
     }

@@ -28,15 +28,11 @@ interface FacetOptionInterface
     /**
      * Returns the name of this option. Equivalent
      * to value used for filtering.
-     *
-     * @return string
      */
-    public function getName();
+    public function getName() : string;
 
     /**
      * Returns the number of found results for this option.
-     *
-     * @return int
      */
-    public function getCount();
+    public function getCount() : int;
 }

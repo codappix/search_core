@@ -49,13 +49,8 @@ class IndexFactory implements Singleton
 
     /**
      * Get an index bases on TYPO3 table name.
-     *
-     * @param Connection $connection
-     * @param string $documentType
-     *
-     * @return \Elastica\Index
      */
-    public function getIndex(Connection $connection, $documentType)
+    public function getIndex(Connection $connection, string $documentType) : \Elastica\Index
     {
         $index = $connection->getClient()->getIndex('typo3content');
 
@@ -66,12 +61,7 @@ class IndexFactory implements Singleton
         return $index;
     }
 
-    /**
-     * @param string $documentType
-     *
-     * @return array
-     */
-    protected function getConfigurationFor($documentType)
+    protected function getConfigurationFor(string $documentType) : array
     {
         try {
             $configuration = $this->configuration->get('indexing.' . $documentType . '.index');
@@ -88,12 +78,7 @@ class IndexFactory implements Singleton
         }
     }
 
-    /**
-     * @param array $analyzer
-     *
-     * @return array
-     */
-    protected function prepareAnalyzerConfiguration(array $analyzer)
+    protected function prepareAnalyzerConfiguration(array $analyzer) : array
     {
         $fieldsToExplode = ['char_filter', 'filter'];
 

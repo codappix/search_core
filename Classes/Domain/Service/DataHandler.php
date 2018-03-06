@@ -22,6 +22,7 @@ namespace Codappix\SearchCore\Domain\Service;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Domain\Index\IndexerFactory;
+use Codappix\SearchCore\Domain\Index\IndexerInterface;
 use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
 use Codappix\SearchCore\Domain\Index\TcaIndexer;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
@@ -83,41 +84,27 @@ class DataHandler implements Singleton
         $this->indexerFactory = $indexerFactory;
     }
 
-    /**
-     * @param string $table
-     */
-    public function update($table, array $record)
+    public function update(string $table, array $record)
     {
         $this->logger->debug('Record received for update.', [$table, $record]);
         $this->getIndexer($table)->indexDocument($record['uid']);
     }
 
-    /**
-     * @param string $table
-     * @param int $identifier
-     */
-    public function delete($table, $identifier)
+    public function delete(string $table, string $identifier)
     {
         $this->logger->debug('Record received for delete.', [$table, $identifier]);
         $this->connection->deleteDocument($table, $identifier);
     }
 
     /**
-     * @param string $table
-     * @return IndexerInterface
-     *
      * @throws NoMatchingIndexerException
      */
-    protected function getIndexer($table)
+    protected function getIndexer(string $table) : IndexerInterface
     {
         return $this->indexerFactory->getIndexer($table);
     }
 
-    /**
-     * @param string $table
-     * @return bool
-     */
-    public function canHandle($table)
+    public function canHandle(string $table) : bool
     {
         try {
             $this->getIndexer($table);

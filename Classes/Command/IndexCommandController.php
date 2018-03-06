@@ -48,7 +48,7 @@ class IndexCommandController extends CommandController
      *
      * @param string $identifier
      */
-    public function indexCommand($identifier)
+    public function indexCommand(string $identifier)
     {
         try {
             $this->indexerFactory->getIndexer($identifier)->indexAllDocuments();
@@ -63,7 +63,7 @@ class IndexCommandController extends CommandController
      *
      * @param string $identifier
      */
-    public function deleteCommand($identifier)
+    public function deleteCommand(string $identifier)
     {
         try {
             $this->indexerFactory->getIndexer($identifier)->delete();

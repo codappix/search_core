@@ -30,19 +30,17 @@ interface SearchResultInterface extends \Iterator, \Countable, QueryResultInterf
     /**
      * @return array<ResultItemInterface>
      */
-    public function getResults();
+    public function getResults() : array;
 
     /**
      * Return all facets, if any.
      *
      * @return array<FacetInterface>
      */
-    public function getFacets();
+    public function getFacets() : array;
 
     /**
      * Returns the number of results in current result
-     *
-     * @return int
      */
-    public function getCurrentCount();
+    public function getCurrentCount() : int;
 }

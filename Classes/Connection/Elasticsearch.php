@@ -112,7 +112,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         $this->queryFactory = $queryFactory;
     }
 
-    public function addDocument($documentType, array $document)
+    public function addDocument(string $documentType, array $document)
     {
         $this->withType(
             $documentType,
@@ -122,7 +122,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         );
     }
 
-    public function deleteDocument($documentType, $identifier)
+    public function deleteDocument(string $documentType, string $identifier)
     {
         try {
             $this->withType(
@@ -139,7 +139,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         }
     }
 
-    public function updateDocument($documentType, array $document)
+    public function updateDocument(string $documentType, array $document)
     {
         $this->withType(
             $documentType,
@@ -149,7 +149,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         );
     }
 
-    public function addDocuments($documentType, array $documents)
+    public function addDocuments(string $documentType, array $documents)
     {
         $this->withType(
             $documentType,
@@ -159,7 +159,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         );
     }
 
-    public function deleteIndex($documentType)
+    public function deleteIndex(string $documentType)
     {
         $index = $this->connection->getClient()->getIndex('typo3content');
 
@@ -173,11 +173,8 @@ class Elasticsearch implements Singleton, ConnectionInterface
 
     /**
      * Execute given callback with Elastica Type based on provided documentType
-     *
-     * @param string $documentType
-     * @param callable $callback
      */
-    protected function withType($documentType, callable $callback)
+    protected function withType(string $documentType, callable $callback)
     {
         $type = $this->getType($documentType);
         // TODO: Check whether it's to heavy to send it so often e.g. for every single document.
@@ -191,12 +188,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         $type->getIndex()->refresh();
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     *
-     * @return SearchResultInterface
-     */
-    public function search(SearchRequestInterface $searchRequest)
+    public function search(SearchRequestInterface $searchRequest) : SearchResultInterface
     {
         $this->logger->debug('Search for', [$searchRequest->getSearchTerm()]);
 
@@ -207,12 +199,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         return $this->objectManager->get(SearchResult::class, $searchRequest, $search->search());
     }
 
-    /**
-     * @param string $documentType
-     *
-     * @return \Elastica\Type
-     */
-    protected function getType($documentType)
+    protected function getType(string $documentType) : \Elastica\Type
     {
         return $this->typeFactory->getType(
             $this->indexFactory->getIndex(
