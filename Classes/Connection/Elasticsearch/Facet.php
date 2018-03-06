@@ -45,25 +45,26 @@ class Facet implements FacetInterface
      */
     protected $options = [];
 
-    public function __construct($name, array $aggregation, ConfigurationContainerInterface $configuration)
+    public function __construct(string $name, array $aggregation, ConfigurationContainerInterface $configuration)
     {
         $this->name = $name;
         $this->buckets = $aggregation['buckets'];
-        $this->field = $configuration->getIfExists('searching.facets.' . $this->name . '.field') ?: '';
+
+        $config = $configuration->getIfExists('searching.facets.' . $this->name) ?: [];
+        foreach ($config as $configEntry) {
+            if (isset($configEntry['field'])) {
+                $this->field = $configEntry['field'];
+                break;
+            }
+        }
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
-    public function getField()
+    public function getField() : string
     {
         return $this->field;
     }
@@ -73,7 +74,7 @@ class Facet implements FacetInterface
      *
      * @return array<FacetOptionInterface>
      */
-    public function getOptions()
+    public function getOptions() : array
     {
         $this->initOptions();
 

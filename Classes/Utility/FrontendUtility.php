@@ -1,8 +1,8 @@
 <?php
-namespace Codappix\SearchCore\Connection;
+namespace Codappix\SearchCore\Utility;
 
 /*
- * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
+ * Copyright (C) 2018 Justus Moroni <developer@leonmrni.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,19 +20,20 @@ namespace Codappix\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+
 /**
- * Used to request facets / aggregates from connection.
+ * Overwrite BackendUtility to use in frontend.
+ * LanguageService was only usable in backend.
  */
-interface FacetRequestInterface
+class FrontendUtility extends BackendUtility
 {
     /**
-     * The identifier of the facet, used as key in arrays and to get the facet
-     * from search request, etc.
+     * @return TypoScriptFrontendController
      */
-    public function getIdentifier() : string;
-
-    /**
-     * The config to use for facet building.
-     */
-    public function getConfig() : array;
+    protected static function getLanguageService()
+    {
+        return $GLOBALS['TSFE'];
+    }
 }

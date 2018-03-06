@@ -83,19 +83,14 @@ class DataHandlerFinisherTest extends AbstractUnitTestCase
     public function possibleFinisherSetup() : array
     {
         return [
-            'valid add configuration' => [
-                'action' => 'add',
-                'nonCalledActions' => ['delete', 'update'],
-                'expectedSecondArgument' => ['uid' => 23],
-            ],
             'valid update configuration' => [
                 'action' => 'update',
-                'nonCalledActions' => ['delete', 'add'],
+                'nonCalledActions' => ['delete'],
                 'expectedSecondArgument' => ['uid' => 23],
             ],
             'valid delete configuration' => [
                 'action' => 'delete',
-                'nonCalledActions' => ['update', 'add'],
+                'nonCalledActions' => ['update'],
                 'expectedSecondArgument' => 23,
             ],
         ];
@@ -109,7 +104,7 @@ class DataHandlerFinisherTest extends AbstractUnitTestCase
     {
         $this->subject->setOptions($options);
 
-        foreach (['add', 'update', 'delete'] as $nonCalledAction) {
+        foreach (['update', 'delete'] as $nonCalledAction) {
             $this->dataHandlerMock->expects($this->never())->method($nonCalledAction);
         }
 

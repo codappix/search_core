@@ -1,0 +1,4 @@
+disable {
+    # cat=basic/enable; type=boolean; label=Disable Elasticsearch, which is enabled by default
+    elasticsearch = true
+}

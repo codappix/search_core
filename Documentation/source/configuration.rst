@@ -5,9 +5,12 @@
 Configuration
 =============
 
+Installation wide configuration is handled inside of the extension manager. Just check out the
+options there, they all have labels.
+
 The extension offers the following configuration options through TypoScript. If you overwrite them
 through `setup` make sure to keep them in the `module` area as they will be accessed from backend
-mode of TYPO3. Do so by placing the following line at the end::
+mode of TYPO3 for indexing. Do so by placing the following line at the end::
 
     module.tx_searchcore < plugin.tx_searchcore
 

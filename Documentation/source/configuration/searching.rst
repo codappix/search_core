@@ -151,7 +151,18 @@ filtering. This way you can use arbitrary filter names and map them to existing 
 fields
 ------
 
-Defines the fields to fetch from elasticsearch. Two sub entries exist:
+Defines the fields to fetch and search from elasticsearch. With the following sub keys:
+
+``query`` defines the fields to search in. Default is ``_all`` from 5.x times of elasticsearch.
+Configure a comma separated list of fields to search in. This is necessary if you have configured
+special mapping for some fields, or just want to search some fields.
+The most hits get ranked highest. The following is an example configuration::
+
+    fields {
+        query = _all, city
+    }
+
+The following sub properties configure the fields to fetch from elasticsearch:
 
 First ``stored_fields`` which is a list of comma separated fields which actually exist and will be
 added. Typically you will use ``_source`` to fetch the whole indexed fields.
