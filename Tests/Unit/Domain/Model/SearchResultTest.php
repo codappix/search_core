@@ -89,9 +89,9 @@ class SearchResultTest extends AbstractUnitTestCase
 
         $this->assertCount(3, $resultItems);
 
-        $this->assertSame(10, $resultItems[0]['uid']);
-        $this->assertSame(11, $resultItems[1]['uid']);
-        $this->assertSame(12, $resultItems[2]['uid']);
+        $this->assertSame($data[0]['uid'], $resultItems[0]['uid']);
+        $this->assertSame($data[1]['uid'], $resultItems[1]['uid']);
+        $this->assertSame($data[2]['uid'], $resultItems[2]['uid']);
 
         $this->assertInstanceOf(ResultItemInterface::class, $resultItems[0]);
         $this->assertInstanceOf(ResultItemInterface::class, $resultItems[1]);
