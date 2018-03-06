@@ -29,6 +29,16 @@ Also multiple filter are supported. Filtering results by fields for string conte
 Facets / aggregates are also possible. Therefore a mapping has to be defined in TypoScript for
 indexing, and the facets itself while searching.
 
+.. _features_dataProcessing:
+
+DataProcessing
+==============
+
+DataProcessing, as known from ``FLUIDTEMPLATE`` is available while indexing and for search results.
+Each item can be processed by multiple processor to prepare data for indexing and output.
+
+See :ref:`concepts_indexing_dataprocessing` in :ref:`concepts` section.
+
 .. _features_planned:
 
 Planned
