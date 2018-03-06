@@ -158,14 +158,20 @@ class SearchRequest implements SearchRequestInterface
     // Current implementation covers only paginate widget support.
     public function execute($returnRawQueryResult = false)
     {
-        if ($this->connection instanceof ConnectionInterface) {
-            return $this->searchService->processResult($this->connection->search($this));
+        if (! ($this->connection instanceof ConnectionInterface)) {
+            throw new \InvalidArgumentException(
+                'Connection was not set before, therefore execute can not work. Use `setConnection` before.',
+                1502197732
+            );
+        }
+        if (! ($this->searchService instanceof SearchService)) {
+            throw new \InvalidArgumentException(
+                'SearchService was not set before, therefore execute can not work. Use `setSearchService` before.',
+                1520325175
+            );
         }
 
-        throw new \InvalidArgumentException(
-            'Connection was not set before, therefore execute can not work. Use `setConnection` before.',
-            1502197732
-        );
+        return $this->searchService->processResult($this->connection->search($this));
     }
 
     public function setLimit($limit)
