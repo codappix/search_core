@@ -57,7 +57,7 @@ class ResultItemTest extends AbstractUnitTestCase
 
         $subject = new ResultItem($originalData);
         $this->assertSame(
-            'Some title',
+            $originalData['title'],
             $subject['title'],
             'Could not retrieve title in array notation.'
         );
@@ -72,7 +72,6 @@ class ResultItemTest extends AbstractUnitTestCase
             'uid' => 10,
             'title' => 'Some title',
         ];
-        $expectedData = $originalData;
 
         $subject = new ResultItem($originalData);
         $this->assertTrue(isset($subject['title']), 'Could not determine that title exists.');
@@ -88,7 +87,6 @@ class ResultItemTest extends AbstractUnitTestCase
             'uid' => 10,
             'title' => 'Some title',
         ];
-        $expectedData = $originalData;
 
         $subject = new ResultItem($originalData);
         $this->expectException(\BadMethodCallException::class);
@@ -104,7 +102,6 @@ class ResultItemTest extends AbstractUnitTestCase
             'uid' => 10,
             'title' => 'Some title',
         ];
-        $expectedData = $originalData;
 
         $subject = new ResultItem($originalData);
         $this->expectException(\BadMethodCallException::class);
