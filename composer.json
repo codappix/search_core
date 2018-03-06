@@ -21,8 +21,9 @@
         "ruflin/elastica": "~3.2"
     },
     "require-dev": {
-        "typo3/testing-framework": "~1.1.0",
-        "phpunit/phpunit": "~6.2.0"
+        "phpunit/phpunit": "~6.4.4",
+        "typo3/testing-framework": "~1.1.5",
+        "squizlabs/php_codesniffer": "~3.1.1"
     },
     "config": {
         "optimize-autoloader": true,
@@ -36,9 +37,6 @@
         ]
     },
     "extra": {
-        "branch-alias": {
-            "dev-develop": "1.0.x-dev"
-        },
         "typo3/cms": {
             "cms-package-dir": "{$vendor-dir}/typo3/cms",
             "web-dir": ".Build/web"

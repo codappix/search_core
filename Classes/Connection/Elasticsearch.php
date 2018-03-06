@@ -132,7 +132,10 @@ class Elasticsearch implements Singleton, ConnectionInterface
                 }
             );
         } catch (\Elastica\Exception\NotFoundException $exception) {
-            $this->logger->debug('Tried to delete document in index, which does not exist.', [$documentType, $identifier]);
+            $this->logger->debug(
+                'Tried to delete document in index, which does not exist.',
+                [$documentType, $identifier]
+            );
         }
     }
 

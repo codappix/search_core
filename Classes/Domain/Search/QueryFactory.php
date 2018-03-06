@@ -161,7 +161,11 @@ class QueryFactory
     {
         try {
             $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
-                'stored_fields' => GeneralUtility::trimExplode(',', $this->configuration->get('searching.fields.stored_fields'), true),
+                'stored_fields' => GeneralUtility::trimExplode(
+                    ',',
+                    $this->configuration->get('searching.fields.stored_fields'),
+                    true
+                ),
             ]);
         } catch (InvalidArgumentException $e) {
             // Nothing configured
@@ -169,7 +173,10 @@ class QueryFactory
 
         try {
             $scriptFields = $this->configuration->get('searching.fields.script_fields');
-            $scriptFields = $this->configurationUtility->replaceArrayValuesWithRequestContent($searchRequest, $scriptFields);
+            $scriptFields = $this->configurationUtility->replaceArrayValuesWithRequestContent(
+                $searchRequest,
+                $scriptFields
+            );
             $scriptFields = $this->configurationUtility->filterByCondition($scriptFields);
             if ($scriptFields !== []) {
                 $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['script_fields' => $scriptFields]);

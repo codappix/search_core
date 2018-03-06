@@ -29,7 +29,10 @@ class FacetTest extends AbstractFunctionalTestCase
 {
     protected function getTypoScriptFilesForFrontendRootPage()
     {
-        return array_merge(parent::getTypoScriptFilesForFrontendRootPage(), ['EXT:search_core/Tests/Functional/Fixtures/Searching/Facet.ts']);
+        return array_merge(
+            parent::getTypoScriptFilesForFrontendRootPage(),
+            ['EXT:search_core/Tests/Functional/Fixtures/Searching/Facet.ts']
+        );
     }
 
     protected function getDataSets()

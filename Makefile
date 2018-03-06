@@ -15,6 +15,9 @@ install: clean
 	COMPOSER_PROCESS_TIMEOUT=1000 composer require -vv --dev --prefer-dist typo3/cms="$(TYPO3_VERSION)"
 	git checkout composer.json
 
+cgl:
+	./.Build/bin/phpcs
+
 functionalTests:
 	typo3DatabaseName=$(typo3DatabaseName) \
 		typo3DatabaseUsername=$(typo3DatabaseUsername) \
