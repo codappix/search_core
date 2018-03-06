@@ -1,5 +1,5 @@
 <?php
-namespace Copyright\SearchCore\Tests\Unit\Domain\Search;
+namespace Codappix\SearchCore\Tests\Unit\Domain\Search;
 
 /*
  * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -26,6 +26,7 @@ use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
 use Codappix\SearchCore\DataProcessing\Service as DataProcessorService;
 use Codappix\SearchCore\Domain\Model\SearchRequest;
+use Codappix\SearchCore\Domain\Model\SearchResult;
 use Codappix\SearchCore\Domain\Search\SearchService;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
@@ -72,9 +73,6 @@ class SearchServiceTest extends AbstractUnitTestCase
         $this->connection = $this->getMockBuilder(ConnectionInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->connection->expects($this->any())
-            ->method('search')
-            ->willReturn($this->result);
         $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -109,7 +107,8 @@ class SearchServiceTest extends AbstractUnitTestCase
             ->method('search')
             ->with($this->callback(function ($searchRequest) {
                 return $searchRequest->getLimit() === 45;
-            }));
+            }))
+            ->willReturn($this->getMockBuilder(SearchResultInterface::class)->getMock());
 
         $searchRequest = new SearchRequest('SearchWord');
         $this->subject->search($searchRequest);
@@ -131,7 +130,8 @@ class SearchServiceTest extends AbstractUnitTestCase
             ->method('search')
             ->with($this->callback(function ($searchRequest) {
                 return $searchRequest->getLimit() === 10;
-            }));
+            }))
+            ->willReturn($this->getMockBuilder(SearchResultInterface::class)->getMock());
 
         $searchRequest = new SearchRequest('SearchWord');
         $this->subject->search($searchRequest);
@@ -157,7 +157,8 @@ class SearchServiceTest extends AbstractUnitTestCase
             ->method('search')
             ->with($this->callback(function ($searchRequest) {
                 return $searchRequest->getFilter() === ['property' => 'something'];
-            }));
+            }))
+            ->willReturn($this->getMockBuilder(SearchResultInterface::class)->getMock());
 
         $searchRequest = new SearchRequest('SearchWord');
         $this->subject->search($searchRequest);
@@ -186,7 +187,8 @@ class SearchServiceTest extends AbstractUnitTestCase
                     'anotherProperty' => 'anything',
                     'property' => 'something',
                 ];
-            }));
+            }))
+            ->willReturn($this->getMockBuilder(SearchResultInterface::class)->getMock());
 
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setFilter(['anotherProperty' => 'anything']);
@@ -210,7 +212,8 @@ class SearchServiceTest extends AbstractUnitTestCase
             ->method('search')
             ->with($this->callback(function ($searchRequest) {
                 return $searchRequest->getFilter() === ['anotherProperty' => 'anything'];
-            }));
+            }))
+            ->willReturn($this->getMockBuilder(SearchResultInterface::class)->getMock());
 
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setFilter(['anotherProperty' => 'anything']);
@@ -237,10 +240,78 @@ class SearchServiceTest extends AbstractUnitTestCase
             ->method('search')
             ->with($this->callback(function ($searchRequest) {
                 return $searchRequest->getFilter() === ['anotherProperty' => 'anything'];
-            }));
+            }))
+            ->willReturn($this->getMockBuilder(SearchResultInterface::class)->getMock());
 
         $searchRequest = new SearchRequest('SearchWord');
         $searchRequest->setFilter(['anotherProperty' => 'anything']);
         $this->subject->search($searchRequest);
+    }
+
+    /**
+     * @test
+     */
+    public function originalSearchResultIsReturnedIfNoDataProcessorIsConfigured()
+    {
+        $this->configuration->expects($this->any())
+            ->method('getIfExists')
+            ->withConsecutive(['searching.size'], ['searching.facets'])
+            ->will($this->onConsecutiveCalls(null, null));
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->throwException(new InvalidArgumentException));
+
+        $searchResultMock = $this->getMockBuilder(SearchResultInterface::class)->getMock();
+
+        $this->connection->expects($this->once())
+            ->method('search')
+            ->willReturn($searchResultMock);
+
+        $this->dataProcessorService->expects($this->never())->method('executeDataProcessor');
+
+        $searchRequest = new SearchRequest('');
+        $this->assertSame($searchResultMock, $this->subject->search($searchRequest), 'Did not get created result without applied data processing');
+    }
+
+    /**
+     * @test
+     */
+    public function configuredDataProcessorsAreExecutedOnSearchResult()
+    {
+        $this->configuration->expects($this->any())
+            ->method('getIfExists')
+            ->withConsecutive(['searching.size'], ['searching.facets'])
+            ->will($this->onConsecutiveCalls(null, null));
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new InvalidArgumentException),
+                ['SomeProcessorClass']
+            ));
+
+        $searchResultMock = $this->getMockBuilder(SearchResultInterface::class)->getMock();
+        $searchResult = new SearchResult($searchResultMock, [['field 1' => 'value 1']]);
+
+        $this->connection->expects($this->once())
+            ->method('search')
+            ->willReturn($searchResult);
+
+        $this->dataProcessorService->expects($this->once())
+            ->method('executeDataProcessor')
+            ->with('SomeProcessorClass', ['field 1' => 'value 1'])
+            ->willReturn([
+                'field 1' => 'value 1',
+                'field 2' => 'value 2',
+            ]);
+
+        $this->objectManager->expects($this->once())
+            ->method('get')
+            ->with(SearchResult::class, $searchResult, [
+                ['field 1' => 'value 1', 'field 2' => 'value 2']
+            ])
+            ->willReturn($searchResultMock);
+
+        $searchRequest = new SearchRequest('');
+        $this->assertSame($searchResultMock, $this->subject->search($searchRequest), 'Did not get created result with applied data processing');
     }
 }
