@@ -25,7 +25,9 @@ use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
+use Codappix\SearchCore\DataProcessing\Service as DataProcessorService;
 use Codappix\SearchCore\Domain\Model\FacetRequest;
+use Codappix\SearchCore\Domain\Model\SearchResult;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
@@ -50,18 +52,26 @@ class SearchService
     protected $objectManager;
 
     /**
+     * @var DataProcessorService
+     */
+    protected $dataProcessorService;
+
+    /**
      * @param ConnectionInterface $connection
      * @param ConfigurationContainerInterface $configuration
      * @param ObjectManagerInterface $objectManager
+     * @param DataProcessorService $dataProcessorService
      */
     public function __construct(
         ConnectionInterface $connection,
         ConfigurationContainerInterface $configuration,
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
+        DataProcessorService $dataProcessorService
     ) {
         $this->connection = $connection;
         $this->configuration = $configuration;
         $this->objectManager = $objectManager;
+        $this->dataProcessorService = $dataProcessorService;
     }
 
     /**
@@ -70,12 +80,15 @@ class SearchService
      */
     public function search(SearchRequestInterface $searchRequest)
     {
-        $searchRequest->setConnection($this->connection);
         $this->addSize($searchRequest);
         $this->addConfiguredFacets($searchRequest);
         $this->addConfiguredFilters($searchRequest);
 
-        return $this->connection->search($searchRequest);
+        // Add connection to request to enable paginate widget support
+        $searchRequest->setConnection($this->connection);
+        $searchRequest->setSearchService($this);
+
+        return $this->processResult($this->connection->search($searchRequest));
     }
 
     /**
@@ -131,6 +144,33 @@ class SearchService
             $searchRequest->setFilter($filter);
         } catch (InvalidArgumentException $e) {
             // Nothing todo, no filter configured.
+        }
+    }
+
+    /**
+     * Processes the result, e.g. applies configured data processing to result.
+     */
+    public function processResult(SearchResultInterface $searchResult) : SearchResultInterface
+    {
+        try {
+            $newSearchResultItems = [];
+            foreach ($this->configuration->get('searching.dataProcessing') as $configuration) {
+                foreach ($searchResult as $resultItem) {
+                    $newSearchResultItems[] = $this->dataProcessorService->executeDataProcessor(
+                        $configuration,
+                        $resultItem->getPlainData()
+                    );
+                }
+            }
+
+            return $this->objectManager->get(
+                SearchResult::class,
+                $searchResult,
+                $newSearchResultItems
+            );
+        }
+        catch (InvalidArgumentException $e) {
+            return $searchResult;
         }
     }
 }

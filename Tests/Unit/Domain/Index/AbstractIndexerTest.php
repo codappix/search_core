@@ -24,9 +24,9 @@ use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\DataProcessing\CopyToProcessor;
+use Codappix\SearchCore\DataProcessing\Service as DataProcessorService;
 use Codappix\SearchCore\Domain\Index\AbstractIndexer;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 class AbstractIndexerTest extends AbstractUnitTestCase
 {
@@ -46,9 +46,9 @@ class AbstractIndexerTest extends AbstractUnitTestCase
     protected $connection;
 
     /**
-     * @var ObjectManagerInterface
+     * @var DataProcessorService
      */
-    protected $objectManager;
+    protected $dataProcessorService;
 
     public function setUp()
     {
@@ -56,14 +56,15 @@ class AbstractIndexerTest extends AbstractUnitTestCase
 
         $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)->getMock();
         $this->connection = $this->getMockBuilder(ConnectionInterface::class)->getMock();
-        $this->objectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
-
+        $this->dataProcessorService = $this->getMockBuilder(DataProcessorService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->subject = $this->getMockForAbstractClass(AbstractIndexer::class, [
             $this->connection,
             $this->configuration
         ]);
-        $this->inject($this->subject, 'objectManager', $this->objectManager);
+        $this->inject($this->subject, 'dataProcessorService', $this->dataProcessorService);
         $this->subject->injectLogger($this->getMockedLogger());
         $this->subject->setIdentifier('testTable');
         $this->subject->expects($this->any())
@@ -82,12 +83,30 @@ class AbstractIndexerTest extends AbstractUnitTestCase
         $expectedRecord['new_test_field2'] = 'test' . PHP_EOL . 'test';
         $expectedRecord['search_abstract'] = '';
 
-        $this->objectManager->expects($this->any())
-            ->method('get')
-            ->with(CopyToProcessor::class)
-            ->willReturn(new CopyToProcessor());
+        $this->dataProcessorService->expects($this->any())
+            ->method('executeDataProcessor')
+            ->withConsecutive(
+                [
+                    [
+                        '_typoScriptNodeValue' => CopyToProcessor::class,
+                        'to' => 'new_test_field',
+                    ],
+                    $record,
+                ],
+                [
+                    [
+                        '_typoScriptNodeValue' => CopyToProcessor::class,
+                        'to' => 'new_test_field2',
+                    ],
+                    array_merge($record, ['new_test_field' => 'test']),
+                ]
+            )
+            ->will($this->onConsecutiveCalls(
+                array_merge($record, ['new_test_field' => 'test']),
+                $expectedRecord
+            ));
 
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->any())
             ->method('get')
             ->withConsecutive(['indexing.testTable.dataProcessing'], ['indexing.testTable.abstractFields'])
             ->will($this->onConsecutiveCalls([

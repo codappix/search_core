@@ -20,6 +20,7 @@ namespace Codappix\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Domain\Search\SearchService;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 interface SearchRequestInterface extends QueryInterface
@@ -40,4 +41,10 @@ interface SearchRequestInterface extends QueryInterface
      * @return array
      */
     public function getFilter();
+
+    /**
+     * Workaround for paginate widget support which will
+     * use the request to build another search.
+     */
+    public function setSearchService(SearchService $searchService);
 }

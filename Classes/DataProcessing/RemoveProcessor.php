@@ -27,7 +27,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RemoveProcessor implements ProcessorInterface
 {
-    public function processRecord(array $record, array $configuration) : array
+    public function processData(array $record, array $configuration) : array
     {
         if (!isset($configuration['fields'])) {
             return $record;

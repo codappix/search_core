@@ -1,5 +1,5 @@
 <?php
-namespace Codappix\SearchCore\Connection\Elasticsearch;
+namespace Codappix\SearchCore\Domain\Model;
 
 /*
  * Copyright (C) 2016  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,35 +20,29 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
-use Codappix\SearchCore\Connection\FacetInterface;
 use Codappix\SearchCore\Connection\ResultItemInterface;
-use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
 use Codappix\SearchCore\Domain\Model\QueryResultInterfaceStub;
-use Codappix\SearchCore\Domain\Model\ResultItem;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
+/**
+ * Generic model for mapping a concrete search result from a connection.
+ */
 class SearchResult implements SearchResultInterface
 {
     use QueryResultInterfaceStub;
 
     /**
-     * @var SearchRequestInterface
+     * @var SearchResultInterface
      */
-    protected $searchRequest;
+    protected $originalSearchResult;
 
     /**
-     * @var \Elastica\ResultSet
+     * @var array
      */
-    protected $result;
+    protected $resultItems = [];
 
     /**
-     * @var array<FacetInterface>
-     */
-    protected $facets = [];
-
-    /**
-     * @var array<ResultItemInterface>
+     * @var array
      */
     protected $results = [];
 
@@ -59,19 +53,10 @@ class SearchResult implements SearchResultInterface
      */
     protected $position = 0;
 
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    public function __construct(
-        SearchRequestInterface $searchRequest,
-        \Elastica\ResultSet $result,
-        ObjectManagerInterface $objectManager
-    ) {
-        $this->searchRequest = $searchRequest;
-        $this->result = $result;
-        $this->objectManager = $objectManager;
+    public function __construct(SearchResultInterface $originalSearchResult, array $resultItems)
+    {
+        $this->originalSearchResult = $originalSearchResult;
+        $this->resultItems = $resultItems;
     }
 
     /**
@@ -84,52 +69,32 @@ class SearchResult implements SearchResultInterface
         return $this->results;
     }
 
-    /**
-     * Return all facets, if any.
-     *
-     * @return array<FacetInterface>
-     */
-    public function getFacets()
-    {
-        $this->initFacets();
-
-        return $this->facets;
-    }
-
-    public function getCurrentCount()
-    {
-        return $this->result->count();
-    }
-
     protected function initResults()
     {
         if ($this->results !== []) {
             return;
         }
 
-        foreach ($this->result->getResults() as $result) {
-            $this->results[] = new ResultItem($result->getData());
+        foreach ($this->resultItems as $item) {
+            $this->results[] = new ResultItem($item);
         }
     }
 
-    protected function initFacets()
+    public function getFacets()
     {
-        if ($this->facets !== [] || !$this->result->hasAggregations()) {
-            return;
-        }
-
-        foreach ($this->result->getAggregations() as $aggregationName => $aggregation) {
-            $this->facets[$aggregationName] = $this->objectManager->get(Facet::class, $aggregationName, $aggregation);
-        }
+        return $this->originalSearchResult->getFacets();
     }
 
-    // Countable - Interface
+    public function getCurrentCount()
+    {
+        return $this->originalSearchResult->getCurrentCount();
+    }
+
     public function count()
     {
-        return $this->result->getTotalHits();
+        return $this->originalSearchResult->count();
     }
 
-    // Iterator - Interface
     public function current()
     {
         return $this->getResults()[$this->position];
@@ -159,6 +124,6 @@ class SearchResult implements SearchResultInterface
 
     public function getQuery()
     {
-        return $this->searchRequest;
+        return $this->originalSearchResult->getQuery();
     }
 }

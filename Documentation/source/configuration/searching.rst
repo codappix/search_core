@@ -216,3 +216,37 @@ Example::
     }
 
 Only ``filter`` is allowed as value. Will submit an empty query to switch to filter mode.
+
+.. _searching_dataProcessing:
+
+dataProcessing
+--------------
+
+Used by: All connections while indexing, due to implementation inside ``SearchService``.
+
+Configure modifications on each document before returning search result. Same as provided by TYPO3
+for :ref:`t3tsref:cobj-fluidtemplate` through
+:ref:`t3tsref:cobj-fluidtemplate-properties-dataprocessing`.
+
+All processors are applied in configured order. Allowing to work with already processed data.
+
+Example::
+
+    plugin.tx_searchcore.settings.searching.dataProcessing {
+        1 = Codappix\SearchCore\DataProcessing\CopyToProcessor
+        1 {
+            to = search_spellcheck
+        }
+
+        2 = Codappix\SearchCore\DataProcessing\CopyToProcessor
+        2 {
+            to = search_all
+        }
+    }
+
+The above example will copy all existing fields to the field ``search_spellcheck``. Afterwards
+all fields, including ``search_spellcheck`` will be copied to ``search_all``.
+
+.. include:: /configuration/dataProcessing/availableAndPlanned.rst
+
+Also data processors are available while indexing too, see :ref:`dataProcessing`.
