@@ -23,6 +23,8 @@ namespace Copyright\SearchCore\Tests\Unit\Domain\Search;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
+use Codappix\SearchCore\Connection\SearchResultInterface;
+use Codappix\SearchCore\DataProcessing\Service as DataProcessorService;
 use Codappix\SearchCore\Domain\Model\SearchRequest;
 use Codappix\SearchCore\Domain\Search\SearchService;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
@@ -35,24 +37,59 @@ class SearchServiceTest extends AbstractUnitTestCase
      */
     protected $subject;
 
+    /**
+     * @var SearchResultInterface
+     */
+    protected $result;
+
+    /**
+     * @var ConnectionInterface
+     */
+    protected $connection;
+
+    /**
+     * @var ConfigurationContainerInterface
+     */
+    protected $configuration;
+
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    /**
+     * @var DataProcessorService
+     */
+    protected $dataProcessorService;
+
     public function setUp()
     {
         parent::setUp();
 
+        $this->result = $this->getMockBuilder(SearchResultInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->connection = $this->getMockBuilder(ConnectionInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->connection->expects($this->any())
+            ->method('search')
+            ->willReturn($this->result);
         $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->objectManager = $this->getMockBuilder(ObjectManagerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->dataProcessorService = $this->getMockBuilder(DataProcessorService::class)
+            ->setConstructorArgs([$this->objectManager])
+            ->getMock();
 
         $this->subject = new SearchService(
             $this->connection,
             $this->configuration,
-            $this->objectManager
+            $this->objectManager,
+            $this->dataProcessorService
         );
     }
 
@@ -61,13 +98,12 @@ class SearchServiceTest extends AbstractUnitTestCase
      */
     public function sizeIsAddedFromConfiguration()
     {
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->any())
             ->method('getIfExists')
             ->withConsecutive(['searching.size'], ['searching.facets'])
             ->will($this->onConsecutiveCalls(45, null));
-        $this->configuration->expects($this->exactly(1))
+            $this->configuration->expects($this->any())
             ->method('get')
-            ->with('searching.filter')
             ->will($this->throwException(new InvalidArgumentException));
         $this->connection->expects($this->once())
             ->method('search')
@@ -84,13 +120,12 @@ class SearchServiceTest extends AbstractUnitTestCase
      */
     public function defaultSizeIsAddedIfNothingIsConfigured()
     {
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->any())
             ->method('getIfExists')
             ->withConsecutive(['searching.size'], ['searching.facets'])
             ->will($this->onConsecutiveCalls(null, null));
-        $this->configuration->expects($this->exactly(1))
+        $this->configuration->expects($this->any())
             ->method('get')
-            ->with('searching.filter')
             ->will($this->throwException(new InvalidArgumentException));
         $this->connection->expects($this->once())
             ->method('search')
@@ -107,14 +142,16 @@ class SearchServiceTest extends AbstractUnitTestCase
      */
     public function configuredFilterAreAddedToRequestWithoutAnyFilter()
     {
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->any())
             ->method('getIfExists')
             ->withConsecutive(['searching.size'], ['searching.facets'])
             ->will($this->onConsecutiveCalls(null, null));
-        $this->configuration->expects($this->exactly(1))
+        $this->configuration->expects($this->any())
             ->method('get')
-            ->with('searching.filter')
-            ->willReturn(['property' => 'something']);
+            ->will($this->onConsecutiveCalls(
+                ['property' => 'something'],
+                $this->throwException(new InvalidArgumentException)
+            ));
 
         $this->connection->expects($this->once())
             ->method('search')
@@ -131,14 +168,16 @@ class SearchServiceTest extends AbstractUnitTestCase
      */
     public function configuredFilterAreAddedToRequestWithExistingFilter()
     {
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->any())
             ->method('getIfExists')
             ->withConsecutive(['searching.size'], ['searching.facets'])
             ->will($this->onConsecutiveCalls(null, null));
-        $this->configuration->expects($this->exactly(1))
+        $this->configuration->expects($this->any())
             ->method('get')
-            ->with('searching.filter')
-            ->willReturn(['property' => 'something']);
+            ->will($this->onConsecutiveCalls(
+                ['property' => 'something'],
+                $this->throwException(new InvalidArgumentException)
+            ));
 
         $this->connection->expects($this->once())
             ->method('search')
@@ -159,13 +198,12 @@ class SearchServiceTest extends AbstractUnitTestCase
      */
     public function nonConfiguredFilterIsNotChangingRequestWithExistingFilter()
     {
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->any())
             ->method('getIfExists')
             ->withConsecutive(['searching.size'], ['searching.facets'])
             ->will($this->onConsecutiveCalls(null, null));
-        $this->configuration->expects($this->exactly(1))
+        $this->configuration->expects($this->any())
             ->method('get')
-            ->with('searching.filter')
             ->will($this->throwException(new InvalidArgumentException));
 
         $this->connection->expects($this->once())
@@ -184,14 +222,16 @@ class SearchServiceTest extends AbstractUnitTestCase
      */
     public function emptyConfiguredFilterIsNotChangingRequestWithExistingFilter()
     {
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->any())
             ->method('getIfExists')
             ->withConsecutive(['searching.size'], ['searching.facets'])
             ->will($this->onConsecutiveCalls(null, null));
-        $this->configuration->expects($this->exactly(1))
+        $this->configuration->expects($this->any())
             ->method('get')
-            ->with('searching.filter')
-            ->willReturn(['anotherProperty' => '']);
+            ->will($this->onConsecutiveCalls(
+                ['anotherProperty' => ''],
+                $this->throwException(new InvalidArgumentException)
+            ));
 
         $this->connection->expects($this->once())
             ->method('search')

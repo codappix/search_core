@@ -23,6 +23,7 @@ namespace Codappix\SearchCore\Domain\Model;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\FacetRequestInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
+use Codappix\SearchCore\Domain\Search\SearchService;
 
 /**
  * Represents a search request used to process an actual search.
@@ -62,6 +63,11 @@ class SearchRequest implements SearchRequestInterface
      * @var ConnectionInterface
      */
     protected $connection = null;
+
+    /**
+     * @var SearchService
+     */
+    protected $searchService = null;
 
     /**
      * @param string $query
@@ -143,12 +149,17 @@ class SearchRequest implements SearchRequestInterface
         $this->connection = $connection;
     }
 
+    public function setSearchService(SearchService $searchService)
+    {
+        $this->searchService = $searchService;
+    }
+
     // Extbase QueryInterface
     // Current implementation covers only paginate widget support.
     public function execute($returnRawQueryResult = false)
     {
         if ($this->connection instanceof ConnectionInterface) {
-            return $this->connection->search($this);
+            return $this->searchService->processResult($this->connection->search($this));
         }
 
         throw new \InvalidArgumentException(
