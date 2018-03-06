@@ -31,7 +31,7 @@ class ResultItem implements ResultItemInterface
 
     public function __construct(array $result)
     {
-        $this->data = $data;
+        $this->data = $result;
     }
 
     public function getPlainData() : array
