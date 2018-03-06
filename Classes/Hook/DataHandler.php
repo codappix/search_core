@@ -90,8 +90,8 @@ class DataHandler implements Singleton
             $uid = key($record);
             $fieldData = current($record);
 
-            if (isset($fieldArray['uid'])) {
-                $uid = $fieldArray['uid'];
+            if (isset($fieldData['uid'])) {
+                $uid = $fieldData['uid'];
             } elseif (isset($dataHandler->substNEWwithIDs[$uid])) {
                 $uid = $dataHandler->substNEWwithIDs[$uid];
             }
@@ -123,7 +123,7 @@ class DataHandler implements Singleton
             $this->logger->debug('Datahandler could not be setup.');
             return false;
         }
-        if (! $this->dataHandler->canHandle($table)) {
+        if (! $this->dataHandler->supportsTable($table)) {
             $this->logger->debug('Table is not allowed.', [$table]);
             return false;
         }

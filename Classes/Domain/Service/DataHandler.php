@@ -104,7 +104,7 @@ class DataHandler implements Singleton
         return $this->indexerFactory->getIndexer($table);
     }
 
-    public function canHandle(string $table) : bool
+    public function supportsTable(string $table) : bool
     {
         try {
             $this->getIndexer($table);
@@ -112,7 +112,5 @@ class DataHandler implements Singleton
         } catch (NoMatchingIndexerException $e) {
             return false;
         }
-
-        return false;
     }
 }

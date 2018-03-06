@@ -38,6 +38,9 @@ interface SearchRequestInterface extends QueryInterface
 
     public function setFilter(array $filter);
 
+    /**
+     * @return void
+     */
     public function addFacet(FacetRequestInterface $facet);
 
     /**
@@ -48,12 +51,16 @@ interface SearchRequestInterface extends QueryInterface
     /**
      * Workaround for paginate widget support which will
      * use the request to build another search.
+     *
+     * @return void
      */
     public function setConnection(ConnectionInterface $connection);
 
     /**
      * Workaround for paginate widget support which will
      * use the request to build another search.
+     *
+     * @return void
      */
     public function setSearchService(SearchService $searchService);
 }
