@@ -121,6 +121,10 @@ class QueryFactory
             return;
         }
 
+        if (trim($searchRequest->getSearchTerm()) === '') {
+            return;
+        }
+
         $boostQueryParts = [];
 
         foreach ($fields as $fieldName => $boostValue) {
@@ -236,6 +240,18 @@ class QueryFactory
             foreach ($config['fields'] as $elasticField => $inputField) {
                 $filter[$elasticField] = $value[$inputField];
             }
+        }
+
+        if (isset($config['raw'])) {
+            $filter = array_merge($config['raw'], $filter);
+        }
+
+        if ($config['type'] === 'range') {
+            return [
+                'range' => [
+                    $config['field'] => $filter,
+                ],
+            ];
         }
 
         return [$config['field'] => $filter];
