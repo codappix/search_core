@@ -4,9 +4,10 @@ The following Processor are available:
     :maxdepth: 1
     :glob:
 
+    /configuration/dataProcessing/ContentObjectDataProcessorAdapterProcessor
     /configuration/dataProcessing/CopyToProcessor
-    /configuration/dataProcessing/RemoveProcessor
     /configuration/dataProcessing/GeoPointProcessor
+    /configuration/dataProcessing/RemoveProcessor
 
 The following Processor are planned:
 
