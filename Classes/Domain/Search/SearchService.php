@@ -103,15 +103,10 @@ class SearchService
         }
 
         foreach ($facetsConfig as $identifier => $facetConfig) {
-            if (!isset($facetConfig['field']) || trim($facetConfig['field']) === '') {
-                // TODO: Finish throw
-                throw new \Exception('message', 1499171142);
-            }
-
             $searchRequest->addFacet($this->objectManager->get(
                 FacetRequest::class,
                 $identifier,
-                $facetConfig['field']
+                $facetConfig
             ));
         }
     }

@@ -239,11 +239,7 @@ class QueryFactory
         foreach ($searchRequest->getFacets() as $facet) {
             $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
                 'aggs' => [
-                    $facet->getIdentifier() => [
-                        'terms' => [
-                            'field' => $facet->getField(),
-                        ],
-                    ],
+                    $facet->getIdentifier() => $facet->getConfig(),
                 ],
             ]);
         }

@@ -118,8 +118,8 @@ class QueryFactoryTest extends AbstractUnitTestCase
     {
         $this->configureConfigurationMockWithDefault();
         $searchRequest = new SearchRequest('SearchWord');
-        $searchRequest->addFacet(new FacetRequest('Identifier', 'FieldName'));
-        $searchRequest->addFacet(new FacetRequest('Identifier 2', 'FieldName 2'));
+        $searchRequest->addFacet(new FacetRequest('Identifier', ['terms' => ['field' => 'FieldName']]));
+        $searchRequest->addFacet(new FacetRequest('Identifier 2', ['terms' => ['field' => 'FieldName 2']]));
 
         $query = $this->subject->create($searchRequest);
         $this->assertSame(

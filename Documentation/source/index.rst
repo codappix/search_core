@@ -15,3 +15,4 @@ Table of Contents
    connections
    indexer
    development
+   changelog

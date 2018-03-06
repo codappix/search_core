@@ -37,12 +37,6 @@ plugin {
             }
 
             searching {
-                facets {
-                    contentTypes {
-                        field = CType
-                    }
-                }
-
                 fields {
                     query = _all
                 }
