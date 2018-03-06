@@ -168,8 +168,7 @@ class SearchService
                 $searchResult,
                 $newSearchResultItems
             );
-        }
-        catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             return $searchResult;
         }
     }

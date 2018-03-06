@@ -270,7 +270,11 @@ class SearchServiceTest extends AbstractUnitTestCase
         $this->dataProcessorService->expects($this->never())->method('executeDataProcessor');
 
         $searchRequest = new SearchRequest('');
-        $this->assertSame($searchResultMock, $this->subject->search($searchRequest), 'Did not get created result without applied data processing');
+        $this->assertSame(
+            $searchResultMock,
+            $this->subject->search($searchRequest),
+            'Did not get created result without applied data processing'
+        );
     }
 
     /**
@@ -312,6 +316,10 @@ class SearchServiceTest extends AbstractUnitTestCase
             ->willReturn($searchResultMock);
 
         $searchRequest = new SearchRequest('');
-        $this->assertSame($searchResultMock, $this->subject->search($searchRequest), 'Did not get created result with applied data processing');
+        $this->assertSame(
+            $searchResultMock,
+            $this->subject->search($searchRequest),
+            'Did not get created result with applied data processing'
+        );
     }
 }
