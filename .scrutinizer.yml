@@ -1,3 +1,11 @@
+build:
+    nodes:
+        analysis:
+            project_setup:
+                override: true
+            tests:
+                override: [php-scrutinizer-run]
+
 filter:
     excluded_paths:
         - 'Configuration/*'
@@ -19,7 +27,7 @@ tools:
     php_hhvm:
         enabled: true
         config:
-            use_undeclared_constant:  false
+            use_undeclared_constant: false
 
     php_mess_detector:
         enabled: true
@@ -34,5 +42,5 @@ tools:
         enabled: true
     # We generate code coverage during tests at travis and will send them here
     external_code_coverage:
-      runs: 2
-      timeout: 1200
+        runs: 2
+        timeout: 1200
