@@ -1,5 +1,5 @@
-TYPO3 Extension search_core's documentation!
-============================================
+TYPO3 Extension search_core
+===========================
 
 Introduction
 ============
@@ -8,24 +8,21 @@ What does it do?
 ----------------
 
 The goal of this extension is to provide search integrations into TYPO3 CMS. The extension will
-abstract the concrete implementations to allow exchange of concrete backends like Elasticsearch or
-solr.
+provide a convenient API to allow developers to provide concrete implementations of backends like
+Elasticsearch, Algolia or Solr.
 
 The extension provides integration into TYPO3 like a frontend plugin for searches and hooks to
 update search indexes on updates. Also a command line interface is provided for interactions like
-reindexing.
+re-indexing.
 
 Current state
 -------------
 
 This is still a very early beta version. More information can be taken from Github at
-`current issues`_ and `current projects`_.
+`current issues`_.
 
-We are also focusing on Code Quality and Testing through `travis ci`_, `scrutinizer`_ and `codacy`_.
+We are also focusing on Code Quality and Testing through `travis ci`_, ``phpcs``, ``phpunit`` and
+``phpstan``.
 
 .. _current issues: https://github.com/Codappix/search_core/issues
-.. _current projects: https://github.com/Codappix/search_core/projects
 .. _travis ci: https://travis-ci.org/Codappix/search_core
-.. _scrutinizer: https://scrutinizer-ci.com/g/Codappix/search_core/inspections
-.. _codacy: https://www.codacy.com/app/Codappix/search_core/dashboard
-
