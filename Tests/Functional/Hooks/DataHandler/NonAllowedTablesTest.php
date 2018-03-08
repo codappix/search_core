@@ -47,7 +47,11 @@ class NonAllowedTablesTest extends AbstractDataHandlerTest
      */
     public function deletionWillNotBeTriggeredForSysCategories()
     {
-        $this->subject->expects($this->exactly(0))->method('delete');
+        $this->subject->expects($this->exactly(1))
+            ->method('update')
+            ->with('pages', $this->callback(function (array $record) {
+                return isset($record['uid']) && $record['uid'] === 1;
+            }));
 
         $tce = GeneralUtility::makeInstance(Typo3DataHandler::class);
         $tce->stripslashes_values = 0;
@@ -66,7 +70,11 @@ class NonAllowedTablesTest extends AbstractDataHandlerTest
      */
     public function updateWillNotBeTriggeredForExistingSysCategory()
     {
-        $this->subject->expects($this->exactly(0))->method('update');
+        $this->subject->expects($this->exactly(1))
+            ->method('update')
+            ->with('pages', $this->callback(function (array $record) {
+                return isset($record['uid']) && $record['uid'] === 1;
+            }));
 
         $tce = GeneralUtility::makeInstance(Typo3DataHandler::class);
         $tce->stripslashes_values = 0;
@@ -85,7 +93,11 @@ class NonAllowedTablesTest extends AbstractDataHandlerTest
      */
     public function updateWillNotBeTriggeredForNewSysCategoy()
     {
-        $this->subject->expects($this->exactly(0))->method('update');
+        $this->subject->expects($this->exactly(1))
+            ->method('update')
+            ->with('pages', $this->callback(function (array $record) {
+                return isset($record['uid']) && $record['uid'] === 1;
+            }));
 
         $tce = GeneralUtility::makeInstance(Typo3DataHandler::class);
         $tce->stripslashes_values = 0;

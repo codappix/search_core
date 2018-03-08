@@ -99,6 +99,24 @@ class DataHandler implements Singleton
         }
     }
 
+    public function clearCachePostProc(array $parameters, CoreDataHandler $dataHandler)
+    {
+        $pageUid = 0;
+
+        // If editor uses "small page blizzard"
+        if (isset($parameters['cacheCmd']) && is_numeric($parameters['cacheCmd'])) {
+            $pageUid = $parameters['cacheCmd'];
+        }
+        // If records were changed
+        if (isset($parameters['uid_page']) && is_numeric($parameters['uid_page'])) {
+            $pageUid = $parameters['uid_page'];
+        }
+
+        if ($pageUid > 0) {
+            $this->processRecord('pages', (int) $pageUid);
+        }
+    }
+
     protected function processRecord(string $table, int $uid) : bool
     {
         if (! $this->shouldProcessHookForTable($table)) {
