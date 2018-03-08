@@ -156,11 +156,15 @@ class SearchRequest implements SearchRequestInterface
     public function setLimit($limit)
     {
         $this->limit = (int) $limit;
+
+        return $this;
     }
 
     public function setOffset($offset)
     {
         $this->offset = (int) $offset;
+
+        return $this;
     }
 
     public function getLimit()

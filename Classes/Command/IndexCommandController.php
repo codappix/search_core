@@ -22,7 +22,6 @@ namespace Codappix\SearchCore\Command;
 
 use Codappix\SearchCore\Domain\Index\IndexerFactory;
 use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
 /**

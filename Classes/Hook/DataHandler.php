@@ -21,7 +21,6 @@ namespace Codappix\SearchCore\Hook;
  */
 
 use Codappix\SearchCore\Configuration\NoConfigurationException;
-use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
 use Codappix\SearchCore\Domain\Service\DataHandler as OwnDataHandler;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler as CoreDataHandler;
