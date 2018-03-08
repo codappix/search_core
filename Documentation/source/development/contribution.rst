@@ -28,7 +28,7 @@ requirements:
 
 Then setup your system::
 
-    git clone git@github.com:DanielSiepmann/search_core.git \
+    git clone git@github.com:codappix/search_core.git \
         && cd search_core \
         && export typo3DatabaseName="searchcoretest76" \
         && export TYPO3_VERSION="~8.7" \
@@ -64,6 +64,6 @@ All changes are introduced through pull requests at `Github`_ and should contain
 
 * Make sure to follow the documented :ref:`concepts`.
 
-.. _Github: https://github.com/DanielSiepmann/search_core
+.. _Github: https://github.com/codappix/search_core
 .. _travis-ci: https://travis-ci.org/
 .. _PSR-2: http://www.php-fig.org/psr/psr-2/

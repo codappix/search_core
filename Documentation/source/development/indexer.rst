@@ -13,7 +13,7 @@ trigger indexing or deletion of whole index.
 
 As this is the "indexer", deletion of single documents is directly processed by the connection.
 
-``setIdentifier`` is called with the identifier of the current Indexer. This might be usefull to
+``setIdentifier`` is called with the identifier of the current Indexer. This might be useful to
 fetch configuration, related to the indexing, from
 ``Codappix\SearchCore\Configuration\ConfigurationContainerInterface``.
 
