@@ -29,10 +29,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class FrontendUtility extends BackendUtility
 {
-    /**
-     * @return TypoScriptFrontendController
-     */
-    protected static function getLanguageService()
+    protected static function getLanguageService() : TypoScriptFrontendController
     {
         return $GLOBALS['TSFE'];
     }

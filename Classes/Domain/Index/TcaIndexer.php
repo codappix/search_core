@@ -22,6 +22,7 @@ namespace Codappix\SearchCore\Domain\Index;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\ConnectionInterface;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -46,17 +47,14 @@ class TcaIndexer extends AbstractIndexer
         ConnectionInterface $connection,
         ConfigurationContainerInterface $configuration
     ) {
+        parent::__construct($connection, $configuration);
         $this->tcaTableService = $tcaTableService;
-        $this->connection = $connection;
-        $this->configuration = $configuration;
     }
 
     /**
-     * @param int $offset
-     * @param int $limit
      * @return array|null
      */
-    protected function getRecords($offset, $limit)
+    protected function getRecords(int $offset, int $limit)
     {
         $records = $this->getQuery()
             ->setFirstResult($offset)
@@ -77,14 +75,12 @@ class TcaIndexer extends AbstractIndexer
     }
 
     /**
-     * @param int $identifier
-     * @return array
      * @throws NoRecordFoundException If record could not be found.
      */
-    protected function getRecord($identifier)
+    protected function getRecord(int $identifier) : array
     {
         $query = $this->getQuery();
-        $query = $query->andWhere($this->tcaTableService->getTableName() . '.uid = ' . (int) $identifier);
+        $query = $query->andWhere($this->tcaTableService->getTableName() . '.uid = ' . $identifier);
         $record = $query->execute()->fetch();
 
         if ($record === false || $record === null) {
@@ -98,15 +94,12 @@ class TcaIndexer extends AbstractIndexer
         return $record;
     }
 
-    /**
-     * @return string
-     */
-    protected function getDocumentName()
+    protected function getDocumentName() : string
     {
         return $this->tcaTableService->getTableName();
     }
 
-    protected function getQuery($tcaTableService = null) : QueryBuilder
+    protected function getQuery(TcaTableService $tcaTableService = null) : QueryBuilder
     {
         if ($tcaTableService === null) {
             $tcaTableService = $this->tcaTableService;
@@ -126,7 +119,7 @@ class TcaIndexer extends AbstractIndexer
         return $query;
     }
 
-    protected function getDatabaseConnection()
+    protected function getDatabaseConnection() : ConnectionPool
     {
         return GeneralUtility::makeInstance(ConnectionPool::class);
     }

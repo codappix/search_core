@@ -44,12 +44,8 @@ class MappingFactory implements Singleton
 
     /**
      * Get an mapping based on type.
-     *
-     * @param \Elastica\Type $type
-     *
-     * @return \Elastica\Mapping
      */
-    public function getMapping(\Elastica\Type $type)
+    public function getMapping(\Elastica\Type $type) : \Elastica\Type\Mapping
     {
         $mapping = new \Elastica\Type\Mapping();
         $mapping->setType($type);
@@ -64,11 +60,7 @@ class MappingFactory implements Singleton
         return $mapping;
     }
 
-    /**
-     * @param string $identifier
-     * @return array
-     */
-    protected function getConfiguration($identifier)
+    protected function getConfiguration(string $identifier) : array
     {
         try {
             return $this->configuration->get('indexing.' . $identifier . '.mapping');

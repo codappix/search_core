@@ -62,7 +62,7 @@ class SearchResult implements SearchResultInterface
     /**
      * @return array<ResultItemInterface>
      */
-    public function getResults()
+    public function getResults() : array
     {
         $this->initResults();
 
@@ -80,12 +80,12 @@ class SearchResult implements SearchResultInterface
         }
     }
 
-    public function getFacets()
+    public function getFacets() : array
     {
         return $this->originalSearchResult->getFacets();
     }
 
-    public function getCurrentCount()
+    public function getCurrentCount() : int
     {
         return $this->originalSearchResult->getCurrentCount();
     }

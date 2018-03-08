@@ -21,7 +21,7 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
-use Codappix\SearchCore\Configuration\InvalidArgumentException as InvalidConfigurationArgumentException;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\InvalidArgumentException;
 use Codappix\SearchCore\Database\Doctrine\Join;
 use Codappix\SearchCore\Database\Doctrine\Where;
 use Codappix\SearchCore\Domain\Index\IndexingException;
@@ -107,17 +107,11 @@ class TcaTableService
         $this->relationResolver = $relationResolver;
     }
 
-    /**
-     * @return string
-     */
     public function getTableName() : string
     {
         return $this->tableName;
     }
 
-    /**
-     * @return string
-     */
     public function getTableClause() : string
     {
         return $this->tableName;
@@ -125,9 +119,6 @@ class TcaTableService
 
     /**
      * Filter the given records by root line blacklist settings.
-     *
-     * @param array &$records
-     * @return void
      */
     public function filterRecordsByRootLineBlacklist(array &$records)
     {
@@ -139,9 +130,6 @@ class TcaTableService
         );
     }
 
-    /**
-     * @param array &$record
-     */
     public function prepareRecord(array &$record)
     {
         $this->relationResolver->resolveRelationsForRecord($this, $record);
@@ -166,8 +154,8 @@ class TcaTableService
             $whereClause .= ' AND ' . $userDefinedWhere;
         }
 
-        if ($this->isBlacklistedRootLineConfigured()) {
-            $parameters[':blacklistedRootLine'] = $this->getBlacklistedRootLine();
+        if ($this->isBlackListedRootLineConfigured()) {
+            $parameters[':blacklistedRootLine'] = $this->getBlackListedRootLine();
             $whereClause .= ' AND pages.uid NOT IN (:blacklistedRootLine)'
                 . ' AND pages.pid NOT IN (:blacklistedRootLine)';
         }
@@ -231,11 +219,7 @@ class TcaTableService
         return $whereClause;
     }
 
-    /**
-     * @param string
-     * @return bool
-     */
-    protected function isSystemField($columnName) : bool
+    protected function isSystemField(string $columnName) : bool
     {
         $systemFields = [
             // Versioning fields,
@@ -267,11 +251,9 @@ class TcaTableService
     }
 
     /**
-     * @param string $columnName
-     * @return array
      * @throws InvalidArgumentException
      */
-    public function getColumnConfig($columnName) : array
+    public function getColumnConfig(string $columnName) : array
     {
         if (!isset($this->tca['columns'][$columnName])) {
             throw new InvalidArgumentException(
@@ -290,9 +272,6 @@ class TcaTableService
      * Also further TYPO3 mechanics are taken into account. Does a valid root
      * line exist, is page inside a recycler, is inherited start- endtime
      * excluded, etc.
-     *
-     * @param array &$record
-     * @return bool
      */
     protected function isRecordBlacklistedByRootline(array &$record) : bool
     {
@@ -348,8 +327,6 @@ class TcaTableService
 
     /**
      * Checks whether any page uids are black listed.
-     *
-     * @return bool
      */
     protected function isBlackListedRootLineConfigured() : bool
     {
