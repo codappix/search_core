@@ -30,6 +30,11 @@ class FacetOption implements FacetOptionInterface
     protected $name = '';
 
     /**
+     * @var string
+     */
+    protected $displayName = '';
+
+    /**
      * @var int
      */
     protected $count = 0;
@@ -40,12 +45,18 @@ class FacetOption implements FacetOptionInterface
     public function __construct(array $bucket)
     {
         $this->name = $bucket['key'];
+        $this->displayName = isset($bucket['key_as_string']) ? $bucket['key_as_string'] : $this->getName();
         $this->count = $bucket['doc_count'];
     }
 
     public function getName() : string
     {
         return $this->name;
+    }
+
+    public function getDisplayName() : string
+    {
+        return $this->displayName;
     }
 
     public function getCount() : int

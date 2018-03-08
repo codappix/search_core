@@ -32,6 +32,12 @@ interface FacetOptionInterface
     public function getName() : string;
 
     /**
+     * If a pre-rendered name is provided, this will be returned.
+     * Otherwise it's the same as getName().
+     */
+    public function getDisplayName() : string;
+
+    /**
      * Returns the number of found results for this option.
      */
     public function getCount() : int;
