@@ -44,7 +44,7 @@ class Connection implements Singleton
 
     /**
      * @param ConfigurationContainerInterface $configuration
-     * @param \Elastica\Client $elasticaClient
+     * @param \Elastica\Client|null $elasticaClient
      */
     public function __construct(
         ConfigurationContainerInterface $configuration,

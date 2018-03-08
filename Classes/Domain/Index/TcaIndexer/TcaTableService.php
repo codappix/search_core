@@ -21,7 +21,7 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
-use Codappix\SearchCore\Configuration\InvalidArgumentException as InvalidConfigurationArgumentException;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\InvalidArgumentException;
 use Codappix\SearchCore\Database\Doctrine\Join;
 use Codappix\SearchCore\Database\Doctrine\Where;
 use Codappix\SearchCore\Domain\Index\IndexingException;
