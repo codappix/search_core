@@ -21,7 +21,6 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
  */
 
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /**
  * Factory to get indexes.

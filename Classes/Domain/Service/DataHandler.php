@@ -24,9 +24,7 @@ use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Domain\Index\IndexerFactory;
 use Codappix\SearchCore\Domain\Index\IndexerInterface;
 use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
-use Codappix\SearchCore\Domain\Index\TcaIndexer;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Handles all data related things like updates, deletes and inserts.

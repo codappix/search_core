@@ -23,7 +23,6 @@ namespace Codappix\SearchCore\Domain\Index;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
-use Codappix\SearchCore\DataProcessing\ProcessorInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractIndexer implements IndexerInterface
