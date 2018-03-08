@@ -1,4 +1,4 @@
-Breacking Change 120 "Pass facets configuration to elasticsearch"
+Breacking Change 120 "Pass facets configuration to Elasticsearch"
 =================================================================
 
 In order to allow arbitrary facet configuration, we do not process the facet configuration anymore.
@@ -35,6 +35,6 @@ Instead you have to provide the full configuration yourself:
         }
     }
 
-You need to add line 4 and 6, the additional level ``terms`` for elasticsearch.
+You need to add line 4 and 6, the additional level ``terms`` for Elasticsearch.
 
 See :issue:`120`.

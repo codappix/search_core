@@ -1,7 +1,7 @@
 ``Codappix\SearchCore\DataProcessing\RemoveProcessor``
 ======================================================
 
-Will remove fields from record, e.g. if you do not want to sent them to elasticsearch at all.
+Will remove fields from record.
 
 Possible Options:
 
