@@ -108,10 +108,14 @@ class TcaTableServiceTest extends AbstractUnitTestCase
     {
         $GLOBALS['TCA']['test_table'] = [
             'ctrl' => [
-                'languageField' => 'sys_language',
+                'languageField' => 'sys_language_uid',
             ],
             'columns' => [
-                'sys_language' => [],
+                'sys_language_uid' => [
+                    'config' => [
+                        'type' => 'select',
+                    ],
+                ],
                 't3ver_oid' => [],
                 'available_column' => [
                     'config' => [
@@ -141,6 +145,7 @@ class TcaTableServiceTest extends AbstractUnitTestCase
             [
                 'test_table.uid',
                 'test_table.pid',
+                'test_table.sys_language_uid',
                 'test_table.available_column',
             ],
             $subject->getFields(),
