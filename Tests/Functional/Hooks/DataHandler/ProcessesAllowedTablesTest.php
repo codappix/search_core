@@ -66,7 +66,7 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
     /**
      * @test
      */
-    public function updateWillBeTriggeredForTtContent()
+    public function updateWillBeTriggeredForExistingTtContent()
     {
         $this->subject->expects($this->exactly(1))->method('update')
             ->with(
@@ -94,9 +94,9 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
     /**
      * @test
      */
-    public function addWillBeTriggeredForTtContent()
+    public function updateWillBeTriggeredForNewTtContent()
     {
-        $this->subject->expects($this->exactly(1))->method('add')
+        $this->subject->expects($this->exactly(1))->method('update')
             ->with(
                 $this->equalTo('tt_content'),
                 $this->callback(function ($record) {

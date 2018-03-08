@@ -36,5 +36,7 @@ DataProcessing
 
 Before data is transfered to search service, it can be processed by "DataProcessors" like already
 known by :ref:`t3tsref:cobj-fluidtemplate-properties-dataprocessing` of :ref:`t3tsref:cobj-fluidtemplate`.
+The same is true for retrieved search results. They can be processed again by "DataProcessors" to
+prepare data for display in Templates or further usage.
 
 Configuration is done through TypoScript, see :ref:`dataProcessing`.

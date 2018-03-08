@@ -27,15 +27,15 @@ class RemoveProcessorTest extends AbstractUnitTestCase
 {
     /**
      * @test
-     * @dataProvider getPossibleRecordConfigurationCombinations
+     * @dataProvider getPossibleDataConfigurationCombinations
      */
-    public function fieldsAreCopiedAsConfigured(array $record, array $configuration, array $expectedRecord)
+    public function fieldsAreCopiedAsConfigured(array $record, array $configuration, array $expectedData)
     {
         $subject = new RemoveProcessor();
-        $processedRecord = $subject->processRecord($record, $configuration);
+        $processedData = $subject->processData($record, $configuration);
         $this->assertSame(
-            $expectedRecord,
-            $processedRecord,
+            $expectedData,
+            $processedData,
             'The processor did not return the expected processed record.'
         );
     }
@@ -43,7 +43,7 @@ class RemoveProcessorTest extends AbstractUnitTestCase
     /**
      * @return array
      */
-    public function getPossibleRecordConfigurationCombinations()
+    public function getPossibleDataConfigurationCombinations()
     {
         return [
             'Nothing configured' => [
@@ -56,7 +56,7 @@ class RemoveProcessorTest extends AbstractUnitTestCase
                 ],
                 'configuration' => [
                 ],
-                'expectedRecord' => [
+                'expectedData' => [
                     'field 1' => 'Some content like lorem',
                     'field with sub2' => [
                         'Tag 1',
@@ -76,7 +76,7 @@ class RemoveProcessorTest extends AbstractUnitTestCase
                     'fields' => 'field with sub2',
                     '_typoScriptNodeValue' => 'Codappix\SearchCore\DataProcessing\RemoveProcessor',
                 ],
-                'expectedRecord' => [
+                'expectedData' => [
                     'field 1' => 'Some content like lorem',
                 ],
             ],
@@ -92,7 +92,7 @@ class RemoveProcessorTest extends AbstractUnitTestCase
                     'fields' => 'non existing',
                     '_typoScriptNodeValue' => 'Codappix\SearchCore\DataProcessing\RemoveProcessor',
                 ],
-                'expectedRecord' => [
+                'expectedData' => [
                     'field 1' => 'Some content like lorem',
                     'field with sub2' => [
                         'Tag 1',
@@ -113,7 +113,7 @@ class RemoveProcessorTest extends AbstractUnitTestCase
                     'fields' => 'field 3, field with sub2',
                     '_typoScriptNodeValue' => 'Codappix\SearchCore\DataProcessing\RemoveProcessor',
                 ],
-                'expectedRecord' => [
+                'expectedData' => [
                     'field 1' => 'Some content like lorem',
                 ],
             ],
@@ -125,7 +125,7 @@ class RemoveProcessorTest extends AbstractUnitTestCase
                     'fields' => 'field 1',
                     '_typoScriptNodeValue' => 'Codappix\SearchCore\DataProcessing\RemoveProcessor',
                 ],
-                'expectedRecord' => [
+                'expectedData' => [
                 ],
             ],
         ];

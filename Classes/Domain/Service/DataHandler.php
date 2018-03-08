@@ -84,16 +84,6 @@ class DataHandler implements Singleton
 
     /**
      * @param string $table
-     * @param array $record
-     */
-    public function add($table, array $record)
-    {
-        $this->logger->debug('Record received for add.', [$table, $record]);
-        $this->getIndexer($table)->indexDocument($record['uid']);
-    }
-
-    /**
-     * @param string $table
      */
     public function update($table, array $record)
     {

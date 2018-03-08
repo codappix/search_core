@@ -35,6 +35,7 @@ services:
 install: make install
 
 script:
+  - make cgl
   - make unitTests
   - make functionalTests
 

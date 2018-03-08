@@ -30,37 +30,27 @@ class FacetRequest implements FacetRequestInterface
     protected $identifier = '';
 
     /**
-     * @var string
+     * @var array
      */
-    protected $field = '';
+    protected $config = [];
 
     /**
-     * TODO: Add validation / exception?
      * As the facets come from configuration this might be a good idea to help
      * integrators find issues.
-     *
-     * @param string $identifier
-     * @param string $field
      */
-    public function __construct($identifier, $field)
+    public function __construct(string $identifier, array $config)
     {
         $this->identifier = $identifier;
-        $this->field = $field;
+        $this->config = $config;
     }
 
-    /**
-     * @return string
-     */
-    public function getIdentifier()
+    public function getIdentifier() : string
     {
         return $this->identifier;
     }
 
-    /**
-     * @return string
-     */
-    public function getField()
+    public function getConfig() : array
     {
-        return $this->field;
+        return $this->config;
     }
 }

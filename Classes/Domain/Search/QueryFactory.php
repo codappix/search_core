@@ -120,6 +120,10 @@ class QueryFactory
             return;
         }
 
+        if (trim($searchRequest->getSearchTerm()) === '') {
+            return;
+        }
+
         $boostQueryParts = [];
 
         foreach ($fields as $fieldName => $boostValue) {
@@ -162,7 +166,11 @@ class QueryFactory
     {
         try {
             $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
-                'stored_fields' => GeneralUtility::trimExplode(',', $this->configuration->get('searching.fields.stored_fields'), true),
+                'stored_fields' => GeneralUtility::trimExplode(
+                    ',',
+                    $this->configuration->get('searching.fields.stored_fields'),
+                    true
+                ),
             ]);
         } catch (InvalidArgumentException $e) {
             // Nothing configured
@@ -170,7 +178,10 @@ class QueryFactory
 
         try {
             $scriptFields = $this->configuration->get('searching.fields.script_fields');
-            $scriptFields = $this->configurationUtility->replaceArrayValuesWithRequestContent($searchRequest, $scriptFields);
+            $scriptFields = $this->configurationUtility->replaceArrayValuesWithRequestContent(
+                $searchRequest,
+                $scriptFields
+            );
             $scriptFields = $this->configurationUtility->filterByCondition($scriptFields);
             if ($scriptFields !== []) {
                 $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['script_fields' => $scriptFields]);
@@ -232,6 +243,18 @@ class QueryFactory
             }
         }
 
+        if (isset($config['raw'])) {
+            $filter = array_merge($config['raw'], $filter);
+        }
+
+        if ($config['type'] === 'range') {
+            return [
+                'range' => [
+                    $config['field'] => $filter,
+                ],
+            ];
+        }
+
         return [$config['field'] => $filter];
     }
 
@@ -240,11 +263,7 @@ class QueryFactory
         foreach ($searchRequest->getFacets() as $facet) {
             $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
                 'aggs' => [
-                    $facet->getIdentifier() => [
-                        'terms' => [
-                            'field' => $facet->getField(),
-                        ],
-                    ],
+                    $facet->getIdentifier() => $facet->getConfig(),
                 ],
             ]);
         }

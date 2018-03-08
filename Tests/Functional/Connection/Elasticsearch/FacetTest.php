@@ -25,8 +25,16 @@ use Codappix\SearchCore\Domain\Model\SearchRequest;
 use Codappix\SearchCore\Domain\Search\SearchService;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
-class FilterTest extends AbstractFunctionalTestCase
+class FacetTest extends AbstractFunctionalTestCase
 {
+    protected function getTypoScriptFilesForFrontendRootPage()
+    {
+        return array_merge(
+            parent::getTypoScriptFilesForFrontendRootPage(),
+            ['EXT:search_core/Tests/Functional/Fixtures/Searching/Facet.ts']
+        );
+    }
+
     protected function getDataSets()
     {
         return array_merge(
@@ -38,7 +46,7 @@ class FilterTest extends AbstractFunctionalTestCase
     /**
      * @test
      */
-    public function itsPossibleToFilterResultsByASingleField()
+    public function itsPossibleToFetchFacetsForField()
     {
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
@@ -48,14 +56,23 @@ class FilterTest extends AbstractFunctionalTestCase
 
         $searchService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(SearchService::class);
+
         $searchRequest = new SearchRequest();
-
         $result = $searchService->search($searchRequest);
-        $this->assertSame(2, count($result), 'Did not receive both indexed elements without filter.');
 
-        $searchRequest->setFilter(['CType' => 'HTML']);
-        $result = $searchService->search($searchRequest);
-        $this->assertSame(5, (int) $result->getResults()[0]['uid'], 'Did not get the expected result entry.');
-        $this->assertSame(1, count($result), 'Did not receive the single filtered element.');
+        $this->assertSame(1, count($result->getFacets()), 'Did not receive the single defined facet.');
+
+        $facet = current($result->getFacets());
+        $this->assertSame('contentTypes', $facet->getName(), 'Name of facet was not as expected.');
+        $this->assertSame('CType', $facet->getField(), 'Field of facet was not expected.');
+
+        $options = $facet->getOptions();
+        $this->assertSame(2, count($options), 'Did not receive the expected number of possible options for facet.');
+        $option = $options['HTML'];
+        $this->assertSame('HTML', $option->getName(), 'Option did not have expected Name.');
+        $this->assertSame(1, $option->getCount(), 'Option did not have expected count.');
+        $option = $options['Header'];
+        $this->assertSame('Header', $option->getName(), 'Option did not have expected Name.');
+        $this->assertSame(1, $option->getCount(), 'Option did not have expected count.');
     }
 }

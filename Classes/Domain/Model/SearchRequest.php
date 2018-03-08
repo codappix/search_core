@@ -23,6 +23,7 @@ namespace Codappix\SearchCore\Domain\Model;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\FacetRequestInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
+use Codappix\SearchCore\Domain\Search\SearchService;
 
 /**
  * Represents a search request used to process an actual search.
@@ -62,6 +63,11 @@ class SearchRequest implements SearchRequestInterface
      * @var ConnectionInterface
      */
     protected $connection = null;
+
+    /**
+     * @var SearchService
+     */
+    protected $searchService = null;
 
     /**
      * @param string $query
@@ -143,18 +149,29 @@ class SearchRequest implements SearchRequestInterface
         $this->connection = $connection;
     }
 
+    public function setSearchService(SearchService $searchService)
+    {
+        $this->searchService = $searchService;
+    }
+
     // Extbase QueryInterface
     // Current implementation covers only paginate widget support.
     public function execute($returnRawQueryResult = false)
     {
-        if ($this->connection instanceof ConnectionInterface) {
-            return $this->connection->search($this);
+        if (! ($this->connection instanceof ConnectionInterface)) {
+            throw new \InvalidArgumentException(
+                'Connection was not set before, therefore execute can not work. Use `setConnection` before.',
+                1502197732
+            );
+        }
+        if (! ($this->searchService instanceof SearchService)) {
+            throw new \InvalidArgumentException(
+                'SearchService was not set before, therefore execute can not work. Use `setSearchService` before.',
+                1520325175
+            );
         }
 
-        throw new \InvalidArgumentException(
-            'Connection was not set before, therefore execute can not work. Use `setConnection` before.',
-            1502197732
-        );
+        return $this->searchService->processResult($this->connection->search($this));
     }
 
     public function setLimit($limit)

@@ -25,5 +25,12 @@ namespace Codappix\SearchCore\Connection;
  */
 interface ResultItemInterface extends \ArrayAccess
 {
-
+    /**
+     * Returns every information as array.
+     *
+     * Provide key/column/field => data.
+     *
+     * Used e.g. for dataprocessing.
+     */
+    public function getPlainData() : array;
 }

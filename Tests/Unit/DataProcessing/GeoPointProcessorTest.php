@@ -27,15 +27,15 @@ class GeoPointProcessorTest extends AbstractUnitTestCase
 {
     /**
      * @test
-     * @dataProvider getPossibleRecordConfigurationCombinations
+     * @dataProvider getPossibleDataConfigurationCombinations
      */
-    public function geoPointsAreAddedAsConfigured(array $record, array $configuration, array $expectedRecord)
+    public function geoPointsAreAddedAsConfigured(array $record, array $configuration, array $expectedData)
     {
         $subject = new GeoPointProcessor();
-        $processedRecord = $subject->processRecord($record, $configuration);
+        $processedData = $subject->processData($record, $configuration);
         $this->assertSame(
-            $expectedRecord,
-            $processedRecord,
+            $expectedData,
+            $processedData,
             'The processor did not return the expected processed record.'
         );
     }
@@ -43,7 +43,7 @@ class GeoPointProcessorTest extends AbstractUnitTestCase
     /**
      * @return array
      */
-    public function getPossibleRecordConfigurationCombinations()
+    public function getPossibleDataConfigurationCombinations()
     {
         return [
             'Create new field with existing lat and lng' => [
@@ -56,7 +56,7 @@ class GeoPointProcessorTest extends AbstractUnitTestCase
                     'lat' => 'lat',
                     'lon' => 'lng',
                 ],
-                'expectedRecord' => [
+                'expectedData' => [
                     'lat' => 23.232,
                     'lng' => 45.43,
                     'location' => [
@@ -73,7 +73,7 @@ class GeoPointProcessorTest extends AbstractUnitTestCase
                 'configuration' => [
                     'to' => 'location',
                 ],
-                'expectedRecord' => [
+                'expectedData' => [
                     'lat' => 23.232,
                     'lng' => 45.43,
                 ],
@@ -88,7 +88,7 @@ class GeoPointProcessorTest extends AbstractUnitTestCase
                     'lat' => 'lat',
                     'lon' => 'lng',
                 ],
-                'expectedRecord' => [
+                'expectedData' => [
                     'lat' => '',
                     'lng' => '',
                 ],
@@ -103,7 +103,7 @@ class GeoPointProcessorTest extends AbstractUnitTestCase
                     'lat' => 'lat',
                     'lon' => 'lng',
                 ],
-                'expectedRecord' => [
+                'expectedData' => [
                     'lat' => 'av',
                     'lng' => 'dsf',
                 ],

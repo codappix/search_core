@@ -119,20 +119,48 @@ E.g. you submit a filter in form of:
 
 .. code-block:: html
 
-    <f:form.textfield property="filter.distance.location.lat" value="51.168098" />
-    <f:form.textfield property="filter.distance.location.lon" value="6.381384" />
-    <f:form.textfield property="filter.distance.distance" value="100km" />
+        <f:comment>
+            Due to TYPO3 7.x fluid limitations, we build this input ourself.
+            No longer necessary in 8 and above
+        </f:comment>
+        <select name="tx_searchcore_search[searchRequest][filter][month][from]" class="_control" >
+            <option value="">Month</option>
+            <f:for each="{searchResult.facets.month.options}" as="month">
+                <f:if condition="{month.count}">
+                    <option
+                        value="{month.displayName -> f:format.date(format: 'Y-m')}"
+                        {f:if(condition: '{searchRequest.filter.month.from} == {month.displayName -> f:format.date(format: \'Y-m\')}', then: 'selected="true"')}
+                    >{month.displayName -> f:format.date(format: '%B %Y')}</option>
+                </f:if>
+            </f:for>
+        </select>
+        <select name="tx_searchcore_search[searchRequest][filter][month][to]" class="_control" >
+            <option value="">Month</option>
+            <f:for each="{searchResult.facets.month.options}" as="month">
+                <f:if condition="{month.count}">
+                    <option
+                        value="{month.displayName -> f:format.date(format: 'Y-m')}"
+                        {f:if(condition: '{searchRequest.filter.month.from} == {month.displayName -> f:format.date(format: \'Y-m\')}', then: 'selected="true"')}
+                    >{month.displayName -> f:format.date(format: '%B %Y')}</option>
+                </f:if>
+            </f:for>
+        </select>
 
 This will create a ``distance`` filter with subproperties. To make this filter actually work, you
 can add the following TypoScript, which will be added to the filter::
 
     mapping {
         filter {
-            distance {
-                field = geo_distance
+            month {
+                type = range
+                field = released
+                raw {
+                    format = yyyy-MM
+                }
+
                 fields {
-                    distance = distance
-                    location = location
+                    gte = from
+                    lte = to
                 }
             }
         }
@@ -143,8 +171,11 @@ in elasticsearch. In above example they do match, but you can also use different
 On the left hand side is the elasticsearch field name, on the right side the one submitted as a
 filter.
 
-The ``field``, in above example ``geo_distance``, will be used as the elasticsearch field for
+The ``field``, in above example ``released``, will be used as the elasticsearch field for
 filtering. This way you can use arbitrary filter names and map them to existing elasticsearch fields.
+
+Everything that is configured inside ``raw`` is passed, as is, to search service, e.g.
+elasticsearch.
 
 .. _fields:
 
@@ -216,3 +247,37 @@ Example::
     }
 
 Only ``filter`` is allowed as value. Will submit an empty query to switch to filter mode.
+
+.. _searching_dataProcessing:
+
+dataProcessing
+--------------
+
+Used by: All connections while indexing, due to implementation inside ``SearchService``.
+
+Configure modifications on each document before returning search result. Same as provided by TYPO3
+for :ref:`t3tsref:cobj-fluidtemplate` through
+:ref:`t3tsref:cobj-fluidtemplate-properties-dataprocessing`.
+
+All processors are applied in configured order. Allowing to work with already processed data.
+
+Example::
+
+    plugin.tx_searchcore.settings.searching.dataProcessing {
+        1 = Codappix\SearchCore\DataProcessing\CopyToProcessor
+        1 {
+            to = search_spellcheck
+        }
+
+        2 = Codappix\SearchCore\DataProcessing\CopyToProcessor
+        2 {
+            to = search_all
+        }
+    }
+
+The above example will copy all existing fields to the field ``search_spellcheck``. Afterwards
+all fields, including ``search_spellcheck`` will be copied to ``search_all``.
+
+.. include:: /configuration/dataProcessing/availableAndPlanned.rst
+
+Also data processors are available while indexing too, see :ref:`dataProcessing`.

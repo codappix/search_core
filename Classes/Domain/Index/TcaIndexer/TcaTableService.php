@@ -167,7 +167,9 @@ class TcaTableService
             ;
         }
 
-        $userDefinedWhere = $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.additionalWhereClause');
+        $userDefinedWhere = $this->configuration->getIfExists(
+            'indexing.' . $this->getTableName() . '.additionalWhereClause'
+        );
         if (is_string($userDefinedWhere)) {
             $whereClause .= ' AND ' . $userDefinedWhere;
         }
@@ -348,6 +350,9 @@ class TcaTableService
      */
     protected function getBlackListedRootLine() : array
     {
-        return GeneralUtility::intExplode(',', $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist'));
+        return GeneralUtility::intExplode(
+            ',',
+            $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist')
+        );
     }
 }

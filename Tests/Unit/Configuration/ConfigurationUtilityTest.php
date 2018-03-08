@@ -31,8 +31,11 @@ class ConfigurationUtilityTest extends AbstractUnitTestCase
      * @test
      * @dataProvider possibleRequestAndConfigurationForFluidtemplate
      */
-    public function recursiveEntriesAreProcessedAsFluidtemplate(SearchRequestInterface $searchRequest, array $array, array $expected)
-    {
+    public function recursiveEntriesAreProcessedAsFluidtemplate(
+        SearchRequestInterface $searchRequest,
+        array $array,
+        array $expected
+    ) {
         $subject = new ConfigurationUtility();
 
         $this->assertSame(
