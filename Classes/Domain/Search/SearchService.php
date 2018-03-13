@@ -74,11 +74,7 @@ class SearchService
         $this->dataProcessorService = $dataProcessorService;
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @return SearchResultInterface
-     */
-    public function search(SearchRequestInterface $searchRequest)
+    public function search(SearchRequestInterface $searchRequest) : SearchResultInterface
     {
         $this->addSize($searchRequest);
         $this->addConfiguredFacets($searchRequest);
@@ -93,8 +89,6 @@ class SearchService
 
     /**
      * Add configured size of search result items to request.
-     *
-     * @param SearchRequestInterface $searchRequest
      */
     protected function addSize(SearchRequestInterface $searchRequest)
     {
@@ -105,8 +99,6 @@ class SearchService
 
     /**
      * Add facets from configuration to request.
-     *
-     * @param SearchRequestInterface $searchRequest
      */
     protected function addConfiguredFacets(SearchRequestInterface $searchRequest)
     {
@@ -126,8 +118,6 @@ class SearchService
 
     /**
      * Add filters from configuration, e.g. flexform or TypoScript.
-     *
-     * @param SearchRequestInterface $searchRequest
      */
     protected function addConfiguredFilters(SearchRequestInterface $searchRequest)
     {

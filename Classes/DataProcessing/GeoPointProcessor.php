@@ -27,7 +27,7 @@ class GeoPointProcessor implements ProcessorInterface
 {
     public function processData(array $record, array $configuration) : array
     {
-        if (! $this->canApply($record, $configuration)) {
+        if (! $this->isApplyable($record, $configuration)) {
             return $record;
         }
 
@@ -39,7 +39,7 @@ class GeoPointProcessor implements ProcessorInterface
         return $record;
     }
 
-    protected function canApply(array $record, array $configuration) : bool
+    protected function isApplyable(array $record, array $configuration) : bool
     {
         if (!isset($record[$configuration['lat']])
             || !is_numeric($record[$configuration['lat']])

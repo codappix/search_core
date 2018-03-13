@@ -28,62 +28,44 @@ interface ConnectionInterface
     /**
      * Will add a new document.
      *
-     * @param string $documentType
-     * @param array $document
-     *
      * @return void
      */
-    public function addDocument($documentType, array $document);
+    public function addDocument(string $documentType, array $document);
 
     /**
      * Add the given documents.
      *
-     * @param string $documentType
-     * @param array $documents
-     *
      * @return void
      */
-    public function addDocuments($documentType, array $documents);
+    public function addDocuments(string $documentType, array $documents);
 
     /**
      * Will update an existing document.
      *
      * NOTE: Batch updating is not yet supported.
      *
-     * @param string $documentType
-     * @param array $document
-     *
      * @return void
      */
-    public function updateDocument($documentType, array $document);
+    public function updateDocument(string $documentType, array $document);
 
     /**
      * Will remove an existing document.
      *
      * NOTE: Batch deleting is not yet supported.
      *
-     * @param string $documentType
-     * @param int $identifier
-     *
      * @return void
      */
-    public function deleteDocument($documentType, $identifier);
+    public function deleteDocument(string $documentType, string $identifier);
 
     /**
      * Search by given request and return result.
-     *
-     * @param SearchRequestInterface $searchRequest
-     *
-     * @return SearchResultInterface
      */
-    public function search(SearchRequestInterface $searchRequest);
+    public function search(SearchRequestInterface $searchRequest) : SearchResultInterface;
 
     /**
      * Will delete the whole index / db.
      *
-     * @param string $documentType
-     *
      * @return void
      */
-    public function deleteIndex($documentType);
+    public function deleteIndex(string $documentType);
 }

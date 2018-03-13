@@ -25,6 +25,14 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class IndexDeletionTest extends AbstractFunctionalTestCase
 {
+    protected function getDataSets()
+    {
+        return array_merge(
+            parent::getDataSets(),
+            ['Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml']
+        );
+    }
+
     /**
      * @test
      */

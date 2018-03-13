@@ -21,7 +21,6 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
-use Codappix\SearchCore\Configuration\InvalidArgumentException as InvalidConfigurationArgumentException;
 use Codappix\SearchCore\Domain\Index\IndexingException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -105,17 +104,11 @@ class TcaTableService
         $this->relationResolver = $relationResolver;
     }
 
-    /**
-     * @return string
-     */
     public function getTableName() : string
     {
         return $this->tableName;
     }
 
-    /**
-     * @return string
-     */
     public function getTableClause() : string
     {
         if ($this->tableName === 'pages') {
@@ -138,9 +131,6 @@ class TcaTableService
         );
     }
 
-    /**
-     * Adjust record accordingly to configuration.
-     */
     public function prepareRecord(array &$record)
     {
         $this->relationResolver->resolveRelationsForRecord($this, $record);

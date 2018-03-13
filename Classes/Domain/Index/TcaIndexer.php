@@ -43,17 +43,14 @@ class TcaIndexer extends AbstractIndexer
         ConnectionInterface $connection,
         ConfigurationContainerInterface $configuration
     ) {
+        parent::__construct($connection, $configuration);
         $this->tcaTableService = $tcaTableService;
-        $this->connection = $connection;
-        $this->configuration = $configuration;
     }
 
     /**
-     * @param int $offset
-     * @param int $limit
      * @return array|null
      */
-    protected function getRecords($offset, $limit)
+    protected function getRecords(int $offset, int $limit)
     {
         $records = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
             $this->tcaTableService->getFields(),
@@ -76,11 +73,9 @@ class TcaIndexer extends AbstractIndexer
     }
 
     /**
-     * @param int $identifier
-     * @return array
      * @throws NoRecordFoundException If record could not be found.
      */
-    protected function getRecord($identifier)
+    protected function getRecord(int $identifier) : array
     {
         $record = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
             $this->tcaTableService->getFields(),
@@ -100,10 +95,7 @@ class TcaIndexer extends AbstractIndexer
         return $record;
     }
 
-    /**
-     * @return string
-     */
-    protected function getDocumentName()
+    protected function getDocumentName() : string
     {
         return $this->tcaTableService->getTableName();
     }

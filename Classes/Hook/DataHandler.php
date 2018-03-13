@@ -48,46 +48,38 @@ class DataHandler implements Singleton
     /**
      * Dependency injection as TYPO3 doesn't provide it on it's own.
      * Still you can submit your own dataHandler.
-     *
-     * @param OwnDataHandler $dataHandler
-     * @param Logger $logger
      */
     public function __construct(OwnDataHandler $dataHandler = null, Logger $logger = null)
     {
-        $this->dataHandler = $dataHandler;
-        if ($this->dataHandler === null) {
+        if ($dataHandler === null) {
             try {
-                $this->dataHandler = GeneralUtility::makeInstance(ObjectManager::class)
+                $dataHandler = GeneralUtility::makeInstance(ObjectManager::class)
                     ->get(OwnDataHandler::class);
             } catch (NoConfigurationException $e) {
                 // We have no configuration. That's fine, hooks will not be
                 // executed due to check for existing DataHandler.
             }
         }
+        $this->dataHandler = $dataHandler;
 
-        $this->logger = $logger;
-        if ($this->logger === null) {
-            $this->logger = GeneralUtility::makeInstance(LogManager::class)
+        if ($logger === null) {
+            $logger = GeneralUtility::makeInstance(LogManager::class)
                 ->getLogger(__CLASS__);
         }
+        $this->logger = $logger;
     }
 
     /**
      * Called by CoreDataHandler on deletion of records.
-     *
-     * @param string $table
-     * @param int $uid
-     *
-     * @return bool False if hook was not processed.
      */
-    public function processCmdmap_deleteAction($table, $uid)
+    public function processCmdmap_deleteAction(string $table, int $uid) : bool
     {
         if (! $this->shouldProcessHookForTable($table)) {
             $this->logger->debug('Delete not processed.', [$table, $uid]);
             return false;
         }
 
-        $this->dataHandler->delete($table, $uid);
+        $this->dataHandler->delete($table, (string) $uid);
         return true;
     }
 
@@ -97,8 +89,8 @@ class DataHandler implements Singleton
             $uid = key($record);
             $fieldData = current($record);
 
-            if (isset($fieldArray['uid'])) {
-                $uid = $fieldArray['uid'];
+            if (isset($fieldData['uid'])) {
+                $uid = $fieldData['uid'];
             } elseif (isset($dataHandler->substNEWwithIDs[$uid])) {
                 $uid = $dataHandler->substNEWwithIDs[$uid];
             }
@@ -124,17 +116,13 @@ class DataHandler implements Singleton
         return false;
     }
 
-    /**
-     * @param string $table
-     * @return bool
-     */
-    protected function shouldProcessHookForTable($table)
+    protected function shouldProcessHookForTable(string $table) : bool
     {
         if ($this->dataHandler === null) {
             $this->logger->debug('Datahandler could not be setup.');
             return false;
         }
-        if (! $this->dataHandler->canHandle($table)) {
+        if (! $this->dataHandler->supportsTable($table)) {
             $this->logger->debug('Table is not allowed.', [$table]);
             return false;
         }
@@ -145,11 +133,9 @@ class DataHandler implements Singleton
     /**
      * Wrapper to allow unit testing.
      *
-     * @param string $table
-     * @param int $uid
-     * @return null|array<String>
+     * @return array|null
      */
-    protected function getRecord($table, $uid)
+    protected function getRecord(string $table, int $uid)
     {
         return BackendUtility::getRecord($table, $uid);
     }

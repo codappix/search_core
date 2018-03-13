@@ -42,7 +42,7 @@ class PagesIndexer extends TcaIndexer
 
     /**
      * @param TcaTableService $tcaTableService
-     * @param TcaTableService $tcaTableService
+     * @param TcaTableService $contentTableService
      * @param ConnectionInterface $connection
      * @param ConfigurationContainerInterface $configuration
      */
@@ -52,10 +52,8 @@ class PagesIndexer extends TcaIndexer
         ConnectionInterface $connection,
         ConfigurationContainerInterface $configuration
     ) {
-        $this->tcaTableService = $tcaTableService;
+        parent::__construct($tcaTableService, $connection, $configuration);
         $this->contentTableService = $contentTableService;
-        $this->connection = $connection;
-        $this->configuration = $configuration;
     }
 
     protected function prepareRecord(array &$record)

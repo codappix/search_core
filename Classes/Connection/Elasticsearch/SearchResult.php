@@ -77,7 +77,7 @@ class SearchResult implements SearchResultInterface
     /**
      * @return array<ResultItemInterface>
      */
-    public function getResults()
+    public function getResults() : array
     {
         $this->initResults();
 
@@ -89,14 +89,14 @@ class SearchResult implements SearchResultInterface
      *
      * @return array<FacetInterface>
      */
-    public function getFacets()
+    public function getFacets() : array
     {
         $this->initFacets();
 
         return $this->facets;
     }
 
-    public function getCurrentCount()
+    public function getCurrentCount() : int
     {
         return $this->result->count();
     }
