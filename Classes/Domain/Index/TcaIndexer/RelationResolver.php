@@ -97,7 +97,7 @@ class RelationResolver implements Singleton
         return array_map('trim', explode(',', $value));
     }
 
-    protected function getUtilityForMode(): string
+    protected function getUtilityForMode() : string
     {
         if (TYPO3_MODE === 'BE') {
             return BackendUtility::class;
