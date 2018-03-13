@@ -43,12 +43,12 @@ call_user_func(
         if (\TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) >= 8000000) {
             $container->registerImplementation(
                 \Codappix\SearchCore\Compatibility\TypoScriptServiceInterface::class,
-                \TYPO3\CMS\Core\TypoScript\TypoScriptService::class
+                \Codappix\SearchCore\Compatibility\TypoScriptService::class
             );
         } else {
             $container->registerImplementation(
                 \Codappix\SearchCore\Compatibility\TypoScriptServiceInterface::class,
-                \TYPO3\CMS\Extbase\Service\TypoScriptService::class
+                \Codappix\SearchCore\Compatibility\TypoScriptService76::class
             );
         }
 

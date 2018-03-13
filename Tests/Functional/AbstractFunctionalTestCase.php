@@ -66,4 +66,9 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
     {
         return ['EXT:search_core/Tests/Functional/Fixtures/BasicSetup.ts'];
     }
+
+    protected function useLegacyVersion() : bool
+    {
+        return \TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) < 8000000;
+    }
 }
