@@ -53,7 +53,10 @@ class IndexFactory implements Singleton
         $index = $connection->getClient()->getIndex('typo3content');
 
         if ($index->exists() === false) {
-            $index->create($this->getConfigurationFor($documentType));
+            $config = $this->getConfigurationFor($documentType);
+            $this->logger->debug(sprintf('Create index %s.', $documentType), [$documentType, $config]);
+            $index->create($config);
+            $this->logger->debug(sprintf('Created index %s.', $documentType), [$documentType]);
         }
 
         return $index;
@@ -64,9 +67,11 @@ class IndexFactory implements Singleton
         try {
             $configuration = $this->configuration->get('indexing.' . $documentType . '.index');
 
-            if (isset($configuration['analysis']['analyzer'])) {
-                foreach ($configuration['analysis']['analyzer'] as $key => $analyzer) {
-                    $configuration['analysis']['analyzer'][$key] = $this->prepareAnalyzerConfiguration($analyzer);
+            foreach (['analyzer', 'filter'] as $optionsToExpand) {
+                if (isset($configuration['analysis'][$optionsToExpand])) {
+                    foreach ($configuration['analysis'][$optionsToExpand] as $key => $options) {
+                        $configuration['analysis'][$optionsToExpand][$key] = $this->prepareOptions($options);
+                    }
                 }
             }
 
@@ -78,7 +83,7 @@ class IndexFactory implements Singleton
 
     protected function prepareAnalyzerConfiguration(array $analyzer) : array
     {
-        $fieldsToExplode = ['char_filter', 'filter'];
+        $fieldsToExplode = ['char_filter', 'filter', 'word_list'];
 
         foreach ($fieldsToExplode as $fieldToExplode) {
             if (isset($analyzer[$fieldToExplode])) {
