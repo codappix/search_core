@@ -38,6 +38,21 @@ class IndexFactory implements Singleton
     protected $configuration;
 
     /**
+     * @var \TYPO3\CMS\Core\Log\Logger
+     */
+    protected $logger;
+
+    /**
+     * Inject log manager to get concrete logger from it.
+     *
+     * @param \TYPO3\CMS\Core\Log\LogManager $logManager
+     */
+    public function injectLogger(\TYPO3\CMS\Core\Log\LogManager $logManager)
+    {
+        $this->logger = $logManager->getLogger(__CLASS__);
+    }
+
+    /**
      * @param ConfigurationContainerInterface $configuration
      */
     public function __construct(ConfigurationContainerInterface $configuration)
