@@ -13,6 +13,7 @@ language: php
 php:
   - 7.0
   - 7.1
+  - 7.2
 
 env:
   global:
@@ -24,6 +25,8 @@ env:
     - typo3DatabaseHost="127.0.0.1"
     - typo3DatabaseUsername="travis"
     - typo3DatabasePassword=""
+  matrix:
+    - TYPO3_VERSION="~7.6"
 
 matrix:
   fast_finish: true

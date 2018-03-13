@@ -10,9 +10,18 @@ typo3DatabaseUsername ?= "dev"
 typo3DatabasePassword ?= "dev"
 typo3DatabaseHost ?= "127.0.0.1"
 
+sourceOrDist=--prefer-dist
+ifeq ($(TYPO3_VERSION),~7.6)
+	sourceOrDist=--prefer-source
+endif
+
 .PHONY: install
 install: clean
-	COMPOSER_PROCESS_TIMEOUT=1000 composer require -vv --dev --prefer-dist typo3/cms="$(TYPO3_VERSION)"
+	if [ $(TYPO3_VERSION) = ~7.6 ]; then \
+		patch composer.json Tests/InstallPatches/composer.json.patch; \
+	fi
+
+	COMPOSER_PROCESS_TIMEOUT=1000 composer require -vv --dev $(sourceOrDist) typo3/cms="$(TYPO3_VERSION)"
 	git checkout composer.json
 
 cgl:
