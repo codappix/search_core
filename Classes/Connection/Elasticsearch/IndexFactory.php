@@ -85,7 +85,9 @@ class IndexFactory implements Singleton
             foreach (['analyzer', 'filter'] as $optionsToExpand) {
                 if (isset($configuration['analysis'][$optionsToExpand])) {
                     foreach ($configuration['analysis'][$optionsToExpand] as $key => $options) {
-                        $configuration['analysis'][$optionsToExpand][$key] = $this->prepareAnalyzerConfiguration($options);
+                        $configuration['analysis'][$optionsToExpand][$key] = $this->prepareAnalyzerConfiguration(
+                            $options
+                        );
                     }
                 }
             }

@@ -5,7 +5,7 @@ TYPO3_WEB_DIR := $(current_dir).Build/web
 TYPO3_PATH_ROOT := $(current_dir).Build/web
 # Allow different versions on travis
 TYPO3_VERSION ?= ~8.7
-typo3DatabaseName ?= "searchcore_test2"
+typo3DatabaseName ?= "searchcore_test"
 typo3DatabaseUsername ?= "dev"
 typo3DatabasePassword ?= "dev"
 typo3DatabaseHost ?= "127.0.0.1"

@@ -220,12 +220,17 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
         $response = $this->client->request('typo3content/_search?q=*:*');
         $this->assertSame($response->getData()['hits']['total'], 2, 'Not exactly 2 documents were indexed.');
 
-        $this->getConnectionPool()->getConnectionForTable('tt_content')
-            ->update(
-                'tt_content',
-                ['hidden' => true],
-                ['uid' => 10]
-            );
+        if ($this->isLegacyVersion()) {
+            $this->getDatabaseConnection()
+                ->exec_UPDATEquery('tt_content', 'uid = 10', ['hidden' => 1]);
+        } else {
+            $this->getConnectionPool()->getConnectionForTable('tt_content')
+                ->update(
+                    'tt_content',
+                    ['hidden' => true],
+                    ['uid' => 10]
+                );
+        }
 
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)

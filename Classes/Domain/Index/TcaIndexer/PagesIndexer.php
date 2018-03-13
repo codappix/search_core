@@ -23,6 +23,7 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Domain\Index\TcaIndexer;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
 
 /**
  * Specific indexer for Pages, will basically add content of page.
@@ -30,7 +31,7 @@ use Codappix\SearchCore\Domain\Index\TcaIndexer;
 class PagesIndexer extends TcaIndexer
 {
     /**
-     * @var TcaTableService
+     * @var TcaTableServiceInterface
      */
     protected $contentTableService;
 
@@ -41,14 +42,14 @@ class PagesIndexer extends TcaIndexer
     protected $fileRepository;
 
     /**
-     * @param TcaTableService $tcaTableService
-     * @param TcaTableService $contentTableService
+     * @param TcaTableServiceInterface $tcaTableService
+     * @param TcaTableServiceInterface $contentTableService
      * @param ConnectionInterface $connection
      * @param ConfigurationContainerInterface $configuration
      */
     public function __construct(
-        TcaTableService $tcaTableService,
-        TcaTableService $contentTableService,
+        TcaTableServiceInterface $tcaTableService,
+        TcaTableServiceInterface $contentTableService,
         ConnectionInterface $connection,
         ConfigurationContainerInterface $configuration
     ) {
@@ -77,7 +78,17 @@ class PagesIndexer extends TcaIndexer
 
     protected function fetchContentForPage(int $uid) : array
     {
-        $contentElements = $this->getQuery($this->contentTableService)->execute()->fetchAll();
+        if ($this->contentTableService instanceof TcaTableService) {
+            $contentElements = $this->contentTableService->getQuery()
+                ->execute()->fetchAll();
+        } else {
+            $contentElements = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+                $this->contentTableService->getFields(),
+                $this->contentTableService->getTableClause(),
+                $this->contentTableService->getWhereClause() .
+                sprintf(' AND %s.pid = %u', $this->contentTableService->getTableName(), $uid)
+            );
+        }
 
         if ($contentElements === null) {
             $this->logger->debug('No content for page ' . $uid);

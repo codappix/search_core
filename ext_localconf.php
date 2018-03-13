@@ -37,23 +37,11 @@ call_user_func(
             ]
         );
 
-        // Register different concrete implementations, depending on current TYPO3 version.
-        // This way we can provide working implementations for multiple TYPO3 versions.
-        $container = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\Container\Container::class);
-        if (\TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) >= 8000000) {
-            $container->registerImplementation(
-                \Codappix\SearchCore\Compatibility\TypoScriptServiceInterface::class,
-                \Codappix\SearchCore\Compatibility\TypoScriptService::class
-            );
-        } else {
-            $container->registerImplementation(
-                \Codappix\SearchCore\Compatibility\TypoScriptServiceInterface::class,
-                \Codappix\SearchCore\Compatibility\TypoScriptService76::class
-            );
-        }
+        \Codappix\SearchCore\Compatibility\ImplementationRegistrationService::registerImplementations();
 
         // API does make use of object manager, therefore use GLOBALS
         $extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extensionKey]);
+        $container = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\Container\Container::class);
         if ($extensionConfiguration === false
             || !isset($extensionConfiguration['disable.']['elasticsearch'])
             || $extensionConfiguration['disable.']['elasticsearch'] !== '1'

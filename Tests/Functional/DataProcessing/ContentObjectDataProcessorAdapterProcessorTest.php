@@ -45,7 +45,7 @@ class ContentObjectDataProcessorAdapterProcessorTest extends AbstractFunctionalT
             'new_content' => ['value1', 'value2'],
         ];
 
-        if ($this->useLegacyVersion()) {
+        if ($this->isLegacyVersion()) {
             $typoScriptService = new TypoScriptService76();
         } else {
             $typoScriptService = new TypoScriptService();

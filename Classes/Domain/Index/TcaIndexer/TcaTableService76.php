@@ -21,13 +21,9 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
-use Codappix\SearchCore\Database\Doctrine\Join;
-use Codappix\SearchCore\Database\Doctrine\Where;
 use Codappix\SearchCore\Domain\Index\IndexingException;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\InvalidArgumentException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
@@ -35,7 +31,7 @@ use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 /**
  * Encapsulate logik related to TCA configuration.
  */
-class TcaTableService implements TcaTableServiceInterface
+class TcaTableService76 implements TcaTableServiceInterface
 {
     /**
      * TCA for current table.
@@ -116,25 +112,35 @@ class TcaTableService implements TcaTableServiceInterface
 
     public function getTableClause() : string
     {
-        return $this->tableName;
+        if ($this->tableName === 'pages') {
+            return $this->tableName;
+        }
+
+        return $this->tableName . ' LEFT JOIN pages on ' . $this->tableName . '.pid = pages.uid';
     }
 
     public function getRecords(int $offset, int $limit) : array
     {
-        $records = $this->getQuery()
-            ->setFirstResult($offset)
-            ->setMaxResults($limit)
-            ->execute()
-            ->fetchAll();
+        $records = $this->getConnection()->exec_SELECTgetRows(
+            $this->getFields(),
+            $this->getTableClause(),
+            $this->getWhereClause(),
+            '',
+            '',
+            (int) $offset . ',' . (int) $limit
+        );
 
         return $records ?: [];
     }
 
     public function getRecord(int $identifier) : array
     {
-        $query = $this->getQuery();
-        $query = $query->andWhere($this->getTableName() . '.uid = ' . $identifier);
-        $record = $query->execute()->fetch();
+        $record = $this->getConnection()->exec_SELECTgetSingleRow(
+            $this->getFields(),
+            $this->getTableClause(),
+            $this->getWhereClause()
+            . ' AND ' . $this->getTableName() . '.uid = ' . (int) $identifier
+        );
 
         return $record ?: [];
     }
@@ -161,10 +167,19 @@ class TcaTableService implements TcaTableServiceInterface
         }
     }
 
-    protected function getWhereClause() : Where
+    public function getWhereClause() : string
     {
-        $parameters = [];
-        $whereClause = $this->getSystemWhereClause();
+        $whereClause = '1=1'
+            . BackendUtility::BEenableFields($this->tableName)
+            . BackendUtility::deleteClause($this->tableName)
+            . ' AND pages.no_search = 0'
+            ;
+
+        if ($this->tableName !== 'pages') {
+            $whereClause .= BackendUtility::BEenableFields('pages')
+                . BackendUtility::deleteClause('pages')
+                ;
+        }
 
         $userDefinedWhere = $this->configuration->getIfExists(
             'indexing.' . $this->getTableName() . '.additionalWhereClause'
@@ -172,18 +187,20 @@ class TcaTableService implements TcaTableServiceInterface
         if (is_string($userDefinedWhere)) {
             $whereClause .= ' AND ' . $userDefinedWhere;
         }
-
-        if ($this->isBlackListedRootLineConfigured()) {
-            $parameters[':blacklistedRootLine'] = $this->getBlackListedRootLine();
-            $whereClause .= ' AND pages.uid NOT IN (:blacklistedRootLine)'
-                . ' AND pages.pid NOT IN (:blacklistedRootLine)';
+        if ($this->isBlacklistedRootLineConfigured()) {
+            $whereClause .= ' AND pages.uid NOT IN ('
+                . implode(',', $this->getBlacklistedRootLine())
+                . ')'
+                . ' AND pages.pid NOT IN ('
+                . implode(',', $this->getBlacklistedRootLine())
+                . ')';
         }
 
         $this->logger->debug('Generated where clause.', [$this->tableName, $whereClause]);
-        return new Where($whereClause, $parameters);
+        return $whereClause;
     }
 
-    protected function getFields() : array
+    public function getFields() : string
     {
         $fields = array_merge(
             ['uid','pid'],
@@ -203,19 +220,9 @@ class TcaTableService implements TcaTableServiceInterface
         }
 
         $this->logger->debug('Generated fields.', [$this->tableName, $fields]);
-        return $fields;
+        return implode(',', $fields);
     }
 
-    protected function getJoins() : array
-    {
-        if ($this->tableName === 'pages') {
-            return [];
-        }
-
-        return [
-            new Join('pages', 'pages.uid = ' . $this->tableName . '.pid'),
-        ];
-    }
 
     /**
      * Generate SQL for TYPO3 as a system, to make sure only available records
@@ -232,7 +239,7 @@ class TcaTableService implements TcaTableServiceInterface
         if ($this->tableName !== 'pages') {
             $whereClause .= BackendUtility::BEenableFields('pages')
                 . BackendUtility::deleteClause('pages')
-            ;
+                ;
         }
 
         return $whereClause;
@@ -365,25 +372,8 @@ class TcaTableService implements TcaTableServiceInterface
         );
     }
 
-    public function getQuery() : QueryBuilder
+    protected function getConnection() : \TYPO3\CMS\Core\Database\DatabaseConnection
     {
-        $queryBuilder = $this->getDatabaseConnection()->getQueryBuilderForTable($this->getTableName());
-        $where = $this->getWhereClause();
-        $query = $queryBuilder->select(... $this->getFields())
-            ->from($this->getTableClause())
-            ->where($where->getStatement())
-            ->setParameters($where->getParameters());
-
-        foreach ($this->getJoins() as $join) {
-            $query->from($join->getTable());
-            $query->andWhere($join->getCondition());
-        }
-
-        return $query;
-    }
-
-    protected function getDatabaseConnection() : ConnectionPool
-    {
-        return GeneralUtility::makeInstance(ConnectionPool::class);
+        return $GLOBALS['TYPO3_DB'];
     }
 }
