@@ -73,7 +73,6 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
      */
     public function updateWillBeTriggeredForExistingTtContent()
     {
-<<<<<<< HEAD
         $this->subject->expects($this->exactly(2))->method('update')
             ->withConsecutive(
                 [
@@ -98,7 +97,7 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
                         return isset($record['uid']) && $record['uid'] === 1;
                     })
                 ]
-            });
+            );
 
         $tce = GeneralUtility::makeInstance(Typo3DataHandler::class);
         $tce->stripslashes_values = 0;
