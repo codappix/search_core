@@ -15,6 +15,9 @@ call_user_func(
                         ],
                     ],
                     't3lib/class.t3lib_tcemain.php' => [
+                        'clearCachePostProc' => [
+                            $extensionKey => \Codappix\SearchCore\Hook\DataHandler::class . '->clearCachePostProc',
+                        ],
                         'processCmdmapClass' => [
                             $extensionKey => \Codappix\SearchCore\Hook\DataHandler::class,
                         ],
