@@ -41,8 +41,6 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
         }
 
         $this->setUpFrontendRootPage(1, $this->getTypoScriptFilesForFrontendRootPage());
-
-        // \Codappix\SearchCore\Compatibility\ImplementationRegistrationService::registerImplementations();
     }
 
     /**
