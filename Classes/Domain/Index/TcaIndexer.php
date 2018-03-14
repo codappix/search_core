@@ -30,17 +30,17 @@ use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface;
 class TcaIndexer extends AbstractIndexer
 {
     /**
-     * @var TcaIndexer\TcaTableServiceInterface
+     * @var TcaTableServiceInterface
      */
     protected $tcaTableService;
 
     /**
-     * @param TcaIndexer\TcaTableServiceInterface $tcaTableService
+     * @param TcaTableServiceInterface $tcaTableService
      * @param ConnectionInterface $connection
      * @param ConfigurationContainerInterface $configuration
      */
     public function __construct(
-        TcaIndexer\TcaTableServiceInterface $tcaTableService,
+        TcaTableServiceInterface $tcaTableService,
         ConnectionInterface $connection,
         ConfigurationContainerInterface $configuration
     ) {
