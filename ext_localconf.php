@@ -44,15 +44,15 @@ call_user_func(
 
         // API does make use of object manager, therefore use GLOBALS
         $extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extensionKey]);
-        $container = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\Container\Container::class);
         if ($extensionConfiguration === false
             || !isset($extensionConfiguration['disable.']['elasticsearch'])
             || $extensionConfiguration['disable.']['elasticsearch'] !== '1'
         ) {
-            $container->registerImplementation(
-                \Codappix\SearchCore\Connection\ConnectionInterface::class,
-                \Codappix\SearchCore\Connection\Elasticsearch::class
-            );
+            \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\Container\Container::class)
+                ->registerImplementation(
+                    \Codappix\SearchCore\Connection\ConnectionInterface::class,
+                    \Codappix\SearchCore\Connection\Elasticsearch::class
+                );
         }
     },
     $_EXTKEY
