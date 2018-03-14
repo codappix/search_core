@@ -50,11 +50,10 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
         $response = $this->client->request('typo3content/_search?q=*:*');
 
         $this->assertTrue($response->isOk(), 'Elastica did not answer with ok code.');
-        $this->assertSame($response->getData()['hits']['total'], 2, 'Not exactly 2 documents were indexed.');
-        $this->assertArraySubset(
-            ['_source' => ['header' => 'indexed content element']],
-            $response->getData()['hits']['hits'][1],
-            false,
+        $this->assertSame($response->getData()['hits']['total'], 3, 'Not exactly 3 documents were indexed.');
+        $this->assertSame(
+            'indexed content element',
+            $response->getData()['hits']['hits'][2]['_source']['header'],
             'Record was not indexed.'
         );
     }
@@ -113,7 +112,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
         $response = $this->client->request('typo3content/_search?q=*:*');
 
         $this->assertTrue($response->isOk(), 'Elastica did not answer with ok code.');
-        $this->assertSame($response->getData()['hits']['total'], 2, 'Not exactly 2 documents were indexed.');
+        $this->assertSame($response->getData()['hits']['total'], 3, 'Not exactly 3 documents were indexed.');
     }
 
     /**
@@ -136,7 +135,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
         $response = $this->client->request('typo3content/_search?q=*:*');
 
         $this->assertTrue($response->isOk(), 'Elastica did not answer with ok code.');
-        $this->assertSame($response->getData()['hits']['total'], 3, 'Not exactly 3 documents were indexed.');
+        $this->assertSame($response->getData()['hits']['total'], 4, 'Not exactly 4 documents were indexed.');
         $response = $this->client->request('typo3content/_search?q=uid:11');
         $this->assertArraySubset(
             ['_source' => ['header' => 'Also indexable record']],
@@ -168,7 +167,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
 
         $response = $this->client->request('typo3content/_search?q=*:*');
         $this->assertTrue($response->isOk(), 'Elastica did not answer with ok code.');
-        $this->assertSame($response->getData()['hits']['total'], 4, 'Not exactly 4 documents were indexed.');
+        $this->assertSame($response->getData()['hits']['total'], 5, 'Not exactly 5 documents were indexed.');
 
         $response = $this->client->request('typo3content/_search?q=uid:11');
         $this->assertArraySubset(
@@ -218,7 +217,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
             ;
 
         $response = $this->client->request('typo3content/_search?q=*:*');
-        $this->assertSame($response->getData()['hits']['total'], 2, 'Not exactly 2 documents were indexed.');
+        $this->assertSame($response->getData()['hits']['total'], 3, 'Not exactly 3 documents were indexed.');
 
         if ($this->isLegacyVersion()) {
             $this->getDatabaseConnection()
@@ -239,6 +238,6 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
             ;
 
         $response = $this->client->request('typo3content/_search?q=*:*');
-        $this->assertSame($response->getData()['hits']['total'], 1, 'Not exactly 1 document is in index.');
+        $this->assertSame($response->getData()['hits']['total'], 2, 'Not exactly 2 document is in index.');
     }
 }
