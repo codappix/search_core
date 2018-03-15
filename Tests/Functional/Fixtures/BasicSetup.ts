@@ -14,7 +14,7 @@ plugin {
 
                     additionalWhereClause (
                         tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu', 'shortcut', 'search', 'login')
-                        AND tt_content.bodytext != ''
+                        AND (tt_content.bodytext != '' OR tt_content.header != '')
                     )
 
                     mapping {
@@ -27,6 +27,7 @@ plugin {
                 pages {
                     indexer = Codappix\SearchCore\Domain\Index\TcaIndexer\PagesIndexer
                     abstractFields = abstract, description, bodytext
+                    contentFields = header, bodytext
 
                     mapping {
                         CType {
