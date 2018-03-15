@@ -174,7 +174,7 @@ class TcaTableService implements TcaTableServiceInterface
         }
 
         if ($this->isBlackListedRootLineConfigured()) {
-            $parameters[':blacklistedRootLine'] = $this->getBlackListedRootLine();
+            $parameters[':blacklistedRootLine'] = implode(',', $this->getBlackListedRootLine());
             $whereClause .= ' AND pages.uid NOT IN (:blacklistedRootLine)'
                 . ' AND pages.pid NOT IN (:blacklistedRootLine)';
         }

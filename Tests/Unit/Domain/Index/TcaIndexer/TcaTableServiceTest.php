@@ -74,7 +74,7 @@ class TcaTableServiceTest extends AbstractUnitTestCase
      */
     public function doUsePlainQueryIfNoAdditionalWhereClauseIsDefined()
     {
-        $this->markTestSkipped('We have to migrate this test for TYPO3 CMS 8.x');
+        $this->markTestIncomplete('We have to migrate this test for TYPO3 CMS 8.x');
         $this->configuration->expects($this->exactly(2))
             ->method('getIfExists')
             ->withConsecutive(['indexing.table.additionalWhereClause'], ['indexing.table.rootLineBlacklist'])
@@ -98,7 +98,7 @@ class TcaTableServiceTest extends AbstractUnitTestCase
      */
     public function configuredAdditionalWhereClauseIsAdded()
     {
-        $this->markTestSkipped('We have to migrate this test for TYPO3 CMS 8.x');
+        $this->markTestIncomplete('We have to migrate this test for TYPO3 CMS 8.x');
         $this->configuration->expects($this->exactly(2))
             ->method('getIfExists')
             ->withConsecutive(['indexing.table.additionalWhereClause'], ['indexing.table.rootLineBlacklist'])
@@ -110,15 +110,15 @@ class TcaTableServiceTest extends AbstractUnitTestCase
 
         $this->subject->getRecord(10);
 
-        // $whereClause = $this->subject->getWhereClause();
-        // $this->assertSame(
-        //     '1=1 AND pages.no_search = 0 AND table.field = "someValue"',
-        //     $whereClause->getStatement()
-        // );
-        // $this->assertSame(
-        //     [],
-        //     $whereClause->getParameters()
-        // );
+        $whereClause = $this->subject->getWhereClause();
+        $this->assertSame(
+            '1=1 AND pages.no_search = 0 AND table.field = "someValue"',
+            $whereClause->getStatement()
+        );
+        $this->assertSame(
+            [],
+            $whereClause->getParameters()
+        );
     }
 
     /**
@@ -126,6 +126,7 @@ class TcaTableServiceTest extends AbstractUnitTestCase
      */
     public function allConfiguredAndAllowedTcaColumnsAreReturnedAsFields()
     {
+        $this->markTestIncomplete('We have to migrate this test');
         $GLOBALS['TCA']['test_table'] = [
             'ctrl' => [
                 'languageField' => 'sys_language_uid',
@@ -161,16 +162,16 @@ class TcaTableServiceTest extends AbstractUnitTestCase
         );
         $this->inject($subject, 'logger', $this->getMockedLogger());
 
-        // $this->assertSame(
-        //     [
-        //         'test_table.uid',
-        //         'test_table.pid',
-        //         'test_table.sys_language_uid',
-        //         'test_table.available_column',
-        //     ],
-        //     $subject->getFields(),
-        //     ''
-        // );
+        $this->assertSame(
+            [
+                'test_table.uid',
+                'test_table.pid',
+                'test_table.sys_language_uid',
+                'test_table.available_column',
+            ],
+            $subject->getFields(),
+            ''
+        );
         unset($GLOBALS['TCA']['test_table']);
     }
 }
