@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <pages>
+        <uid>2</uid>
+        <pid>1</pid>
+        <title>Content here will be indexed</title>
+    </pages>
+
+    <tt_content>
+        <uid>1</uid>
+        <pid>1</pid>
+        <tstamp>1480686370</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>0</hidden>
+        <sorting>72</sorting>
+        <sys_language_uid>2</sys_language_uid>
+        <CType>header</CType>
+        <header>indexed content element</header>
+        <bodytext>this is the content of header content element that should get indexed</bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
+</dataset>
