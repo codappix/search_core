@@ -68,10 +68,6 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->identifier = $identifier;
     }
 
-    /**
-     * @param ConnectionInterface $connection
-     * @param ConfigurationContainerInterface $configuration
-     */
     public function __construct(ConnectionInterface $connection, ConfigurationContainerInterface $configuration)
     {
         $this->connection = $connection;

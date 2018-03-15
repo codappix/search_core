@@ -20,8 +20,8 @@ namespace Codappix\SearchCore\DataProcessing;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Compatibility\TypoScriptServiceInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
@@ -30,11 +30,11 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 class ContentObjectDataProcessorAdapterProcessor implements ProcessorInterface
 {
     /**
-     * @var TypoScriptService
+     * @var TypoScriptServiceInterface
      */
     protected $typoScriptService;
 
-    public function __construct(TypoScriptService $typoScriptService)
+    public function __construct(TypoScriptServiceInterface $typoScriptService)
     {
         $this->typoScriptService = $typoScriptService;
     }

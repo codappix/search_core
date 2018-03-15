@@ -95,4 +95,9 @@ abstract class AbstractUnitTestCase extends CoreTestCase
             ->willReturn($translationService);
         GeneralUtility::setSingletonInstance(ObjectManager::class, $objectManager);
     }
+
+    protected function isLegacyVersion() : bool
+    {
+        return \TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) < 8000000;
+    }
 }

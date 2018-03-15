@@ -38,6 +38,7 @@ class IndexFactoryTest extends AbstractUnitTestCase
 
         $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)->getMock();
         $this->subject = new IndexFactory($this->configuration);
+        $this->subject->injectLogger($this->getMockedLogger());
     }
 
     /**

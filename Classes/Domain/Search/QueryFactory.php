@@ -136,13 +136,15 @@ class QueryFactory
             ];
         }
 
-        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
-            'query' => [
-                'bool' => [
-                    'should' => $boostQueryParts,
+        if (!empty($boostQueryParts)) {
+            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+                'query' => [
+                    'bool' => [
+                        'should' => $boostQueryParts,
+                    ],
                 ],
-            ],
-        ]);
+            ]);
+        }
     }
 
     protected function addFactorBoost(array &$query)

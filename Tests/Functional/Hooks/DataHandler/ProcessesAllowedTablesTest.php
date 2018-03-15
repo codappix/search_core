@@ -53,7 +53,11 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
         $this->subject->expects($this->exactly(1))
             ->method('update')
             ->with('pages', $this->callback(function (array $record) {
-                return isset($record['uid']) && $record['uid'] === 1;
+                if ($this->isLegacyVersion()) {
+                    return isset($record['uid']) && $record['uid'] === '1';
+                } else {
+                    return isset($record['uid']) && $record['uid'] === 1;
+                }
             }));
 
         $tce = GeneralUtility::makeInstance(Typo3DataHandler::class);
@@ -78,6 +82,13 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
                 [
                     $this->equalTo('tt_content'),
                     $this->callback(function ($record) {
+                        if ($this->isLegacyVersion()) {
+                            return isset($record['uid']) && $record['uid'] === '1'
+                                && isset($record['pid']) && $record['pid'] === '1'
+                                && isset($record['colPos']) && $record['colPos'] === '1'
+                                ;
+                        }
+
                         return isset($record['uid']) && $record['uid'] === 1
                             && isset($record['pid']) && $record['pid'] === 1
                             && isset($record['colPos']) && $record['colPos'] === 1
@@ -87,7 +98,11 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
                 [
                     $this->equalTo('pages'),
                     $this->callback(function ($record) {
-                        return isset($record['uid']) && $record['uid'] === 1;
+                        if ($this->isLegacyVersion()) {
+                            return isset($record['uid']) && $record['uid'] === '1';
+                        } else {
+                            return isset($record['uid']) && $record['uid'] === 1;
+                        }
                     })
                 ]
             );
@@ -114,6 +129,13 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
                 [
                     $this->equalTo('tt_content'),
                     $this->callback(function ($record) {
+                        if ($this->isLegacyVersion()) {
+                            return isset($record['uid']) && $record['uid'] === '2'
+                                && isset($record['pid']) && $record['pid'] === '1'
+                                && isset($record['header']) && $record['header'] === 'a new record'
+                                ;
+                        }
+
                         return isset($record['uid']) && $record['uid'] === 2
                             && isset($record['pid']) && $record['pid'] === 1
                             && isset($record['header']) && $record['header'] === 'a new record'
@@ -123,7 +145,11 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
                 [
                     $this->equalTo('pages'),
                     $this->callback(function ($record) {
-                        return isset($record['uid']) && $record['uid'] === 1;
+                        if ($this->isLegacyVersion()) {
+                            return isset($record['uid']) && $record['uid'] === '1';
+                        } else {
+                            return isset($record['uid']) && $record['uid'] === 1;
+                        }
                     })
                 ]
             );

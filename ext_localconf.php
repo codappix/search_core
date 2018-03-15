@@ -40,6 +40,8 @@ call_user_func(
             ]
         );
 
+        \Codappix\SearchCore\Compatibility\ImplementationRegistrationService::registerImplementations();
+
         // API does make use of object manager, therefore use GLOBALS
         $extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extensionKey]);
         if ($extensionConfiguration === false

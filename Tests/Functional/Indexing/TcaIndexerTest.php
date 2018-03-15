@@ -24,7 +24,7 @@ use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\Elasticsearch;
 use Codappix\SearchCore\Domain\Index\TcaIndexer;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\RelationResolver;
-use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface;
 use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
@@ -47,7 +47,7 @@ class TcaIndexerTest extends AbstractFunctionalTestCase
         $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
         $tableName = 'tt_content';
         $tableService = $objectManager->get(
-            TcaTableService::class,
+            TcaTableServiceInterface::class,
             $tableName,
             $objectManager->get(RelationResolver::class),
             $objectManager->get(ConfigurationContainerInterface::class)
@@ -72,6 +72,42 @@ class TcaIndexerTest extends AbstractFunctionalTestCase
                     }
 
                     return true;
+                })
+            );
+
+        $objectManager->get(TcaIndexer::class, $tableService, $connection)->indexAllDocuments();
+    }
+
+    /**
+     * @test
+     */
+    public function sysLanguageIsKept()
+    {
+        $this->importDataSet('Tests/Functional/Fixtures/Indexing/TcaIndexer/KeepSysLanguageUid.xml');
+        $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
+        $tableName = 'tt_content';
+        $tableService = $objectManager->get(
+            TcaTableServiceInterface::class,
+            $tableName,
+            $objectManager->get(RelationResolver::class),
+            $objectManager->get(ConfigurationContainerInterface::class)
+        );
+
+        $connection = $this->getMockBuilder(Elasticsearch::class)
+            ->setMethods(['addDocuments'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $connection->expects($this->once())
+            ->method('addDocuments')
+            ->with(
+                $this->stringContains('tt_content'),
+                $this->callback(function ($documents) {
+                    if ($this->isLegacyVersion()) {
+                        return isset($documents[0]['sys_language_uid']) && $documents[0]['sys_language_uid'] === '2';
+                    } else {
+                        return isset($documents[0]['sys_language_uid']) && $documents[0]['sys_language_uid'] === 2;
+                    }
                 })
             );
 

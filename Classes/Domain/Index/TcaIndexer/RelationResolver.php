@@ -33,7 +33,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RelationResolver implements Singleton
 {
-    public function resolveRelationsForRecord(TcaTableService $service, array &$record)
+    public function resolveRelationsForRecord(TcaTableServiceInterface $service, array &$record)
     {
         foreach (array_keys($record) as $column) {
             // TODO: Define / configure fields to exclude?!
@@ -97,7 +97,7 @@ class RelationResolver implements Singleton
         return array_map('trim', explode(',', $value));
     }
 
-    protected function getUtilityForMode(): string
+    protected function getUtilityForMode() : string
     {
         if (TYPO3_MODE === 'BE') {
             return BackendUtility::class;

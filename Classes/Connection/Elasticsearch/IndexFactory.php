@@ -38,6 +38,21 @@ class IndexFactory implements Singleton
     protected $configuration;
 
     /**
+     * @var \TYPO3\CMS\Core\Log\Logger
+     */
+    protected $logger;
+
+    /**
+     * Inject log manager to get concrete logger from it.
+     *
+     * @param \TYPO3\CMS\Core\Log\LogManager $logManager
+     */
+    public function injectLogger(\TYPO3\CMS\Core\Log\LogManager $logManager)
+    {
+        $this->logger = $logManager->getLogger(__CLASS__);
+    }
+
+    /**
      * @param ConfigurationContainerInterface $configuration
      */
     public function __construct(ConfigurationContainerInterface $configuration)
@@ -53,7 +68,10 @@ class IndexFactory implements Singleton
         $index = $connection->getClient()->getIndex('typo3content');
 
         if ($index->exists() === false) {
-            $index->create($this->getConfigurationFor($documentType));
+            $config = $this->getConfigurationFor($documentType);
+            $this->logger->debug(sprintf('Create index %s.', $documentType), [$documentType, $config]);
+            $index->create($config);
+            $this->logger->debug(sprintf('Created index %s.', $documentType), [$documentType]);
         }
 
         return $index;
@@ -64,9 +82,13 @@ class IndexFactory implements Singleton
         try {
             $configuration = $this->configuration->get('indexing.' . $documentType . '.index');
 
-            if (isset($configuration['analysis']['analyzer'])) {
-                foreach ($configuration['analysis']['analyzer'] as $key => $analyzer) {
-                    $configuration['analysis']['analyzer'][$key] = $this->prepareAnalyzerConfiguration($analyzer);
+            foreach (['analyzer', 'filter'] as $optionsToExpand) {
+                if (isset($configuration['analysis'][$optionsToExpand])) {
+                    foreach ($configuration['analysis'][$optionsToExpand] as $key => $options) {
+                        $configuration['analysis'][$optionsToExpand][$key] = $this->prepareAnalyzerConfiguration(
+                            $options
+                        );
+                    }
                 }
             }
 
@@ -78,7 +100,7 @@ class IndexFactory implements Singleton
 
     protected function prepareAnalyzerConfiguration(array $analyzer) : array
     {
-        $fieldsToExplode = ['char_filter', 'filter'];
+        $fieldsToExplode = ['char_filter', 'filter', 'word_list'];
 
         foreach ($fieldsToExplode as $fieldToExplode) {
             if (isset($analyzer[$fieldToExplode])) {
