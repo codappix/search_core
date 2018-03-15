@@ -44,6 +44,26 @@ class SearchController extends ActionController
         parent::__construct();
     }
 
+    public function initializeSearchAction()
+    {
+        if (isset($this->settings['searching']['mode']) && $this->settings['searching']['mode'] === 'filter'
+            && $this->request->hasArgument('searchRequest') === false
+        ) {
+            $this->request->setArguments(array_merge(
+                $this->request->getArguments(),
+                [
+                    'searchRequest' => $this->objectManager->get(SearchRequest::class),
+                ]
+            ));
+        }
+
+        if ($this->arguments->hasArgument('searchRequest')) {
+            $this->arguments->getArgument('searchRequest')->getPropertyMappingConfiguration()
+                ->allowAllProperties()
+                ;
+        }
+    }
+
     /**
      * Process a search and deliver original request and result to view.
      *

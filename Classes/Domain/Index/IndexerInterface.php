@@ -33,11 +33,23 @@ interface IndexerInterface
     public function indexAllDocuments();
 
     /**
-     * Fetches a single document from the indexerService and pushes it to the connection.
-     *
-     * @param string $identifier identifier, the indexer needs to identify a single document
+     * Fetches a single document and pushes it to the connection.
      *
      * @return void
      */
-    public function indexDocument($identifier);
+    public function indexDocument(string $identifier);
+
+    /**
+     * Recieves the identifier of the indexer itself.
+     *
+     * @return void
+     */
+    public function setIdentifier(string $identifier);
+
+    /**
+     * Delete the whole index.
+     *
+     * @return void
+     */
+    public function delete();
 }

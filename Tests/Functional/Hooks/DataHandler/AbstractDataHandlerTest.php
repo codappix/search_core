@@ -21,6 +21,7 @@ namespace Codappix\SearchCore\Tests\Functional\Hooks\DataHandler;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Domain\Index\IndexerFactory;
 use Codappix\SearchCore\Domain\Service\DataHandler as DataHandlerService;
 use Codappix\SearchCore\Hook\DataHandler as DataHandlerHook;
 use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
@@ -42,11 +43,13 @@ abstract class AbstractDataHandlerTest extends AbstractFunctionalTestCase
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 
         $this->subject = $this->getMockBuilder(DataHandlerService::class)
-            ->setConstructorArgs([$objectManager->get(ConfigurationContainerInterface::class)])
+            ->setConstructorArgs([
+                $objectManager->get(ConfigurationContainerInterface::class),
+                $objectManager->get(IndexerFactory::class)
+            ])
             ->setMethods(['add', 'update', 'delete'])
             ->getMock();
 
-        // This way TYPO3 will use our mock instead of a new instance.
-        $GLOBALS['T3_VAR']['getUserObj']['&' . DataHandlerHook::class] = new DataHandlerHook($this->subject);
+        GeneralUtility::setSingletonInstance(DataHandlerHook::class, new DataHandlerHook($this->subject));
     }
 }

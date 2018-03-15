@@ -5,22 +5,25 @@ Connections
 
 See Concept of :ref:`concepts_connections` for further background information.
 
-The extension provides the following connections out of the box:
+For information about implementing a new connection, take a look at :ref:`development_connection`.
 
-.. _Elasticsearch:
+The following connections were developed, or are in development, for ``search_core``:
+
+.. _connection_elasticsearch:
 
 Elasticsearch
 -------------
 
-Integrates `elastic Elasticsearch`_ using `elastica`_ into TYPO3.
+Support for `Elasticsearch`_ is provided out of the box by `search_core` at the moment.
 
-Provides basic support like indexing without mappings and full text search at the moment.
+.. _Elasticsearch: https://www.elastic.co/products/elasticsearch
 
-The connection is configurable through the following options:
+.. _connection_algolia:
 
-* :ref:`host`
+Algolia
+-------
 
-* :ref:`port`
+`search_algolia`_ will integrate `Algolia`_ and is currently under development by Martin Hummer.
 
-.. _elastic Elasticsearch: https://www.elastic.co/products/elasticsearch
-.. _elastica: http://elastica.io/
+.. _search_algolia: https://github.com/martinhummer/search_algolia/
+.. _Algolia: https://www.algolia.com/

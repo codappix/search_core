@@ -20,10 +20,27 @@ namespace Codappix\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
-/**
- *
- */
-interface SearchResultInterface extends \Iterator, \Countable, \ArrayAccess
-{
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
+/**
+ * A search result.
+ */
+interface SearchResultInterface extends \Iterator, \Countable, QueryResultInterface
+{
+    /**
+     * @return array<ResultItemInterface>
+     */
+    public function getResults() : array;
+
+    /**
+     * Return all facets, if any.
+     *
+     * @return array<FacetInterface>
+     */
+    public function getFacets() : array;
+
+    /**
+     * Returns the number of results in current result
+     */
+    public function getCurrentCount() : int;
 }

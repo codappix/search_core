@@ -21,8 +21,10 @@ namespace Codappix\SearchCore\Domain\Service;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Domain\Index\IndexerFactory;
+use Codappix\SearchCore\Domain\Index\IndexerInterface;
+use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Handles all data related things like updates, deletes and inserts.
@@ -46,8 +48,7 @@ class DataHandler implements Singleton
     protected $connection;
 
     /**
-     * @var \Codappix\SearchCore\Domain\Index\IndexerFactory
-     * @inject
+     * @var IndexerFactory
      */
     protected $indexerFactory;
 
@@ -73,48 +74,41 @@ class DataHandler implements Singleton
 
     /**
      * @param ConfigurationContainerInterface $configuration
+     * @param IndexerFactory $indexerFactory
      */
-    public function __construct(ConfigurationContainerInterface $configuration)
+    public function __construct(ConfigurationContainerInterface $configuration, IndexerFactory $indexerFactory)
     {
         $this->configuration = $configuration;
+        $this->indexerFactory = $indexerFactory;
     }
 
-    /**
-     * Get all tables that are allowed for indexing.
-     *
-     * @return array<String>
-     */
-    public function getAllowedTablesForIndexing()
-    {
-        return GeneralUtility::trimExplode(',', $this->configuration->get('indexer.tca.allowedTables'));
-    }
-
-    /**
-     * @param string $table
-     * @param array $record
-     */
-    public function add($table, array $record)
-    {
-        $this->logger->debug('Record received for add.', [$table, $record]);
-        $this->indexerFactory->getIndexer($table)->indexDocument($record['uid']);
-    }
-
-    /**
-     * @param string $table
-     */
-    public function update($table, array $record)
+    public function update(string $table, array $record)
     {
         $this->logger->debug('Record received for update.', [$table, $record]);
-        $this->indexerFactory->getIndexer($table)->indexDocument($record['uid']);
+        $this->getIndexer($table)->indexDocument($record['uid']);
     }
 
-    /**
-     * @param string $table
-     * @param int $identifier
-     */
-    public function delete($table, $identifier)
+    public function delete(string $table, string $identifier)
     {
         $this->logger->debug('Record received for delete.', [$table, $identifier]);
         $this->connection->deleteDocument($table, $identifier);
+    }
+
+    /**
+     * @throws NoMatchingIndexerException
+     */
+    protected function getIndexer(string $table) : IndexerInterface
+    {
+        return $this->indexerFactory->getIndexer($table);
+    }
+
+    public function supportsTable(string $table) : bool
+    {
+        try {
+            $this->getIndexer($table);
+            return true;
+        } catch (NoMatchingIndexerException $e) {
+            return false;
+        }
     }
 }

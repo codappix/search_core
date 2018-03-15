@@ -20,7 +20,10 @@ namespace Codappix\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Connection\Elasticsearch\SearchResult;
+use Codappix\SearchCore\Domain\Search\QueryFactory;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 /**
  * Outer wrapper to elasticsearch.
@@ -43,14 +46,29 @@ class Elasticsearch implements Singleton, ConnectionInterface
     protected $typeFactory;
 
     /**
+     * @var Elasticsearch\MappingFactory
+     */
+    protected $mappingFactory;
+
+    /**
      * @var Elasticsearch\DocumentFactory
      */
     protected $documentFactory;
 
     /**
+     * @var QueryFactory
+     */
+    protected $queryFactory;
+
+    /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
+
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
 
     /**
      * Inject log manager to get concrete logger from it.
@@ -63,24 +81,38 @@ class Elasticsearch implements Singleton, ConnectionInterface
     }
 
     /**
+     * @param ObjectManagerInterface $objectManager
+     */
+    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
+
+    /**
      * @param Elasticsearch\Connection $connection
      * @param Elasticsearch\IndexFactory $indexFactory
      * @param Elasticsearch\TypeFactory $typeFactory
+     * @param Elasticsearch\MappingFactory $mappingFactory
      * @param Elasticsearch\DocumentFactory $documentFactory
+     * @param QueryFactory $queryFactory
      */
     public function __construct(
         Elasticsearch\Connection $connection,
         Elasticsearch\IndexFactory $indexFactory,
         Elasticsearch\TypeFactory $typeFactory,
-        Elasticsearch\DocumentFactory $documentFactory
+        Elasticsearch\MappingFactory $mappingFactory,
+        Elasticsearch\DocumentFactory $documentFactory,
+        QueryFactory $queryFactory
     ) {
         $this->connection = $connection;
         $this->indexFactory = $indexFactory;
         $this->typeFactory = $typeFactory;
+        $this->mappingFactory = $mappingFactory;
         $this->documentFactory = $documentFactory;
+        $this->queryFactory = $queryFactory;
     }
 
-    public function addDocument($documentType, array $document)
+    public function addDocument(string $documentType, array $document)
     {
         $this->withType(
             $documentType,
@@ -90,7 +122,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         );
     }
 
-    public function deleteDocument($documentType, $identifier)
+    public function deleteDocument(string $documentType, string $identifier)
     {
         try {
             $this->withType(
@@ -100,11 +132,14 @@ class Elasticsearch implements Singleton, ConnectionInterface
                 }
             );
         } catch (\Elastica\Exception\NotFoundException $exception) {
-            $this->logger->debug('Tried to delete document in index, which does not exist.', [$documentType, $identifier]);
+            $this->logger->debug(
+                'Tried to delete document in index, which does not exist.',
+                [$documentType, $identifier]
+            );
         }
     }
 
-    public function updateDocument($documentType, array $document)
+    public function updateDocument(string $documentType, array $document)
     {
         $this->withType(
             $documentType,
@@ -114,7 +149,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         );
     }
 
-    public function addDocuments($documentType, array $documents)
+    public function addDocuments(string $documentType, array $documents)
     {
         $this->withType(
             $documentType,
@@ -124,42 +159,47 @@ class Elasticsearch implements Singleton, ConnectionInterface
         );
     }
 
+    public function deleteIndex(string $documentType)
+    {
+        $index = $this->connection->getClient()->getIndex('typo3content');
+
+        if (! $index->exists()) {
+            $this->logger->notice('Index did not exist, therefore was not deleted.', [$documentType, 'typo3content']);
+            return;
+        }
+
+        $index->delete();
+    }
+
     /**
      * Execute given callback with Elastica Type based on provided documentType
-     *
-     * @param string $documentType
-     * @param callable $callback
      */
-    protected function withType($documentType, callable $callback)
+    protected function withType(string $documentType, callable $callback)
     {
         $type = $this->getType($documentType);
+        // TODO: Check whether it's to heavy to send it so often e.g. for every single document.
+        // Perhaps add command controller to submit mapping?!
+        // Also it's not possible to change mapping without deleting index first.
+        // Mattes told about a solution.
+        // So command looks like the best way so far, except we manage mattes solution.
+        // Still then this should be done once. So perhaps singleton which tracks state and does only once?
+        $this->mappingFactory->getMapping($type)->send();
         $callback($type);
         $type->getIndex()->refresh();
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     *
-     * @return \Elastica\ResultSet
-     */
-    public function search(SearchRequestInterface $searchRequest)
+    public function search(SearchRequestInterface $searchRequest) : SearchResultInterface
     {
         $this->logger->debug('Search for', [$searchRequest->getSearchTerm()]);
 
         $search = new \Elastica\Search($this->connection->getClient());
         $search->addIndex('typo3content');
+        $search->setQuery($this->queryFactory->create($searchRequest));
 
-        // TODO: Return wrapped result to implement our interface.
-        // Also update php doc to reflect the change.
-        return $search->search('"' . $searchRequest->getSearchTerm() . '"');
+        return $this->objectManager->get(SearchResult::class, $searchRequest, $search->search());
     }
 
-    /**
-     * @param string $documentType
-     *
-     * @return \Elastica\Type
-     */
-    protected function getType($documentType)
+    protected function getType(string $documentType) : \Elastica\Type
     {
         return $this->typeFactory->getType(
             $this->indexFactory->getIndex(

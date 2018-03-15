@@ -20,9 +20,10 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
-use Elastica\Exception\ResponseException;
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Factory to get indexes.
@@ -32,28 +33,81 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 class IndexFactory implements Singleton
 {
     /**
-     * Get an index bases on TYPO3 table name.
-     *
-     * @param Connection $connection
-     * @param string $documentType
-     *
-     * @return \Elastica\Index
+     * @var ConfigurationContainerInterface
      */
-    public function getIndex(Connection $connection, $documentType)
+    protected $configuration;
+
+    /**
+     * @var \TYPO3\CMS\Core\Log\Logger
+     */
+    protected $logger;
+
+    /**
+     * Inject log manager to get concrete logger from it.
+     *
+     * @param \TYPO3\CMS\Core\Log\LogManager $logManager
+     */
+    public function injectLogger(\TYPO3\CMS\Core\Log\LogManager $logManager)
     {
-        // TODO: Fetch index name from configuration, based on $documentType.
+        $this->logger = $logManager->getLogger(__CLASS__);
+    }
+
+    /**
+     * @param ConfigurationContainerInterface $configuration
+     */
+    public function __construct(ConfigurationContainerInterface $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
+     * Get an index bases on TYPO3 table name.
+     */
+    public function getIndex(Connection $connection, string $documentType) : \Elastica\Index
+    {
         $index = $connection->getClient()->getIndex('typo3content');
 
-        try {
-            // TODO: Provide configuration?!
-            // http://elastica.io/getting-started/storing-and-indexing-documents.html#section-analysis
-            $index->create();
-        } catch (ResponseException $exception) {
-            if (stripos($exception->getMessage(), 'already exists') === false) {
-                throw $exception;
-            }
+        if ($index->exists() === false) {
+            $config = $this->getConfigurationFor($documentType);
+            $this->logger->debug(sprintf('Create index %s.', $documentType), [$documentType, $config]);
+            $index->create($config);
+            $this->logger->debug(sprintf('Created index %s.', $documentType), [$documentType]);
         }
 
         return $index;
+    }
+
+    protected function getConfigurationFor(string $documentType) : array
+    {
+        try {
+            $configuration = $this->configuration->get('indexing.' . $documentType . '.index');
+
+            foreach (['analyzer', 'filter'] as $optionsToExpand) {
+                if (isset($configuration['analysis'][$optionsToExpand])) {
+                    foreach ($configuration['analysis'][$optionsToExpand] as $key => $options) {
+                        $configuration['analysis'][$optionsToExpand][$key] = $this->prepareAnalyzerConfiguration(
+                            $options
+                        );
+                    }
+                }
+            }
+
+            return $configuration;
+        } catch (InvalidArgumentException $e) {
+            return [];
+        }
+    }
+
+    protected function prepareAnalyzerConfiguration(array $analyzer) : array
+    {
+        $fieldsToExplode = ['char_filter', 'filter', 'word_list'];
+
+        foreach ($fieldsToExplode as $fieldToExplode) {
+            if (isset($analyzer[$fieldToExplode])) {
+                $analyzer[$fieldToExplode] = GeneralUtility::trimExplode(',', $analyzer[$fieldToExplode], true);
+            }
+        }
+
+        return $analyzer;
     }
 }

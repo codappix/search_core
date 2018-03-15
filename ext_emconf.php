@@ -4,10 +4,11 @@ $EM_CONF[$_EXTKEY] = [
     'title' => 'Search Core',
     'description' => 'Search core for implementing various search types.',
     'category' => 'be',
+    'clearCacheOnLoad' => 1,
     'constraints' => [
         'depends' => [
-            'typo3' => '7.6.0-7.6.99',
-            'php' => '5.6.0-7.99.99'
+            'typo3' => '7.6.0-8.7.99',
+            'php' => '7.0.0-7.2.99'
         ],
         'conflicts' => [],
     ],
@@ -16,9 +17,8 @@ $EM_CONF[$_EXTKEY] = [
             'Codappix\\SearchCore\\' => 'Classes',
         ],
     ],
-    'state' => 'alpha',
-    'clearCacheOnLoad' => 1,
+    'state' => 'beta',
+    'version' => '0.0.1',
     'author' => 'Daniel Siepmann',
     'author_email' => 'coding@daniel-siepmann.de',
-    'version' => '1.0.0',
 ];

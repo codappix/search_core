@@ -47,8 +47,18 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
      */
     public function deletionWillBeTriggeredForTtContent()
     {
-        $this->subject->expects($this->exactly(1))->method('delete')
+        $this->subject->expects($this->exactly(1))
+            ->method('delete')
             ->with($this->equalTo('tt_content'), $this->equalTo('1'));
+        $this->subject->expects($this->exactly(1))
+            ->method('update')
+            ->with('pages', $this->callback(function (array $record) {
+                if ($this->isLegacyVersion()) {
+                    return isset($record['uid']) && $record['uid'] === '1';
+                } else {
+                    return isset($record['uid']) && $record['uid'] === 1;
+                }
+            }));
 
         $tce = GeneralUtility::makeInstance(Typo3DataHandler::class);
         $tce->stripslashes_values = 0;
@@ -65,17 +75,36 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
     /**
      * @test
      */
-    public function updateWillBeTriggeredForTtContent()
+    public function updateWillBeTriggeredForExistingTtContent()
     {
-        $this->subject->expects($this->exactly(1))->method('update')
-            ->with(
-                $this->equalTo('tt_content'),
-                $this->callback(function ($record) {
-                    return isset($record['uid']) && $record['uid'] === '1'
-                        && isset($record['pid']) && $record['pid'] === '1'
-                        && isset($record['colPos']) && $record['colPos'] === '1'
-                        ;
-                })
+        $this->subject->expects($this->exactly(2))->method('update')
+            ->withConsecutive(
+                [
+                    $this->equalTo('tt_content'),
+                    $this->callback(function ($record) {
+                        if ($this->isLegacyVersion()) {
+                            return isset($record['uid']) && $record['uid'] === '1'
+                                && isset($record['pid']) && $record['pid'] === '1'
+                                && isset($record['colPos']) && $record['colPos'] === '1'
+                                ;
+                        }
+
+                        return isset($record['uid']) && $record['uid'] === 1
+                            && isset($record['pid']) && $record['pid'] === 1
+                            && isset($record['colPos']) && $record['colPos'] === 1
+                            ;
+                    })
+                ],
+                [
+                    $this->equalTo('pages'),
+                    $this->callback(function ($record) {
+                        if ($this->isLegacyVersion()) {
+                            return isset($record['uid']) && $record['uid'] === '1';
+                        } else {
+                            return isset($record['uid']) && $record['uid'] === 1;
+                        }
+                    })
+                ]
             );
 
         $tce = GeneralUtility::makeInstance(Typo3DataHandler::class);
@@ -93,17 +122,36 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
     /**
      * @test
      */
-    public function addWillBeTriggeredForTtContent()
+    public function updateWillBeTriggeredForNewTtContent()
     {
-        $this->subject->expects($this->exactly(1))->method('add')
-            ->with(
-                $this->equalTo('tt_content'),
-                $this->callback(function ($record) {
-                    return isset($record['uid']) && $record['uid'] === 2
-                        && isset($record['pid']) && $record['pid'] === 1
-                        && isset($record['header']) && $record['header'] === 'a new record'
-                        ;
-                })
+        $this->subject->expects($this->exactly(2))->method('update')
+            ->withConsecutive(
+                [
+                    $this->equalTo('tt_content'),
+                    $this->callback(function ($record) {
+                        if ($this->isLegacyVersion()) {
+                            return isset($record['uid']) && $record['uid'] === '2'
+                                && isset($record['pid']) && $record['pid'] === '1'
+                                && isset($record['header']) && $record['header'] === 'a new record'
+                                ;
+                        }
+
+                        return isset($record['uid']) && $record['uid'] === 2
+                            && isset($record['pid']) && $record['pid'] === 1
+                            && isset($record['header']) && $record['header'] === 'a new record'
+                            ;
+                    })
+                ],
+                [
+                    $this->equalTo('pages'),
+                    $this->callback(function ($record) {
+                        if ($this->isLegacyVersion()) {
+                            return isset($record['uid']) && $record['uid'] === '1';
+                        } else {
+                            return isset($record['uid']) && $record['uid'] === 1;
+                        }
+                    })
+                ]
             );
 
         $tce = GeneralUtility::makeInstance(Typo3DataHandler::class);

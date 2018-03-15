@@ -20,12 +20,145 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Connection\FacetInterface;
+use Codappix\SearchCore\Connection\ResultItemInterface;
+use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
+use Codappix\SearchCore\Domain\Model\QueryResultInterfaceStub;
+use Codappix\SearchCore\Domain\Model\ResultItem;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
-/**
- *
- */
-class SearchResult extends \Elastica\SearchResult implements SearchResultInterface
+class SearchResult implements SearchResultInterface
 {
+    use QueryResultInterfaceStub;
 
+    /**
+     * @var SearchRequestInterface
+     */
+    protected $searchRequest;
+
+    /**
+     * @var \Elastica\ResultSet
+     */
+    protected $result;
+
+    /**
+     * @var array<FacetInterface>
+     */
+    protected $facets = [];
+
+    /**
+     * @var array<ResultItemInterface>
+     */
+    protected $results = [];
+
+    /**
+     * For Iterator interface.
+     *
+     * @var int
+     */
+    protected $position = 0;
+
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    public function __construct(
+        SearchRequestInterface $searchRequest,
+        \Elastica\ResultSet $result,
+        ObjectManagerInterface $objectManager
+    ) {
+        $this->searchRequest = $searchRequest;
+        $this->result = $result;
+        $this->objectManager = $objectManager;
+    }
+
+    /**
+     * @return array<ResultItemInterface>
+     */
+    public function getResults() : array
+    {
+        $this->initResults();
+
+        return $this->results;
+    }
+
+    /**
+     * Return all facets, if any.
+     *
+     * @return array<FacetInterface>
+     */
+    public function getFacets() : array
+    {
+        $this->initFacets();
+
+        return $this->facets;
+    }
+
+    public function getCurrentCount() : int
+    {
+        return $this->result->count();
+    }
+
+    protected function initResults()
+    {
+        if ($this->results !== []) {
+            return;
+        }
+
+        foreach ($this->result->getResults() as $result) {
+            $this->results[] = new ResultItem($result->getData());
+        }
+    }
+
+    protected function initFacets()
+    {
+        if ($this->facets !== [] || !$this->result->hasAggregations()) {
+            return;
+        }
+
+        foreach ($this->result->getAggregations() as $aggregationName => $aggregation) {
+            $this->facets[$aggregationName] = $this->objectManager->get(Facet::class, $aggregationName, $aggregation);
+        }
+    }
+
+    // Countable - Interface
+    public function count()
+    {
+        return $this->result->getTotalHits();
+    }
+
+    // Iterator - Interface
+    public function current()
+    {
+        return $this->getResults()[$this->position];
+    }
+
+    public function next()
+    {
+        ++$this->position;
+
+        return $this->current();
+    }
+
+    public function key()
+    {
+        return $this->position;
+    }
+
+    public function valid()
+    {
+        return isset($this->getResults()[$this->position]);
+    }
+
+    public function rewind()
+    {
+        $this->position = 0;
+    }
+
+    public function getQuery()
+    {
+        return $this->searchRequest;
+    }
 }

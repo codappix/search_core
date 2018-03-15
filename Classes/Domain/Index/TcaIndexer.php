@@ -20,107 +20,41 @@ namespace Codappix\SearchCore\Domain\Index;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\ConnectionInterface;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface;
 
 /**
  * Will index the given table using configuration from TCA.
  */
-class TcaIndexer implements IndexerInterface
+class TcaIndexer extends AbstractIndexer
 {
     /**
-     * @var ConnectionInterface
-     */
-    protected $connection;
-
-    /**
-     * @var TcaIndexer\TcaTableService
+     * @var TcaTableServiceInterface
      */
     protected $tcaTableService;
 
     /**
-     * @var \TYPO3\CMS\Core\Log\Logger
-     */
-    protected $logger;
-
-    /**
-     * Inject log manager to get concrete logger from it.
-     *
-     * @param \TYPO3\CMS\Core\Log\LogManager $logManager
-     */
-    public function injectLogger(\TYPO3\CMS\Core\Log\LogManager $logManager)
-    {
-        $this->logger = $logManager->getLogger(__CLASS__);
-    }
-
-    /**
-     * @param TcaIndexer\TcaTableService $tcaTableService
+     * @param TcaTableServiceInterface $tcaTableService
      * @param ConnectionInterface $connection
+     * @param ConfigurationContainerInterface $configuration
      */
     public function __construct(
-        TcaIndexer\TcaTableService $tcaTableService,
-        ConnectionInterface $connection
+        TcaTableServiceInterface $tcaTableService,
+        ConnectionInterface $connection,
+        ConfigurationContainerInterface $configuration
     ) {
+        parent::__construct($connection, $configuration);
         $this->tcaTableService = $tcaTableService;
-        $this->connection = $connection;
-    }
-
-    public function indexAllDocuments()
-    {
-        $this->logger->info('Start indexing');
-        foreach ($this->getRecordGenerator() as $records) {
-            $this->logger->debug('Index records.', [$records]);
-            if ($records === null) {
-                break;
-            }
-
-            $this->connection->addDocuments($this->tcaTableService->getTableName(), $records);
-        }
-        $this->logger->info('Finish indexing');
-    }
-
-    public function indexDocument($identifier)
-    {
-        $this->logger->info('Start indexing single record.', [$identifier]);
-        try {
-            $this->connection->addDocument($this->tcaTableService->getTableName(), $this->getRecord($identifier));
-        } catch (NoRecordFoundException $e) {
-            $this->logger->info('Could not index document.', [$e->getMessage()]);
-        }
-        $this->logger->info('Finish indexing');
     }
 
     /**
-     * @return \Generator
-     */
-    protected function getRecordGenerator()
-    {
-        $offset = 0;
-        // TODO: Make configurable.
-        $limit = 50;
-
-        while (($records = $this->getRecords($offset, $limit)) !== []) {
-            yield $records;
-            $offset += $limit;
-        }
-    }
-
-    /**
-     * @param int $offset
-     * @param int $limit
      * @return array|null
      */
-    protected function getRecords($offset, $limit)
+    protected function getRecords(int $offset, int $limit)
     {
-        $records = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-            $this->tcaTableService->getFields(),
-            $this->tcaTableService->getTableClause(),
-            $this->tcaTableService->getWhereClause(),
-            '',
-            '',
-            (int) $offset . ',' . (int) $limit
-        );
-        if ($records === null) {
+        $records = $this->tcaTableService->getRecords($offset, $limit);
+        if ($records === []) {
             return null;
         }
 
@@ -133,20 +67,13 @@ class TcaIndexer implements IndexerInterface
     }
 
     /**
-     * @param int $identifier
-     * @return array
      * @throws NoRecordFoundException If record could not be found.
      */
-    protected function getRecord($identifier)
+    protected function getRecord(int $identifier) : array
     {
-        $record = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
-            $this->tcaTableService->getFields(),
-            $this->tcaTableService->getTableClause(),
-            $this->tcaTableService->getWhereClause()
-                . ' AND ' . $this->tcaTableService->getTableName() . '.uid = ' . (int) $identifier
-        );
+        $record = $this->tcaTableService->getRecord($identifier);
 
-        if ($record === false || $record === null) {
+        if ($record === []) {
             throw new NoRecordFoundException(
                 'Record could not be fetched from database: "' . $identifier . '". Perhaps record is not active.',
                 1484225364
@@ -155,5 +82,10 @@ class TcaIndexer implements IndexerInterface
         $this->tcaTableService->prepareRecord($record);
 
         return $record;
+    }
+
+    protected function getDocumentName() : string
+    {
+        return $this->tcaTableService->getTableName();
     }
 }

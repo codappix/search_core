@@ -20,6 +20,10 @@ namespace Codappix\SearchCore\Domain\Index;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\Configuration\InvalidArgumentException;
+use Codappix\SearchCore\Domain\Index\IndexerInterface;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
@@ -34,27 +38,67 @@ class IndexerFactory implements Singleton
     protected $objectManager;
 
     /**
-     * @param ObjectManagerInterface $objectManager
+     * @var ConfigurationContainerInterface
      */
-    public function __construct(ObjectManagerInterface $objectManager)
-    {
+    protected $configuration;
+
+    /**
+     * @param ObjectManagerInterface $objectManager
+     * @param ConfigurationContainerInterface $configuration
+     */
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        ConfigurationContainerInterface $configuration
+    ) {
         $this->objectManager = $objectManager;
+        $this->configuration = $configuration;
     }
 
     /**
-     * @param string $tableName
-     *
-     * @return IndexerInterface
+     * @throws NoMatchingIndexer
      */
-    public function getIndexer($tableName)
+    public function getIndexer(string $identifier) : IndexerInterface
     {
-        // This is the place to use configuration to return different indexer.
-        return $this->objectManager->get(
-            TcaIndexer::Class,
-            $this->objectManager->get(
-                TcaIndexer\TcaTableService::class,
-                $tableName
-            )
-        );
+        try {
+            return $this->buildIndexer($this->configuration->get('indexing.' . $identifier . '.indexer'), $identifier);
+        } catch (NoMatchingIndexerException $e) {
+            // Nothing to do, we throw exception below
+        } catch (InvalidArgumentException $e) {
+            // Nothing to do, we throw exception below
+        }
+
+        throw new NoMatchingIndexerException('Could not find an indexer for ' . $identifier, 1497341442);
+    }
+
+    /**
+     * @throws NoMatchingIndexer
+     */
+    protected function buildIndexer(string $indexerClass, string $identifier) : IndexerInterface
+    {
+        $indexer = null;
+        if (is_subclass_of($indexerClass, TcaIndexer\PagesIndexer::class)
+            || $indexerClass === TcaIndexer\PagesIndexer::class
+        ) {
+            $indexer = $this->objectManager->get(
+                $indexerClass,
+                $this->objectManager->get(TcaTableServiceInterface::class, $identifier),
+                $this->objectManager->get(TcaTableServiceInterface::class, 'tt_content')
+            );
+        } elseif (is_subclass_of($indexerClass, TcaIndexer::class) || $indexerClass === TcaIndexer::class) {
+            $indexer = $this->objectManager->get(
+                $indexerClass,
+                $this->objectManager->get(TcaTableServiceInterface::class, $identifier)
+            );
+        } elseif (class_exists($indexerClass) && in_array(IndexerInterface::class, class_implements($indexerClass))) {
+            $indexer = $this->objectManager->get($indexerClass);
+        }
+
+        if ($indexer === null) {
+            throw new NoMatchingIndexerException('Could not find indexer: ' . $indexerClass, 1497341442);
+        }
+
+        $indexer->setIdentifier($identifier);
+
+        return $indexer;
     }
 }
