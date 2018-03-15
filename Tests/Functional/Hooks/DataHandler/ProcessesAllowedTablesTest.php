@@ -53,7 +53,11 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
         $this->subject->expects($this->exactly(1))
             ->method('update')
             ->with('pages', $this->callback(function (array $record) {
-                return isset($record['uid']) && $record['uid'] === 1;
+                if ($this->isLegacyVersion()) {
+                    return isset($record['uid']) && $record['uid'] === '1';
+                } else {
+                    return isset($record['uid']) && $record['uid'] === 1;
+                }
             }));
 
         $tce = GeneralUtility::makeInstance(Typo3DataHandler::class);
@@ -94,7 +98,11 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
                 [
                     $this->equalTo('pages'),
                     $this->callback(function ($record) {
-                        return isset($record['uid']) && $record['uid'] === 1;
+                        if ($this->isLegacyVersion()) {
+                            return isset($record['uid']) && $record['uid'] === '1';
+                        } else {
+                            return isset($record['uid']) && $record['uid'] === 1;
+                        }
                     })
                 ]
             );
@@ -137,7 +145,11 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
                 [
                     $this->equalTo('pages'),
                     $this->callback(function ($record) {
-                        return isset($record['uid']) && $record['uid'] === 1;
+                        if ($this->isLegacyVersion()) {
+                            return isset($record['uid']) && $record['uid'] === '1';
+                        } else {
+                            return isset($record['uid']) && $record['uid'] === 1;
+                        }
                     })
                 ]
             );
