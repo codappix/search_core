@@ -257,7 +257,6 @@ class TcaTableService76 implements TcaTableServiceInterface
             $this->tca['ctrl']['cruser_id'],
             $this->tca['ctrl']['fe_cruser_id'],
             $this->tca['ctrl']['fe_crgroup_id'],
-            $this->tca['ctrl']['languageField'],
             $this->tca['ctrl']['origUid'],
         ];
 

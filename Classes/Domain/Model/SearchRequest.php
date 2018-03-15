@@ -87,6 +87,9 @@ class SearchRequest implements SearchRequestInterface
         return $this->query;
     }
 
+    /**
+     * @param array $filter
+     */
     public function setFilter(array $filter)
     {
         $filter = \TYPO3\CMS\Core\Utility\ArrayUtility::removeArrayEntryByValue($filter, '');

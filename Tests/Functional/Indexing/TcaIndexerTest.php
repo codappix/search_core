@@ -77,4 +77,40 @@ class TcaIndexerTest extends AbstractFunctionalTestCase
 
         $objectManager->get(TcaIndexer::class, $tableService, $connection)->indexAllDocuments();
     }
+
+    /**
+     * @test
+     */
+    public function sysLanguageIsKept()
+    {
+        $this->importDataSet('Tests/Functional/Fixtures/Indexing/TcaIndexer/KeepSysLanguageUid.xml');
+        $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
+        $tableName = 'tt_content';
+        $tableService = $objectManager->get(
+            TcaTableServiceInterface::class,
+            $tableName,
+            $objectManager->get(RelationResolver::class),
+            $objectManager->get(ConfigurationContainerInterface::class)
+        );
+
+        $connection = $this->getMockBuilder(Elasticsearch::class)
+            ->setMethods(['addDocuments'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $connection->expects($this->once())
+            ->method('addDocuments')
+            ->with(
+                $this->stringContains('tt_content'),
+                $this->callback(function ($documents) {
+                    if ($this->isLegacyVersion()) {
+                        return isset($documents[0]['sys_language_uid']) && $documents[0]['sys_language_uid'] === '2';
+                    } else {
+                        return isset($documents[0]['sys_language_uid']) && $documents[0]['sys_language_uid'] === 2;
+                    }
+                })
+            );
+
+        $objectManager->get(TcaIndexer::class, $tableService, $connection)->indexAllDocuments();
+    }
 }
