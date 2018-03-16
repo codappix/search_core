@@ -79,8 +79,14 @@ class PagesIndexer extends TcaIndexer
     protected function fetchContentForPage(int $uid) : array
     {
         if ($this->contentTableService instanceof TcaTableService) {
-            $contentElements = $this->contentTableService->getQuery()
-                ->execute()->fetchAll();
+            $queryBuilder = $this->contentTableService->getQuery();
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->eq(
+                    $this->contentTableService->getTableName() . '.pid',
+                    $queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT)
+                )
+            );
+            $contentElements = $queryBuilder->execute()->fetchAll();
         } else {
             $contentElements = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
                 $this->contentTableService->getFields(),

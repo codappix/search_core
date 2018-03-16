@@ -99,4 +99,31 @@
         <colPos>0</colPos>
         <filelink_sorting>0</filelink_sorting>
     </tt_content>
+
+    <tt_content>
+        <uid>100</uid>
+        <pid>2</pid>
+        <tstamp>1480686370</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>0</hidden>
+        <sorting>72</sorting>
+        <CType>header</CType>
+        <header>Indexed on page 2</header>
+        <bodytext>This element is on a different page</bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
+
+    <pages>
+        <uid>2</uid>
+        <pid>1</pid>
+        <title>Second page with content</title>
+        <description>Used to check whether content is indexed only for parent page.</description>
+    </pages>
 </dataset>
