@@ -113,7 +113,7 @@ class DataHandlerToProcessorTest extends AbstractUnitTestCase
     /**
      * @test
      */
-    public function indexingIsNotCalledForProcesIfDataIsInvalid()
+    public function indexingIsNotCalledForProcessIfDataIsInvalid()
     {
         $coreDataHandlerMock = $this->getMockBuilder(CoreDataHandler::class)->getMock();
         $coreDataHandlerMock->datamap = [
