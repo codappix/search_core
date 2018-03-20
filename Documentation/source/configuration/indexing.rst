@@ -86,6 +86,23 @@ Default::
 
     abstract, description, bodytext
 
+.. _contentFields:
+
+contentFields
+-------------
+
+Used by: :ref:`PagesIndexer`.
+
+Define which fields should be used to provide the auto generated field "content".
+
+Example::
+
+    plugin.tx_searchcore.settings.indexing.pages.contentFields := addToList(table_caption)
+
+Default::
+
+    header, bodytext
+
 .. _mapping:
 
 mapping
