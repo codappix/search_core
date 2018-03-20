@@ -72,7 +72,7 @@ class DataHandler implements Singleton
     /**
      * Called by CoreDataHandler on deletion of records.
      */
-    public function processCmdmap_deleteAction(string $table, int $uid) : bool
+    public function processCmdmap_deleteAction(string $table, string $uid) : bool
     {
         if (! $this->shouldProcessHookForTable($table)) {
             $this->logger->debug('Delete not processed.', [$table, $uid]);
@@ -93,6 +93,10 @@ class DataHandler implements Singleton
                 $uid = $fieldData['uid'];
             } elseif (isset($dataHandler->substNEWwithIDs[$uid])) {
                 $uid = $dataHandler->substNEWwithIDs[$uid];
+            }
+
+            if (!is_numeric($uid) || $uid <= 0) {
+                continue;
             }
 
             $this->processRecord($table, $uid);
