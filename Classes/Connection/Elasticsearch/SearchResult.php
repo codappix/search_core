@@ -108,7 +108,7 @@ class SearchResult implements SearchResultInterface
         }
 
         foreach ($this->result->getResults() as $result) {
-            $this->results[] = new ResultItem($result->getData());
+            $this->results[] = new ResultItem($result->getData(), $result->getParam('_type'));
         }
     }
 

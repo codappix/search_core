@@ -146,10 +146,13 @@ class SearchService
             $newSearchResultItems = [];
             foreach ($this->configuration->get('searching.dataProcessing') as $configuration) {
                 foreach ($searchResult as $resultItem) {
-                    $newSearchResultItems[] = $this->dataProcessorService->executeDataProcessor(
-                        $configuration,
-                        $resultItem->getPlainData()
-                    );
+                    $newSearchResultItems[] = [
+                        'data' => $this->dataProcessorService->executeDataProcessor(
+                            $configuration,
+                            $resultItem->getPlainData()
+                        ),
+                        'type' => $resultItem->getType(),
+                    ];
                 }
             }
 
