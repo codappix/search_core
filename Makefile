@@ -41,16 +41,11 @@ unitTests:
 		.Build/bin/phpunit --colors --debug -v \
 		-c Tests/Unit/UnitTests.xml
 
-uploadCodeCoverage: uploadCodeCoverageToScrutinizer uploadCodeCoverageToCodacy
+uploadCodeCoverage: uploadCodeCoverageToScrutinizer
 
 uploadCodeCoverageToScrutinizer:
 	wget https://scrutinizer-ci.com/ocular.phar && \
 	php ocular.phar code-coverage:upload --format=php-clover .Build/report/functional/clover/coverage
-
-uploadCodeCoverageToCodacy:
-	composer require -vv --dev codacy/coverage && \
-	git checkout composer.json && \
-	php .Build/bin/codacycoverage clover .Build/report/functional/clover/coverage
 
 clean:
 	rm -rf .Build composer.lock
