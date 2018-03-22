@@ -36,7 +36,7 @@ class ResultItemTest extends AbstractUnitTestCase
         ];
         $expectedData = $originalData;
 
-        $subject = new ResultItem($originalData);
+        $subject = new ResultItem($originalData, 'testType');
         $this->assertSame(
             $expectedData,
             $subject->getPlainData(),
@@ -55,7 +55,7 @@ class ResultItemTest extends AbstractUnitTestCase
         ];
         $expectedData = $originalData;
 
-        $subject = new ResultItem($originalData);
+        $subject = new ResultItem($originalData, 'testType');
         $this->assertSame(
             $originalData['title'],
             $subject['title'],
@@ -73,7 +73,7 @@ class ResultItemTest extends AbstractUnitTestCase
             'title' => 'Some title',
         ];
 
-        $subject = new ResultItem($originalData);
+        $subject = new ResultItem($originalData, 'testType');
         $this->assertTrue(isset($subject['title']), 'Could not determine that title exists.');
         $this->assertFalse(isset($subject['title2']), 'Could not determine that title2 does not exists.');
     }
@@ -88,7 +88,7 @@ class ResultItemTest extends AbstractUnitTestCase
             'title' => 'Some title',
         ];
 
-        $subject = new ResultItem($originalData);
+        $subject = new ResultItem($originalData, 'testType');
         $this->expectException(\BadMethodCallException::class);
         $subject['title'] = 'New Title';
     }
@@ -103,8 +103,57 @@ class ResultItemTest extends AbstractUnitTestCase
             'title' => 'Some title',
         ];
 
-        $subject = new ResultItem($originalData);
+        $subject = new ResultItem($originalData, 'testType');
         $this->expectException(\BadMethodCallException::class);
         unset($subject['title']);
+    }
+
+    /**
+     * @test
+     */
+    public function typeCanBeRetrievedAfterConstruction()
+    {
+        $originalData = [
+            'uid' => 10,
+            'title' => 'Some title',
+        ];
+        $expectedData = $originalData;
+
+        $subject = new ResultItem($originalData, 'testType');
+        $this->assertSame(
+            'testType',
+            $subject->getType(),
+            'Could not retrieve type.'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function typeCanNotBeChanged()
+    {
+        $originalData = [
+            'uid' => 10,
+            'title' => 'Some title',
+        ];
+
+        $subject = new ResultItem($originalData, 'testType');
+        $this->expectException(\BadMethodCallException::class);
+        $subject['type'] = 'New Title';
+    }
+
+    /**
+     * @test
+     */
+    public function typeCanNotBeRemoved()
+    {
+        $originalData = [
+            'uid' => 10,
+            'title' => 'Some title',
+        ];
+
+        $subject = new ResultItem($originalData, 'testType');
+        $this->expectException(\BadMethodCallException::class);
+        unset($subject['type']);
     }
 }

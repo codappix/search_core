@@ -80,6 +80,18 @@ class CopyToProcessorTest extends AbstractUnitTestCase
                     'new_field' => 'Some content like lorem' . PHP_EOL . 'Tag 1' . PHP_EOL . 'Tag 2',
                 ],
             ],
+            'Copy single field to new field' => [
+                'record' => [
+                    'field 1' => 'Some content like lorem',
+                ],
+                'configuration' => [
+                    'to' => 'new_field',
+                ],
+                'expectedData' => [
+                    'field 1' => 'Some content like lorem',
+                    'new_field' => 'Some content like lorem',
+                ],
+            ],
         ];
     }
 }

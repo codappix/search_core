@@ -71,16 +71,25 @@ class SearchResultTest extends AbstractUnitTestCase
         $originalSearchResultMock = $this->getMockBuilder(SearchResultInterface::class)->getMock();
         $data = [
             [
-                'uid' => 10,
-                'title' => 'Some Title',
+                'data' => [
+                    'uid' => 10,
+                    'title' => 'Some Title',
+                ],
+                'type' => 'testType1',
             ],
             [
-                'uid' => 11,
-                'title' => 'Some Title 2',
+                'data' => [
+                    'uid' => 11,
+                    'title' => 'Some Title 2',
+                ],
+                'type' => 'testType2',
             ],
             [
-                'uid' => 12,
-                'title' => 'Some Title 3',
+                'data' => [
+                    'uid' => 12,
+                    'title' => 'Some Title 3',
+                ],
+                'type' => 'testType2',
             ],
         ];
 
@@ -89,9 +98,12 @@ class SearchResultTest extends AbstractUnitTestCase
 
         $this->assertCount(3, $resultItems);
 
-        $this->assertSame($data[0]['uid'], $resultItems[0]['uid']);
-        $this->assertSame($data[1]['uid'], $resultItems[1]['uid']);
-        $this->assertSame($data[2]['uid'], $resultItems[2]['uid']);
+        $this->assertSame($data[0]['data']['uid'], $resultItems[0]['uid']);
+        $this->assertSame($data[0]['type'], $resultItems[0]->getType());
+        $this->assertSame($data[1]['data']['uid'], $resultItems[1]['uid']);
+        $this->assertSame($data[1]['type'], $resultItems[1]->getType());
+        $this->assertSame($data[2]['data']['uid'], $resultItems[2]['uid']);
+        $this->assertSame($data[2]['type'], $resultItems[2]->getType());
 
         $this->assertInstanceOf(ResultItemInterface::class, $resultItems[0]);
         $this->assertInstanceOf(ResultItemInterface::class, $resultItems[1]);

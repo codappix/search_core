@@ -76,7 +76,7 @@ class SearchResult implements SearchResultInterface
         }
 
         foreach ($this->resultItems as $item) {
-            $this->results[] = new ResultItem($item);
+            $this->results[] = new ResultItem($item['data'], $item['type']);
         }
     }
 

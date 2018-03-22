@@ -91,4 +91,46 @@ class DataHandlerToProcessorTest extends AbstractUnitTestCase
             ],
         ];
     }
+
+    /**
+     * @test
+     */
+    public function indexingIsNotCalledForCacheClearIfDataIsInvalid()
+    {
+        $coreDataHandlerMock = $this->getMockBuilder(CoreDataHandler::class)->getMock();
+        $ownDataHandlerMock = $this->getMockBuilder(OwnDataHandler::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $subject = new DataHandler($ownDataHandlerMock);
+
+        $ownDataHandlerMock->expects($this->never())->method('update');
+
+        $subject->clearCachePostProc([
+            'cacheCmd' => 'NEW343',
+        ], $coreDataHandlerMock);
+    }
+    /**
+     * @test
+     */
+    public function indexingIsNotCalledForProcessIfDataIsInvalid()
+    {
+        $coreDataHandlerMock = $this->getMockBuilder(CoreDataHandler::class)->getMock();
+        $coreDataHandlerMock->datamap = [
+            'tt_content' => [
+                'NEW343' => [],
+            ],
+        ];
+        $coreDataHandlerMock->substNEWwithIDs = [];
+
+        $ownDataHandlerMock = $this->getMockBuilder(OwnDataHandler::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $subject = new DataHandler($ownDataHandlerMock);
+
+        $ownDataHandlerMock->expects($this->never())->method('update');
+
+        $subject->processDatamap_afterAllOperations($coreDataHandlerMock);
+    }
 }

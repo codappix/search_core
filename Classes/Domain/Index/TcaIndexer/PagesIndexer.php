@@ -24,6 +24,7 @@ use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Domain\Index\TcaIndexer;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Specific indexer for Pages, will basically add content of page.
@@ -79,8 +80,14 @@ class PagesIndexer extends TcaIndexer
     protected function fetchContentForPage(int $uid) : array
     {
         if ($this->contentTableService instanceof TcaTableService) {
-            $contentElements = $this->contentTableService->getQuery()
-                ->execute()->fetchAll();
+            $queryBuilder = $this->contentTableService->getQuery();
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->eq(
+                    $this->contentTableService->getTableName() . '.pid',
+                    $queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT)
+                )
+            );
+            $contentElements = $queryBuilder->execute()->fetchAll();
         } else {
             $contentElements = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
                 $this->contentTableService->getFields(),
@@ -103,7 +110,7 @@ class PagesIndexer extends TcaIndexer
                 $images,
                 $this->getContentElementImages($contentElement['uid'])
             );
-            $content[] = $contentElement['bodytext'];
+            $content[] = $this->getContentFromContentElement($contentElement);
         }
 
         return [
@@ -135,5 +142,23 @@ class PagesIndexer extends TcaIndexer
         }
 
         return $imageRelationUids;
+    }
+
+    protected function getContentFromContentElement(array $contentElement) : string
+    {
+        $content = '';
+
+        $fieldsWithContent = GeneralUtility::trimExplode(
+            ',',
+            $this->configuration->get('indexing.' . $this->identifier . '.contentFields'),
+            true
+        );
+        foreach ($fieldsWithContent as $fieldWithContent) {
+            if (isset($contentElement[$fieldWithContent]) && trim($contentElement[$fieldWithContent])) {
+                $content .= trim($contentElement[$fieldWithContent]) . ' ';
+            }
+        }
+
+        return trim($content);
     }
 }

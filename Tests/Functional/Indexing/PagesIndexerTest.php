@@ -48,9 +48,11 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
             ->with(
                 $this->stringContains($tableName),
                 $this->callback(function ($documents) {
-                    return count($documents) === 1
+                    return count($documents) === 2
                         && isset($documents[0]['content']) && $documents[0]['content'] ===
-                        'this is the content of header content element that should get indexed Some text in paragraph'
+                        'indexed content element' .
+                        ' this is the content of header content element that should get indexed' .
+                        ' Indexed without html tags Some text in paragraph'
                         && isset($documents[0]['search_abstract']) && $documents[0]['search_abstract'] ===
                         'Used as abstract as no abstract is defined.'
                         ;
