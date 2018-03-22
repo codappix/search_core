@@ -27,11 +27,21 @@ class CopyToProcessor implements ProcessorInterface
 {
     public function processData(array $record, array $configuration) : array
     {
-        $all = [];
+        $target = [];
 
-        $this->addArray($all, $record);
-        $all = array_filter($all);
-        $record[$configuration['to']] = implode(PHP_EOL, $all);
+        $from = $record;
+        if (isset($configuration['from'])) {
+            $from = $record[$configuration['from']];
+        }
+
+        if (is_array($from)) {
+            $this->addArray($target, $from);
+        } else {
+            $target[] = (string) $from;
+        }
+
+        $target = array_filter($target);
+        $record[$configuration['to']] = implode(PHP_EOL, $target);
 
         return $record;
     }

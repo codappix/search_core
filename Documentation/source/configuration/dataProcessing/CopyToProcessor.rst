@@ -8,6 +8,10 @@ Possible Options:
 ``to``
     Defines the field to copy the values into. All values not false will be copied at the moment.
 
+``from``
+    Optional, defines the field to copy, can only be one field.
+    If empty, all existing fields will be copied.
+
 Example::
 
     plugin.tx_searchcore.settings.indexing.tt_content.dataProcessing {
@@ -17,7 +21,8 @@ Example::
         }
         2 = Codappix\SearchCore\DataProcessing\CopyToProcessor
         2 {
-            to = spellcheck
+            from = uid
+            to = backup_uid
         }
     }
 
