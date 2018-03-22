@@ -33,4 +33,12 @@ interface ResultItemInterface extends \ArrayAccess
      * Used e.g. for dataprocessing.
      */
     public function getPlainData() : array;
+
+    /**
+     * Returns the type of the item.
+     *
+     * That should make it easier to differentiate if multiple
+     * types are returned for one query.
+     */
+    public function getType() : string;
 }

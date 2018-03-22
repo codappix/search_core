@@ -294,7 +294,14 @@ class SearchServiceTest extends AbstractUnitTestCase
             ));
 
         $searchResultMock = $this->getMockBuilder(SearchResultInterface::class)->getMock();
-        $searchResult = new SearchResult($searchResultMock, [['field 1' => 'value 1']]);
+        $searchResult = new SearchResult($searchResultMock, [
+            [
+                'data' => [
+                    'field 1' => 'value 1'
+                ],
+                'type' => 'testType',
+            ],
+        ]);
 
         $this->connection->expects($this->once())
             ->method('search')
@@ -311,7 +318,13 @@ class SearchServiceTest extends AbstractUnitTestCase
         $this->objectManager->expects($this->once())
             ->method('get')
             ->with(SearchResult::class, $searchResult, [
-                ['field 1' => 'value 1', 'field 2' => 'value 2']
+                [
+                    'data' => [
+                        'field 1' => 'value 1',
+                        'field 2' => 'value 2',
+                    ],
+                    'type' => 'testType',
+                ]
             ])
             ->willReturn($searchResultMock);
 
