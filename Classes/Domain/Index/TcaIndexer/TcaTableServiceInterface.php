@@ -41,4 +41,6 @@ interface TcaTableServiceInterface
     public function getRecords(int $offset, int $limit) : array;
 
     public function getRecord(int $identifier) : array;
+
+    public function getLanguageUidColumn() : string;
 }

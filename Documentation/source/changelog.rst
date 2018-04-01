@@ -5,6 +5,7 @@ Changelog
    :maxdepth: 1
    :glob:
 
+   changelog/20180410-148-keep-sys_language_uid
    changelog/20180315-134-make-conent-fields-configurable
    changelog/20180309-25-provide-sys-language-uid
    changelog/20180308-131-respect-page-cache-clear
