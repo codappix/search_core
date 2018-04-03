@@ -42,7 +42,7 @@ class RelationResolverTest extends AbstractUnitTestCase
     public function sysLanguageUidZeroIsKept()
     {
         $originalRecord = [
-            'sys_language_uid' => '0',
+            'sys_language_uid' => 0,
         ];
         $record = $originalRecord;
         $GLOBALS['TCA'] = [
@@ -58,11 +58,11 @@ class RelationResolverTest extends AbstractUnitTestCase
                                     'flags-multiple',
                                 ],
                             ],
-                            'renderType = selectSingle',
-                            'special = languages',
-                            'type = select',
-                            'exclude = 1',
-                            'label = LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.language',
+                            'renderType' => 'selectSingle',
+                            'special' => 'languages',
+                            'type' => 'select',
+                            'exclude' => 1,
+                            'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.language',
                         ],
                     ],
                 ],
