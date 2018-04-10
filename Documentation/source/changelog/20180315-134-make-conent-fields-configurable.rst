@@ -1,4 +1,4 @@
-FEATURE 134 "Enable indexing of tt_content records of CType Header"
+Feature 134 "Enable indexing of tt_content records of CType Header"
 ===================================================================
 
 Before, only ``bodytext`` was used to generate content while indexing pages.
