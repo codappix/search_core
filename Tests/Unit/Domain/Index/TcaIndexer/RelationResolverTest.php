@@ -42,7 +42,7 @@ class RelationResolverTest extends AbstractUnitTestCase
     public function sysLanguageUidZeroIsKept()
     {
         $originalRecord = [
-            'sys_language_uid' => 0,
+            'sys_language_uid' => '0',
         ];
         $record = $originalRecord;
         $GLOBALS['TCA'] = [
@@ -72,6 +72,9 @@ class RelationResolverTest extends AbstractUnitTestCase
         $tableServiceMock->expects($this->any())
             ->method('getTableName')
             ->willReturn('tt_content');
+        $tableServiceMock->expects($this->any())
+            ->method('getLanguageUidColumn')
+            ->willReturn('sys_language_uid');
         $tableServiceMock->expects($this->any())
             ->method('getColumnConfig')
             ->willReturn($GLOBALS['TCA']['tt_content']['columns']['sys_language_uid']['config']);
