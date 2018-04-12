@@ -1,4 +1,4 @@
-FEATURE 25 "Respect multiple languages" - Provide sys_language_uid
+Feature 25 "Respect multiple languages" - Provide sys_language_uid
 ==================================================================
 
 Previously we did not fetch ``sys_language_uid`` field from database. This prevented everyone from
