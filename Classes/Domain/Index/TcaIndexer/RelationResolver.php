@@ -82,7 +82,7 @@ class RelationResolver implements Singleton
     protected function isRelation(array &$config) : bool
     {
         return isset($config['foreign_table'])
-            || (isset($config['renderType']) && $config['renderType'] !== 'selectSingle')
+            || (isset($config['renderType']) && !in_array($config['renderType'], ['selectSingle', 'inputDateTime']))
             || (isset($config['internal_type']) && strtolower($config['internal_type']) === 'db')
             ;
     }
