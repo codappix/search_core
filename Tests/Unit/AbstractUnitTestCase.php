@@ -39,14 +39,9 @@ abstract class AbstractUnitTestCase extends CoreTestCase
         $this->singletonInstances = GeneralUtility::getSingletonInstances();
 
         // Disable caching backends to make TYPO3 parts work in unit test mode.
-
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
             \TYPO3\CMS\Core\Cache\CacheManager::class
-        )->setCacheConfigurations([
-            'extbase_object' => [
-                'backend' => \TYPO3\CMS\Core\Cache\Backend\NullBackend::class,
-            ],
-        ]);
+        )->setCacheConfigurations($this->getCacheConfiguration());
     }
 
     public function tearDown()
@@ -99,5 +94,26 @@ abstract class AbstractUnitTestCase extends CoreTestCase
     protected function isLegacyVersion() : bool
     {
         return \TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) < 8000000;
+    }
+
+    protected function getCacheConfiguration() : array
+    {
+        $cacheConfiguration = [
+            'extbase_object' => [
+                'backend' => \TYPO3\CMS\Core\Cache\Backend\NullBackend::class,
+            ],
+            'cache_runtime' => [
+                'backend' => \TYPO3\CMS\Core\Cache\Backend\NullBackend::class,
+            ],
+        ];
+
+        if (class_exists(\TYPO3\CMS\Fluid\Core\Cache\FluidTemplateCache::class)) {
+            $cacheConfiguration['fluid_template'] = [
+                'backend' => \TYPO3\CMS\Core\Cache\Backend\NullBackend::class,
+                'frontend' => \TYPO3\CMS\Fluid\Core\Cache\FluidTemplateCache::class,
+            ];
+        }
+
+        return $cacheConfiguration;
     }
 }
