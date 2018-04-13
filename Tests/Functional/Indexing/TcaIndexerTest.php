@@ -103,11 +103,7 @@ class TcaIndexerTest extends AbstractFunctionalTestCase
             ->with(
                 $this->stringContains('tt_content'),
                 $this->callback(function ($documents) {
-                    if ($this->isLegacyVersion()) {
-                        return isset($documents[0]['sys_language_uid']) && $documents[0]['sys_language_uid'] === '2';
-                    } else {
-                        return isset($documents[0]['sys_language_uid']) && $documents[0]['sys_language_uid'] === 2;
-                    }
+                    return isset($documents[0]['sys_language_uid']) && $documents[0]['sys_language_uid'] === 2;
                 })
             );
 
