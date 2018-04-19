@@ -40,6 +40,59 @@ class RelationResolverTest extends AbstractUnitTestCase
     /**
      * @test
      */
+    public function sysLanguageUidZeroIsKept()
+    {
+        $record = [
+            'sys_language_uid' => '0',
+        ];
+        $GLOBALS['TCA'] = [
+            'tt_content' => [
+                'columns' => [
+                    'sys_language_uid' => [
+                        'config' => [
+                            'default' => 0,
+                            'items' => [
+                                [
+                                    'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages',
+                                    '-1',
+                                    'flags-multiple',
+                                ],
+                            ],
+                            'renderType' => 'selectSingle',
+                            'special' => 'languages',
+                            'type' => 'select',
+                            'exclude' => '1',
+                            'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.language',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $tableServiceMock = $this->getMockBuilder(TcaTableServiceInterface::class)->getMock();
+        $tableServiceMock->expects($this->any())
+            ->method('getTableName')
+            ->willReturn('tt_content');
+        $tableServiceMock->expects($this->any())
+            ->method('getLanguageUidColumn')
+            ->willReturn('sys_language_uid');
+        $tableServiceMock->expects($this->any())
+            ->method('getColumnConfig')
+            ->willReturn($GLOBALS['TCA']['tt_content']['columns']['sys_language_uid']['config']);
+
+        $this->subject->resolveRelationsForRecord($tableServiceMock, $record);
+
+        $this->assertSame(
+            [
+                'sys_language_uid' => 0,
+            ],
+            $record,
+            'sys_language_uid was not kept as zero.'
+        );
+    }
+
+    /**
+     * @test
+     */
     public function renderTypeInputDateTimeIsHandled()
     {
         $originalRecord = [

@@ -1,5 +1,5 @@
-Breacking Change 120 "Pass facets configuration to Elasticsearch"
-=================================================================
+Breaking Change 120 "Pass facets configuration to Elasticsearch"
+================================================================
 
 In order to allow arbitrary facet configuration, we do not process the facet configuration anymore.
 Instead integrators are able to configure facets for search service "as is". We just pipe the

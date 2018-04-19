@@ -283,6 +283,15 @@ class TcaTableService implements TcaTableServiceInterface
         return $this->tca['columns'][$columnName]['config'];
     }
 
+    public function getLanguageUidColumn() : string
+    {
+        if (!isset($this->tca['ctrl']['languageField'])) {
+            return '';
+        }
+
+        return $this->tca['ctrl']['languageField'];
+    }
+
     /**
      * Checks whether the given record was blacklisted by root line.
      * This can be configured by typoscript as whole root lines can be black listed.
