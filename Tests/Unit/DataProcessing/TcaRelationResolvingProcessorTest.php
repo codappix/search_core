@@ -1,5 +1,5 @@
 <?php
-namespace Codappix\SearchCore\Tests\Unit\Domain\Index\TcaIndexer;
+namespace Codappix\SearchCore\Tests\Unit\DataProcessing;
 
 /*
  * Copyright (C) 2018  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -20,21 +20,46 @@ namespace Codappix\SearchCore\Tests\Unit\Domain\Index\TcaIndexer;
  * 02110-1301, USA.
  */
 
-use Codappix\SearchCore\Domain\Index\TcaIndexer\RelationResolver;
-use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface;
+use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
+use Codappix\SearchCore\DataProcessing\TcaRelationResolvingProcessor;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class RelationResolverTest extends AbstractUnitTestCase
+class TcaRelationResolvingProcessorTest extends AbstractUnitTestCase
 {
     /**
-     * @var RelationResolver
+     * @var TcaRelationResolvingProcessor
      */
     protected $subject;
+
+    /**
+     * @var ConfigurationContainerInterface
+     */
+    protected $configurationMock;
 
     public function setUp()
     {
         parent::setUp();
-        $this->subject = new RelationResolver();
+        $this->configurationMock = $this->getMockBuilder(ConfigurationContainerInterface::class)->getMock();
+
+        GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\Container\Container::class)
+            ->registerImplementation(
+                ConfigurationContainerInterface::class,
+                get_class($this->configurationMock)
+            );
+
+        $this->subject = GeneralUtility::makeInstance(ObjectManager::class)
+            ->get(TcaRelationResolvingProcessor::class);
+    }
+
+    /**
+     * @test
+     */
+    public function exceptionIsThrownIfTableIsNotConfigured()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->subject->processData([], []);
     }
 
     /**
@@ -42,11 +67,17 @@ class RelationResolverTest extends AbstractUnitTestCase
      */
     public function sysLanguageUidZeroIsKept()
     {
-        $record = [
+        $originalRecord = [
             'sys_language_uid' => '0',
+        ];
+        $record = [
+            'sys_language_uid' => 0,
         ];
         $GLOBALS['TCA'] = [
             'tt_content' => [
+                'ctrl' => [
+                    'languageField' => 'sys_language_uid',
+                ],
                 'columns' => [
                     'sys_language_uid' => [
                         'config' => [
@@ -68,19 +99,10 @@ class RelationResolverTest extends AbstractUnitTestCase
                 ],
             ],
         ];
-        $tableServiceMock = $this->getMockBuilder(TcaTableServiceInterface::class)->getMock();
-        $tableServiceMock->expects($this->any())
-            ->method('getTableName')
-            ->willReturn('tt_content');
-        $tableServiceMock->expects($this->any())
-            ->method('getLanguageUidColumn')
-            ->willReturn('sys_language_uid');
-        $tableServiceMock->expects($this->any())
-            ->method('getColumnConfig')
-            ->willReturn($GLOBALS['TCA']['tt_content']['columns']['sys_language_uid']['config']);
-
-        $this->subject->resolveRelationsForRecord($tableServiceMock, $record);
-
+        $configuration = [
+            '_table' => 'tt_content',
+        ];
+        $record = $this->subject->processData($originalRecord, $configuration);
         $this->assertSame(
             [
                 'sys_language_uid' => 0,
@@ -96,7 +118,8 @@ class RelationResolverTest extends AbstractUnitTestCase
     public function renderTypeInputDateTimeIsHandled()
     {
         $originalRecord = [
-            'starttime' => 0,
+            'endtime' => 99999999999,
+            'starttime' => 1523010960,
         ];
         $record = $originalRecord;
         $GLOBALS['TCA'] = [
@@ -104,12 +127,24 @@ class RelationResolverTest extends AbstractUnitTestCase
                 'columns' => [
                     'starttime' => [
                         'config' => [
+                            'type' => 'input',
                             'default' => 0,
-                            'eval' => 'datetime',
+                            'eval' => 'datetime,int',
                             'renderType' => 'inputDateTime',
                         ],
-                        'type' => 'input',
-                        'exclude' => 1,
+                        'exclude' => true,
+                        'l10n_display' => 'defaultAsReadonly',
+                        'l10n_mode' => 'exclude',
+                        'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
+                    ],
+                    'endtime' => [
+                        'config' => [
+                            'type' => 'input',
+                            'default' => 0,
+                            'eval' => 'datetime,int',
+                            'renderType' => 'inputDateTime',
+                        ],
+                        'exclude' => true,
                         'l10n_display' => 'defaultAsReadonly',
                         'l10n_mode' => 'exclude',
                         'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
@@ -117,20 +152,18 @@ class RelationResolverTest extends AbstractUnitTestCase
                 ],
             ],
         ];
-        $tableServiceMock = $this->getMockBuilder(TcaTableServiceInterface::class)->getMock();
-        $tableServiceMock->expects($this->any())
-            ->method('getTableName')
-            ->willReturn('tt_content');
-        $tableServiceMock->expects($this->any())
-            ->method('getColumnConfig')
-            ->willReturn($GLOBALS['TCA']['tt_content']['columns']['starttime']['config']);
-
-        $this->subject->resolveRelationsForRecord($tableServiceMock, $record);
-
+        $configuration = [
+            '_table' => 'tt_content',
+            'excludeFields' => 'starttime',
+        ];
+        $record = $this->subject->processData($originalRecord, $configuration);
         $this->assertSame(
-            $originalRecord,
+            [
+                'endtime' => '16-11-38 09:46',
+                'starttime' => 1523010960,
+            ],
             $record,
-            'TCA column configured with renderType inputDateTime was not kept as unix timestamp.'
+            'Exclude fields were not respected.'
         );
     }
 }

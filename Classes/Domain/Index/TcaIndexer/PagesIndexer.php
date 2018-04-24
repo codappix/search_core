@@ -60,6 +60,8 @@ class PagesIndexer extends TcaIndexer
 
     protected function prepareRecord(array &$record)
     {
+        parent::prepareRecord($record);
+
         $possibleTitleFields = ['nav_title', 'tx_tqseo_pagetitle_rel', 'title'];
         foreach ($possibleTitleFields as $searchTitleField) {
             if (isset($record[$searchTitleField]) && trim($record[$searchTitleField])) {
@@ -74,7 +76,6 @@ class PagesIndexer extends TcaIndexer
             $record['content'] = $content['content'];
             $record['media'] = array_values(array_unique(array_merge($record['media'], $content['images'])));
         }
-        parent::prepareRecord($record);
     }
 
     protected function fetchContentForPage(int $uid) : array

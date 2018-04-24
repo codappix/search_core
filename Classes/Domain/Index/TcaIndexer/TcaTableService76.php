@@ -51,11 +51,6 @@ class TcaTableService76 implements TcaTableServiceInterface
     protected $configuration;
 
     /**
-     * @var RelationResolver
-     */
-    protected $relationResolver;
-
-    /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
@@ -89,7 +84,6 @@ class TcaTableService76 implements TcaTableServiceInterface
      */
     public function __construct(
         $tableName,
-        RelationResolver $relationResolver,
         ConfigurationContainerInterface $configuration
     ) {
         if (!isset($GLOBALS['TCA'][$tableName])) {
@@ -102,7 +96,6 @@ class TcaTableService76 implements TcaTableServiceInterface
         $this->tableName = $tableName;
         $this->tca = &$GLOBALS['TCA'][$this->tableName];
         $this->configuration = $configuration;
-        $this->relationResolver = $relationResolver;
     }
 
     public function getTableName() : string
@@ -157,8 +150,6 @@ class TcaTableService76 implements TcaTableServiceInterface
 
     public function prepareRecord(array &$record)
     {
-        $this->relationResolver->resolveRelationsForRecord($this, $record);
-
         if (isset($record['uid']) && !isset($record['search_identifier'])) {
             $record['search_identifier'] = $record['uid'];
         }
