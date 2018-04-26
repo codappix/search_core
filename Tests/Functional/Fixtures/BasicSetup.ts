@@ -22,6 +22,10 @@ plugin {
                             type = keyword
                         }
                     }
+
+                    dataProcessing {
+                        1 = Codappix\SearchCore\DataProcessing\TcaRelationResolvingProcessor
+                    }
                 }
 
                 pages {
@@ -33,6 +37,10 @@ plugin {
                         CType {
                             type = keyword
                         }
+                    }
+
+                    dataProcessing {
+                        1 = Codappix\SearchCore\DataProcessing\TcaRelationResolvingProcessor
                     }
                 }
             }

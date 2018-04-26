@@ -1,5 +1,5 @@
-Breacking Change "Introduce PHP 7.0 TypeHints"
-==============================================
+Breaking Change "Introduce PHP 7.0 TypeHints"
+=============================================
 
 As PHP evolved, we now migrate the whole code base to use PHP 7.0 type hints.
 We do not use PHP 7.1 Type Hints, as some customers still need PHP 7.0 support.

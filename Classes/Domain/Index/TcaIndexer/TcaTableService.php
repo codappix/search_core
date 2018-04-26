@@ -55,11 +55,6 @@ class TcaTableService implements TcaTableServiceInterface
     protected $configuration;
 
     /**
-     * @var RelationResolver
-     */
-    protected $relationResolver;
-
-    /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
@@ -93,7 +88,6 @@ class TcaTableService implements TcaTableServiceInterface
      */
     public function __construct(
         $tableName,
-        RelationResolver $relationResolver,
         ConfigurationContainerInterface $configuration
     ) {
         if (!isset($GLOBALS['TCA'][$tableName])) {
@@ -106,7 +100,6 @@ class TcaTableService implements TcaTableServiceInterface
         $this->tableName = $tableName;
         $this->tca = &$GLOBALS['TCA'][$this->tableName];
         $this->configuration = $configuration;
-        $this->relationResolver = $relationResolver;
     }
 
     public function getTableName() : string
@@ -151,8 +144,6 @@ class TcaTableService implements TcaTableServiceInterface
 
     public function prepareRecord(array &$record)
     {
-        $this->relationResolver->resolveRelationsForRecord($this, $record);
-
         if (isset($record['uid']) && !isset($record['search_identifier'])) {
             $record['search_identifier'] = $record['uid'];
         }
@@ -281,6 +272,15 @@ class TcaTableService implements TcaTableServiceInterface
         }
 
         return $this->tca['columns'][$columnName]['config'];
+    }
+
+    public function getLanguageUidColumn() : string
+    {
+        if (!isset($this->tca['ctrl']['languageField'])) {
+            return '';
+        }
+
+        return $this->tca['ctrl']['languageField'];
     }
 
     /**

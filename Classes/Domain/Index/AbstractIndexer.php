@@ -129,7 +129,7 @@ abstract class AbstractIndexer implements IndexerInterface
     {
         try {
             foreach ($this->configuration->get('indexing.' . $this->identifier . '.dataProcessing') as $configuration) {
-                $record = $this->dataProcessorService->executeDataProcessor($configuration, $record);
+                $record = $this->dataProcessorService->executeDataProcessor($configuration, $record, $this->identifier);
             }
         } catch (InvalidArgumentException $e) {
             // Nothing to do.
