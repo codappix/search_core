@@ -42,12 +42,16 @@ class Service
      *
      * @param array|string $configuration Either the full configuration or only the class name.
      */
-    public function executeDataProcessor($configuration, array $data) : array
+    public function executeDataProcessor($configuration, array $data, string $recordType = '') : array
     {
         if (is_string($configuration)) {
             $configuration = [
                 '_typoScriptNodeValue' => $configuration,
             ];
+        }
+
+        if (!isset($configuration['_table']) && $recordType !== '') {
+            $configuration['_table'] = $recordType;
         }
 
         return $this->objectManager->get($configuration['_typoScriptNodeValue'])
