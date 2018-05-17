@@ -21,7 +21,6 @@ namespace Codappix\SearchCore\Hook;
  */
 
 use Codappix\SearchCore\Configuration\NoConfigurationException;
-use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
 use Codappix\SearchCore\Domain\Service\DataHandler as OwnDataHandler;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler as CoreDataHandler;
@@ -49,99 +48,103 @@ class DataHandler implements Singleton
     /**
      * Dependency injection as TYPO3 doesn't provide it on it's own.
      * Still you can submit your own dataHandler.
-     *
-     * @param OwnDataHandler $dataHandler
-     * @param Logger $logger
      */
     public function __construct(OwnDataHandler $dataHandler = null, Logger $logger = null)
     {
-        $this->dataHandler = $dataHandler;
-        if ($this->dataHandler === null) {
+        if ($dataHandler === null) {
             try {
-                $this->dataHandler = GeneralUtility::makeInstance(ObjectManager::class)
+                $dataHandler = GeneralUtility::makeInstance(ObjectManager::class)
                     ->get(OwnDataHandler::class);
             } catch (NoConfigurationException $e) {
                 // We have no configuration. That's fine, hooks will not be
                 // executed due to check for existing DataHandler.
             }
         }
+        $this->dataHandler = $dataHandler;
 
-        $this->logger = $logger;
-        if ($this->logger === null) {
-            $this->logger = GeneralUtility::makeInstance(LogManager::class)
+        if ($logger === null) {
+            $logger = GeneralUtility::makeInstance(LogManager::class)
                 ->getLogger(__CLASS__);
         }
+        $this->logger = $logger;
     }
 
     /**
      * Called by CoreDataHandler on deletion of records.
-     *
-     * @param string $table
-     * @param int $uid
-     *
-     * @return bool False if hook was not processed.
      */
-    public function processCmdmap_deleteAction($table, $uid)
+    public function processCmdmap_deleteAction(string $table, string $uid) : bool
     {
         if (! $this->shouldProcessHookForTable($table)) {
             $this->logger->debug('Delete not processed.', [$table, $uid]);
             return false;
         }
 
-        $this->dataHandler->delete($table, $uid);
+        $this->dataHandler->delete($table, (string) $uid);
         return true;
     }
 
-    /**
-     * Called by CoreDataHandler on database operations, e.g. if new records were created or records were updated.
-     *
-     * @param string $status
-     * @param string $table
-     * @param string|int $uid
-     * @param array $fieldArray
-     * @param CoreDataHandler $dataHandler
-     *
-     * @return bool False if hook was not processed.
-     */
-    public function processDatamap_afterDatabaseOperations($status, $table, $uid, array $fieldArray, CoreDataHandler $dataHandler)
+    public function processDatamap_afterAllOperations(CoreDataHandler $dataHandler)
+    {
+        foreach ($dataHandler->datamap as $table => $record) {
+            $uid = key($record);
+            $fieldData = current($record);
+
+            if (isset($fieldData['uid'])) {
+                $uid = $fieldData['uid'];
+            } elseif (isset($dataHandler->substNEWwithIDs[$uid])) {
+                $uid = $dataHandler->substNEWwithIDs[$uid];
+            }
+
+            if (!is_numeric($uid) || $uid <= 0) {
+                continue;
+            }
+
+            $this->processRecord($table, $uid);
+        }
+    }
+
+    public function clearCachePostProc(array $parameters, CoreDataHandler $dataHandler)
+    {
+        $pageUid = 0;
+
+        // If editor uses "small page blizzard"
+        if (isset($parameters['cacheCmd']) && is_numeric($parameters['cacheCmd'])) {
+            $pageUid = $parameters['cacheCmd'];
+        }
+        // If records were changed
+        if (isset($parameters['uid_page']) && is_numeric($parameters['uid_page'])) {
+            $pageUid = $parameters['uid_page'];
+        }
+
+        if ($pageUid > 0) {
+            $this->processRecord('pages', (int) $pageUid);
+        }
+    }
+
+    protected function processRecord(string $table, int $uid) : bool
     {
         if (! $this->shouldProcessHookForTable($table)) {
-            $this->logger->debug('Database update not processed.', [$table, $uid]);
+            $this->logger->debug('Indexing of record not processed.', [$table, $uid]);
             return false;
         }
 
-        if ($status === 'new') {
-            $fieldArray['uid'] = $dataHandler->substNEWwithIDs[$uid];
-            $this->dataHandler->add($table, $fieldArray);
+        $record = $this->getRecord($table, $uid);
+        if ($record !== null) {
+            $this->dataHandler->update($table, $record);
             return true;
         }
 
-        if ($status === 'update') {
-            $record = $this->getRecord($table, $uid);
-            if ($record !== null) {
-                $this->dataHandler->update($table, $record);
-            }
-            return true;
-        }
-
-        $this->logger->debug(
-            'Database update not processed, cause status is unhandled.',
-            [$status, $table, $uid, $fieldArray]
-        );
+        $this->logger->debug('Indexing of record not processed, as he was not found in Database.', [$table, $uid]);
         return false;
     }
 
-    /**
-     * @param string $table
-     * @return bool
-     */
-    protected function shouldProcessHookForTable($table)
+    protected function shouldProcessHookForTable(string $table) : bool
     {
         if ($this->dataHandler === null) {
             $this->logger->debug('Datahandler could not be setup.');
             return false;
         }
-        if (! $this->dataHandler->canHandle($table)) {
+        if (! $this->dataHandler->supportsTable($table)) {
             $this->logger->debug('Table is not allowed.', [$table]);
             return false;
         }
@@ -152,11 +155,9 @@ class DataHandler implements Singleton
     /**
      * Wrapper to allow unit testing.
      *
-     * @param string $table
-     * @param int $uid
-     * @return null|array<String>
+     * @return array|null
      */
-    protected function getRecord($table, $uid)
+    protected function getRecord(string $table, int $uid)
     {
         return BackendUtility::getRecord($table, $uid);
     }

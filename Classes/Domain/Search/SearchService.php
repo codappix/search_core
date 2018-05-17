@@ -25,7 +25,9 @@ use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
+use Codappix\SearchCore\DataProcessing\Service as DataProcessorService;
 use Codappix\SearchCore\Domain\Model\FacetRequest;
+use Codappix\SearchCore\Domain\Model\SearchResult;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
@@ -50,38 +52,43 @@ class SearchService
     protected $objectManager;
 
     /**
+     * @var DataProcessorService
+     */
+    protected $dataProcessorService;
+
+    /**
      * @param ConnectionInterface $connection
      * @param ConfigurationContainerInterface $configuration
      * @param ObjectManagerInterface $objectManager
+     * @param DataProcessorService $dataProcessorService
      */
     public function __construct(
         ConnectionInterface $connection,
         ConfigurationContainerInterface $configuration,
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
+        DataProcessorService $dataProcessorService
     ) {
         $this->connection = $connection;
         $this->configuration = $configuration;
         $this->objectManager = $objectManager;
+        $this->dataProcessorService = $dataProcessorService;
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @return SearchResultInterface
-     */
-    public function search(SearchRequestInterface $searchRequest)
+    public function search(SearchRequestInterface $searchRequest) : SearchResultInterface
     {
-        $searchRequest->setConnection($this->connection);
         $this->addSize($searchRequest);
         $this->addConfiguredFacets($searchRequest);
         $this->addConfiguredFilters($searchRequest);
 
-        return $this->connection->search($searchRequest);
+        // Add connection to request to enable paginate widget support
+        $searchRequest->setConnection($this->connection);
+        $searchRequest->setSearchService($this);
+
+        return $this->processResult($this->connection->search($searchRequest));
     }
 
     /**
      * Add configured size of search result items to request.
-     *
-     * @param SearchRequestInterface $searchRequest
      */
     protected function addSize(SearchRequestInterface $searchRequest)
     {
@@ -92,8 +99,6 @@ class SearchService
 
     /**
      * Add facets from configuration to request.
-     *
-     * @param SearchRequestInterface $searchRequest
      */
     protected function addConfiguredFacets(SearchRequestInterface $searchRequest)
     {
@@ -103,23 +108,16 @@ class SearchService
         }
 
         foreach ($facetsConfig as $identifier => $facetConfig) {
-            if (!isset($facetConfig['field']) || trim($facetConfig['field']) === '') {
-                // TODO: Finish throw
-                throw new \Exception('message', 1499171142);
-            }
-
             $searchRequest->addFacet($this->objectManager->get(
                 FacetRequest::class,
                 $identifier,
-                $facetConfig['field']
+                $facetConfig
             ));
         }
     }
 
     /**
      * Add filters from configuration, e.g. flexform or TypoScript.
-     *
-     * @param SearchRequestInterface $searchRequest
      */
     protected function addConfiguredFilters(SearchRequestInterface $searchRequest)
     {
@@ -136,6 +134,35 @@ class SearchService
             $searchRequest->setFilter($filter);
         } catch (InvalidArgumentException $e) {
             // Nothing todo, no filter configured.
+        }
+    }
+
+    /**
+     * Processes the result, e.g. applies configured data processing to result.
+     */
+    public function processResult(SearchResultInterface $searchResult) : SearchResultInterface
+    {
+        try {
+            $newSearchResultItems = [];
+            foreach ($this->configuration->get('searching.dataProcessing') as $configuration) {
+                foreach ($searchResult as $resultItem) {
+                    $newSearchResultItems[] = [
+                        'data' => $this->dataProcessorService->executeDataProcessor(
+                            $configuration,
+                            $resultItem->getPlainData()
+                        ),
+                        'type' => $resultItem->getType(),
+                    ];
+                }
+            }
+
+            return $this->objectManager->get(
+                SearchResult::class,
+                $searchResult,
+                $newSearchResultItems
+            );
+        } catch (InvalidArgumentException $e) {
+            return $searchResult;
         }
     }
 }

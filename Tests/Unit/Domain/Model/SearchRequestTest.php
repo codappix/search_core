@@ -20,7 +20,10 @@ namespace Codappix\SearchCore\Tests\Unit\Domain\Model;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Connection\ConnectionInterface;
+use Codappix\SearchCore\Connection\SearchResultInterface;
 use Codappix\SearchCore\Domain\Model\SearchRequest;
+use Codappix\SearchCore\Domain\Search\SearchService;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
 
 class SearchRequestTest extends AbstractUnitTestCase
@@ -31,12 +34,12 @@ class SearchRequestTest extends AbstractUnitTestCase
      */
     public function emptyFilterWillNotBeSet(array $filter)
     {
-        $searchRequest = new SearchRequest();
-        $searchRequest->setFilter($filter);
+        $subject = new SearchRequest();
+        $subject->setFilter($filter);
 
         $this->assertSame(
             [],
-            $searchRequest->getFilter(),
+            $subject->getFilter(),
             'Empty filter were set, even if they should not.'
         );
     }
@@ -68,13 +71,67 @@ class SearchRequestTest extends AbstractUnitTestCase
     public function filterIsSet()
     {
         $filter = ['someField' => 'someValue'];
-        $searchRequest = new SearchRequest();
-        $searchRequest->setFilter($filter);
+        $subject = new SearchRequest();
+        $subject->setFilter($filter);
 
         $this->assertSame(
             $filter,
-            $searchRequest->getFilter(),
+            $subject->getFilter(),
             'Filter was not set.'
         );
+    }
+
+    /**
+     * @test
+     */
+    public function exceptionIsThrownIfSearchServiceWasNotSet()
+    {
+        $subject = new SearchRequest();
+        $subject->setConnection($this->getMockBuilder(ConnectionInterface::class)->getMock());
+        $this->expectException(\InvalidArgumentException::class);
+        $subject->execute();
+    }
+
+    /**
+     * @test
+     */
+    public function exceptionIsThrownIfConnectionWasNotSet()
+    {
+        $subject = new SearchRequest();
+        $subject->setSearchService(
+            $this->getMockBuilder(SearchService::class)
+                ->disableOriginalConstructor()
+                ->getMock()
+        );
+        $this->expectException(\InvalidArgumentException::class);
+        $subject->execute();
+    }
+
+    /**
+     * @test
+     */
+    public function executionMakesUseOfProvidedConnectionAndSearchService()
+    {
+        $searchServiceMock = $this->getMockBuilder(SearchService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connectionMock = $this->getMockBuilder(ConnectionInterface::class)
+            ->getMock();
+        $searchResultMock = $this->getMockBuilder(SearchResultInterface::class)
+            ->getMock();
+
+        $subject = new SearchRequest();
+        $subject->setSearchService($searchServiceMock);
+        $subject->setConnection($connectionMock);
+
+        $connectionMock->expects($this->once())
+            ->method('search')
+            ->with($subject)
+            ->willReturn($searchResultMock);
+        $searchServiceMock->expects($this->once())
+            ->method('processResult')
+            ->with($searchResultMock);
+
+        $subject->execute();
     }
 }

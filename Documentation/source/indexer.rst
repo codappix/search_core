@@ -5,6 +5,8 @@ Indexer
 
 See Concept of :ref:`concepts_indexing` for further background information.
 
+For information about implementing a new indexer, take a look at :ref:`development_indexer`.
+
 The extension provides the following indexer out of the box:
 
 .. _TcaIndexer:
@@ -15,23 +17,12 @@ TcaIndexer
 Provides zero configuration TYPO3 integration by using the :ref:`t3tcaref:start`. You just can
 start indexing TYPO3.
 
-The indexer will use the TCA to fetch all necessary information like relations. Currently the
-implementation is very basic. In future it will also provide mapping for :ref:`Elasticsearch` and
-further stuff.
+Just add the indexer for a TYPO3 table. The indexer will use the TCA to fetch all necessary
+information like relations.
 
-The indexer is configurable through the following options:
+.. note::
 
-* :ref:`rootLineBlacklist`
-
-* :ref:`additionalWhereClause`
-
-* :ref:`abstractFields`
-
-* :ref:`mapping`
-
-* :ref:`index`
-
-* :ref:`dataProcessing`
+  Not all relations are resolved yet, see :issue:`17`.
 
 .. _PagesIndexer:
 
@@ -42,23 +33,7 @@ Provides zero configuration TYPO3 integration by using the :ref:`t3tcaref:start`
 start indexing TYPO3.
 
 The indexer will use the TCA to fetch all necessary information like relations. Currently the
-implementation is very basic. In future it will also provide mapping for :ref:`Elasticsearch` and
-further stuff. Also all static content from each page will be concatenated into a single field to
-improve search.
-
-The indexer is configurable through the following options:
-
-* :ref:`rootLineBlacklist`
-
-* :ref:`additionalWhereClause`
-
-* :ref:`abstractFields`
-
-* :ref:`mapping`
-
-* :ref:`index`
-
-* :ref:`dataProcessing`
+implementation is very basic.
 
 .. note::
 

@@ -3,38 +3,47 @@
 Concepts
 ========
 
-The extension is built with the following concepts in mind.
+The main concept is to provide a foundation where other developers can profit from, to provide
+integrations into search services like Elasticsearch, Algolia, ... .
+
+Our code contains the following concepts which should be understand:
 
 .. _concepts_connections:
 
 Connections
 -----------
 
-It should be possible to use different search services like elasticsearch and solr out of the box.
-If a service is not contained, it should be possible to implement the necessary part by implementing
-the necessary interfaces and configuring the extension to use the new connection.
+Different search services can provide integrations. ``search_core`` only provides abstractions and
+interfaces. The main purpose is to provide a stable API between TYPO3 and concrete connection.
 
-Also it should be possible to use multiple connections at once. This way multiple search services
-can be used in the same installation.
-
-Currently only :ref:`Elasticsearch` is provided.
+For information about implementing a new connection, take a look at :ref:`development_connection`.
 
 .. _concepts_indexing:
 
 Indexing
 --------
 
-The indexing is done by one of the available indexer. For each identifier it's possible to define
-the indexer to use. Also it's possible to write custom indexer to use.
+Indexing is the process of collecting and preparing data, before sending it to a Connection.
+The indexing is done by one of the available indexer. Indexer are identified by a key, as configured
+in TypoScript.
 
-Currently only the :ref:`TcaIndexer` is provided.
+Currently :ref:`TcaIndexer` and :ref:`PagesIndexer` are provided.
 
-.. _concepts_indexing_dataprocessing:
+For information about implementing a new indexer, take a look at :ref:`development_indexer`.
+
+.. _concepts_dataprocessing:
 
 DataProcessing
 ^^^^^^^^^^^^^^
 
 Before data is transfered to search service, it can be processed by "DataProcessors" like already
 known by :ref:`t3tsref:cobj-fluidtemplate-properties-dataprocessing` of :ref:`t3tsref:cobj-fluidtemplate`.
+The same is true for retrieved search results. They can be processed again by "DataProcessors" to
+prepare data for display in Templates or further usage.
 
-Configuration is done through TypoScript, see :ref:`dataProcessing`.
+This should keep indexers simple and move logic to DataProcessors. This makes most parts highly
+flexible as integrators are able to configure DataProcessors and change their order.
+
+Configuration is done through TypoScript, see :ref:`dataprocessors`.
+
+For information about implementing a new DataProcessor, take a look at :ref:`development_dataprocessor`.

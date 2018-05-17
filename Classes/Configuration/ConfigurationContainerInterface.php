@@ -20,13 +20,11 @@ namespace Codappix\SearchCore\Configuration;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Core\SingletonInterface as Singleton;
-
 /**
  * Container of all configurations for extension.
- * Always inject this to have a single place for configuration and parsing only once.
+ * Always inject this to have a single place for configuration.
  */
-interface ConfigurationContainerInterface extends Singleton
+interface ConfigurationContainerInterface
 {
     /**
      * Returns the option defined by section and key.
@@ -37,7 +35,7 @@ interface ConfigurationContainerInterface extends Singleton
      *
      * @throws InvalidArgumentException
      */
-    public function get($path);
+    public function get(string $path);
 
     /**
      * Same as get but will not throw an exception but return null.
@@ -45,5 +43,5 @@ interface ConfigurationContainerInterface extends Singleton
      * @param string $path In dot notation.
      * @return mixed|null
      */
-    public function getIfExists($path);
+    public function getIfExists(string $path);
 }

@@ -23,8 +23,6 @@ namespace Codappix\SearchCore\Domain\Search;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\ConfigurationUtility;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
-use Codappix\SearchCore\Connection\ConnectionInterface;
-use Codappix\SearchCore\Connection\Elasticsearch\Query;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ArrayUtility;
@@ -121,6 +119,10 @@ class QueryFactory
             return;
         }
 
+        if (trim($searchRequest->getSearchTerm()) === '') {
+            return;
+        }
+
         $boostQueryParts = [];
 
         foreach ($fields as $fieldName => $boostValue) {
@@ -134,13 +136,15 @@ class QueryFactory
             ];
         }
 
-        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
-            'query' => [
-                'bool' => [
-                    'should' => $boostQueryParts,
+        if (!empty($boostQueryParts)) {
+            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+                'query' => [
+                    'bool' => [
+                        'should' => $boostQueryParts,
+                    ],
                 ],
-            ],
-        ]);
+            ]);
+        }
     }
 
     protected function addFactorBoost(array &$query)
@@ -161,7 +165,11 @@ class QueryFactory
     {
         try {
             $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
-                'stored_fields' => GeneralUtility::trimExplode(',', $this->configuration->get('searching.fields.stored_fields'), true),
+                'stored_fields' => GeneralUtility::trimExplode(
+                    ',',
+                    $this->configuration->get('searching.fields.stored_fields'),
+                    true
+                ),
             ]);
         } catch (InvalidArgumentException $e) {
             // Nothing configured
@@ -169,7 +177,10 @@ class QueryFactory
 
         try {
             $scriptFields = $this->configuration->get('searching.fields.script_fields');
-            $scriptFields = $this->configurationUtility->replaceArrayValuesWithRequestContent($searchRequest, $scriptFields);
+            $scriptFields = $this->configurationUtility->replaceArrayValuesWithRequestContent(
+                $searchRequest,
+                $scriptFields
+            );
             $scriptFields = $this->configurationUtility->filterByCondition($scriptFields);
             if ($scriptFields !== []) {
                 $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['script_fields' => $scriptFields]);
@@ -231,6 +242,18 @@ class QueryFactory
             }
         }
 
+        if (isset($config['raw'])) {
+            $filter = array_merge($config['raw'], $filter);
+        }
+
+        if ($config['type'] === 'range') {
+            return [
+                'range' => [
+                    $config['field'] => $filter,
+                ],
+            ];
+        }
+
         return [$config['field'] => $filter];
     }
 
@@ -239,11 +262,7 @@ class QueryFactory
         foreach ($searchRequest->getFacets() as $facet) {
             $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
                 'aggs' => [
-                    $facet->getIdentifier() => [
-                        'terms' => [
-                            'field' => $facet->getField(),
-                        ],
-                    ],
+                    $facet->getIdentifier() => $facet->getConfig(),
                 ],
             ]);
         }

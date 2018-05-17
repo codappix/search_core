@@ -89,6 +89,58 @@ class QueryFactoryTest extends AbstractUnitTestCase
     /**
      * @test
      */
+    public function rangeFilterIsAddedToQuery()
+    {
+        $this->configureConfigurationMockWithDefault();
+        $this->configuration->expects($this->any())
+            ->method('getIfExists')
+            ->will($this->returnCallback(function ($configName) {
+                if ($configName === 'searching.mapping.filter.month') {
+                    return [
+                        'type' => 'range',
+                        'field' => 'released',
+                        'raw' => [
+                            'format' => 'yyyy-MM',
+                        ],
+                        'fields' => [
+                            'gte' => 'from',
+                            'lte' => 'to',
+                        ],
+                    ];
+                }
+
+                return [];
+            }));
+
+        $searchRequest = new SearchRequest('SearchWord');
+        $searchRequest->setFilter([
+            'month' => [
+                'from' => '2016-03',
+                'to' => '2017-11',
+            ],
+        ]);
+
+        $query = $this->subject->create($searchRequest);
+        $this->assertSame(
+            [
+                [
+                    'range' => [
+                        'released' => [
+                            'format' => 'yyyy-MM',
+                            'gte' => '2016-03',
+                            'lte' => '2017-11',
+                        ],
+                    ],
+                ]
+            ],
+            $query->toArray()['query']['bool']['filter'],
+            'Filter was not added to query.'
+        );
+    }
+
+    /**
+     * @test
+     */
     public function emptyFilterIsNotAddedToQuery()
     {
         $this->configureConfigurationMockWithDefault();
@@ -118,8 +170,8 @@ class QueryFactoryTest extends AbstractUnitTestCase
     {
         $this->configureConfigurationMockWithDefault();
         $searchRequest = new SearchRequest('SearchWord');
-        $searchRequest->addFacet(new FacetRequest('Identifier', 'FieldName'));
-        $searchRequest->addFacet(new FacetRequest('Identifier 2', 'FieldName 2'));
+        $searchRequest->addFacet(new FacetRequest('Identifier', ['terms' => ['field' => 'FieldName']]));
+        $searchRequest->addFacet(new FacetRequest('Identifier 2', ['terms' => ['field' => 'FieldName 2']]));
 
         $query = $this->subject->create($searchRequest);
         $this->assertSame(

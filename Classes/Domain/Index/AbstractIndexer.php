@@ -23,7 +23,6 @@ namespace Codappix\SearchCore\Domain\Index;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
-use Codappix\SearchCore\DataProcessing\ProcessorInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractIndexer implements IndexerInterface
@@ -44,6 +43,12 @@ abstract class AbstractIndexer implements IndexerInterface
     protected $identifier = '';
 
     /**
+     * @var \Codappix\SearchCore\DataProcessing\Service
+     * @inject
+     */
+    protected $dataProcessorService;
+
+    /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
@@ -58,15 +63,11 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->logger = $logManager->getLogger(__CLASS__);
     }
 
-    public function setIdentifier($identifier)
+    public function setIdentifier(string $identifier)
     {
         $this->identifier = $identifier;
     }
 
-    /**
-     * @param ConnectionInterface $connection
-     * @param ConfigurationContainerInterface $configuration
-     */
     public function __construct(ConnectionInterface $connection, ConfigurationContainerInterface $configuration)
     {
         $this->connection = $connection;
@@ -91,11 +92,11 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->logger->info('Finish indexing');
     }
 
-    public function indexDocument($identifier)
+    public function indexDocument(string $identifier)
     {
         $this->logger->info('Start indexing single record.', [$identifier]);
         try {
-            $record = $this->getRecord($identifier);
+            $record = $this->getRecord((int) $identifier);
             $this->prepareRecord($record);
 
             $this->connection->addDocument($this->getDocumentName(), $record);
@@ -113,10 +114,7 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->logger->info('Finish deletion.');
     }
 
-    /**
-     * @return \Generator
-     */
-    protected function getRecordGenerator()
+    protected function getRecordGenerator() : \Generator
     {
         $offset = 0;
         $limit = $this->getLimit();
@@ -127,24 +125,11 @@ abstract class AbstractIndexer implements IndexerInterface
         }
     }
 
-    /**
-     * @param array &$record
-     */
     protected function prepareRecord(array &$record)
     {
         try {
             foreach ($this->configuration->get('indexing.' . $this->identifier . '.dataProcessing') as $configuration) {
-                $className = '';
-                if (is_string($configuration)) {
-                    $className = $configuration;
-                    $configuration = [];
-                } else {
-                    $className = $configuration['_typoScriptNodeValue'];
-                }
-                $dataProcessor = GeneralUtility::makeInstance($className);
-                if ($dataProcessor instanceof ProcessorInterface) {
-                    $record = $dataProcessor->processRecord($record, $configuration);
-                }
+                $record = $this->dataProcessorService->executeDataProcessor($configuration, $record, $this->identifier);
             }
         } catch (InvalidArgumentException $e) {
             // Nothing to do.
@@ -153,9 +138,6 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->handleAbstract($record);
     }
 
-    /**
-     * @param array &$record
-     */
     protected function handleAbstract(array &$record)
     {
         $record['search_abstract'] = '';
@@ -165,7 +147,7 @@ abstract class AbstractIndexer implements IndexerInterface
                 ',',
                 $this->configuration->get('indexing.' . $this->identifier . '.abstractFields')
             );
-            if (!$fieldsToUse) {
+            if ($fieldsToUse === []) {
                 return;
             }
             foreach ($fieldsToUse as $fieldToUse) {
@@ -181,31 +163,22 @@ abstract class AbstractIndexer implements IndexerInterface
 
     /**
      * Returns the limit to use to fetch records.
-     *
-     * @return int
      */
-    protected function getLimit()
+    protected function getLimit() : int
     {
         // TODO: Make configurable.
         return 50;
     }
 
     /**
-     * @param int $offset
-     * @param int $limit
      * @return array|null
      */
-    abstract protected function getRecords($offset, $limit);
+    abstract protected function getRecords(int $offset, int $limit);
 
     /**
-     * @param int $identifier
-     * @return array
      * @throws NoRecordFoundException If record could not be found.
      */
-    abstract protected function getRecord($identifier);
+    abstract protected function getRecord(int $identifier) : array;
 
-    /**
-     * @return string
-     */
-    abstract protected function getDocumentName();
+    abstract protected function getDocumentName() : string;
 }

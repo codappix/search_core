@@ -22,7 +22,6 @@ namespace Codappix\SearchCore\Command;
 
 use Codappix\SearchCore\Domain\Index\IndexerFactory;
 use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
 /**
@@ -48,7 +47,7 @@ class IndexCommandController extends CommandController
      *
      * @param string $identifier
      */
-    public function indexCommand($identifier)
+    public function indexCommand(string $identifier)
     {
         try {
             $this->indexerFactory->getIndexer($identifier)->indexAllDocuments();
@@ -63,7 +62,7 @@ class IndexCommandController extends CommandController
      *
      * @param string $identifier
      */
-    public function deleteCommand($identifier)
+    public function deleteCommand(string $identifier)
     {
         try {
             $this->indexerFactory->getIndexer($identifier)->delete();

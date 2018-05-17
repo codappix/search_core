@@ -55,40 +55,7 @@ class FilterTest extends AbstractFunctionalTestCase
 
         $searchRequest->setFilter(['CType' => 'HTML']);
         $result = $searchService->search($searchRequest);
-        $this->assertSame(5, $result->getResults()[0]['uid'], 'Did not get the expected result entry.');
+        $this->assertSame(5, (int) $result->getResults()[0]['uid'], 'Did not get the expected result entry.');
         $this->assertSame(1, count($result), 'Did not receive the single filtered element.');
-    }
-
-    /**
-     * @test
-     */
-    public function itsPossibleToFetchFacetsForField()
-    {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
-            ->get(IndexerFactory::class)
-            ->getIndexer('tt_content')
-            ->indexAllDocuments()
-            ;
-
-        $searchService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
-            ->get(SearchService::class);
-
-        $searchRequest = new SearchRequest('Search Word');
-        $result = $searchService->search($searchRequest);
-
-        $this->assertSame(1, count($result->getFacets()), 'Did not receive the single defined facet.');
-
-        $facet = current($result->getFacets());
-        $this->assertSame('contentTypes', $facet->getName(), 'Name of facet was not as expected.');
-        $this->assertSame('CType', $facet->getField(), 'Field of facet was not expected.');
-
-        $options = $facet->getOptions();
-        $this->assertSame(2, count($options), 'Did not receive the expected number of possible options for facet.');
-        $option = $options['HTML'];
-        $this->assertSame('HTML', $option->getName(), 'Option did not have expected Name.');
-        $this->assertSame(1, $option->getCount(), 'Option did not have expected count.');
-        $option = $options['Header'];
-        $this->assertSame('Header', $option->getName(), 'Option did not have expected Name.');
-        $this->assertSame(1, $option->getCount(), 'Option did not have expected count.');
     }
 }

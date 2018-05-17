@@ -27,15 +27,15 @@ class CopyToProcessorTest extends AbstractUnitTestCase
 {
     /**
      * @test
-     * @dataProvider getPossibleRecordConfigurationCombinations
+     * @dataProvider getPossibleDataConfigurationCombinations
      */
-    public function fieldsAreCopiedAsConfigured(array $record, array $configuration, array $expectedRecord)
+    public function fieldsAreCopiedAsConfigured(array $record, array $configuration, array $expectedData)
     {
         $subject = new CopyToProcessor();
-        $processedRecord = $subject->processRecord($record, $configuration);
+        $processedData = $subject->processData($record, $configuration);
         $this->assertSame(
-            $expectedRecord,
-            $processedRecord,
+            $expectedData,
+            $processedData,
             'The processor did not return the expected processed record.'
         );
     }
@@ -43,7 +43,7 @@ class CopyToProcessorTest extends AbstractUnitTestCase
     /**
      * @return array
      */
-    public function getPossibleRecordConfigurationCombinations()
+    public function getPossibleDataConfigurationCombinations()
     {
         return [
             'Copy all fields to new field' => [
@@ -54,7 +54,7 @@ class CopyToProcessorTest extends AbstractUnitTestCase
                 'configuration' => [
                     'to' => 'new_field',
                 ],
-                'expectedRecord' => [
+                'expectedData' => [
                     'field 1' => 'Some content like lorem',
                     'field 2' => 'Some more content like ipsum',
                     'new_field' => 'Some content like lorem' . PHP_EOL . 'Some more content like ipsum',
@@ -71,13 +71,25 @@ class CopyToProcessorTest extends AbstractUnitTestCase
                 'configuration' => [
                     'to' => 'new_field',
                 ],
-                'expectedRecord' => [
+                'expectedData' => [
                     'field 1' => 'Some content like lorem',
                     'field with sub2' => [
                         'Tag 1',
                         'Tag 2',
                     ],
                     'new_field' => 'Some content like lorem' . PHP_EOL . 'Tag 1' . PHP_EOL . 'Tag 2',
+                ],
+            ],
+            'Copy single field to new field' => [
+                'record' => [
+                    'field 1' => 'Some content like lorem',
+                ],
+                'configuration' => [
+                    'to' => 'new_field',
+                ],
+                'expectedData' => [
+                    'field 1' => 'Some content like lorem',
+                    'new_field' => 'Some content like lorem',
                 ],
             ],
         ];

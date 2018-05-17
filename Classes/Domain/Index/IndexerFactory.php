@@ -23,8 +23,7 @@ namespace Codappix\SearchCore\Domain\Index;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Domain\Index\IndexerInterface;
-use Codappix\SearchCore\Domain\Index\TcaIndexer;
-use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
@@ -56,12 +55,9 @@ class IndexerFactory implements Singleton
     }
 
     /**
-     * @param string $identifier
-     *
-     * @return IndexerInterface
      * @throws NoMatchingIndexer
      */
-    public function getIndexer($identifier)
+    public function getIndexer(string $identifier) : IndexerInterface
     {
         try {
             return $this->buildIndexer($this->configuration->get('indexing.' . $identifier . '.indexer'), $identifier);
@@ -75,13 +71,9 @@ class IndexerFactory implements Singleton
     }
 
     /**
-     * @param string $indexerClass
-     * @param string $identifier
-     *
-     * @return IndexerInterface
      * @throws NoMatchingIndexer
      */
-    protected function buildIndexer($indexerClass, $identifier)
+    protected function buildIndexer(string $indexerClass, string $identifier) : IndexerInterface
     {
         $indexer = null;
         if (is_subclass_of($indexerClass, TcaIndexer\PagesIndexer::class)
@@ -89,13 +81,13 @@ class IndexerFactory implements Singleton
         ) {
             $indexer = $this->objectManager->get(
                 $indexerClass,
-                $this->objectManager->get(TcaTableService::class, $identifier),
-                $this->objectManager->get(TcaTableService::class, 'tt_content')
+                $this->objectManager->get(TcaTableServiceInterface::class, $identifier),
+                $this->objectManager->get(TcaTableServiceInterface::class, 'tt_content')
             );
         } elseif (is_subclass_of($indexerClass, TcaIndexer::class) || $indexerClass === TcaIndexer::class) {
             $indexer = $this->objectManager->get(
                 $indexerClass,
-                $this->objectManager->get(TcaTableService::class, $identifier)
+                $this->objectManager->get(TcaTableServiceInterface::class, $identifier)
             );
         } elseif (class_exists($indexerClass) && in_array(IndexerInterface::class, class_implements($indexerClass))) {
             $indexer = $this->objectManager->get($indexerClass);

@@ -33,11 +33,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RelationResolver implements Singleton
 {
-    public function resolveRelationsForRecord(TcaTableService $service, array &$record) : void
+    public function resolveRelationsForRecord(TcaTableServiceInterface $service, array $record) : array
     {
         foreach (array_keys($record) as $column) {
-            // TODO: Define / configure fields to exclude?!
-            if ($column === 'pid') {
+            if (in_array($column, ['pid', $service->getLanguageUidColumn()])) {
+                $record[$column] = (int) $record[$column];
                 continue;
             }
 
@@ -61,6 +61,8 @@ class RelationResolver implements Singleton
                 continue;
             }
         }
+
+        return $record;
     }
 
     protected function resolveValue($value, array $tcaColumn)
@@ -82,7 +84,7 @@ class RelationResolver implements Singleton
     protected function isRelation(array &$config) : bool
     {
         return isset($config['foreign_table'])
-            || (isset($config['renderType']) && $config['renderType'] !== 'selectSingle')
+            || (isset($config['renderType']) && !in_array($config['renderType'], ['selectSingle', 'inputDateTime']))
             || (isset($config['internal_type']) && strtolower($config['internal_type']) === 'db')
             ;
     }
@@ -97,7 +99,7 @@ class RelationResolver implements Singleton
         return array_map('trim', explode(',', $value));
     }
 
-    protected function getUtilityForMode(): string
+    protected function getUtilityForMode() : string
     {
         if (TYPO3_MODE === 'BE') {
             return BackendUtility::class;

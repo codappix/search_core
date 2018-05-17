@@ -39,7 +39,6 @@ class ConfigurationContainer implements ConfigurationContainerInterface
     /**
      * Inject settings via ConfigurationManager.
      *
-     * @param ConfigurationManagerInterface $configurationManager
      * @throws NoConfigurationException
      */
     public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
@@ -59,7 +58,7 @@ class ConfigurationContainer implements ConfigurationContainerInterface
      * @return mixed
      * @throws InvalidArgumentException
      */
-    public function get($path)
+    public function get(string $path)
     {
         $value = ArrayUtility::getValueByPath($this->settings, $path);
 
@@ -77,7 +76,7 @@ class ConfigurationContainer implements ConfigurationContainerInterface
      * @param string $path In dot notation.
      * @return mixed
      */
-    public function getIfExists($path)
+    public function getIfExists(string $path)
     {
         return ArrayUtility::getValueByPath($this->settings, $path);
     }

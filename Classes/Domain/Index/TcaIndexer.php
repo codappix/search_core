@@ -22,9 +22,7 @@ namespace Codappix\SearchCore\Domain\Index;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\ConnectionInterface;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface;
 
 /**
  * Will index the given table using configuration from TCA.
@@ -32,39 +30,31 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class TcaIndexer extends AbstractIndexer
 {
     /**
-     * @var TcaIndexer\TcaTableService
+     * @var TcaTableServiceInterface
      */
     protected $tcaTableService;
 
     /**
-     * @param TcaIndexer\TcaTableService $tcaTableService
+     * @param TcaTableServiceInterface $tcaTableService
      * @param ConnectionInterface $connection
      * @param ConfigurationContainerInterface $configuration
      */
     public function __construct(
-        TcaIndexer\TcaTableService $tcaTableService,
+        TcaTableServiceInterface $tcaTableService,
         ConnectionInterface $connection,
         ConfigurationContainerInterface $configuration
     ) {
+        parent::__construct($connection, $configuration);
         $this->tcaTableService = $tcaTableService;
-        $this->connection = $connection;
-        $this->configuration = $configuration;
     }
 
     /**
-     * @param int $offset
-     * @param int $limit
      * @return array|null
      */
-    protected function getRecords($offset, $limit)
+    protected function getRecords(int $offset, int $limit)
     {
-        $records = $this->getQuery()
-            ->setFirstResult($offset)
-            ->setMaxResults($limit)
-            ->execute()
-            ->fetchAll();
-
-        if ($records === null) {
+        $records = $this->tcaTableService->getRecords($offset, $limit);
+        if ($records === []) {
             return null;
         }
 
@@ -77,17 +67,13 @@ class TcaIndexer extends AbstractIndexer
     }
 
     /**
-     * @param int $identifier
-     * @return array
      * @throws NoRecordFoundException If record could not be found.
      */
-    protected function getRecord($identifier)
+    protected function getRecord(int $identifier) : array
     {
-        $query = $this->getQuery();
-        $query = $query->andWhere($this->tcaTableService->getTableName() . '.uid = ' . (int) $identifier);
-        $record = $query->execute()->fetch();
+        $record = $this->tcaTableService->getRecord($identifier);
 
-        if ($record === false || $record === null) {
+        if ($record === []) {
             throw new NoRecordFoundException(
                 'Record could not be fetched from database: "' . $identifier . '". Perhaps record is not active.',
                 1484225364
@@ -98,36 +84,8 @@ class TcaIndexer extends AbstractIndexer
         return $record;
     }
 
-    /**
-     * @return string
-     */
-    protected function getDocumentName()
+    protected function getDocumentName() : string
     {
         return $this->tcaTableService->getTableName();
-    }
-
-    protected function getQuery($tcaTableService = null) : QueryBuilder
-    {
-        if ($tcaTableService === null) {
-            $tcaTableService = $this->tcaTableService;
-        }
-        $queryBuilder = $this->getDatabaseConnection()->getQueryBuilderForTable($tcaTableService->getTableName());
-        $where = $tcaTableService->getWhereClause();
-        $query = $queryBuilder->select(... $tcaTableService->getFields())
-            ->from($tcaTableService->getTableClause())
-            ->where($where->getStatement())
-            ->setParameters($where->getParameters());
-
-        foreach ($tcaTableService->getJoins() as $join) {
-            $query->from($join->getTable());
-            $query->andWhere($join->getCondition());
-        }
-
-        return $query;
-    }
-
-    protected function getDatabaseConnection()
-    {
-        return GeneralUtility::makeInstance(ConnectionPool::class);
     }
 }

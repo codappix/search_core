@@ -22,10 +22,8 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
-use Elastica\Exception\ResponseException;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /**
  * Factory to get indexes.
@@ -38,6 +36,21 @@ class IndexFactory implements Singleton
      * @var ConfigurationContainerInterface
      */
     protected $configuration;
+
+    /**
+     * @var \TYPO3\CMS\Core\Log\Logger
+     */
+    protected $logger;
+
+    /**
+     * Inject log manager to get concrete logger from it.
+     *
+     * @param \TYPO3\CMS\Core\Log\LogManager $logManager
+     */
+    public function injectLogger(\TYPO3\CMS\Core\Log\LogManager $logManager)
+    {
+        $this->logger = $logManager->getLogger(__CLASS__);
+    }
 
     /**
      * @param ConfigurationContainerInterface $configuration
@@ -59,36 +72,33 @@ class IndexFactory implements Singleton
 
     /**
      * Get an index bases on TYPO3 table name.
-     *
-     * @param Connection $connection
-     * @param string $documentType
-     *
-     * @return \Elastica\Index
      */
-    public function getIndex(Connection $connection, $documentType)
+    public function getIndex(Connection $connection, string $documentType) : \Elastica\Index
     {
         $index = $connection->getClient()->getIndex($this->getIndexName());
 
         if ($index->exists() === false) {
-            $index->create($this->getConfigurationFor($documentType));
+            $config = $this->getConfigurationFor($documentType);
+            $this->logger->debug(sprintf('Create index %s.', $documentType), [$documentType, $config]);
+            $index->create($config);
+            $this->logger->debug(sprintf('Created index %s.', $documentType), [$documentType]);
         }
 
         return $index;
     }
 
-    /**
-     * @param string $documentType
-     *
-     * @return array
-     */
-    protected function getConfigurationFor($documentType)
+    protected function getConfigurationFor(string $documentType) : array
     {
         try {
             $configuration = $this->configuration->get('indexing.' . $documentType . '.index');
 
-            if (isset($configuration['analysis']['analyzer'])) {
-                foreach ($configuration['analysis']['analyzer'] as $key => $analyzer) {
-                    $configuration['analysis']['analyzer'][$key] = $this->prepareAnalyzerConfiguration($analyzer);
+            foreach (['analyzer', 'filter'] as $optionsToExpand) {
+                if (isset($configuration['analysis'][$optionsToExpand])) {
+                    foreach ($configuration['analysis'][$optionsToExpand] as $key => $options) {
+                        $configuration['analysis'][$optionsToExpand][$key] = $this->prepareAnalyzerConfiguration(
+                            $options
+                        );
+                    }
                 }
             }
 
@@ -98,14 +108,9 @@ class IndexFactory implements Singleton
         }
     }
 
-    /**
-     * @param array $analyzer
-     *
-     * @return array
-     */
-    protected function prepareAnalyzerConfiguration(array $analyzer)
+    protected function prepareAnalyzerConfiguration(array $analyzer) : array
     {
-        $fieldsToExplode = ['char_filter', 'filter'];
+        $fieldsToExplode = ['char_filter', 'filter', 'word_list'];
 
         foreach ($fieldsToExplode as $fieldToExplode) {
             if (isset($analyzer[$fieldToExplode])) {

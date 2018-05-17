@@ -35,20 +35,16 @@ interface IndexerInterface
     /**
      * Fetches a single document and pushes it to the connection.
      *
-     * @param string $identifier
-     *
      * @return void
      */
-    public function indexDocument($identifier);
+    public function indexDocument(string $identifier);
 
     /**
      * Recieves the identifier of the indexer itself.
      *
-     * @param string $identifier
-     *
      * @return void
      */
-    public function setIdentifier($identifier);
+    public function setIdentifier(string $identifier);
 
     /**
      * Delete the whole index.

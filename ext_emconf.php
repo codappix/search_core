@@ -7,8 +7,8 @@ $EM_CONF[$_EXTKEY] = [
     'clearCacheOnLoad' => 1,
     'constraints' => [
         'depends' => [
-            'typo3' => '8.7.0-8.7.99',
-            'php' => '7.1.0-7.99.99'
+            'typo3' => '7.6.0-8.7.99',
+            'php' => '7.0.0-7.2.99'
         ],
         'conflicts' => [],
     ],
@@ -18,7 +18,7 @@ $EM_CONF[$_EXTKEY] = [
         ],
     ],
     'state' => 'beta',
-    'version' => '1.0.0',
+    'version' => '0.0.4',
     'author' => 'Daniel Siepmann',
     'author_email' => 'coding@daniel-siepmann.de',
 ];

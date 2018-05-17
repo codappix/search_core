@@ -58,13 +58,11 @@ class DataHandlerFinisher extends AbstractFinisher
 
         switch ($action) {
             case 'update':
+            case 'add':
                 $this->dataHandler->update($tableName, $record);
                 break;
-            case 'add':
-                $this->dataHandler->add($tableName, $record);
-                break;
             case 'delete':
-                $this->dataHandler->delete($tableName, $record['uid']);
+                $this->dataHandler->delete($tableName, (string) $record['uid']);
                 break;
         }
     }

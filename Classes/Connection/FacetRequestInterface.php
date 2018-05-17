@@ -28,15 +28,11 @@ interface FacetRequestInterface
     /**
      * The identifier of the facet, used as key in arrays and to get the facet
      * from search request, etc.
-     *
-     * @return string
      */
-    public function getIdentifier();
+    public function getIdentifier() : string;
 
     /**
-     * The field to use for facet building.
-     *
-     * @return string
+     * The config to use for facet building.
      */
-    public function getField();
+    public function getConfig() : array;
 }

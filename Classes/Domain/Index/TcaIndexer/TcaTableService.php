@@ -21,11 +21,13 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
-use Codappix\SearchCore\Configuration\InvalidArgumentException as InvalidConfigurationArgumentException;
 use Codappix\SearchCore\Database\Doctrine\Join;
 use Codappix\SearchCore\Database\Doctrine\Where;
 use Codappix\SearchCore\Domain\Index\IndexingException;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\InvalidArgumentException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
@@ -33,7 +35,7 @@ use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 /**
  * Encapsulate logik related to TCA configuration.
  */
-class TcaTableService
+class TcaTableService implements TcaTableServiceInterface
 {
     /**
      * TCA for current table.
@@ -51,11 +53,6 @@ class TcaTableService
      * @var ConfigurationContainerInterface
      */
     protected $configuration;
-
-    /**
-     * @var RelationResolver
-     */
-    protected $relationResolver;
 
     /**
      * @var \TYPO3\CMS\Core\Log\Logger
@@ -91,7 +88,6 @@ class TcaTableService
      */
     public function __construct(
         $tableName,
-        RelationResolver $relationResolver,
         ConfigurationContainerInterface $configuration
     ) {
         if (!isset($GLOBALS['TCA'][$tableName])) {
@@ -104,32 +100,39 @@ class TcaTableService
         $this->tableName = $tableName;
         $this->tca = &$GLOBALS['TCA'][$this->tableName];
         $this->configuration = $configuration;
-        $this->relationResolver = $relationResolver;
     }
 
-    /**
-     * @return string
-     */
     public function getTableName() : string
     {
         return $this->tableName;
     }
 
-    /**
-     * @return string
-     */
     public function getTableClause() : string
     {
         return $this->tableName;
     }
 
-    /**
-     * Filter the given records by root line blacklist settings.
-     *
-     * @param array &$records
-     * @return void
-     */
-    public function filterRecordsByRootLineBlacklist(array &$records) : void
+    public function getRecords(int $offset, int $limit) : array
+    {
+        $records = $this->getQuery()
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->execute()
+            ->fetchAll();
+
+        return $records ?: [];
+    }
+
+    public function getRecord(int $identifier) : array
+    {
+        $query = $this->getQuery();
+        $query = $query->andWhere($this->getTableName() . '.uid = ' . $identifier);
+        $record = $query->execute()->fetch();
+
+        return $record ?: [];
+    }
+
+    public function filterRecordsByRootLineBlacklist(array &$records)
     {
         $records = array_filter(
             $records,
@@ -139,13 +142,8 @@ class TcaTableService
         );
     }
 
-    /**
-     * @param array &$record
-     */
-    public function prepareRecord(array &$record) : void
+    public function prepareRecord(array &$record)
     {
-        $this->relationResolver->resolveRelationsForRecord($this, $record);
-
         if (isset($record['uid']) && !isset($record['search_identifier'])) {
             $record['search_identifier'] = $record['uid'];
         }
@@ -154,18 +152,20 @@ class TcaTableService
         }
     }
 
-    public function getWhereClause() : Where
+    protected function getWhereClause() : Where
     {
         $parameters = [];
         $whereClause = $this->getSystemWhereClause();
 
-        $userDefinedWhere = $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.additionalWhereClause');
+        $userDefinedWhere = $this->configuration->getIfExists(
+            'indexing.' . $this->getTableName() . '.additionalWhereClause'
+        );
         if (is_string($userDefinedWhere)) {
             $whereClause .= ' AND ' . $userDefinedWhere;
         }
 
-        if ($this->isBlacklistedRootLineConfigured()) {
-            $parameters[':blacklistedRootLine'] = $this->getBlacklistedRootLine();
+        if ($this->isBlackListedRootLineConfigured()) {
+            $parameters[':blacklistedRootLine'] = implode(',', $this->getBlackListedRootLine());
             $whereClause .= ' AND pages.uid NOT IN (:blacklistedRootLine)'
                 . ' AND pages.pid NOT IN (:blacklistedRootLine)';
         }
@@ -174,7 +174,7 @@ class TcaTableService
         return new Where($whereClause, $parameters);
     }
 
-    public function getFields() : array
+    protected function getFields() : array
     {
         $fields = array_merge(
             ['uid','pid'],
@@ -197,7 +197,7 @@ class TcaTableService
         return $fields;
     }
 
-    public function getJoins() : array
+    protected function getJoins() : array
     {
         if ($this->tableName === 'pages') {
             return [];
@@ -212,7 +212,7 @@ class TcaTableService
      * Generate SQL for TYPO3 as a system, to make sure only available records
      * are fetched.
      */
-    public function getSystemWhereClause() : string
+    protected function getSystemWhereClause() : string
     {
         $whereClause = '1=1'
             . BackendUtility::BEenableFields($this->tableName)
@@ -229,11 +229,7 @@ class TcaTableService
         return $whereClause;
     }
 
-    /**
-     * @param string
-     * @return bool
-     */
-    protected function isSystemField($columnName) : bool
+    protected function isSystemField(string $columnName) : bool
     {
         $systemFields = [
             // Versioning fields,
@@ -245,7 +241,6 @@ class TcaTableService
             $this->tca['ctrl']['cruser_id'],
             $this->tca['ctrl']['fe_cruser_id'],
             $this->tca['ctrl']['fe_crgroup_id'],
-            $this->tca['ctrl']['languageField'],
             $this->tca['ctrl']['origUid'],
         ];
 
@@ -265,11 +260,9 @@ class TcaTableService
     }
 
     /**
-     * @param string $columnName
-     * @return array
      * @throws InvalidArgumentException
      */
-    public function getColumnConfig($columnName) : array
+    public function getColumnConfig(string $columnName) : array
     {
         if (!isset($this->tca['columns'][$columnName])) {
             throw new InvalidArgumentException(
@@ -281,6 +274,15 @@ class TcaTableService
         return $this->tca['columns'][$columnName]['config'];
     }
 
+    public function getLanguageUidColumn() : string
+    {
+        if (!isset($this->tca['ctrl']['languageField'])) {
+            return '';
+        }
+
+        return $this->tca['ctrl']['languageField'];
+    }
+
     /**
      * Checks whether the given record was blacklisted by root line.
      * This can be configured by typoscript as whole root lines can be black listed.
@@ -288,9 +290,6 @@ class TcaTableService
      * Also further TYPO3 mechanics are taken into account. Does a valid root
      * line exist, is page inside a recycler, is inherited start- endtime
      * excluded, etc.
-     *
-     * @param array &$record
-     * @return bool
      */
     protected function isRecordBlacklistedByRootline(array &$record) : bool
     {
@@ -346,8 +345,6 @@ class TcaTableService
 
     /**
      * Checks whether any page uids are black listed.
-     *
-     * @return bool
      */
     protected function isBlackListedRootLineConfigured() : bool
     {
@@ -361,6 +358,31 @@ class TcaTableService
      */
     protected function getBlackListedRootLine() : array
     {
-        return GeneralUtility::intExplode(',', $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist'));
+        return GeneralUtility::intExplode(
+            ',',
+            $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist')
+        );
+    }
+
+    public function getQuery() : QueryBuilder
+    {
+        $queryBuilder = $this->getDatabaseConnection()->getQueryBuilderForTable($this->getTableName());
+        $where = $this->getWhereClause();
+        $query = $queryBuilder->select(... $this->getFields())
+            ->from($this->getTableClause())
+            ->where($where->getStatement())
+            ->setParameters($where->getParameters());
+
+        foreach ($this->getJoins() as $join) {
+            $query->from($join->getTable());
+            $query->andWhere($join->getCondition());
+        }
+
+        return $query;
+    }
+
+    protected function getDatabaseConnection() : ConnectionPool
+    {
+        return GeneralUtility::makeInstance(ConnectionPool::class);
     }
 }

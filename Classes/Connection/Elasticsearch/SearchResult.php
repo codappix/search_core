@@ -24,10 +24,14 @@ use Codappix\SearchCore\Connection\FacetInterface;
 use Codappix\SearchCore\Connection\ResultItemInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
+use Codappix\SearchCore\Domain\Model\QueryResultInterfaceStub;
+use Codappix\SearchCore\Domain\Model\ResultItem;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 class SearchResult implements SearchResultInterface
 {
+    use QueryResultInterfaceStub;
+
     /**
      * @var SearchRequestInterface
      */
@@ -73,7 +77,7 @@ class SearchResult implements SearchResultInterface
     /**
      * @return array<ResultItemInterface>
      */
-    public function getResults()
+    public function getResults() : array
     {
         $this->initResults();
 
@@ -85,14 +89,14 @@ class SearchResult implements SearchResultInterface
      *
      * @return array<FacetInterface>
      */
-    public function getFacets()
+    public function getFacets() : array
     {
         $this->initFacets();
 
         return $this->facets;
     }
 
-    public function getCurrentCount()
+    public function getCurrentCount() : int
     {
         return $this->result->count();
     }
@@ -104,7 +108,7 @@ class SearchResult implements SearchResultInterface
         }
 
         foreach ($this->result->getResults() as $result) {
-            $this->results[] = new ResultItem($result);
+            $this->results[] = new ResultItem($result->getData(), $result->getParam('_type'));
         }
     }
 
@@ -153,41 +157,8 @@ class SearchResult implements SearchResultInterface
         $this->position = 0;
     }
 
-    // Extbase QueryResultInterface - Implemented to support Pagination of Fluid.
-
     public function getQuery()
     {
         return $this->searchRequest;
-    }
-
-    public function getFirst()
-    {
-        throw new \BadMethodCallException('Method is not implemented yet.', 1502195121);
-    }
-
-    public function toArray()
-    {
-        throw new \BadMethodCallException('Method is not implemented yet.', 1502195135);
-    }
-
-    public function offsetExists($offset)
-    {
-        // Return false to allow Fluid to use appropriate getter methods.
-        return false;
-    }
-
-    public function offsetGet($offset)
-    {
-        throw new \BadMethodCallException('Use getter to fetch properties.', 1502196933);
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        throw new \BadMethodCallException('You are not allowed to modify the result.', 1502196934);
-    }
-
-    public function offsetUnset($offset)
-    {
-        throw new \BadMethodCallException('You are not allowed to modify the result.', 1502196936);
     }
 }

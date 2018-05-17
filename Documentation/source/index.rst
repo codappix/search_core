@@ -1,7 +1,7 @@
 .. include:: readme.rst
 
 Table of Contents
-=================
+-----------------
 
 .. toctree::
    :maxdepth: 1
@@ -14,4 +14,6 @@ Table of Contents
    concepts
    connections
    indexer
+   dataprocessors
    development
+   changelog

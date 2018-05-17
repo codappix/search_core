@@ -15,7 +15,7 @@ plugin {
 
                     additionalWhereClause (
                         tt_content.CType NOT IN ('gridelements_pi1', 'list', 'div', 'menu', 'shortcut', 'search', 'login')
-                        AND tt_content.bodytext != ''
+                        AND (tt_content.bodytext != '' OR tt_content.header != '')
                     )
 
                     mapping {
@@ -23,27 +23,30 @@ plugin {
                             type = keyword
                         }
                     }
+
+                    dataProcessing {
+                        1 = Codappix\SearchCore\DataProcessing\TcaRelationResolvingProcessor
+                    }
                 }
 
                 pages {
                     indexer = Codappix\SearchCore\Domain\Index\TcaIndexer\PagesIndexer
                     abstractFields = abstract, description, bodytext
+                    contentFields = header, bodytext
 
                     mapping {
                         CType {
                             type = keyword
                         }
                     }
+
+                    dataProcessing {
+                        1 = Codappix\SearchCore\DataProcessing\TcaRelationResolvingProcessor
+                    }
                 }
             }
 
             searching {
-                facets {
-                    contentTypes {
-                        field = CType
-                    }
-                }
-
                 fields {
                     query = _all
                 }

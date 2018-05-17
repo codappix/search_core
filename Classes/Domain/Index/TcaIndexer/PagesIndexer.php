@@ -23,6 +23,8 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Domain\Index\TcaIndexer;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Specific indexer for Pages, will basically add content of page.
@@ -30,33 +32,36 @@ use Codappix\SearchCore\Domain\Index\TcaIndexer;
 class PagesIndexer extends TcaIndexer
 {
     /**
-     * @var TcaTableService
+     * @var TcaTableServiceInterface
      */
     protected $contentTableService;
 
     /**
-     * @param TcaTableService $tcaTableService
-     * @param TcaTableService $tcaTableService
+     * @var \TYPO3\CMS\Core\Resource\FileRepository
+     * @inject
+     */
+    protected $fileRepository;
+
+    /**
+     * @param TcaTableServiceInterface $tcaTableService
+     * @param TcaTableServiceInterface $contentTableService
      * @param ConnectionInterface $connection
      * @param ConfigurationContainerInterface $configuration
      */
     public function __construct(
-        TcaTableService $tcaTableService,
-        TcaTableService $contentTableService,
+        TcaTableServiceInterface $tcaTableService,
+        TcaTableServiceInterface $contentTableService,
         ConnectionInterface $connection,
         ConfigurationContainerInterface $configuration
     ) {
-        $this->tcaTableService = $tcaTableService;
+        parent::__construct($tcaTableService, $connection, $configuration);
         $this->contentTableService = $contentTableService;
-        $this->connection = $connection;
-        $this->configuration = $configuration;
     }
 
-    /**
-     * @param array &$record
-     */
     protected function prepareRecord(array &$record)
     {
+        parent::prepareRecord($record);
+
         $possibleTitleFields = ['nav_title', 'tx_tqseo_pagetitle_rel', 'title'];
         foreach ($possibleTitleFields as $searchTitleField) {
             if (isset($record[$searchTitleField]) && trim($record[$searchTitleField])) {
@@ -65,32 +70,96 @@ class PagesIndexer extends TcaIndexer
             }
         }
 
-        $record['content'] = $this->fetchContentForPage($record['uid']);
-        parent::prepareRecord($record);
+        $record['media'] = $this->fetchMediaForPage($record['uid']);
+        $content = $this->fetchContentForPage($record['uid']);
+        if ($content !== []) {
+            $record['content'] = $content['content'];
+            $record['media'] = array_values(array_unique(array_merge($record['media'], $content['images'])));
+        }
     }
 
-    /**
-     * @param int $uid
-     * @return string
-     */
-    protected function fetchContentForPage($uid)
+    protected function fetchContentForPage(int $uid) : array
     {
-        $contentElements = $this->getQuery($this->contentTableService)->execute()->fetchAll();
+        if ($this->contentTableService instanceof TcaTableService) {
+            $queryBuilder = $this->contentTableService->getQuery();
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->eq(
+                    $this->contentTableService->getTableName() . '.pid',
+                    $queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT)
+                )
+            );
+            $contentElements = $queryBuilder->execute()->fetchAll();
+        } else {
+            $contentElements = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+                $this->contentTableService->getFields(),
+                $this->contentTableService->getTableClause(),
+                $this->contentTableService->getWhereClause() .
+                sprintf(' AND %s.pid = %u', $this->contentTableService->getTableName(), $uid)
+            );
+        }
 
         if ($contentElements === null) {
             $this->logger->debug('No content for page ' . $uid);
-            return '';
+            return [];
         }
 
         $this->logger->debug('Fetched content for page ' . $uid);
+        $images = [];
         $content = [];
         foreach ($contentElements as $contentElement) {
-            $content[] = $contentElement['bodytext'];
+            $images = array_merge(
+                $images,
+                $this->getContentElementImages($contentElement['uid'])
+            );
+            $content[] = $this->getContentFromContentElement($contentElement);
         }
 
-        // Remove Tags.
-        // Interpret escaped new lines and special chars.
-        // Trim, e.g. trailing or leading new lines.
-        return trim(stripcslashes(strip_tags(implode(' ', $content))));
+        return [
+            // Remove Tags.
+            // Interpret escaped new lines and special chars.
+            // Trim, e.g. trailing or leading new lines.
+            'content' => trim(stripcslashes(strip_tags(implode(' ', $content)))),
+            'images' => $images,
+        ];
+    }
+
+    protected function getContentElementImages(int $uidOfContentElement) : array
+    {
+        return $this->fetchSysFileReferenceUids($uidOfContentElement, 'tt_content', 'image');
+    }
+
+    protected function fetchMediaForPage(int $uid) : array
+    {
+        return $this->fetchSysFileReferenceUids($uid, 'pages', 'media');
+    }
+
+    protected function fetchSysFileReferenceUids(int $uid, string $tablename, string $fieldname) : array
+    {
+        $imageRelationUids = [];
+        $imageRelations = $this->fileRepository->findByRelation($tablename, $fieldname, $uid);
+
+        foreach ($imageRelations as $relation) {
+            $imageRelationUids[] = $relation->getUid();
+        }
+
+        return $imageRelationUids;
+    }
+
+    protected function getContentFromContentElement(array $contentElement) : string
+    {
+        $content = '';
+
+        $fieldsWithContent = GeneralUtility::trimExplode(
+            ',',
+            $this->configuration->get('indexing.' . $this->identifier . '.contentFields'),
+            true
+        );
+        foreach ($fieldsWithContent as $fieldWithContent) {
+            if (isset($contentElement[$fieldWithContent]) && trim($contentElement[$fieldWithContent])) {
+                $content .= trim($contentElement[$fieldWithContent]) . ' ';
+            }
+        }
+
+        return trim($content);
     }
 }

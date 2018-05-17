@@ -1,5 +1,5 @@
 <?php
-namespace Codappix\SearchCore\Connection\Elasticsearch;
+namespace Codappix\SearchCore\Domain\Model;
 
 /*
  * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
@@ -29,9 +29,25 @@ class ResultItem implements ResultItemInterface
      */
     protected $data = [];
 
-    public function __construct(\Elastica\Result $result)
+    /**
+     * @var string
+     */
+    protected $type = '';
+
+    public function __construct(array $result, string $type)
     {
-        $this->data = $result->getData();
+        $this->data = $result;
+        $this->type = $type;
+    }
+
+    public function getType() : string
+    {
+        return $this->type;
+    }
+
+    public function getPlainData() : array
+    {
+        return $this->data;
     }
 
     public function offsetExists($offset)

@@ -23,6 +23,7 @@ namespace Codappix\SearchCore\Domain\Model;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\FacetRequestInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
+use Codappix\SearchCore\Domain\Search\SearchService;
 
 /**
  * Represents a search request used to process an actual search.
@@ -64,25 +65,24 @@ class SearchRequest implements SearchRequestInterface
     protected $connection = null;
 
     /**
-     * @param string $query
+     * @var SearchService
      */
-    public function __construct($query = '')
-    {
-        $this->query = (string) $query;
-    }
+    protected $searchService = null;
 
     /**
-     * @return string
+     * @param string $query
      */
-    public function getQuery()
+    public function __construct(string $query = '')
+    {
+        $this->query = $query;
+    }
+
+    public function getQuery() : string
     {
         return $this->query;
     }
 
-    /**
-     * @return string
-     */
-    public function getSearchTerm()
+    public function getSearchTerm() : string
     {
         return $this->query;
     }
@@ -96,26 +96,18 @@ class SearchRequest implements SearchRequestInterface
         $this->filter = \TYPO3\CMS\Extbase\Utility\ArrayUtility::removeEmptyElementsRecursively($filter);
     }
 
-    /**
-     * @return bool
-     */
-    public function hasFilter()
+    public function hasFilter() : bool
     {
         return count($this->filter) > 0;
     }
 
-    /**
-     * @return array
-     */
-    public function getFilter()
+    public function getFilter() : array
     {
         return $this->filter;
     }
 
     /**
      * Add a facet to gather in this search request.
-     *
-     * @param FacetRequestInterface $facet
      */
     public function addFacet(FacetRequestInterface $facet)
     {
@@ -124,10 +116,8 @@ class SearchRequest implements SearchRequestInterface
 
     /**
      * Returns all configured facets to fetch in this search request.
-     *
-     * @return array
      */
-    public function getFacets()
+    public function getFacets() : array
     {
         return $this->facets;
     }
@@ -135,36 +125,49 @@ class SearchRequest implements SearchRequestInterface
     /**
      * Define connection to use for this request.
      * Necessary to allow implementation of execute for interface.
-     *
-     * @param ConnectionInterface $connection
      */
     public function setConnection(ConnectionInterface $connection)
     {
         $this->connection = $connection;
     }
 
+    public function setSearchService(SearchService $searchService)
+    {
+        $this->searchService = $searchService;
+    }
+
     // Extbase QueryInterface
     // Current implementation covers only paginate widget support.
     public function execute($returnRawQueryResult = false)
     {
-        if ($this->connection instanceof ConnectionInterface) {
-            return $this->connection->search($this);
+        if (! ($this->connection instanceof ConnectionInterface)) {
+            throw new \InvalidArgumentException(
+                'Connection was not set before, therefore execute can not work. Use `setConnection` before.',
+                1502197732
+            );
+        }
+        if (! ($this->searchService instanceof SearchService)) {
+            throw new \InvalidArgumentException(
+                'SearchService was not set before, therefore execute can not work. Use `setSearchService` before.',
+                1520325175
+            );
         }
 
-        throw new \InvalidArgumentException(
-            'Connection was not set before, therefore execute can not work. Use `setConnection` before.',
-            1502197732
-        );
+        return $this->searchService->processResult($this->connection->search($this));
     }
 
     public function setLimit($limit)
     {
         $this->limit = (int) $limit;
+
+        return $this;
     }
 
     public function setOffset($offset)
     {
         $this->offset = (int) $offset;
+
+        return $this;
     }
 
     public function getLimit()

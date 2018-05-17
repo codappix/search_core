@@ -24,7 +24,7 @@ use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\Elasticsearch;
 use Codappix\SearchCore\Domain\Index\TcaIndexer;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\RelationResolver;
-use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface;
 use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
@@ -47,7 +47,7 @@ class TcaIndexerTest extends AbstractFunctionalTestCase
         $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
         $tableName = 'tt_content';
         $tableService = $objectManager->get(
-            TcaTableService::class,
+            TcaTableServiceInterface::class,
             $tableName,
             $objectManager->get(RelationResolver::class),
             $objectManager->get(ConfigurationContainerInterface::class)

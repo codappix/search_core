@@ -11,9 +11,10 @@ Manual indexing
 
 You can trigger indexing from CLI::
 
-    ./typo3/cli_dispatch.phpsh extbase index:index --identifier 'tt_content'
+    ./typo3/cli_dispatch.phpsh extbase index:index --identifier 'pages'
+    ./bin/typo3cms index:index --identifier 'pages'
 
-This will index the table ``tt_content`` using the :ref:`TcaIndexer`.
+This will index the table ``pages`` using the :ref:`TcaIndexer`.
 
 Only one index per call is available, to run multiple indexers, just make multiple calls.
 The indexers have to be defined in TypoScript via :ref:`configuration_options_index`.
@@ -25,9 +26,10 @@ Manual deletion
 
 You can trigger deletion for a single index from CLI::
 
-    ./typo3/cli_dispatch.phpsh extbase index:delete --identifier 'tt_content'
+    ./typo3/cli_dispatch.phpsh extbase index:delete --identifier 'pages'
+    ./bin/typo3cms index:delete --identifier 'pages'
 
-This will delete the index for the table ``tt_content``.
+This will delete the index for the table ``pages``.
 
 Only one delete per call is available, to run multiple deletions, just make multiple calls.
 
@@ -53,7 +55,6 @@ A form finisher is provided to integrate indexing into form extension.
 Add form finisher to your available finishers and configure it like:
 
 .. code-block:: yaml
-   :linenos:
 
     -
         identifier: SearchCoreIndexer
@@ -62,7 +63,7 @@ Add form finisher to your available finishers and configure it like:
             indexIdentifier: 'fe_users'
             recordUid: '{FeUser.user.uid}'
 
-All three options are necessary, where
+All three options are necessary, where:
 
 ``action``
     Is one of ``delete``, ``update`` or ``add``.
@@ -81,7 +82,7 @@ plugin. The plugin is named *Search Core*.
 
 Please provide your own template, the extension will not deliver a useful template for now.
 
-The extbase mapping is used, this way you can create a form:
+The Extbase mapping is used, this way you can create a form:
 
 .. code-block:: html
 
@@ -95,11 +96,10 @@ The extbase mapping is used, this way you can create a form:
 Filter
 """"""
 
-Thanks to extbase mapping, filter are added to the form:
+Thanks to Extbase mapping, filter are added to the form:
 
 .. code-block:: html
 
-   <!-- Case sensitive for fields of type keyword. -->
    <f:form.textfield property="filter.exampleName" value="the value to match" />
 
 .. _usage_searching_facets:
