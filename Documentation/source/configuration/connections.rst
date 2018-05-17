@@ -56,6 +56,8 @@ Used by: :ref:`Elasticsearch`.
 
 The index where the documents are being indexed to. E.g. default ``typo3content`` for Elasticsearch.
 
+This can be used to have one Elasticsearch server for multiple environments. E.g. production and staging.
+
 Example::
 
     plugin.tx_searchcore.settings.connections.elasticsearch.index = typo3content
