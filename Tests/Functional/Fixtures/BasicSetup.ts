@@ -5,6 +5,7 @@ plugin {
                 elasticsearch {
                     host = localhost
                     port = 9200
+                    index = typo3content
                 }
             }
 
