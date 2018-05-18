@@ -50,9 +50,9 @@ Example::
 .. _index:
 
 ``index``
---------
+---------
 
-Used by: :ref:`Elasticsearch`.
+Used by: :ref:`connection_elasticsearch`.
 
 The index where the documents are being indexed to. E.g. default ``typo3content`` for Elasticsearch.
 
