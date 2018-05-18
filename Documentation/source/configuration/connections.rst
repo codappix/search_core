@@ -46,3 +46,18 @@ The port where search service is reachable. E.g. default ``9200`` for Elasticsea
 Example::
 
     plugin.tx_searchcore.settings.connections.elasticsearch.port = 9200
+
+.. _index:
+
+``index``
+---------
+
+Used by: :ref:`connection_elasticsearch`.
+
+The index where the documents are being indexed to. E.g. default ``typo3content`` for Elasticsearch.
+
+This can be used to have one Elasticsearch server for multiple environments. E.g. production and staging.
+
+Example::
+
+    plugin.tx_searchcore.settings.connections.elasticsearch.index = typo3content

@@ -5,6 +5,7 @@ plugin {
                 elasticsearch {
                     host = {$plugin.tx_searchcore.settings.connections.elasticsearch.host}
                     port = {$plugin.tx_searchcore.settings.connections.elasticsearch.port}
+                    index = {$plugin.tx_searchcore.settings.connections.elasticsearch.index}
                 }
             }
 

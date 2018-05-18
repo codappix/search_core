@@ -24,6 +24,7 @@ use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\Elasticsearch\Connection;
 use Codappix\SearchCore\Connection\Elasticsearch\IndexFactory;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use PHPUnit_Framework_MockObject_MockObject;
 
 class IndexFactoryTest extends AbstractUnitTestCase
 {
@@ -31,6 +32,11 @@ class IndexFactoryTest extends AbstractUnitTestCase
      * @var IndexFactory
      */
     protected $subject;
+
+    /**
+     * @var PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $configuration;
 
     public function setUp()
     {
@@ -67,6 +73,11 @@ class IndexFactoryTest extends AbstractUnitTestCase
         $connection->expects($this->once())
             ->method('getClient')
             ->willReturn($clientMock);
+
+        $this->configuration->expects($this->once())
+            ->method('get')
+            ->with('connections.elasticsearch.index')
+            ->willReturn('typo3content');
 
         $this->subject->getIndex($connection, 'someIndex');
     }
@@ -123,10 +134,20 @@ class IndexFactoryTest extends AbstractUnitTestCase
             ->method('getClient')
             ->willReturn($clientMock);
 
-        $this->configuration->expects($this->once())
+        $this->configuration->expects($this->exactly(2))
             ->method('get')
-            ->with('indexing.someIndex.index')
-            ->willReturn($configuration);
+            ->will(
+                $this->returnValueMap([
+                    [
+                        'indexing.someIndex.index',
+                        $configuration
+                    ],
+                    [
+                        'connections.elasticsearch.index',
+                        'typo3content'
+                    ]
+                ])
+            );
 
         $this->subject->getIndex($connection, 'someIndex');
     }
