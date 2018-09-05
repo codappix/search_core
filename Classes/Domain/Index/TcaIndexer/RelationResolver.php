@@ -41,14 +41,7 @@ class RelationResolver implements Singleton
                 continue;
             }
 
-            $record[$column] = GeneralUtility::makeInstance($this->getUtilityForMode())
-                ::getProcessedValueExtra(
-                    $service->getTableName(),
-                    $column,
-                    $record[$column],
-                    0,
-                    $record['uid']
-                );
+            $record[$column] = $this->getColumnValue($record, $column, $service);
 
             try {
                 $config = $service->getColumnConfig($column);
@@ -106,5 +99,17 @@ class RelationResolver implements Singleton
         }
 
         return FrontendUtility::class;
+    }
+
+    protected function getColumnValue(array $record, string $column, TcaTableServiceInterface $service): string
+    {
+        $utility = GeneralUtility::makeInstance($this->getUtilityForMode());
+        return $utility::getProcessedValueExtra(
+            $service->getTableName(),
+            $column,
+            $record[$column],
+            0,
+            $record['uid']
+        ) ?? '';
     }
 }
