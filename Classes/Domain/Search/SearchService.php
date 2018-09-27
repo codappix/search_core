@@ -126,9 +126,7 @@ class SearchService
 
             ArrayUtility::mergeRecursiveWithOverrule(
                 $filter,
-                $this->configuration->get('searching.filter'),
-                true,
-                false
+                $this->configuration->get('searching.filter')
             );
 
             $searchRequest->setFilter($filter);

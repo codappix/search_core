@@ -167,6 +167,33 @@ class SearchServiceTest extends AbstractUnitTestCase
     /**
      * @test
      */
+    public function configuredFilterWithValueZeroAreAddedToRequestWithoutAnyFilter()
+    {
+        $this->configuration->expects($this->any())
+            ->method('getIfExists')
+            ->withConsecutive(['searching.size'], ['searching.facets'])
+            ->will($this->onConsecutiveCalls(null, null));
+        $this->configuration->expects($this->any())
+            ->method('get')
+            ->will($this->onConsecutiveCalls(
+                ['property' => '0'],
+                $this->throwException(new InvalidArgumentException)
+            ));
+
+        $this->connection->expects($this->once())
+            ->method('search')
+            ->with($this->callback(function ($searchRequest) {
+                return $searchRequest->getFilter() === ['property' => '0'];
+            }))
+            ->willReturn($this->getMockBuilder(SearchResultInterface::class)->getMock());
+
+        $searchRequest = new SearchRequest('SearchWord');
+        $this->subject->search($searchRequest);
+    }
+
+    /**
+     * @test
+     */
     public function configuredFilterAreAddedToRequestWithExistingFilter()
     {
         $this->configuration->expects($this->any())
@@ -207,34 +234,6 @@ class SearchServiceTest extends AbstractUnitTestCase
         $this->configuration->expects($this->any())
             ->method('get')
             ->will($this->throwException(new InvalidArgumentException));
-
-        $this->connection->expects($this->once())
-            ->method('search')
-            ->with($this->callback(function ($searchRequest) {
-                return $searchRequest->getFilter() === ['anotherProperty' => 'anything'];
-            }))
-            ->willReturn($this->getMockBuilder(SearchResultInterface::class)->getMock());
-
-        $searchRequest = new SearchRequest('SearchWord');
-        $searchRequest->setFilter(['anotherProperty' => 'anything']);
-        $this->subject->search($searchRequest);
-    }
-
-    /**
-     * @test
-     */
-    public function emptyConfiguredFilterIsNotChangingRequestWithExistingFilter()
-    {
-        $this->configuration->expects($this->any())
-            ->method('getIfExists')
-            ->withConsecutive(['searching.size'], ['searching.facets'])
-            ->will($this->onConsecutiveCalls(null, null));
-        $this->configuration->expects($this->any())
-            ->method('get')
-            ->will($this->onConsecutiveCalls(
-                ['anotherProperty' => ''],
-                $this->throwException(new InvalidArgumentException)
-            ));
 
         $this->connection->expects($this->once())
             ->method('search')

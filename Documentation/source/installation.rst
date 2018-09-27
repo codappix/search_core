@@ -9,7 +9,7 @@ Composer
 
 The extension can be installed through composer::
 
-    composer require "codappix/search_core" "~0.0.6"
+    composer require "codappix/search_core" "~0.0.7"
 
 Note that you have to allow unstable packages:
 
