@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Hook;
 
 /*
@@ -24,8 +25,8 @@ use Codappix\SearchCore\Configuration\NoConfigurationException;
 use Codappix\SearchCore\Domain\Service\DataHandler as OwnDataHandler;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler as CoreDataHandler;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
@@ -48,6 +49,8 @@ class DataHandler implements Singleton
     /**
      * Dependency injection as TYPO3 doesn't provide it on it's own.
      * Still you can submit your own dataHandler.
+     * @param OwnDataHandler $dataHandler
+     * @param Logger $logger
      */
     public function __construct(OwnDataHandler $dataHandler = null, Logger $logger = null)
     {
@@ -71,18 +74,27 @@ class DataHandler implements Singleton
 
     /**
      * Called by CoreDataHandler on deletion of records.
+     *
+     * @param string $table
+     * @param string $uid
+     * @return bool
      */
-    public function processCmdmap_deleteAction(string $table, string $uid) : bool
+    public function processCmdmap_deleteAction(string $table, string $uid): bool
     {
-        if (! $this->shouldProcessHookForTable($table)) {
+        if (!$this->shouldProcessHookForTable($table)) {
             $this->logger->debug('Delete not processed.', [$table, $uid]);
             return false;
         }
 
-        $this->dataHandler->delete($table, (string) $uid);
+        $this->dataHandler->delete($table, $uid);
         return true;
     }
 
+    /**
+     * @param CoreDataHandler $dataHandler
+     * @return void
+     * @throws \Codappix\SearchCore\Domain\Index\NoMatchingIndexerException
+     */
     public function processDatamap_afterAllOperations(CoreDataHandler $dataHandler)
     {
         foreach ($dataHandler->datamap as $table => $record) {
@@ -103,6 +115,12 @@ class DataHandler implements Singleton
         }
     }
 
+    /**
+     * @param array $parameters
+     * @param CoreDataHandler $dataHandler
+     * @return void
+     * @throws \Codappix\SearchCore\Domain\Index\NoMatchingIndexerException
+     */
     public function clearCachePostProc(array $parameters, CoreDataHandler $dataHandler)
     {
         $pageUid = 0;
@@ -117,13 +135,19 @@ class DataHandler implements Singleton
         }
 
         if ($pageUid > 0) {
-            $this->processRecord('pages', (int) $pageUid);
+            $this->processRecord('pages', (int)$pageUid);
         }
     }
 
-    protected function processRecord(string $table, int $uid) : bool
+    /**
+     * @param string $table
+     * @param integer $uid
+     * @return bool
+     * @throws \Codappix\SearchCore\Domain\Index\NoMatchingIndexerException
+     */
+    protected function processRecord(string $table, int $uid): bool
     {
-        if (! $this->shouldProcessHookForTable($table)) {
+        if (!$this->shouldProcessHookForTable($table)) {
             $this->logger->debug('Indexing of record not processed.', [$table, $uid]);
             return false;
         }
@@ -138,13 +162,17 @@ class DataHandler implements Singleton
         return false;
     }
 
-    protected function shouldProcessHookForTable(string $table) : bool
+    /**
+     * @param string $table
+     * @return bool
+     */
+    protected function shouldProcessHookForTable(string $table): bool
     {
         if ($this->dataHandler === null) {
             $this->logger->debug('Datahandler could not be setup.');
             return false;
         }
-        if (! $this->dataHandler->supportsTable($table)) {
+        if (!$this->dataHandler->supportsTable($table)) {
             $this->logger->debug('Table is not allowed.', [$table]);
             return false;
         }
@@ -155,6 +183,8 @@ class DataHandler implements Singleton
     /**
      * Wrapper to allow unit testing.
      *
+     * @param string $table
+     * @param integer $uid
      * @return array|null
      */
     protected function getRecord(string $table, int $uid)

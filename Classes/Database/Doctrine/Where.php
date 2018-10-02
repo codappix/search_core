@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Database\Doctrine;
 
 /*
@@ -32,18 +33,29 @@ class Where
      */
     protected $parameters = [];
 
+    /**
+     * Where constructor.
+     * @param string $statement
+     * @param array $parameters
+     */
     public function __construct(string $statement, array $parameters)
     {
         $this->statement = $statement;
         $this->parameters = $parameters;
     }
 
-    public function getStatement() : string
+    /**
+     * @return string
+     */
+    public function getStatement(): string
     {
         return $this->statement;
     }
 
-    public function getParameters() : array
+    /**
+     * @return array
+     */
+    public function getParameters(): array
     {
         return $this->parameters;
     }

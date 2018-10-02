@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Utility;
 
 /*
@@ -29,7 +30,10 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class FrontendUtility extends BackendUtility
 {
-    protected static function getLanguageService() : TypoScriptFrontendController
+    /**
+     * @return TypoScriptFrontendController
+     */
+    protected static function getLanguageService(): TypoScriptFrontendController
     {
         return $GLOBALS['TSFE'];
     }

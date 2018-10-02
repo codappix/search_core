@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Model;
 
 /*
@@ -20,9 +21,7 @@ namespace Codappix\SearchCore\Domain\Model;
  * 02110-1301, USA.
  */
 
-use Codappix\SearchCore\Connection\ResultItemInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
-use Codappix\SearchCore\Domain\Model\QueryResultInterfaceStub;
 
 /**
  * Generic model for mapping a concrete search result from a connection.
@@ -44,7 +43,7 @@ class SearchResult implements SearchResultInterface
     /**
      * @var array
      */
-    protected $results = [];
+    protected $results;
 
     /**
      * For Iterator interface.
@@ -53,6 +52,11 @@ class SearchResult implements SearchResultInterface
      */
     protected $position = 0;
 
+    /**
+     * SearchResult constructor.
+     * @param SearchResultInterface $originalSearchResult
+     * @param array $resultItems
+     */
     public function __construct(SearchResultInterface $originalSearchResult, array $resultItems)
     {
         $this->originalSearchResult = $originalSearchResult;
@@ -62,44 +66,60 @@ class SearchResult implements SearchResultInterface
     /**
      * @return array<ResultItemInterface>
      */
-    public function getResults() : array
+    public function getResults(): array
     {
         $this->initResults();
 
         return $this->results;
     }
 
+    /**
+     * @return void
+     */
     protected function initResults()
     {
-        if ($this->results !== []) {
-            return;
-        }
-
-        foreach ($this->resultItems as $item) {
-            $this->results[] = new ResultItem($item['data'], $item['type']);
+        if ($this->results === null) {
+            foreach ($this->resultItems as $item) {
+                $this->results[] = new ResultItem($item['data'], $item['type']);
+            }
         }
     }
 
-    public function getFacets() : array
+    /**
+     * @return array
+     */
+    public function getFacets(): array
     {
         return $this->originalSearchResult->getFacets();
     }
 
-    public function getCurrentCount() : int
+    /**
+     * @return integer
+     */
+    public function getCurrentCount(): int
     {
         return $this->originalSearchResult->getCurrentCount();
     }
 
+    /**
+     * @return integer
+     */
     public function count()
     {
         return $this->originalSearchResult->count();
     }
 
+    /**
+     * @return mixed
+     */
     public function current()
     {
         return $this->getResults()[$this->position];
     }
 
+    /**
+     * @return mixed
+     */
     public function next()
     {
         ++$this->position;
@@ -107,21 +127,33 @@ class SearchResult implements SearchResultInterface
         return $this->current();
     }
 
+    /**
+     * @return integer|mixed
+     */
     public function key()
     {
         return $this->position;
     }
 
+    /**
+     * @return bool
+     */
     public function valid()
     {
         return isset($this->getResults()[$this->position]);
     }
 
+    /**
+     * @return void
+     */
     public function rewind()
     {
         $this->position = 0;
     }
 
+    /**
+     * @return \TYPO3\CMS\Extbase\Persistence\QueryInterface
+     */
     public function getQuery()
     {
         return $this->originalSearchResult->getQuery();

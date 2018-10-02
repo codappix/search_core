@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Search;
 
 /*
@@ -74,7 +75,11 @@ class SearchService
         $this->dataProcessorService = $dataProcessorService;
     }
 
-    public function search(SearchRequestInterface $searchRequest) : SearchResultInterface
+    /**
+     * @param SearchRequestInterface $searchRequest
+     * @return SearchResultInterface
+     */
+    public function search(SearchRequestInterface $searchRequest): SearchResultInterface
     {
         $this->addSize($searchRequest);
         $this->addConfiguredFacets($searchRequest);
@@ -89,6 +94,8 @@ class SearchService
 
     /**
      * Add configured size of search result items to request.
+     *
+     * @param SearchRequestInterface $searchRequest
      */
     protected function addSize(SearchRequestInterface $searchRequest)
     {
@@ -99,6 +106,8 @@ class SearchService
 
     /**
      * Add facets from configuration to request.
+     *
+     * @param SearchRequestInterface $searchRequest
      */
     protected function addConfiguredFacets(SearchRequestInterface $searchRequest)
     {
@@ -118,6 +127,8 @@ class SearchService
 
     /**
      * Add filters from configuration, e.g. flexform or TypoScript.
+     *
+     * @param SearchRequestInterface $searchRequest
      */
     protected function addConfiguredFilters(SearchRequestInterface $searchRequest)
     {
@@ -137,8 +148,11 @@ class SearchService
 
     /**
      * Processes the result, e.g. applies configured data processing to result.
+     *
+     * @param SearchResultInterface $searchResult
+     * @return SearchResultInterface
      */
-    public function processResult(SearchResultInterface $searchResult) : SearchResultInterface
+    public function processResult(SearchResultInterface $searchResult): SearchResultInterface
     {
         try {
             $newSearchResultItems = [];

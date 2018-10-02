@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\DataProcessing;
 
 /*
@@ -25,7 +26,12 @@ namespace Codappix\SearchCore\DataProcessing;
  */
 class CopyToProcessor implements ProcessorInterface
 {
-    public function processData(array $record, array $configuration) : array
+    /**
+     * @param array $record
+     * @param array $configuration
+     * @return array
+     */
+    public function processData(array $record, array $configuration): array
     {
         $target = [];
 
@@ -37,7 +43,7 @@ class CopyToProcessor implements ProcessorInterface
         if (is_array($from)) {
             $this->addArray($target, $from);
         } else {
-            $target[] = (string) $from;
+            $target[] = (string)$from;
         }
 
         $target = array_filter($target);
@@ -46,6 +52,11 @@ class CopyToProcessor implements ProcessorInterface
         return $record;
     }
 
+    /**
+     * @param array $target
+     * @param array $from
+     * @return void
+     */
     protected function addArray(array &$target, array $from)
     {
         foreach ($from as $value) {
@@ -54,7 +65,7 @@ class CopyToProcessor implements ProcessorInterface
                 continue;
             }
 
-            $target[] = (string) $value;
+            $target[] = (string)$value;
         }
     }
 }

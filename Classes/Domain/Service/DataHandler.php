@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Service;
 
 /*
@@ -73,6 +74,7 @@ class DataHandler implements Singleton
     }
 
     /**
+     * DataHandler constructor.
      * @param ConfigurationContainerInterface $configuration
      * @param IndexerFactory $indexerFactory
      */
@@ -82,12 +84,23 @@ class DataHandler implements Singleton
         $this->indexerFactory = $indexerFactory;
     }
 
+    /**
+     * @param string $table
+     * @param array $record
+     * @return void
+     * @throws NoMatchingIndexerException
+     */
     public function update(string $table, array $record)
     {
         $this->logger->debug('Record received for update.', [$table, $record]);
         $this->getIndexer($table)->indexDocument($record['uid']);
     }
 
+    /**
+     * @param string $table
+     * @param string $identifier
+     * @return void
+     */
     public function delete(string $table, string $identifier)
     {
         $this->logger->debug('Record received for delete.', [$table, $identifier]);
@@ -95,14 +108,20 @@ class DataHandler implements Singleton
     }
 
     /**
+     * @param string $table
+     * @return IndexerInterface
      * @throws NoMatchingIndexerException
      */
-    protected function getIndexer(string $table) : IndexerInterface
+    protected function getIndexer(string $table): IndexerInterface
     {
         return $this->indexerFactory->getIndexer($table);
     }
 
-    public function supportsTable(string $table) : bool
+    /**
+     * @param string $table
+     * @return boolean
+     */
+    public function supportsTable(string $table): bool
     {
         try {
             $this->getIndexer($table);

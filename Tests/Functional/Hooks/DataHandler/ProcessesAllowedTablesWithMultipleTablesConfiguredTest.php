@@ -31,7 +31,7 @@ class ProcessesAllowedTablesWithMultipleTablesConfiguredTest extends ProcessesAl
     {
         return array_merge(
             parent::getTypoScriptFilesForFrontendRootPage(),
-            ['EXT:search_core/ Tests/Functional/Fixtures/Hooks/DataHandler/MultipleAllowedTables.ts']
+            ['EXT:search_core/Tests/Functional/Fixtures/Hooks/DataHandler/MultipleAllowedTables.ts']
         );
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Integration\Form\Finisher;
 
 /*
@@ -46,10 +47,15 @@ class DataHandlerFinisher extends AbstractFinisher
         'action' => '',
     ];
 
+    /**
+     * @return null|string|void
+     * @throws FinisherException
+     * @throws \Codappix\SearchCore\Domain\Index\NoMatchingIndexerException
+     */
     protected function executeInternal()
     {
         $action = $this->parseOption('action');
-        $record = ['uid' => (int) $this->parseOption('recordUid')];
+        $record = ['uid' => (int)$this->parseOption('recordUid')];
         $tableName = $this->parseOption('indexIdentifier');
 
         if ($action === '' || $tableName === '' || !is_string($tableName) || $record['uid'] === 0) {
@@ -62,7 +68,7 @@ class DataHandlerFinisher extends AbstractFinisher
                 $this->dataHandler->update($tableName, $record);
                 break;
             case 'delete':
-                $this->dataHandler->delete($tableName, (string) $record['uid']);
+                $this->dataHandler->delete($tableName, (string)$record['uid']);
                 break;
         }
     }

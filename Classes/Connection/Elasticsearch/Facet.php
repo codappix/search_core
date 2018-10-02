@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 /*
@@ -22,7 +23,6 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\FacetInterface;
-use Codappix\SearchCore\Connection\FacetOptionInterface;
 
 class Facet implements FacetInterface
 {
@@ -44,8 +44,14 @@ class Facet implements FacetInterface
     /**
      * @var array<FacetOption>
      */
-    protected $options = [];
+    protected $options;
 
+    /**
+     * Facet constructor.
+     * @param string $name
+     * @param array $aggregation
+     * @param ConfigurationContainerInterface $configuration
+     */
     public function __construct(string $name, array $aggregation, ConfigurationContainerInterface $configuration)
     {
         $this->name = $name;
@@ -60,12 +66,18 @@ class Facet implements FacetInterface
         }
     }
 
-    public function getName() : string
+    /**
+     * @return string
+     */
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getField() : string
+    /**
+     * @return string
+     */
+    public function getField(): string
     {
         return $this->field;
     }
@@ -75,21 +87,23 @@ class Facet implements FacetInterface
      *
      * @return array<FacetOptionInterface>
      */
-    public function getOptions() : array
+    public function getOptions(): array
     {
         $this->initOptions();
 
         return $this->options;
     }
 
+    /**
+     * @return void
+     */
     protected function initOptions()
     {
-        if ($this->options !== []) {
-            return;
-        }
-
-        foreach ($this->buckets as $bucket) {
-            $this->options[$bucket['key']] = new FacetOption($bucket);
+        if ($this->options === null) {
+            $this->options = [];
+            foreach ($this->buckets as $bucket) {
+                $this->options[$bucket['key']] = new FacetOption($bucket);
+            }
         }
     }
 }

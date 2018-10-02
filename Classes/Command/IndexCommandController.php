@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Command;
 
 /*
@@ -36,6 +37,7 @@ class IndexCommandController extends CommandController
 
     /**
      * @param IndexerFactory $factory
+     * @return void
      */
     public function injectIndexerFactory(IndexerFactory $factory)
     {
@@ -46,6 +48,7 @@ class IndexCommandController extends CommandController
      * Will index the given identifier.
      *
      * @param string $identifier
+     * @return void
      */
     public function indexCommand(string $identifier)
     {
@@ -61,6 +64,7 @@ class IndexCommandController extends CommandController
      * Will delete the given identifier.
      *
      * @param string $identifier
+     * @return void
      */
     public function deleteCommand(string $identifier)
     {

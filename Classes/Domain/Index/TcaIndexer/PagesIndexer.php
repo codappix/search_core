@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 
 /*
@@ -23,7 +24,6 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Domain\Index\TcaIndexer;
-use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -58,6 +58,9 @@ class PagesIndexer extends TcaIndexer
         $this->contentTableService = $contentTableService;
     }
 
+    /**
+     * @param array $record
+     */
     protected function prepareRecord(array &$record)
     {
         parent::prepareRecord($record);
@@ -78,7 +81,11 @@ class PagesIndexer extends TcaIndexer
         }
     }
 
-    protected function fetchContentForPage(int $uid) : array
+    /**
+     * @param integer $uid
+     * @return array
+     */
+    protected function fetchContentForPage(int $uid): array
     {
         if ($this->contentTableService instanceof TcaTableService) {
             $queryBuilder = $this->contentTableService->getQuery();
@@ -123,17 +130,31 @@ class PagesIndexer extends TcaIndexer
         ];
     }
 
-    protected function getContentElementImages(int $uidOfContentElement) : array
+    /**
+     * @param integer $uidOfContentElement
+     * @return array
+     */
+    protected function getContentElementImages(int $uidOfContentElement): array
     {
         return $this->fetchSysFileReferenceUids($uidOfContentElement, 'tt_content', 'image');
     }
 
-    protected function fetchMediaForPage(int $uid) : array
+    /**
+     * @param integer $uid
+     * @return array
+     */
+    protected function fetchMediaForPage(int $uid): array
     {
         return $this->fetchSysFileReferenceUids($uid, 'pages', 'media');
     }
 
-    protected function fetchSysFileReferenceUids(int $uid, string $tablename, string $fieldname) : array
+    /**
+     * @param integer $uid
+     * @param string $tablename
+     * @param string $fieldname
+     * @return array
+     */
+    protected function fetchSysFileReferenceUids(int $uid, string $tablename, string $fieldname): array
     {
         $imageRelationUids = [];
         $imageRelations = $this->fileRepository->findByRelation($tablename, $fieldname, $uid);
@@ -145,7 +166,11 @@ class PagesIndexer extends TcaIndexer
         return $imageRelationUids;
     }
 
-    protected function getContentFromContentElement(array $contentElement) : string
+    /**
+     * @param array $contentElement
+     * @return string
+     */
+    protected function getContentFromContentElement(array $contentElement): string
     {
         $content = '';
 

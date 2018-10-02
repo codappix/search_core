@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\DataProcessing;
 
 /*
@@ -32,6 +33,10 @@ class Service
      */
     protected $objectManager;
 
+    /**
+     * Service constructor.
+     * @param ObjectManagerInterface $objectManager
+     */
     public function __construct(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
@@ -41,8 +46,11 @@ class Service
      * Executes the dataprocessor depending on configuration and returns the result.
      *
      * @param array|string $configuration Either the full configuration or only the class name.
+     * @param array $data
+     * @param string $recordType
+     * @return array
      */
-    public function executeDataProcessor($configuration, array $data, string $recordType = '') : array
+    public function executeDataProcessor($configuration, array $data, string $recordType = ''): array
     {
         if (is_string($configuration)) {
             $configuration = [
@@ -50,7 +58,7 @@ class Service
             ];
         }
 
-        if (!isset($configuration['_table']) && $recordType !== '') {
+        if ($recordType !== '' && !isset($configuration['_table'])) {
             $configuration['_table'] = $recordType;
         }
 

@@ -63,6 +63,9 @@ class DataHandlerFinisherTest extends AbstractUnitTestCase
      * @test
      * @requires function \TYPO3\CMS\Form\Domain\Finishers\AbstractFinisher::setOptions
      * @dataProvider possibleFinisherSetup
+     * @param string $action
+     * @param array $nonCalledActions
+     * @param $expectedSecondArgument
      */
     public function validConfiguration(string $action, array $nonCalledActions, $expectedSecondArgument)
     {
@@ -101,6 +104,7 @@ class DataHandlerFinisherTest extends AbstractUnitTestCase
      * @test
      * @requires function \TYPO3\CMS\Form\Domain\Finishers\AbstractFinisher::setOptions
      * @dataProvider invalidFinisherSetup
+     * @param array $options
      */
     public function nothingHappensIfUnknownActionIsConfigured(array $options)
     {

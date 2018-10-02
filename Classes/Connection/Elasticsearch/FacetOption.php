@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 /*
@@ -49,17 +50,20 @@ class FacetOption implements FacetOptionInterface
         $this->count = $bucket['doc_count'];
     }
 
-    public function getName() : string
+    /**
+     * @return string
+     */
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getDisplayName() : string
+    public function getDisplayName(): string
     {
         return $this->displayName;
     }
 
-    public function getCount() : int
+    public function getCount(): int
     {
         return $this->count;
     }

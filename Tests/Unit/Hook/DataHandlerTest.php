@@ -30,6 +30,8 @@ class DataHandlerToProcessorTest extends AbstractUnitTestCase
     /**
      * @test
      * @dataProvider getPossibleCallCombinations
+     * @param array $parameters
+     * @param bool $expectCall
      */
     public function fieldsAreCopiedAsConfigured(array $parameters, bool $expectCall)
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Index;
 
 /*
@@ -49,6 +50,8 @@ class TcaIndexer extends AbstractIndexer
     }
 
     /**
+     * @param integer $offset
+     * @param integer $limit
      * @return array|null
      */
     protected function getRecords(int $offset, int $limit)
@@ -67,9 +70,11 @@ class TcaIndexer extends AbstractIndexer
     }
 
     /**
+     * @param integer $identifier
+     * @return array
      * @throws NoRecordFoundException If record could not be found.
      */
-    protected function getRecord(int $identifier) : array
+    protected function getRecord(int $identifier): array
     {
         $record = $this->tcaTableService->getRecord($identifier);
 
@@ -84,7 +89,10 @@ class TcaIndexer extends AbstractIndexer
         return $record;
     }
 
-    protected function getDocumentName() : string
+    /**
+     * @return string
+     */
+    protected function getDocumentName(): string
     {
         return $this->tcaTableService->getTableName();
     }

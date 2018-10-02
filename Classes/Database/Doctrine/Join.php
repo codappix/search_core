@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Database\Doctrine;
 
 /*
@@ -32,18 +33,29 @@ class Join
      */
     protected $condition = '';
 
+    /**
+     * Join constructor.
+     * @param string $table
+     * @param string $condition
+     */
     public function __construct(string $table, string $condition)
     {
         $this->table = $table;
         $this->condition = $condition;
     }
 
-    public function getTable() : string
+    /**
+     * @return string
+     */
+    public function getTable(): string
     {
         return $this->table;
     }
 
-    public function getCondition() : string
+    /**
+     * @return string
+     */
+    public function getCondition(): string
     {
         return $this->condition;
     }

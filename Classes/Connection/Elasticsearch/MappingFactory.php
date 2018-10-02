@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 /*
@@ -44,8 +45,11 @@ class MappingFactory implements Singleton
 
     /**
      * Get an mapping based on type.
+     *
+     * @param \Elastica\Type $type
+     * @return \Elastica\Type\Mapping
      */
-    public function getMapping(\Elastica\Type $type) : \Elastica\Type\Mapping
+    public function getMapping(\Elastica\Type $type): \Elastica\Type\Mapping
     {
         $mapping = new \Elastica\Type\Mapping();
         $mapping->setType($type);
@@ -60,7 +64,11 @@ class MappingFactory implements Singleton
         return $mapping;
     }
 
-    protected function getConfiguration(string $identifier) : array
+    /**
+     * @param string $identifier
+     * @return array
+     */
+    protected function getConfiguration(string $identifier): array
     {
         try {
             return $this->configuration->get('indexing.' . $identifier . '.mapping');

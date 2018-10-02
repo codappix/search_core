@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Index;
 
 /*
@@ -63,17 +64,29 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->logger = $logManager->getLogger(__CLASS__);
     }
 
+    /**
+     * @param string $identifier
+     * @return void
+     */
     public function setIdentifier(string $identifier)
     {
         $this->identifier = $identifier;
     }
 
+    /**
+     * AbstractIndexer constructor.
+     * @param ConnectionInterface $connection
+     * @param ConfigurationContainerInterface $configuration
+     */
     public function __construct(ConnectionInterface $connection, ConfigurationContainerInterface $configuration)
     {
         $this->connection = $connection;
         $this->configuration = $configuration;
     }
 
+    /**
+     * @return void
+     */
     public function indexAllDocuments()
     {
         $this->logger->info('Start indexing');
@@ -92,11 +105,15 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->logger->info('Finish indexing');
     }
 
+    /**
+     * @param string $identifier
+     * @return void
+     */
     public function indexDocument(string $identifier)
     {
         $this->logger->info('Start indexing single record.', [$identifier]);
         try {
-            $record = $this->getRecord((int) $identifier);
+            $record = $this->getRecord((int)$identifier);
             $this->prepareRecord($record);
 
             $this->connection->addDocument($this->getDocumentName(), $record);
@@ -107,6 +124,9 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->logger->info('Finish indexing');
     }
 
+    /**
+     * @return void
+     */
     public function delete()
     {
         $this->logger->info('Start deletion of index.');
@@ -114,7 +134,10 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->logger->info('Finish deletion.');
     }
 
-    protected function getRecordGenerator() : \Generator
+    /**
+     * @return \Generator
+     */
+    protected function getRecordGenerator()
     {
         $offset = 0;
         $limit = $this->getLimit();
@@ -125,6 +148,10 @@ abstract class AbstractIndexer implements IndexerInterface
         }
     }
 
+    /**
+     * @param array $record
+     * @return void
+     */
     protected function prepareRecord(array &$record)
     {
         try {
@@ -138,6 +165,10 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->handleAbstract($record);
     }
 
+    /**
+     * @param array $record
+     * @return void
+     */
     protected function handleAbstract(array &$record)
     {
         $record['search_abstract'] = '';
@@ -148,8 +179,9 @@ abstract class AbstractIndexer implements IndexerInterface
                 $this->configuration->get('indexing.' . $this->identifier . '.abstractFields')
             );
             if ($fieldsToUse === []) {
-                return;
+                throw new InvalidArgumentException('No fields to use', 1538487209251);
             }
+
             foreach ($fieldsToUse as $fieldToUse) {
                 if (isset($record[$fieldToUse]) && trim($record[$fieldToUse])) {
                     $record['search_abstract'] = trim($record[$fieldToUse]);
@@ -157,28 +189,36 @@ abstract class AbstractIndexer implements IndexerInterface
                 }
             }
         } catch (InvalidArgumentException $e) {
-            return;
+            // Nothing to do.
         }
     }
 
     /**
      * Returns the limit to use to fetch records.
+     *
+     * @return integer
      */
-    protected function getLimit() : int
+    protected function getLimit(): int
     {
         // TODO: Make configurable.
         return 50;
     }
 
     /**
+     * @param integer $offset
+     * @param integer $limit
      * @return array|null
      */
     abstract protected function getRecords(int $offset, int $limit);
 
     /**
-     * @throws NoRecordFoundException If record could not be found.
+     * @param integer $identifier
+     * @return array
      */
-    abstract protected function getRecord(int $identifier) : array;
+    abstract protected function getRecord(int $identifier): array;
 
-    abstract protected function getDocumentName() : string;
+    /**
+     * @return string
+     */
+    abstract protected function getDocumentName(): string;
 }

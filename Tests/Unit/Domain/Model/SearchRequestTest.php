@@ -31,6 +31,7 @@ class SearchRequestTest extends AbstractUnitTestCase
     /**
      * @test
      * @dataProvider possibleEmptyFilter
+     * @param array $filter
      */
     public function emptyFilterWillNotBeSet(array $filter)
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection;
 
 /*
@@ -31,14 +32,18 @@ interface ResultItemInterface extends \ArrayAccess
      * Provide key/column/field => data.
      *
      * Used e.g. for dataprocessing.
+     *
+     * @return array
      */
-    public function getPlainData() : array;
+    public function getPlainData(): array;
 
     /**
      * Returns the type of the item.
      *
      * That should make it easier to differentiate if multiple
      * types are returned for one query.
+     *
+     * @return string
      */
-    public function getType() : string;
+    public function getType(): string;
 }

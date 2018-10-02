@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\DataProcessing;
 
 /*
@@ -34,12 +35,21 @@ class ContentObjectDataProcessorAdapterProcessor implements ProcessorInterface
      */
     protected $typoScriptService;
 
+    /**
+     * ContentObjectDataProcessorAdapterProcessor constructor.
+     * @param TypoScriptServiceInterface $typoScriptService
+     */
     public function __construct(TypoScriptServiceInterface $typoScriptService)
     {
         $this->typoScriptService = $typoScriptService;
     }
 
-    public function processData(array $data, array $configuration) : array
+    /**
+     * @param array $data
+     * @param array $configuration
+     * @return array
+     */
+    public function processData(array $data, array $configuration): array
     {
         $dataProcessor = GeneralUtility::makeInstance($configuration['_dataProcessor']);
         $contentObjectRenderer = GeneralUtility::makeInstance(ContentObjectRenderer::class);

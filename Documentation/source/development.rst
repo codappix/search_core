@@ -10,6 +10,7 @@ DataProcessor and Connection. The other is how to contribute.
    :maxdepth: 1
    :glob:
 
+   development/configuration
    development/indexer
    development/dataProcessor
    development/connection

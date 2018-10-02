@@ -30,6 +30,9 @@ class ConfigurationUtilityTest extends AbstractUnitTestCase
     /**
      * @test
      * @dataProvider possibleRequestAndConfigurationForFluidtemplate
+     * @param SearchRequestInterface $searchRequest
+     * @param array $array
+     * @param array $expected
      */
     public function recursiveEntriesAreProcessedAsFluidtemplate(
         SearchRequestInterface $searchRequest,
@@ -92,6 +95,8 @@ class ConfigurationUtilityTest extends AbstractUnitTestCase
     /**
      * @test
      * @dataProvider possibleConditionEntries
+     * @param array $entries
+     * @param array $expected
      */
     public function conditionsAreHandledAsExpected(array $entries, array $expected)
     {

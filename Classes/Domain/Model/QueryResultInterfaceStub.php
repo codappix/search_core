@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Model;
 
 /*
@@ -28,32 +29,56 @@ namespace Codappix\SearchCore\Domain\Model;
  */
 trait QueryResultInterfaceStub
 {
+    /**
+     * @throws \BadMethodCallException
+     */
     public function getFirst()
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502195121);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function toArray()
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502195135);
     }
 
+    /**
+     * @param $offset
+     * @return boolean
+     * @throws \BadMethodCallException
+     */
     public function offsetExists($offset)
     {
         // Return false to allow Fluid to use appropriate getter methods.
         return false;
     }
 
+    /**
+     * @param $offset
+     * @throws \BadMethodCallException
+     */
     public function offsetGet($offset)
     {
         throw new \BadMethodCallException('Use getter to fetch properties.', 1502196933);
     }
 
+    /**
+     * @param $offset
+     * @param $value
+     * @throws \BadMethodCallException
+     */
     public function offsetSet($offset, $value)
     {
         throw new \BadMethodCallException('You are not allowed to modify the result.', 1502196934);
     }
 
+    /**
+     * @param $offset
+     * @throws \BadMethodCallException
+     */
     public function offsetUnset($offset)
     {
         throw new \BadMethodCallException('You are not allowed to modify the result.', 1502196936);

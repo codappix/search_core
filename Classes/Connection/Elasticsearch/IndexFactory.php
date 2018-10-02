@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 /*
@@ -65,15 +66,19 @@ class IndexFactory implements Singleton
      *
      * @return string
      */
-    public function getIndexName()
+    public function getIndexName(): string
     {
-        return $this->configuration->get('connections.elasticsearch.index');
+        return (string)$this->configuration->get('connections.elasticsearch.index');
     }
 
     /**
      * Get an index bases on TYPO3 table name.
+     *
+     * @param Connection $connection
+     * @param string $documentType
+     * @return \Elastica\Index
      */
-    public function getIndex(Connection $connection, string $documentType) : \Elastica\Index
+    public function getIndex(Connection $connection, string $documentType): \Elastica\Index
     {
         $index = $connection->getClient()->getIndex($this->getIndexName());
 
@@ -87,7 +92,11 @@ class IndexFactory implements Singleton
         return $index;
     }
 
-    protected function getConfigurationFor(string $documentType) : array
+    /**
+     * @param string $documentType
+     * @return array
+     */
+    protected function getConfigurationFor(string $documentType): array
     {
         try {
             $configuration = $this->configuration->get('indexing.' . $documentType . '.index');
@@ -108,7 +117,11 @@ class IndexFactory implements Singleton
         }
     }
 
-    protected function prepareAnalyzerConfiguration(array $analyzer) : array
+    /**
+     * @param array $analyzer
+     * @return array
+     */
+    protected function prepareAnalyzerConfiguration(array $analyzer): array
     {
         $fieldsToExplode = ['char_filter', 'filter', 'word_list'];
 

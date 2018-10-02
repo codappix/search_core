@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 /*
@@ -20,8 +21,6 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
-use Codappix\SearchCore\Connection\FacetInterface;
-use Codappix\SearchCore\Connection\ResultItemInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
 use Codappix\SearchCore\Domain\Model\QueryResultInterfaceStub;
@@ -45,12 +44,12 @@ class SearchResult implements SearchResultInterface
     /**
      * @var array<FacetInterface>
      */
-    protected $facets = [];
+    protected $facets;
 
     /**
      * @var array<ResultItemInterface>
      */
-    protected $results = [];
+    protected $results;
 
     /**
      * For Iterator interface.
@@ -64,6 +63,13 @@ class SearchResult implements SearchResultInterface
      */
     protected $objectManager;
 
+    /**
+     * SearchResult constructor.
+     *
+     * @param SearchRequestInterface $searchRequest
+     * @param \Elastica\ResultSet $result
+     * @param ObjectManagerInterface $objectManager
+     */
     public function __construct(
         SearchRequestInterface $searchRequest,
         \Elastica\ResultSet $result,
@@ -77,7 +83,7 @@ class SearchResult implements SearchResultInterface
     /**
      * @return array<ResultItemInterface>
      */
-    public function getResults() : array
+    public function getResults(): array
     {
         $this->initResults();
 
@@ -89,52 +95,74 @@ class SearchResult implements SearchResultInterface
      *
      * @return array<FacetInterface>
      */
-    public function getFacets() : array
+    public function getFacets(): array
     {
         $this->initFacets();
 
         return $this->facets;
     }
 
-    public function getCurrentCount() : int
+    /**
+     * @return integer
+     */
+    public function getCurrentCount(): int
     {
         return $this->result->count();
     }
 
+    /**
+     * @return void
+     */
     protected function initResults()
     {
-        if ($this->results !== []) {
-            return;
-        }
-
-        foreach ($this->result->getResults() as $result) {
-            $this->results[] = new ResultItem($result->getData(), $result->getParam('_type'));
+        if ($this->results === null) {
+            $this->results = [];
+            foreach ($this->result->getResults() as $result) {
+                $this->results[] = new ResultItem($result->getData(), $result->getParam('_type'));
+            }
         }
     }
 
+    /**
+     * @return void
+     */
     protected function initFacets()
     {
-        if ($this->facets !== [] || !$this->result->hasAggregations()) {
-            return;
-        }
-
-        foreach ($this->result->getAggregations() as $aggregationName => $aggregation) {
-            $this->facets[$aggregationName] = $this->objectManager->get(Facet::class, $aggregationName, $aggregation);
+        if ($this->facets === null) {
+            $this->facets = [];
+            if ($this->result->hasAggregations()) {
+                foreach ($this->result->getAggregations() as $aggregationName => $aggregation) {
+                    $this->facets[$aggregationName] = $this->objectManager->get(Facet::class, $aggregationName, $aggregation);
+                }
+            }
         }
     }
 
-    // Countable - Interface
+    /**
+     * Countable - Interface
+     *
+     * @return integer
+     */
     public function count()
     {
         return $this->result->getTotalHits();
     }
 
-    // Iterator - Interface
+    /**
+     * Iterator - Interface
+     *
+     * @return mixed
+     */
     public function current()
     {
         return $this->getResults()[$this->position];
     }
 
+    /**
+     * Iterator - Interface
+     *
+     * @return mixed
+     */
     public function next()
     {
         ++$this->position;
@@ -142,21 +170,37 @@ class SearchResult implements SearchResultInterface
         return $this->current();
     }
 
+    /**
+     * Iterator - Interface
+     *
+     * @return int|mixed
+     */
     public function key()
     {
         return $this->position;
     }
 
+    /**
+     * Iterator - Interface
+     *
+     * @return bool
+     */
     public function valid()
     {
         return isset($this->getResults()[$this->position]);
     }
 
+    /**
+     * Iterator - Interface
+     */
     public function rewind()
     {
         $this->position = 0;
     }
 
+    /**
+     * @return SearchRequestInterface|\TYPO3\CMS\Extbase\Persistence\QueryInterface
+     */
     public function getQuery()
     {
         return $this->searchRequest;

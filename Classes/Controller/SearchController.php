@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Controller;
 
 /*
@@ -44,30 +45,33 @@ class SearchController extends ActionController
         parent::__construct();
     }
 
+    /**
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException
+     * @return void
+     */
     public function initializeSearchAction()
     {
-        if (isset($this->settings['searching']['mode']) && $this->settings['searching']['mode'] === 'filter'
+        if (isset($this->settings['searching']['mode'])
+            && $this->settings['searching']['mode'] === 'filter'
             && $this->request->hasArgument('searchRequest') === false
         ) {
             $this->request->setArguments(array_merge(
                 $this->request->getArguments(),
-                [
-                    'searchRequest' => $this->objectManager->get(SearchRequest::class),
-                ]
+                ['searchRequest' => $this->objectManager->get(SearchRequest::class)]
             ));
         }
 
         if ($this->arguments->hasArgument('searchRequest')) {
             $this->arguments->getArgument('searchRequest')->getPropertyMappingConfiguration()
-                ->allowAllProperties()
-                ;
+                ->allowAllProperties();
         }
     }
 
     /**
      * Process a search and deliver original request and result to view.
      *
-     * @param null|SearchRequest $searchRequest
+     * @param SearchRequest $searchRequest
+     * @return void
      */
     public function searchAction(SearchRequest $searchRequest = null)
     {

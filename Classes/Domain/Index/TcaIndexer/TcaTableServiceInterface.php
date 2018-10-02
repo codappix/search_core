@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 
 /*
@@ -22,25 +23,50 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 
 interface TcaTableServiceInterface
 {
-    public function getTableName() : string;
+    /**
+     * @return string
+     */
+    public function getTableName(): string;
 
-    public function getTableClause() : string;
+    /**
+     * @return string
+     */
+    public function getTableClause(): string;
 
     /**
      * Filter the given records by root line blacklist settings.
+     * @param array $records
+     * @return void
      */
     public function filterRecordsByRootLineBlacklist(array &$records);
 
+    /**
+     * @param array $record
+     * @return mixed
+     */
     public function prepareRecord(array &$record);
 
     /**
-     * @throws InvalidArgumentException
+     * @param string $columnName
+     * @return array
      */
-    public function getColumnConfig(string $columnName) : array;
+    public function getColumnConfig(string $columnName): array;
 
-    public function getRecords(int $offset, int $limit) : array;
+    /**
+     * @param integer $offset
+     * @param integer $limit
+     * @return array
+     */
+    public function getRecords(int $offset, int $limit): array;
 
-    public function getRecord(int $identifier) : array;
+    /**
+     * @param integer $identifier
+     * @return array
+     */
+    public function getRecord(int $identifier): array;
 
-    public function getLanguageUidColumn() : string;
+    /**
+     * @return string
+     */
+    public function getLanguageUidColumn(): string;
 }

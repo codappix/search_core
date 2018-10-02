@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection;
 
 /*
@@ -28,6 +29,8 @@ interface ConnectionInterface
     /**
      * Will add a new document.
      *
+     * @param string $documentType
+     * @param array $document
      * @return void
      */
     public function addDocument(string $documentType, array $document);
@@ -35,6 +38,8 @@ interface ConnectionInterface
     /**
      * Add the given documents.
      *
+     * @param string $documentType
+     * @param array $documents
      * @return void
      */
     public function addDocuments(string $documentType, array $documents);
@@ -44,6 +49,8 @@ interface ConnectionInterface
      *
      * NOTE: Batch updating is not yet supported.
      *
+     * @param string $documentType
+     * @param array $document
      * @return void
      */
     public function updateDocument(string $documentType, array $document);
@@ -53,18 +60,24 @@ interface ConnectionInterface
      *
      * NOTE: Batch deleting is not yet supported.
      *
+     * @param string $documentType
+     * @param string $identifier
      * @return void
      */
     public function deleteDocument(string $documentType, string $identifier);
 
     /**
      * Search by given request and return result.
+     *
+     * @param SearchRequestInterface $searchRequest
+     * @return SearchResultInterface
      */
-    public function search(SearchRequestInterface $searchRequest) : SearchResultInterface;
+    public function search(SearchRequestInterface $searchRequest): SearchResultInterface;
 
     /**
      * Will delete the whole index / db.
      *
+     * @param string $documentType
      * @return void
      */
     public function deleteIndex(string $documentType);

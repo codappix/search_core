@@ -100,7 +100,7 @@ class SearchServiceTest extends AbstractUnitTestCase
             ->method('getIfExists')
             ->withConsecutive(['searching.size'], ['searching.facets'])
             ->will($this->onConsecutiveCalls(45, null));
-            $this->configuration->expects($this->any())
+        $this->configuration->expects($this->any())
             ->method('get')
             ->will($this->throwException(new InvalidArgumentException));
         $this->connection->expects($this->once())

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 
 /*
@@ -24,7 +25,6 @@ use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Database\Doctrine\Join;
 use Codappix\SearchCore\Database\Doctrine\Where;
 use Codappix\SearchCore\Domain\Index\IndexingException;
-use Codappix\SearchCore\Domain\Index\TcaIndexer\InvalidArgumentException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -85,6 +85,7 @@ class TcaTableService implements TcaTableServiceInterface
     /**
      * @param string $tableName
      * @param ConfigurationContainerInterface $configuration
+     * @throws IndexingException
      */
     public function __construct(
         $tableName,
@@ -102,17 +103,28 @@ class TcaTableService implements TcaTableServiceInterface
         $this->configuration = $configuration;
     }
 
-    public function getTableName() : string
+    /**
+     * @return string
+     */
+    public function getTableName(): string
     {
         return $this->tableName;
     }
 
-    public function getTableClause() : string
+    /**
+     * @return string
+     */
+    public function getTableClause(): string
     {
         return $this->tableName;
     }
 
-    public function getRecords(int $offset, int $limit) : array
+    /**
+     * @param integer $offset
+     * @param integer $limit
+     * @return array
+     */
+    public function getRecords(int $offset, int $limit): array
     {
         $records = $this->getQuery()
             ->setFirstResult($offset)
@@ -123,7 +135,11 @@ class TcaTableService implements TcaTableServiceInterface
         return $records ?: [];
     }
 
-    public function getRecord(int $identifier) : array
+    /**
+     * @param integer $identifier
+     * @return array
+     */
+    public function getRecord(int $identifier): array
     {
         $query = $this->getQuery();
         $query = $query->andWhere($this->getTableName() . '.uid = ' . $identifier);
@@ -132,16 +148,24 @@ class TcaTableService implements TcaTableServiceInterface
         return $record ?: [];
     }
 
+    /**
+     * @param array $records
+     * @return void
+     */
     public function filterRecordsByRootLineBlacklist(array &$records)
     {
         $records = array_filter(
             $records,
             function ($record) {
-                return ! $this->isRecordBlacklistedByRootline($record);
+                return !$this->isRecordBlacklistedByRootline($record);
             }
         );
     }
 
+    /**
+     * @param array $record
+     * @return void
+     */
     public function prepareRecord(array &$record)
     {
         if (isset($record['uid']) && !isset($record['search_identifier'])) {
@@ -152,7 +176,10 @@ class TcaTableService implements TcaTableServiceInterface
         }
     }
 
-    protected function getWhereClause() : Where
+    /**
+     * @return Where
+     */
+    protected function getWhereClause(): Where
     {
         $parameters = [];
         $whereClause = $this->getSystemWhereClause();
@@ -174,17 +201,19 @@ class TcaTableService implements TcaTableServiceInterface
         return new Where($whereClause, $parameters);
     }
 
-    protected function getFields() : array
+    /**
+     * @return array
+     */
+    protected function getFields(): array
     {
         $fields = array_merge(
-            ['uid','pid'],
+            ['uid', 'pid'],
             array_filter(
                 array_keys($this->tca['columns']),
                 function ($columnName) {
                     return !$this->isSystemField($columnName)
                         && !$this->isUserField($columnName)
-                        && !$this->isPassthroughField($columnName)
-                        ;
+                        && !$this->isPassthroughField($columnName);
                 }
             )
         );
@@ -197,7 +226,11 @@ class TcaTableService implements TcaTableServiceInterface
         return $fields;
     }
 
-    protected function getJoins() : array
+
+    /**
+     * @return array
+     */
+    protected function getJoins(): array
     {
         if ($this->tableName === 'pages') {
             return [];
@@ -212,31 +245,40 @@ class TcaTableService implements TcaTableServiceInterface
      * Generate SQL for TYPO3 as a system, to make sure only available records
      * are fetched.
      */
-    protected function getSystemWhereClause() : string
+    protected function getSystemWhereClause(): string
     {
         $whereClause = '1=1'
             . BackendUtility::BEenableFields($this->tableName)
             . BackendUtility::deleteClause($this->tableName)
-            . ' AND pages.no_search = 0'
-            ;
+            . ' AND pages.no_search = 0';
 
         if ($this->tableName !== 'pages') {
             $whereClause .= BackendUtility::BEenableFields('pages')
-                . BackendUtility::deleteClause('pages')
-            ;
+                . BackendUtility::deleteClause('pages');
         }
 
         return $whereClause;
     }
 
-    protected function isSystemField(string $columnName) : bool
+    /**
+     * @param string $columnName
+     * @return bool
+     */
+    protected function isSystemField(string $columnName): bool
     {
         $systemFields = [
             // Versioning fields,
             // https://docs.typo3.org/typo3cms/TCAReference/Reference/Ctrl/Index.html#versioningws
-            't3ver_oid', 't3ver_id', 't3ver_label', 't3ver_wsid',
-            't3ver_state', 't3ver_stage', 't3ver_count', 't3ver_tstamp',
-            't3ver_move_id', 't3ver_swapmode',
+            't3ver_oid',
+            't3ver_id',
+            't3ver_label',
+            't3ver_wsid',
+            't3ver_state',
+            't3ver_stage',
+            't3ver_count',
+            't3ver_tstamp',
+            't3ver_move_id',
+            't3ver_swapmode',
             $this->tca['ctrl']['transOrigDiffSourceField'],
             $this->tca['ctrl']['cruser_id'],
             $this->tca['ctrl']['fe_cruser_id'],
@@ -247,22 +289,31 @@ class TcaTableService implements TcaTableServiceInterface
         return in_array($columnName, $systemFields);
     }
 
-    protected function isUserField(string $columnName) : bool
+    /**
+     * @param string $columnName
+     * @return bool
+     */
+    protected function isUserField(string $columnName): bool
     {
         $config = $this->getColumnConfig($columnName);
         return isset($config['type']) && $config['type'] === 'user';
     }
 
-    protected function isPassthroughField(string $columnName) : bool
+    /**
+     * @param string $columnName
+     * @return bool
+     */
+    protected function isPassthroughField(string $columnName): bool
     {
         $config = $this->getColumnConfig($columnName);
         return isset($config['type']) && $config['type'] === 'passthrough';
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @param string $columnName
+     * @return array
      */
-    public function getColumnConfig(string $columnName) : array
+    public function getColumnConfig(string $columnName): array
     {
         if (!isset($this->tca['columns'][$columnName])) {
             throw new InvalidArgumentException(
@@ -274,7 +325,10 @@ class TcaTableService implements TcaTableServiceInterface
         return $this->tca['columns'][$columnName]['config'];
     }
 
-    public function getLanguageUidColumn() : string
+    /**
+     * @return string
+     */
+    public function getLanguageUidColumn(): string
     {
         if (!isset($this->tca['ctrl']['languageField'])) {
             return '';
@@ -290,8 +344,11 @@ class TcaTableService implements TcaTableServiceInterface
      * Also further TYPO3 mechanics are taken into account. Does a valid root
      * line exist, is page inside a recycler, is inherited start- endtime
      * excluded, etc.
+     *
+     * @param array $record
+     * @return bool
      */
-    protected function isRecordBlacklistedByRootline(array &$record) : bool
+    protected function isRecordBlacklistedByRootline(array &$record): bool
     {
         $pageUid = $record['pid'];
         if ($this->tableName === 'pages') {
@@ -325,9 +382,9 @@ class TcaTableService implements TcaTableServiceInterface
             }
 
             if ($pageInRootLine['extendToSubpages'] && (
-                ($pageInRootLine['endtime'] > 0 && $pageInRootLine['endtime'] <= time())
-                || ($pageInRootLine['starttime'] > 0 && $pageInRootLine['starttime'] >= time())
-            )) {
+                    ($pageInRootLine['endtime'] > 0 && $pageInRootLine['endtime'] <= time())
+                    || ($pageInRootLine['starttime'] > 0 && $pageInRootLine['starttime'] >= time())
+                )) {
                 $this->logger->info(
                     sprintf(
                         'Record %u is black listed due to configured timing of parent page %u.',
@@ -346,9 +403,9 @@ class TcaTableService implements TcaTableServiceInterface
     /**
      * Checks whether any page uids are black listed.
      */
-    protected function isBlackListedRootLineConfigured() : bool
+    protected function isBlackListedRootLineConfigured(): bool
     {
-        return (bool) $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist');
+        return (bool)$this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist');
     }
 
     /**
@@ -356,7 +413,7 @@ class TcaTableService implements TcaTableServiceInterface
      *
      * @return array<Int>
      */
-    protected function getBlackListedRootLine() : array
+    protected function getBlackListedRootLine(): array
     {
         return GeneralUtility::intExplode(
             ',',
@@ -364,7 +421,10 @@ class TcaTableService implements TcaTableServiceInterface
         );
     }
 
-    public function getQuery() : QueryBuilder
+    /**
+     * @return QueryBuilder
+     */
+    public function getQuery(): QueryBuilder
     {
         $queryBuilder = $this->getDatabaseConnection()->getQueryBuilderForTable($this->getTableName());
         $where = $this->getWhereClause();
@@ -381,7 +441,10 @@ class TcaTableService implements TcaTableServiceInterface
         return $query;
     }
 
-    protected function getDatabaseConnection() : ConnectionPool
+    /**
+     * @return ConnectionPool
+     */
+    protected function getDatabaseConnection(): ConnectionPool
     {
         return GeneralUtility::makeInstance(ConnectionPool::class);
     }

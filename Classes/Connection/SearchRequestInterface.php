@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection;
 
 /*
@@ -20,8 +21,6 @@ namespace Codappix\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
-use Codappix\SearchCore\Connection\ConnectionInterface;
-use Codappix\SearchCore\Connection\FacetRequestInterface;
 use Codappix\SearchCore\Domain\Search\SearchService;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
@@ -29,16 +28,29 @@ interface SearchRequestInterface extends QueryInterface
 {
     /**
      * Returns the actual string the user searched for.
+     *
+     * @return string
      */
-    public function getSearchTerm() : string;
+    public function getSearchTerm(): string;
 
-    public function hasFilter() : bool;
+    /**
+     * @return bool
+     */
+    public function hasFilter(): bool;
 
-    public function getFilter() : array;
+    /**
+     * @return array
+     */
+    public function getFilter(): array;
 
+    /**
+     * @param array $filter
+     * @return void
+     */
     public function setFilter(array $filter);
 
     /**
+     * @param FacetRequestInterface $facet
      * @return void
      */
     public function addFacet(FacetRequestInterface $facet);
@@ -46,12 +58,13 @@ interface SearchRequestInterface extends QueryInterface
     /**
      * @return array<FacetRequestInterface>
      */
-    public function getFacets() : array;
+    public function getFacets(): array;
 
     /**
      * Workaround for paginate widget support which will
      * use the request to build another search.
      *
+     * @param ConnectionInterface $connection
      * @return void
      */
     public function setConnection(ConnectionInterface $connection);
@@ -60,6 +73,7 @@ interface SearchRequestInterface extends QueryInterface
      * Workaround for paginate widget support which will
      * use the request to build another search.
      *
+     * @param SearchService $searchService
      * @return void
      */
     public function setSearchService(SearchService $searchService);

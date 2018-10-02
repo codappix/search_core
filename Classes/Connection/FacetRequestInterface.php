@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection;
 
 /*
@@ -28,11 +29,15 @@ interface FacetRequestInterface
     /**
      * The identifier of the facet, used as key in arrays and to get the facet
      * from search request, etc.
+     *
+     * @return string
      */
-    public function getIdentifier() : string;
+    public function getIdentifier(): string;
 
     /**
      * The config to use for facet building.
+     *
+     * @return array
      */
-    public function getConfig() : array;
+    public function getConfig(): array;
 }
