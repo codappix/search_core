@@ -9,9 +9,9 @@
     <ul>
         <f:for each="{searchResult}" as="result">
             <li>
-                <f:link.page pageUid="{result.plainData.uid}">
+                <f:link.typolink parameter="{result.plainData.search_page_typolink}">
                     [{result.type}:{result.plainData.uid}] - {result.plainData.search_title}
-                </f:link.page>
+                </f:link.typolink>
             </li>
         </f:for>
     </ul>

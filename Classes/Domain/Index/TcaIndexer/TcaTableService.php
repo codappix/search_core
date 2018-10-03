@@ -174,6 +174,19 @@ class TcaTableService implements TcaTableServiceInterface
         if (isset($record[$this->tca['ctrl']['label']]) && !isset($record['search_title'])) {
             $record['search_title'] = $record[$this->tca['ctrl']['label']];
         }
+        if (!isset($record['search_page_typolink'])) {
+            switch ($this->tableName) {
+                case 'pages':
+                    $record['search_page_typolink'] = 't3://page?uid=' . $record['uid'];
+                    break;
+                case 'sys_file':
+                    $record['search_page_typolink'] = 't3://file?uid=' . $record['uid'];
+                    break;
+                default:
+                    $record['search_page_typolink'] = 't3://page?uid=' . $record['pid'];
+                    break;
+            }
+        }
     }
 
     /**
