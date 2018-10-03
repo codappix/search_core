@@ -26,7 +26,8 @@ plugin {
 
             searching {
                 fields {
-                    query = _all
+                    # Default query fields (leave empty for all)
+                    query =
                 }
             }
         }

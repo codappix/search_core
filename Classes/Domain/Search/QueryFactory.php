@@ -25,8 +25,8 @@ use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\ConfigurationUtility;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class QueryFactory
 {
@@ -122,8 +122,12 @@ class QueryFactory
         $matchExpression = [
             'type' => 'most_fields',
             'query' => $searchRequest->getSearchTerm(),
-            'fields' => GeneralUtility::trimExplode(',', $this->configuration->get('searching.fields.query')),
         ];
+
+        $fieldsToQuery = GeneralUtility::trimExplode(',', $this->configuration->getIfExists('searching.fields.query'), true);
+        if (!empty($fieldsToQuery)) {
+            $matchExpression['fields'] = $fieldsToQuery;
+        }
 
         $minimumShouldMatch = $this->configuration->getIfExists('searching.minimumShouldMatch');
         if ($minimumShouldMatch) {
