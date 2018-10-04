@@ -1,0 +1,24 @@
+# dummy placeholders for item groups
+mod.wizards.newContentElement.wizardItems.plugins {
+    elements {
+        searchcore_form {
+            title = LLL:EXT:search_core/Resources/Private/Language/locallang_be.xlf:plugin.form.title
+            description = LLL:EXT:search_core/Resources/Private/Language/locallang_be.xlf:plugin.form.description
+            iconIdentifier = plugin-search_core-form
+            tt_content_defValues {
+                CType = list
+                list_type = searchcore_form
+            }
+        }
+
+        searchcore_results {
+            title = LLL:EXT:search_core/Resources/Private/Language/locallang_be.xlf:plugin.results.title
+            description = LLL:EXT:search_core/Resources/Private/Language/locallang_be.xlf:plugin.results.description
+            iconIdentifier = plugin-search_core-results
+            tt_content_defValues {
+                CType = list
+                list_type = searchcore_results
+            }
+        }
+    }
+}

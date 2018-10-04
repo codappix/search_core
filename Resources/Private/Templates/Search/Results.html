@@ -1,0 +1,25 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<f:layout name="Default"/>
+
+<f:section name="Content">
+    <f:if condition="{searchResult}">
+        <f:then>
+            <ul class="core-search-results">
+                <f:for each="{searchResult}" as="result">
+                    <li>
+                        <f:render partial="Results/ListItem" arguments="{searchRequest: searchRequest, result: result}"/>
+                    </li>
+                </f:for>
+            </ul>
+        </f:then>
+        <f:else>
+            <f:if condition="{searchRequest.searchTerm}">
+                <f:then>{f:translate(key: 'no_results_found_with_search', arguments: '{0: searchRequest.searchTerm}')}</f:then>
+                <f:else>{f:translate(key: 'no_results_found')}</f:else>
+            </f:if>
+        </f:else>
+    </f:if>
+</f:section>
+
+</html>

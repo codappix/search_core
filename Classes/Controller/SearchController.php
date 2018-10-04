@@ -68,12 +68,31 @@ class SearchController extends ActionController
     }
 
     /**
-     * Process a search and deliver original request and result to view.
+     * Action: Search form
      *
      * @param SearchRequest $searchRequest
      * @return void
      */
-    public function searchAction(SearchRequest $searchRequest = null)
+    public function formAction(SearchRequest $searchRequest = null)
+    {
+        $searchResult = null;
+        if ($searchRequest !== null) {
+            $searchResult = $this->searchService->search($searchRequest);
+        }
+
+        $this->view->assignMultiple([
+            'searchRequest' => $searchRequest,
+            'searchResult' => $searchResult,
+        ]);
+    }
+
+    /**
+     * Action: Display list results and deliver original request and result to view.
+     *
+     * @param SearchRequest $searchRequest
+     * @return void
+     */
+    public function resultsAction(SearchRequest $searchRequest = null)
     {
         $searchResult = null;
         if ($searchRequest !== null) {

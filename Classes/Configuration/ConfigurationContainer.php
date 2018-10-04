@@ -47,7 +47,7 @@ class ConfigurationContainer implements ConfigurationContainerInterface
         $this->settings = $configurationManager->getConfiguration(
             ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
             'SearchCore',
-            'search'
+            'Results'
         );
         if ($this->settings === null) {
             throw new NoConfigurationException('Could not fetch configuration.', 1484226842);
