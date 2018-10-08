@@ -174,6 +174,16 @@ class TcaTableService implements TcaTableServiceInterface
         if (isset($record[$this->tca['ctrl']['label']]) && !isset($record['search_title'])) {
             $record['search_title'] = $record[$this->tca['ctrl']['label']];
         }
+        if (isset($this->tca['ctrl']['enablecolumns']['fe_group']) && isset($record[$this->tca['ctrl']['enablecolumns']['fe_group']])) {
+            $groups = GeneralUtility::intExplode(
+                ',',
+                $record[$this->tca['ctrl']['enablecolumns']['fe_group']],
+                true
+            );
+            // Always fallback on public visibility when configured
+            $record[$this->tca['ctrl']['enablecolumns']['fe_group']] = !empty($groups) ? $groups : [0];
+        }
+
         if (!isset($record['search_page_typolink'])) {
             switch ($this->tableName) {
                 case 'pages':
