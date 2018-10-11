@@ -23,6 +23,7 @@ namespace Codappix\SearchCore\Command;
 
 use Codappix\SearchCore\Domain\Index\IndexerFactory;
 use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
 /**
@@ -52,12 +53,17 @@ class IndexCommandController extends CommandController
      */
     public function indexCommand(string $identifier)
     {
-        try {
-            $this->indexerFactory->getIndexer($identifier)->indexAllDocuments();
-            $this->outputLine($identifier . ' was indexed.');
-        } catch (NoMatchingIndexerException $e) {
-            $this->outputLine('No indexer found for: ' . $identifier);
+        // Allow multiple identifiers per import task
+        $identifiers = GeneralUtility::trimExplode(',', $identifier, true);
+        foreach ($identifiers as $value) {
+            try {
+                $this->indexerFactory->getIndexer($value)->indexAllDocuments();
+                $this->outputLine($value . ' was indexed.');
+            } catch (NoMatchingIndexerException $e) {
+                $this->outputLine('No indexer found for: ' . $value);
+            }
         }
+
     }
 
     /**
@@ -68,11 +74,15 @@ class IndexCommandController extends CommandController
      */
     public function deleteCommand(string $identifier)
     {
-        try {
-            $this->indexerFactory->getIndexer($identifier)->delete();
-            $this->outputLine($identifier . ' was deleted.');
-        } catch (NoMatchingIndexerException $e) {
-            $this->outputLine('No indexer found for: ' . $identifier);
+        // Allow multiple identifiers per import task
+        $identifiers = GeneralUtility::trimExplode(',', $identifier, true);
+        foreach ($identifiers as $value) {
+            try {
+                $this->indexerFactory->getIndexer($value)->delete();
+                $this->outputLine($value . ' was deleted.');
+            } catch (NoMatchingIndexerException $e) {
+                $this->outputLine('No indexer found for: ' . $value);
+            }
         }
     }
 }

@@ -21,6 +21,8 @@ namespace Codappix\SearchCore\Connection;
  * 02110-1301, USA.
  */
 
+use Elastica\Query;
+
 /**
  * Defines interface for connections to storage backend for interacting with documents.
  */
@@ -77,8 +79,15 @@ interface ConnectionInterface
     /**
      * Will delete the whole index / db.
      *
-     * @param string $documentType
      * @return void
      */
-    public function deleteIndex(string $documentType);
+    public function deleteIndex();
+
+    /**
+     * Will delete the index / db of defined document type.
+     *
+     * @param Query $query
+     * @return void
+     */
+    public function deleteIndexByQuery(Query $query);
 }

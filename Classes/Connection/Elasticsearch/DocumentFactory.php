@@ -60,7 +60,6 @@ class DocumentFactory implements Singleton
         }
 
         $identifier = $document['search_identifier'];
-        unset($document['search_identifier']);
 
         $this->logger->debug(
             sprintf('Convert %s %u to document.', $documentType, $identifier),

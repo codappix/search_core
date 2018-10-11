@@ -23,8 +23,10 @@ namespace Codappix\SearchCore\Connection;
 
 use Codappix\SearchCore\Connection\Elasticsearch\SearchResult;
 use Codappix\SearchCore\Domain\Search\QueryFactory;
+use Elastica\Query;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Outer wrapper to elasticsearch.
@@ -121,8 +123,8 @@ class Elasticsearch implements Singleton, ConnectionInterface
     {
         $this->withType(
             $documentType,
-            function ($type) use ($document) {
-                $type->addDocument($this->documentFactory->getDocument($type->getName(), $document));
+            function ($type) use ($documentType, $document) {
+                $type->addDocument($this->documentFactory->getDocument($documentType, $document));
             }
         );
     }
@@ -156,8 +158,8 @@ class Elasticsearch implements Singleton, ConnectionInterface
     {
         $this->withType(
             $documentType,
-            function ($type) use ($document) {
-                $type->updateDocument($this->documentFactory->getDocument($type->getName(), $document));
+            function ($type) use ($documentType, $document) {
+                $type->updateDocument($this->documentFactory->getDocument($documentType, $document));
             }
         );
     }
@@ -170,28 +172,46 @@ class Elasticsearch implements Singleton, ConnectionInterface
     {
         $this->withType(
             $documentType,
-            function ($type) use ($documents) {
-                $type->addDocuments($this->documentFactory->getDocuments($type->getName(), $documents));
+            function ($type) use ($documentType, $documents) {
+                $type->addDocuments($this->documentFactory->getDocuments($documentType, $documents));
             }
         );
     }
 
     /**
-     * @param string $documentType
+     * @return void
      */
-    public function deleteIndex(string $documentType)
+    public function deleteIndex()
     {
         $index = $this->connection->getClient()->getIndex($this->indexFactory->getIndexName());
 
         if (!$index->exists()) {
             $this->logger->notice(
                 'Index did not exist, therefore was not deleted.',
-                [$documentType, $this->indexFactory->getIndexName()]
+                [$this->indexFactory->getIndexName()]
             );
             return;
         }
 
         $index->delete();
+    }
+
+    /**
+     * @param Query $query
+     * @return void
+     */
+    public function deleteIndexByQuery(Query $query)
+    {
+        $index = $this->connection->getClient()->getIndex($this->indexFactory->getIndexName());
+        if (!$index->exists()) {
+            $this->logger->notice(
+                'Index did not exist, therefore items can not be deleted by query.',
+                [$this->indexFactory->getIndexName(), $query->getQuery()]
+            );
+            return;
+        }
+
+        $index->deleteByQuery($query);
     }
 
     /**
@@ -202,7 +222,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
      */
     protected function withType(string $documentType, callable $callback)
     {
-        $type = $this->getType($documentType);
+        $type = $this->getType();
         // TODO: Check whether it's to heavy to send it so often e.g. for every single document.
         // Perhaps add command controller to submit mapping?!
         // Also it's not possible to change mapping without deleting index first.
@@ -230,17 +250,16 @@ class Elasticsearch implements Singleton, ConnectionInterface
     }
 
     /**
-     * @param string $documentType
      * @return \Elastica\Type
      */
-    protected function getType(string $documentType): \Elastica\Type
+    protected function getType(): \Elastica\Type
     {
         return $this->typeFactory->getType(
             $this->indexFactory->getIndex(
                 $this->connection,
-                $documentType
+                'document'
             ),
-            $documentType
+            'document'
         );
     }
 }

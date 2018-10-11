@@ -168,9 +168,6 @@ class TcaTableService implements TcaTableServiceInterface
      */
     public function prepareRecord(array &$record)
     {
-        if (isset($record['uid']) && !isset($record['search_identifier'])) {
-            $record['search_identifier'] = $record['uid'];
-        }
         if (isset($record[$this->tca['ctrl']['label']]) && !isset($record['search_title'])) {
             $record['search_title'] = $record[$this->tca['ctrl']['label']];
         }
