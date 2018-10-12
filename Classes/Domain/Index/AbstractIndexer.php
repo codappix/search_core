@@ -168,7 +168,7 @@ abstract class AbstractIndexer implements IndexerInterface
         } catch (InvalidArgumentException $e) {
             // Nothing to do.
         }
-        $this->generateSearchIdentifier($record);
+        $this->generateSearchIdentifiers($record);
         $this->handleAbstract($record);
     }
 
@@ -176,8 +176,11 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param array $record
      * @return void
      */
-    protected function generateSearchIdentifier(array &$record)
+    protected function generateSearchIdentifiers(array &$record)
     {
+        if (!isset($record['search_document'])) {
+            $record['search_document_type'] = $this->getDocumentName();
+        }
         if (!isset($record['search_identifier']) && isset($record['uid'])) {
             $record['search_identifier'] = $this->getDocumentName() . '-' . $record['uid'];
         }

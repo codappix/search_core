@@ -22,7 +22,7 @@ namespace Codappix\SearchCore\Controller;
  */
 
 use Codappix\SearchCore\Domain\Model\SearchRequest;
-use Codappix\SearchCore\Domain\Search\SearchService;
+use Codappix\SearchCore\Domain\Search\CachedSearchService;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
@@ -31,14 +31,14 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 class SearchController extends ActionController
 {
     /**
-     * @var SearchService
+     * @var CachedSearchService
      */
     protected $searchService;
 
     /**
-     * @param SearchService $searchService
+     * @param CachedSearchService $searchService
      */
-    public function __construct(SearchService $searchService)
+    public function __construct(CachedSearchService $searchService)
     {
         $this->searchService = $searchService;
 
