@@ -93,7 +93,9 @@ class SearchRequest implements SearchRequestInterface
     public function setFilter(array $filter)
     {
         $filter = \TYPO3\CMS\Core\Utility\ArrayUtility::removeArrayEntryByValue($filter, '');
-        $this->filter = \TYPO3\CMS\Extbase\Utility\ArrayUtility::removeEmptyElementsRecursively($filter);
+        $this->filter = \TYPO3\CMS\Core\Utility\ArrayUtility::filterRecursive($filter, function ($value) {
+            return !empty($value);
+        });
     }
 
     public function hasFilter() : bool

@@ -21,7 +21,7 @@ namespace Codappix\SearchCore\Configuration;
  */
 
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 
 /**
  * Container of all configurations for extension.

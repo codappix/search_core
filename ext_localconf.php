@@ -5,7 +5,7 @@ call_user_func(
         // TODO: Add hook for Extbase -> to handle records modified through
         // Frontend and backend modules not using datahandler
 
-        $GLOBALS['TYPO3_CONF_VARS'] = TYPO3\CMS\Extbase\Utility\ArrayUtility::arrayMergeRecursiveOverrule(
+        \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
             $GLOBALS['TYPO3_CONF_VARS'],
             [
                 'SC_OPTIONS' => [
@@ -43,7 +43,8 @@ call_user_func(
         \Codappix\SearchCore\Compatibility\ImplementationRegistrationService::registerImplementations();
 
         // API does make use of object manager, therefore use GLOBALS
-        $extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extensionKey]);
+        $extensionConfiguration = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class)->get($extensionKey);
+
         if ($extensionConfiguration === false
             || !isset($extensionConfiguration['disable.']['elasticsearch'])
             || $extensionConfiguration['disable.']['elasticsearch'] !== '1'
