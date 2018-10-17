@@ -22,6 +22,7 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * The current connection to elasticsearch.
@@ -54,8 +55,8 @@ class Connection implements Singleton
 
         if ($elasticaClient === null) {
             $elasticaClient = new \Elastica\Client([
-                'host' => $this->configuration->get('connections.elasticsearch.host'),
-                'port' => $this->configuration->get('connections.elasticsearch.port'),
+                'host' => $this->configuration->getIfExists('connections.elasticsearch.host'),
+                'port' => $this->configuration->getIfExists('connections.elasticsearch.port'),
                 // TODO: Make configurable
                 // 'log' => 'file',
             ]);
