@@ -217,11 +217,6 @@ class SearchRequest implements SearchRequestInterface
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196199);
     }
 
-    public function like($propertyName, $operand, $caseSensitive = true)
-    {
-        throw new \BadMethodCallException('Method is not implemented yet.', 1502196167);
-    }
-
     public function contains($propertyName, $operand)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196200);
