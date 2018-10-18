@@ -42,12 +42,13 @@ call_user_func(
 
         \Codappix\SearchCore\Compatibility\ImplementationRegistrationService::registerImplementations();
 
+        
         // API does make use of object manager, therefore use GLOBALS
         $extensionConfiguration = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class)->get($extensionKey);
-
+    
         if ($extensionConfiguration === false
-            || !isset($extensionConfiguration['disable.']['elasticsearch'])
-            || $extensionConfiguration['disable.']['elasticsearch'] !== '1'
+            || !isset($extensionConfiguration['disable']['elasticsearch'])
+            || $extensionConfiguration['disable']['elasticsearch'] !== '1'
         ) {
             \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\Container\Container::class)
                 ->registerImplementation(
