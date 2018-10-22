@@ -70,6 +70,8 @@ class ConfigurationContainer implements ConfigurationContainerInterface
                 InvalidArgumentException::OPTION_DOES_NOT_EXIST
             );
         }
+        
+        return $value;
     }
 
     /**
