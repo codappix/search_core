@@ -23,6 +23,7 @@ namespace Codappix\SearchCore\Configuration;
 use TYPO3\CMS\Core\Utility\Exception\MissingArrayPathException;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Container of all configurations for extension.
@@ -61,12 +62,9 @@ class ConfigurationContainer implements ConfigurationContainerInterface
      */
     public function get(string $path)
     {
-        try
-        {
-            return ArrayUtility::getValueByPath($this->settings, $path);
-        }
-        catch (MissingArrayPathException $exception)
-        {
+        $value = ArrayUtility::getValueByPath($this->settings, $path, '.');
+        
+        if ($value === null) {
             throw new InvalidArgumentException(
                 'The given configuration option "' . $path . '" does not exist.',
                 InvalidArgumentException::OPTION_DOES_NOT_EXIST
@@ -82,7 +80,7 @@ class ConfigurationContainer implements ConfigurationContainerInterface
     {
         try
         {
-            return ArrayUtility::getValueByPath($this->settings, $path);
+            return ArrayUtility::getValueByPath($this->settings, $path, '.');
         }
         catch (\Exception $exception)
         {
