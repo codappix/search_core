@@ -178,7 +178,7 @@ class TcaTableService implements TcaTableServiceInterface
                 true
             );
             // Always fallback on public visibility when configured
-            $record[$this->tca['ctrl']['enablecolumns']['fe_group']] = !empty($groups) ? $groups : [0];
+            $record['search_access'] = !empty($groups) ? $groups : [0];
         }
 
         if (!isset($record['search_page_typolink'])) {

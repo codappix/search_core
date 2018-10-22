@@ -27,5 +27,4 @@ use TYPO3\CMS\Extbase\Service\TypoScriptService as CoreTypoScriptService;
  */
 class TypoScriptService76 extends CoreTypoScriptService implements TypoScriptServiceInterface
 {
-
 }

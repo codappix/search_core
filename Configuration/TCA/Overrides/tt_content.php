@@ -3,7 +3,6 @@
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 call_user_func(function ($extension, $table) {
-
     $plugin = ExtensionUtility::registerPlugin(
             'Codappix.' . $extension,
             'Results',
@@ -21,5 +20,4 @@ call_user_func(function ($extension, $table) {
         ) ?? 'searchcore_form';
 
     $GLOBALS['TCA'][$table]['types']['list']['subtypes_excludelist'][$plugin] = 'recursive,pages';
-
 }, 'search_core', 'tt_content');

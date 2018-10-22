@@ -5,7 +5,6 @@ namespace Codappix\SearchCore\Domain\Search;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Service: Cached Search
@@ -13,7 +12,11 @@ use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
  */
 class CachedSearchService implements SingletonInterface
 {
+    /**
+     * @var array
+     */
     protected $results = [];
+
     /**
      * @var SearchService
      */
@@ -51,5 +54,4 @@ class CachedSearchService implements SingletonInterface
         }
         return sha1(serialize($searchRequest));
     }
-
 }

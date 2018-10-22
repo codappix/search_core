@@ -26,7 +26,6 @@ use Codappix\SearchCore\Domain\Search\QueryFactory;
 use Elastica\Query;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Outer wrapper to elasticsearch.

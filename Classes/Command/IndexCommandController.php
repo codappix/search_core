@@ -63,7 +63,6 @@ class IndexCommandController extends CommandController
                 $this->outputLine('No indexer found for: ' . $value);
             }
         }
-
     }
 
     /**

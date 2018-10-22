@@ -84,7 +84,7 @@ class QueryFactory
         $this->addSize($searchRequest, $query);
         $this->addSearch($searchRequest, $query);
         $this->addBoosts($searchRequest, $query);
-        $this->addFilter($searchRequest, $query);
+        $this->addFilters($searchRequest, $query);
         $this->addFacets($searchRequest, $query);
         $this->addFields($searchRequest, $query);
         $this->addSort($searchRequest, $query);
@@ -249,67 +249,76 @@ class QueryFactory
      * @param array $query
      * @return void
      */
-    protected function addFilter(SearchRequestInterface $searchRequest, array &$query)
+    protected function addFilters(SearchRequestInterface $searchRequest, array &$query)
     {
         if (!$searchRequest->hasFilter()) {
             return;
         }
 
-        $filter = [];
         foreach ($searchRequest->getFilter() as $name => $value) {
-            $filter[] = $this->buildFilter(
+            $this->addFilter(
                 $name,
                 $value,
-                $this->configuration->getIfExists('searching.mapping.filter.' . $name) ?: []
+                $this->configuration->getIfExists('searching.mapping.filter.' . $name) ?: [],
+                $query
             );
         }
-
-        ArrayUtility::mergeRecursiveWithOverrule($query, [
-            'query' => [
-                'bool' => [
-                    'filter' => $filter,
-                ],
-            ],
-        ]);
     }
 
     /**
      * @param string $name
-     * @param $value
+     * @param string $value
      * @param array $config
+     * @param array $query
      * @return array
      */
-    protected function buildFilter(string $name, $value, array $config): array
+    protected function addFilter(string $name, $value, array $config, array &$query): array
     {
-        if ($config === []) {
-            return [
-                'term' => [
-                    $name => $value,
-                ],
-            ];
-        }
+        if (!empty($config)) {
+            if ($config['type'] && $config['type'] === 'user') {
+                if (!isset($config['userFunc'])) {
+                    throw new MissingAttributeException('No userFunc configured for filter type: user', 1539876182018);
+                }
 
-        $filter = [];
+                $parameters = [
+                    'config' => $config,
+                    'value' => $value,
+                    'query' => &$query,
+                ];
+                GeneralUtility::callUserFunction($config['userFunc'], $parameters, $this);
+            } else {
+                $filter = [];
+                if (isset($config['fields'])) {
+                    foreach ($config['fields'] as $elasticField => $inputField) {
+                        $filter[$elasticField] = $value[$inputField];
+                    }
+                }
 
-        if (isset($config['fields'])) {
-            foreach ($config['fields'] as $elasticField => $inputField) {
-                $filter[$elasticField] = $value[$inputField];
+                if (isset($config['raw'])) {
+                    $filter = array_merge($config['raw'], $filter);
+                }
+
+                if ($config['type'] === 'range') {
+                    $query['query']['bool']['filter'][] = [
+                        'range' => [
+                            $config['field'] => $filter
+                        ]
+                    ];
+                } else {
+                    $query['query']['bool']['filter'][] = [
+                        $config['field'] => $filter
+                    ];
+                }
             }
-        }
-
-        if (isset($config['raw'])) {
-            $filter = array_merge($config['raw'], $filter);
-        }
-
-        if ($config['type'] === 'range') {
-            return [
-                'range' => [
-                    $config['field'] => $filter,
-                ],
+        } else {
+            $query['query']['bool']['filter'][] = [
+                'term' => [
+                    $name => $value
+                ]
             ];
         }
 
-        return [$config['field'] => $filter];
+        return $query;
     }
 
     /**
