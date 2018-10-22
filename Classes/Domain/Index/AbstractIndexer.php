@@ -149,8 +149,10 @@ abstract class AbstractIndexer implements IndexerInterface
         $offset = 0;
         $limit = $this->getLimit();
 
-        while (($records = $this->getRecords($offset, $limit)) !== []) {
-            yield $records;
+        while (($records = $this->getRecords($offset, $limit)) !== null) {
+            if (!empty($records)) {
+                yield $records;
+            }
             $offset += $limit;
         }
     }
