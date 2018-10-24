@@ -46,10 +46,6 @@ class MappingFactoryTest extends AbstractUnitTestCase
     {
         $indexName = 'someIndex';
         $configuration = [
-            '_all' => [
-                'type' => 'text',
-                'analyzer' => 'ngram4',
-            ],
             'channel' => [
                 'type' => 'keyword',
             ],
@@ -64,16 +60,8 @@ class MappingFactoryTest extends AbstractUnitTestCase
             ->method('get')
             ->with('indexing.' . $indexName . '.mapping')
             ->willReturn($configuration);
-
         $mapping = $this->subject->getMapping($type)->toArray()[$indexName];
-        $this->assertArraySubset(
-            [
-                '_all' => $configuration['_all']
-            ],
-            $mapping,
-            true,
-            'Configuration of _all field was not set for mapping.'
-        );
+
         $this->assertArraySubset(
             [
                 'channel' => $configuration['channel']

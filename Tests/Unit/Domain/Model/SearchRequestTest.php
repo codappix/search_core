@@ -45,6 +45,10 @@ class SearchRequestTest extends AbstractUnitTestCase
         );
     }
 
+    /**
+     * Data provider for emptyFilterWillNotBeSet()
+     * @return array
+     */
     public function possibleEmptyFilter()
     {
         return [

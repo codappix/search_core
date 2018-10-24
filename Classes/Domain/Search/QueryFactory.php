@@ -124,9 +124,11 @@ class QueryFactory
             'query' => $searchRequest->getSearchTerm(),
         ];
 
-        $fieldsToQuery = GeneralUtility::trimExplode(',', $this->configuration->getIfExists('searching.fields.query'), true);
-        if (!empty($fieldsToQuery)) {
+        try {
+            $fieldsToQuery = GeneralUtility::trimExplode(',', $this->configuration->get('searching.fields.query'), true);
             $matchExpression['fields'] = $fieldsToQuery;
+        } catch (InvalidArgumentException $e) {
+            // Nothing configured
         }
 
         $minimumShouldMatch = $this->configuration->getIfExists('searching.minimumShouldMatch');

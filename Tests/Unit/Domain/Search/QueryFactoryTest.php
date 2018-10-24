@@ -428,7 +428,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 ['searching.fieldValueFactor']
             )
             ->will($this->onConsecutiveCalls(
-                '_all, field1, field2',
+                'field1, field2',
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
@@ -445,7 +445,6 @@ class QueryFactoryTest extends AbstractUnitTestCase
                                 'type' => 'most_fields',
                                 'query' => 'SearchWord',
                                 'fields' => [
-                                    '_all',
                                     'field1',
                                     'field2',
                                 ],
@@ -662,6 +661,9 @@ class QueryFactoryTest extends AbstractUnitTestCase
         );
     }
 
+    /**
+     * @return void
+     */
     protected function configureConfigurationMockWithDefault()
     {
         $this->configuration->expects($this->any())

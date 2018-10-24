@@ -22,7 +22,7 @@ namespace Codappix\Tests\Unit\Controller;
 
 use Codappix\SearchCore\Controller\SearchController;
 use Codappix\SearchCore\Domain\Model\SearchRequest;
-use Codappix\SearchCore\Domain\Search\SearchService;
+use Codappix\SearchCore\Domain\Search\CachedSearchService;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
 use TYPO3\CMS\Extbase\Mvc\Web\Request;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
@@ -54,7 +54,7 @@ class SearchControllerTest extends AbstractUnitTestCase
 
         parent::setUp();
 
-        $searchService = $this->getMockBuilder(SearchService::class)
+        $searchService = $this->getMockBuilder(CachedSearchService::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->request = new Request();

@@ -55,10 +55,6 @@ class MappingFactory implements Singleton
         $mapping->setType($type);
 
         $configuration = $this->getConfiguration($type->getName());
-        if (isset($configuration['_all'])) {
-            $mapping->setAllField($configuration['_all']);
-            unset($configuration['_all']);
-        }
         $mapping->setProperties($configuration);
 
         return $mapping;

@@ -82,6 +82,7 @@ class AbstractIndexerTest extends AbstractUnitTestCase
         $expectedRecord['new_test_field'] = 'test';
         $expectedRecord['new_test_field2'] = 'test' . PHP_EOL . 'test';
         $expectedRecord['search_abstract'] = '';
+        $expectedRecord['search_document_type'] = 'testTable';
 
         $this->dataProcessorService->expects($this->any())
             ->method('executeDataProcessor')
@@ -137,6 +138,7 @@ class AbstractIndexerTest extends AbstractUnitTestCase
         $record = ['field 1' => 'test'];
         $expectedRecord = $record;
         $expectedRecord['search_abstract'] = '';
+        $expectedRecord['search_document_type'] = 'testTable';
 
         $this->configuration->expects($this->exactly(2))
             ->method('get')
