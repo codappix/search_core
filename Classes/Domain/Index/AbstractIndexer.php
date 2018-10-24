@@ -133,8 +133,8 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->logger->info('Start deletion of index.');
         $this->connection->deleteIndexByQuery(Query::create([
             'query' => [
-                'regexp' => [
-                    'search_identifier' => $this->getDocumentName() . '-*'
+                'term' => [
+                    'search_document_type' => $this->getDocumentName()
                 ]
             ]
         ]));
