@@ -25,6 +25,8 @@ use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Domain\Index\TcaIndexer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\RootlineUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Specific indexer for Pages, will basically add content of page.
@@ -64,6 +66,9 @@ class PagesIndexer extends TcaIndexer
     protected function prepareRecord(array &$record)
     {
         parent::prepareRecord($record);
+
+        // Override access from parent rootline
+        $record['search_access'] = $this->fetchAccess($record['uid'], $record['search_access']);
 
         $possibleTitleFields = ['nav_title', 'tx_tqseo_pagetitle_rel', 'title'];
         foreach ($possibleTitleFields as $searchTitleField) {
@@ -146,6 +151,47 @@ class PagesIndexer extends TcaIndexer
     protected function fetchMediaForPage(int $uid): array
     {
         return $this->fetchSysFileReferenceUids($uid, 'pages', 'media');
+    }
+
+    /**
+     * @param integer $uid
+     * @param array $pageAccess
+     * @return array
+     */
+    protected function fetchAccess(int $uid, array $pageAccess): array
+    {
+        try {
+            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+            $rootline = $objectManager->get(RootlineUtility::class, $uid)->get();
+        } catch (\RuntimeException $e) {
+            $this->logger->notice(
+                sprintf('Could not fetch rootline for page %u, because: %s', $uid, $e->getMessage()),
+                [$pageAccess, $e]
+            );
+            return $pageAccess;
+        }
+
+        $access = [$pageAccess];
+        $extended = false;
+        foreach ($rootline as $pageInRootLine) {
+            if ($pageInRootLine['extendToSubpages'] && (!empty($pageInRootLine['fe_group']))) {
+                $extended = true;
+                $access[] = GeneralUtility::intExplode(
+                    ',',
+                    $pageInRootLine['fe_group'],
+                    true
+                );
+            }
+        }
+
+        // Return combined rootline extended access and return unique id's
+        $access = array_unique(array_merge(...$access));
+
+        // Remove public value if fe_group is extended to this page
+        if ($extended && ($key = array_search(0, $access, true)) !== false) {
+            unset($access[$key]);
+        }
+        return array_values($access);
     }
 
     /**
