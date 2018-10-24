@@ -38,7 +38,7 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
     {
         return array_merge(
             parent::getDataSets(),
-            ['Tests/Functional/Fixtures/Hooks/DataHandler/AllowedTables.xml']
+            ['EXT:search_core/Tests/Functional/Fixtures/Hooks/DataHandler/AllowedTables.xml']
         );
     }
 

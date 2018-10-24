@@ -52,7 +52,7 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
      */
     protected function getDataSets()
     {
-        return ['Tests/Functional/Fixtures/BasicSetup.xml'];
+        return ['EXT:search_core/Tests/Functional/Fixtures/BasicSetup.xml'];
     }
 
     /**

@@ -39,7 +39,7 @@ class FacetTest extends AbstractFunctionalTestCase
     {
         return array_merge(
             parent::getDataSets(),
-            ['Tests/Functional/Fixtures/Searching/Filter.xml']
+            ['EXT:search_core/Tests/Functional/Fixtures/Searching/Filter.xml']
         );
     }
 

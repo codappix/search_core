@@ -33,7 +33,7 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
      */
     public function pagesContainAllAdditionalInformation()
     {
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml');
+        $this->importDataSet('EXT:search_core/Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml');
 
         $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
         $tableName = 'pages';
@@ -100,9 +100,9 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
     public function rootLineDataSets()
     {
         return [
-            'Broken root line' => ['Tests/Functional/Fixtures/Indexing/PagesIndexer/BrokenRootLine.xml'],
-            'Recycler doktype' => ['Tests/Functional/Fixtures/Indexing/PagesIndexer/Recycler.xml'],
-            'Extended timing to sub pages' => ['Tests/Functional/Fixtures/Indexing/PagesIndexer/InheritedTiming.xml'],
+            'Broken root line' => ['EXT:search_core/Tests/Functional/Fixtures/Indexing/PagesIndexer/BrokenRootLine.xml'],
+            'Recycler doktype' => ['EXT:search_core/Tests/Functional/Fixtures/Indexing/PagesIndexer/Recycler.xml'],
+            'Extended timing to sub pages' => ['EXT:search_core/Tests/Functional/Fixtures/Indexing/PagesIndexer/InheritedTiming.xml'],
         ];
     }
 }

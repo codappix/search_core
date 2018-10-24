@@ -38,7 +38,7 @@ class NonAllowedTablesTest extends AbstractDataHandlerTest
     {
         return array_merge(
             parent::getDataSets(),
-            ['Tests/Functional/Fixtures/Hooks/DataHandler/NonAllowedTables.xml']
+            ['EXT:search_core/Tests/Functional/Fixtures/Hooks/DataHandler/NonAllowedTables.xml']
         );
     }
 

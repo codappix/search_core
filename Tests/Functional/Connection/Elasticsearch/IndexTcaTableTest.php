@@ -32,7 +32,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
     {
         return array_merge(
             parent::getDataSets(),
-            ['Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml']
+            ['EXT:search_core/Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml']
         );
     }
 
@@ -124,7 +124,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
             parent::getTypoScriptFilesForFrontendRootPage(),
             ['EXT:search_core/Tests/Functional/Fixtures/Indexing/UserWhereClause.ts']
         ));
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/UserWhereClause.xml');
+        $this->importDataSet('EXT:search_core/Tests/Functional/Fixtures/Indexing/UserWhereClause.xml');
 
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
@@ -157,7 +157,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
      */
     public function resolvesRelations()
     {
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/ResolveRelations.xml');
+        $this->importDataSet('EXT:search_core/Tests/Functional/Fixtures/Indexing/ResolveRelations.xml');
 
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
