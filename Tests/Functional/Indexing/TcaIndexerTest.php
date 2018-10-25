@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Indexing;
 
 /*
@@ -66,7 +67,7 @@ class TcaIndexerTest extends AbstractFunctionalTestCase
                     foreach ($documents as $document) {
                         // Page uids 1 and 2 are allowed while 3 and 4 are not allowed.
                         // Therefore only documents with page uid 1 and 2 should exist.
-                        if (! isset($document['pid']) || ! in_array($document['pid'], [1, 2])) {
+                        if (!isset($document['pid']) || !in_array($document['pid'], [1, 2])) {
                             return false;
                         }
                     }

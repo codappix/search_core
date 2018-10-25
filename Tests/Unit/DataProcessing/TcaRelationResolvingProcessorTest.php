@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\DataProcessing;
 
 /*
@@ -23,8 +24,8 @@ namespace Codappix\SearchCore\Tests\Unit\DataProcessing;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\DataProcessing\TcaRelationResolvingProcessor;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TcaRelationResolvingProcessorTest extends AbstractUnitTestCase
 {

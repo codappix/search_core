@@ -68,7 +68,7 @@ class PagesIndexer extends TcaIndexer
         parent::prepareRecord($record);
 
         // Override access from parent rootline
-        $record['search_access'] = $this->fetchAccess($record['uid'], $record['search_access']);
+        $record['search_access'] = $this->fetchAccess($record['uid'], (array)$record['search_access']);
 
         $possibleTitleFields = ['nav_title', 'tx_tqseo_pagetitle_rel', 'title'];
         foreach ($possibleTitleFields as $searchTitleField) {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Functional\Hooks\DataHandler;
 
 /*
@@ -20,12 +21,9 @@ namespace Codappix\SearchCore\Tests\Functional\Hooks\DataHandler;
  * 02110-1301, USA.
  */
 
-use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Domain\Service\DataHandler as DataHandlerService;
-use Codappix\SearchCore\Hook\DataHandler as DataHandlerHook;
 use TYPO3\CMS\Core\DataHandling\DataHandler as Typo3DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
 {
@@ -85,14 +83,12 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
                         if ($this->isLegacyVersion()) {
                             return isset($record['uid']) && $record['uid'] === '1'
                                 && isset($record['pid']) && $record['pid'] === '1'
-                                && isset($record['colPos']) && $record['colPos'] === '1'
-                                ;
+                                && isset($record['colPos']) && $record['colPos'] === '1';
                         }
 
                         return isset($record['uid']) && $record['uid'] === 1
                             && isset($record['pid']) && $record['pid'] === 1
-                            && isset($record['colPos']) && $record['colPos'] === 1
-                            ;
+                            && isset($record['colPos']) && $record['colPos'] === 1;
                     })
                 ],
                 [
@@ -132,14 +128,12 @@ class ProcessesAllowedTablesTest extends AbstractDataHandlerTest
                         if ($this->isLegacyVersion()) {
                             return isset($record['uid']) && $record['uid'] === '2'
                                 && isset($record['pid']) && $record['pid'] === '1'
-                                && isset($record['header']) && $record['header'] === 'a new record'
-                                ;
+                                && isset($record['header']) && $record['header'] === 'a new record';
                         }
 
                         return isset($record['uid']) && $record['uid'] === 2
                             && isset($record['pid']) && $record['pid'] === 1
-                            && isset($record['header']) && $record['header'] === 'a new record'
-                            ;
+                            && isset($record['header']) && $record['header'] === 'a new record';
                     })
                 ],
                 [

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Indexing;
 
 /*
@@ -20,7 +21,6 @@ namespace Codappix\SearchCore\Tests\Indexing;
  * 02110-1301, USA.
  */
 
-use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\Elasticsearch;
 use Codappix\SearchCore\Domain\Index\IndexerFactory;
 use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
@@ -54,8 +54,7 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
                         ' this is the content of header content element that should get indexed' .
                         ' Indexed without html tags Some text in paragraph'
                         && isset($documents[0]['search_abstract']) && $documents[0]['search_abstract'] ===
-                        'Used as abstract as no abstract is defined.'
-                        ;
+                        'Used as abstract as no abstract is defined.';
                 })
             );
 

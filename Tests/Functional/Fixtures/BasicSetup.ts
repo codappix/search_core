@@ -45,12 +45,6 @@ plugin {
                     }
                 }
             }
-
-            searching {
-                fields {
-                    query = _all
-                }
-            }
         }
     }
 }

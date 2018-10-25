@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Domain\Search;
 
 /*
@@ -232,9 +233,6 @@ class QueryFactoryTest extends AbstractUnitTestCase
                             'multi_match' => [
                                 'type' => 'most_fields',
                                 'query' => 'SearchWord',
-                                'fields' => [
-                                    '_all',
-                                ],
                             ],
                         ],
                     ],
@@ -272,9 +270,6 @@ class QueryFactoryTest extends AbstractUnitTestCase
                             'multi_match' => [
                                 'type' => 'most_fields',
                                 'query' => 'SearchWord',
-                                'fields' => [
-                                    '_all',
-                                ],
                                 'minimum_should_match' => '50%',
                             ],
                         ],
@@ -378,9 +373,6 @@ class QueryFactoryTest extends AbstractUnitTestCase
                                     'multi_match' => [
                                         'type' => 'most_fields',
                                         'query' => 'SearchWord',
-                                        'fields' => [
-                                            '_all',
-                                        ],
                                     ],
                                 ],
                             ],
@@ -670,7 +662,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
             ->method('get')
             ->will($this->returnCallback(function ($configName) {
                 if ($configName === 'searching.fields.query') {
-                    return '_all';
+                    return '';
                 }
 
                 throw new InvalidArgumentException();

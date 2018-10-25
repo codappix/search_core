@@ -31,5 +31,4 @@ class ArrayUtility
         }
         return $result;
     }
-
 }

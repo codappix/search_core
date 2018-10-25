@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Domain\Search;
 
 /*
@@ -211,9 +212,9 @@ class SearchServiceTest extends AbstractUnitTestCase
             ->method('search')
             ->with($this->callback(function ($searchRequest) {
                 return $searchRequest->getFilter() === [
-                    'anotherProperty' => 'anything',
-                    'property' => 'something',
-                ];
+                        'anotherProperty' => 'anything',
+                        'property' => 'something',
+                    ];
             }))
             ->willReturn($this->getMockBuilder(SearchResultInterface::class)->getMock());
 

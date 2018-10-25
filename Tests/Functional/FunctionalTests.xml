@@ -1,17 +1,17 @@
 <phpunit
-    backupGlobals="true"
-    backupStaticAttributes="false"
-    bootstrap="Bootstrap.php"
-    colors="true"
-    convertErrorsToExceptions="false"
-    convertWarningsToExceptions="false"
-    forceCoversAnnotation="false"
-    processIsolation="true"
-    stopOnError="false"
-    stopOnFailure="false"
-    stopOnIncomplete="false"
-    stopOnSkipped="false"
-    verbose="false">
+        backupGlobals="true"
+        backupStaticAttributes="false"
+        bootstrap="Bootstrap.php"
+        colors="true"
+        convertErrorsToExceptions="false"
+        convertWarningsToExceptions="false"
+        forceCoversAnnotation="false"
+        processIsolation="true"
+        stopOnError="false"
+        stopOnFailure="false"
+        stopOnIncomplete="false"
+        stopOnSkipped="false"
+        verbose="false">
 
     <testsuites>
         <testsuite name="functional-tests">

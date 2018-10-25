@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Functional\Connection\Elasticsearch;
 
 /*
@@ -39,8 +40,7 @@ class IndexDeletionTest extends AbstractFunctionalTestCase
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
             ->getIndexer('tt_content')
-            ->delete()
-            ;
+            ->delete();
 
         $this->assertFalse(
             $this->client->getIndex('typo3content')->exists(),

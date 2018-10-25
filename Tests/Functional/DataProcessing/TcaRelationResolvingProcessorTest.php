@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Functional\DataProcessing;
 
 /*

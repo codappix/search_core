@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Command;
 
 /*
@@ -25,8 +26,6 @@ use Codappix\SearchCore\Domain\Index\IndexerFactory;
 use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
 use Codappix\SearchCore\Domain\Index\TcaIndexer;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
-use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class IndexCommandControllerTest extends AbstractUnitTestCase
 {

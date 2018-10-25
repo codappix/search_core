@@ -77,7 +77,6 @@ class TcaIndexer extends AbstractIndexer
     protected function getRecord(int $identifier): array
     {
         $record = $this->tcaTableService->getRecord($identifier);
-
         if ($record === []) {
             throw new NoRecordFoundException(
                 'Record could not be fetched from database: "' . $identifier . '". Perhaps record is not active.',
@@ -95,5 +94,14 @@ class TcaIndexer extends AbstractIndexer
     protected function getDocumentName(): string
     {
         return $this->tcaTableService->getTableName();
+    }
+
+    /**
+     * @param string $identifier
+     * @return string
+     */
+    public function getIdentifier($identifier): string
+    {
+        return $this->getDocumentName() . '-' . $identifier;
     }
 }

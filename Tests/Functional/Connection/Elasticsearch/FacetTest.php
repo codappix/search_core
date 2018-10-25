@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Functional\Connection\Elasticsearch;
 
 /*
@@ -27,6 +28,9 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class FacetTest extends AbstractFunctionalTestCase
 {
+    /**
+     * @return array
+     */
     protected function getTypoScriptFilesForFrontendRootPage()
     {
         return array_merge(
@@ -35,6 +39,9 @@ class FacetTest extends AbstractFunctionalTestCase
         );
     }
 
+    /**
+     * @return array
+     */
     protected function getDataSets()
     {
         return array_merge(
@@ -51,8 +58,7 @@ class FacetTest extends AbstractFunctionalTestCase
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
             ->getIndexer('tt_content')
-            ->indexAllDocuments()
-            ;
+            ->indexAllDocuments();
 
         $searchService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(SearchService::class);

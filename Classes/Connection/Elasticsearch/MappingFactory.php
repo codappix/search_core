@@ -47,14 +47,15 @@ class MappingFactory implements Singleton
      * Get an mapping based on type.
      *
      * @param \Elastica\Type $type
+     * @param string $documentType
      * @return \Elastica\Type\Mapping
      */
-    public function getMapping(\Elastica\Type $type): \Elastica\Type\Mapping
+    public function getMapping(\Elastica\Type $type, $documentType = null): \Elastica\Type\Mapping
     {
         $mapping = new \Elastica\Type\Mapping();
         $mapping->setType($type);
 
-        $configuration = $this->getConfiguration($type->getName());
+        $configuration = $this->getConfiguration($documentType ?? $type->getName());
         $mapping->setProperties($configuration);
 
         return $mapping;

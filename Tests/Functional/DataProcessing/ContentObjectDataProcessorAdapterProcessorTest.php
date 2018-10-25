@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Functional\DataProcessing;
 
 /*
@@ -20,8 +21,8 @@ namespace Codappix\SearchCore\Tests\Functional\DataProcessing;
  * 02110-1301, USA.
  */
 
-use Codappix\SearchCore\Compatibility\TypoScriptService76;
 use Codappix\SearchCore\Compatibility\TypoScriptService;
+use Codappix\SearchCore\Compatibility\TypoScriptService76;
 use Codappix\SearchCore\DataProcessing\ContentObjectDataProcessorAdapterProcessor;
 use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Frontend\DataProcessing\SplitProcessor;

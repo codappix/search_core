@@ -77,7 +77,7 @@ class IndexCommandController extends CommandController
         $identifiers = GeneralUtility::trimExplode(',', $identifier, true);
         foreach ($identifiers as $value) {
             try {
-                $this->indexerFactory->getIndexer($value)->delete();
+                $this->indexerFactory->getIndexer($value)->deleteDocuments();
                 $this->outputLine($value . ' was deleted.');
             } catch (NoMatchingIndexerException $e) {
                 $this->outputLine('No indexer found for: ' . $value);

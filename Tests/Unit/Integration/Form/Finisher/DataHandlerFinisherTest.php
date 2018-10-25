@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Integration\Form\Finisher;
 
 /*
@@ -84,7 +85,7 @@ class DataHandlerFinisherTest extends AbstractUnitTestCase
         $this->subject->execute($this->finisherContextMock);
     }
 
-    public function possibleFinisherSetup() : array
+    public function possibleFinisherSetup(): array
     {
         return [
             'valid update configuration' => [
@@ -118,7 +119,7 @@ class DataHandlerFinisherTest extends AbstractUnitTestCase
         $this->subject->execute($this->finisherContextMock);
     }
 
-    public function invalidFinisherSetup() : array
+    public function invalidFinisherSetup(): array
     {
         return [
             'missing options' => [

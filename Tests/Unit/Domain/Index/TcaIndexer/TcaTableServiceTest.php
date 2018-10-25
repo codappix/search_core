@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Domain\Index\TcaIndexer;
 
 /*
@@ -21,10 +22,9 @@ namespace Codappix\SearchCore\Tests\Unit\Domain\Index\TcaIndexer;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
-use Codappix\SearchCore\DataProcessing\CopyToProcessor;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\RelationResolver;
-use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService76;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService76;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 

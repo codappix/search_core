@@ -120,7 +120,7 @@ abstract class AbstractIndexer implements IndexerInterface
             $this->connection->addDocument($this->getDocumentName(), $record);
         } catch (NoRecordFoundException $e) {
             $this->logger->info('Could not index document. Try to delete it therefore.', [$e->getMessage()]);
-            $this->connection->deleteDocument($this->getDocumentName(), $identifier);
+            $this->connection->deleteDocument($this->getDocumentName(), $this->getIdentifier($identifier));
         }
         $this->logger->info('Finish indexing');
     }
@@ -131,6 +131,16 @@ abstract class AbstractIndexer implements IndexerInterface
     public function delete()
     {
         $this->logger->info('Start deletion of index.');
+        $this->connection->deleteIndex();
+        $this->logger->info('Finish deletion.');
+    }
+
+    /**
+     * @return void
+     */
+    public function deleteDocuments()
+    {
+        $this->logger->info('Start deletion of indexed documents.');
         $this->connection->deleteIndexByQuery(Query::create([
             'query' => [
                 'term' => [
@@ -184,7 +194,7 @@ abstract class AbstractIndexer implements IndexerInterface
             $record['search_document_type'] = $this->getDocumentName();
         }
         if (!isset($record['search_identifier']) && isset($record['uid'])) {
-            $record['search_identifier'] = $this->getDocumentName() . '-' . $record['uid'];
+            $record['search_identifier'] = $this->getIdentifier($record['uid']);
         }
     }
 
@@ -244,4 +254,10 @@ abstract class AbstractIndexer implements IndexerInterface
      * @return string
      */
     abstract protected function getDocumentName(): string;
+
+    /**
+     * @param string $identifier
+     * @return string
+     */
+    abstract public function getIdentifier($identifier): string;
 }

@@ -55,4 +55,11 @@ interface IndexerInterface
      * @return void
      */
     public function delete();
+
+    /**
+     * Delete the whole index.
+     *
+     * @return void
+     */
+    public function deleteDocuments();
 }

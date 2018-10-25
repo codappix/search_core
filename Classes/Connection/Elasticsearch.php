@@ -221,14 +221,14 @@ class Elasticsearch implements Singleton, ConnectionInterface
      */
     protected function withType(string $documentType, callable $callback)
     {
-        $type = $this->getType();
+        $type = $this->getType($documentType);
         // TODO: Check whether it's to heavy to send it so often e.g. for every single document.
         // Perhaps add command controller to submit mapping?!
         // Also it's not possible to change mapping without deleting index first.
         // Mattes told about a solution.
         // So command looks like the best way so far, except we manage mattes solution.
         // Still then this should be done once. So perhaps singleton which tracks state and does only once?
-        $this->mappingFactory->getMapping($type)->send();
+        $this->mappingFactory->getMapping($type, $documentType)->send();
         $callback($type);
         $type->getIndex()->refresh();
     }
@@ -249,14 +249,15 @@ class Elasticsearch implements Singleton, ConnectionInterface
     }
 
     /**
+     * @param string $documentType
      * @return \Elastica\Type
      */
-    protected function getType(): \Elastica\Type
+    protected function getType($documentType): \Elastica\Type
     {
         return $this->typeFactory->getType(
             $this->indexFactory->getIndex(
                 $this->connection,
-                'document'
+                $documentType
             ),
             'document'
         );

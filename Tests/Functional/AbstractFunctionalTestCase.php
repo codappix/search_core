@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Functional;
 
 /*
@@ -67,7 +68,7 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
         return ['EXT:search_core/Tests/Functional/Fixtures/BasicSetup.ts'];
     }
 
-    protected function isLegacyVersion() : bool
+    protected function isLegacyVersion(): bool
     {
         return \TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) < 8000000;
     }

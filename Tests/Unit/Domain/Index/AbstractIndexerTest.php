@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Domain\Index;
 
 /*
@@ -123,8 +124,7 @@ class AbstractIndexerTest extends AbstractUnitTestCase
         $this->subject->expects($this->once())
             ->method('getRecord')
             ->with(1)
-            ->willReturn($record)
-            ;
+            ->willReturn($record);
 
         $this->connection->expects($this->once())->method('addDocument')->with('testTable', $expectedRecord);
         $this->subject->indexDocument(1);
@@ -147,8 +147,7 @@ class AbstractIndexerTest extends AbstractUnitTestCase
         $this->subject->expects($this->once())
             ->method('getRecord')
             ->with(1)
-            ->willReturn($record)
-            ;
+            ->willReturn($record);
 
         $this->connection->expects($this->once())->method('addDocument')->with('testTable', $expectedRecord);
         $this->subject->indexDocument(1);
