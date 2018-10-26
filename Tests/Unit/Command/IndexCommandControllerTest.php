@@ -115,6 +115,27 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
     /**
      * @test
      */
+    public function flushIsPossible()
+    {
+        $indexerMock = $this->getMockBuilder(TcaIndexer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->subject->expects($this->once())
+            ->method('outputLine')
+            ->with('Default configured indices were deleted via pages.');
+        $this->indexerFactory->expects($this->once())
+            ->method('getIndexer')
+            ->with('pages')
+            ->will($this->returnValue($indexerMock));
+
+        $indexerMock->expects($this->once())
+            ->method('delete');
+        $this->subject->flushCommand('pages');
+    }
+
+    /**
+     * @test
+     */
     public function deletionForNonExistingIndexerDoesNotWork()
     {
         $this->subject->expects($this->once())

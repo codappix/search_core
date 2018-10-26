@@ -84,4 +84,20 @@ class IndexCommandController extends CommandController
             }
         }
     }
+
+    /**
+     * Will delete the full index.
+     *
+     * @param string $identifier
+     * @return void
+     */
+    public function flushCommand(string $identifier = 'pages')
+    {
+        try {
+            $this->indexerFactory->getIndexer($identifier)->delete();
+            $this->outputLine('Default configured indices were deleted via ' . $identifier . '.');
+        } catch (NoMatchingIndexerException $e) {
+            $this->outputLine('No indexer found for: ' . $identifier);
+        }
+    }
 }
