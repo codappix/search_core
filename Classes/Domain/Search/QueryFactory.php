@@ -125,7 +125,11 @@ class QueryFactory
         ];
 
         try {
-            $fieldsToQuery = GeneralUtility::trimExplode(',', $this->configuration->get('searching.fields.query'), true);
+            $fieldsToQuery = GeneralUtility::trimExplode(
+                ',',
+                $this->configuration->get('searching.fields.query'),
+                true
+            );
             if ($fieldsToQuery !== []) {
                 $matchExpression['fields'] = $fieldsToQuery;
             }

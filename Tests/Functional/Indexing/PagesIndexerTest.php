@@ -96,12 +96,21 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
         $indexer->indexAllDocuments();
     }
 
+    /**
+     * @return array
+     */
     public function rootLineDataSets()
     {
         return [
-            'Broken root line' => ['EXT:search_core/Tests/Functional/Fixtures/Indexing/PagesIndexer/BrokenRootLine.xml'],
-            'Recycler doktype' => ['EXT:search_core/Tests/Functional/Fixtures/Indexing/PagesIndexer/Recycler.xml'],
-            'Extended timing to sub pages' => ['EXT:search_core/Tests/Functional/Fixtures/Indexing/PagesIndexer/InheritedTiming.xml'],
+            'Broken root line' => [
+                'EXT:search_core/Tests/Functional/Fixtures/Indexing/PagesIndexer/BrokenRootLine.xml'
+            ],
+            'Recycler doktype' => [
+                'EXT:search_core/Tests/Functional/Fixtures/Indexing/PagesIndexer/Recycler.xml'
+            ],
+            'Extended timing to sub pages' => [
+                'EXT:search_core/Tests/Functional/Fixtures/Indexing/PagesIndexer/InheritedTiming.xml'
+            ],
         ];
     }
 }
