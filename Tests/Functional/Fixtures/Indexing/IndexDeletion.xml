@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <tt_content>
+        <uid>6</uid>
+        <pid>1</pid>
+        <tstamp>1480686370</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>0</hidden>
+        <sorting>72</sorting>
+        <CType>header</CType>
+        <header>indexed content element</header>
+        <bodytext>this is the content of header content element that should get indexed</bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
+
+    <tt_content>
+        <uid>7</uid>
+        <pid>1</pid>
+        <tstamp>1480686371</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>0</hidden>
+        <sorting>72</sorting>
+        <CType>header</CType>
+        <header>endtime hidden record</header>
+        <bodytext></bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>1481305963</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
+
+    <tt_content>
+        <uid>8</uid>
+        <pid>1</pid>
+        <tstamp>1480686370</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>1</hidden>
+        <sorting>72</sorting>
+        <CType>header</CType>
+        <header>Hidden record</header>
+        <bodytext></bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
+
+    <tt_content>
+        <uid>9</uid>
+        <pid>1</pid>
+        <tstamp>1480686370</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>0</hidden>
+        <sorting>72</sorting>
+        <CType>div</CType>
+        <header>not indexed due to ctype</header>
+        <bodytext>this is the content of div content element that should not get indexed</bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
+
+    <tt_content>
+        <uid>10</uid>
+        <pid>1</pid>
+        <tstamp>1480686370</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>0</hidden>
+        <sorting>72</sorting>
+        <CType>html</CType>
+        <header>Indexed without html tags</header>
+        <bodytext><![CDATA[<p>Some text in paragraph</p>]]></bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
+
+    <tt_content>
+        <uid>100</uid>
+        <pid>2</pid>
+        <tstamp>1480686370</tstamp>
+        <crdate>1480686370</crdate>
+        <hidden>0</hidden>
+        <sorting>72</sorting>
+        <CType>header</CType>
+        <header>Indexed on page 2</header>
+        <bodytext>This element is on a different page</bodytext>
+        <media>0</media>
+        <layout>0</layout>
+        <deleted>0</deleted>
+        <cols>0</cols>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <colPos>0</colPos>
+        <filelink_sorting>0</filelink_sorting>
+    </tt_content>
+
+    <pages>
+        <uid>2</uid>
+        <pid>1</pid>
+        <title>Second page with content</title>
+        <description>Used to check whether content is indexed only for parent page.</description>
+    </pages>
+</dataset>

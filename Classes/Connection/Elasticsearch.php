@@ -209,8 +209,11 @@ class Elasticsearch implements Singleton, ConnectionInterface
             );
             return;
         }
-
-        $index->deleteByQuery($query);
+        $response = $index->deleteByQuery($query);
+        if ($response->getData()['deleted'] > 0) {
+            // Refresh index when delete query is invoked
+            $index->refresh();
+        }
     }
 
     /**
