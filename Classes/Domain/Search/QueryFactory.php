@@ -126,7 +126,9 @@ class QueryFactory
 
         try {
             $fieldsToQuery = GeneralUtility::trimExplode(',', $this->configuration->get('searching.fields.query'), true);
-            $matchExpression['fields'] = $fieldsToQuery;
+            if ($fieldsToQuery !== []) {
+                $matchExpression['fields'] = $fieldsToQuery;
+            }
         } catch (InvalidArgumentException $e) {
             // Nothing configured
         }

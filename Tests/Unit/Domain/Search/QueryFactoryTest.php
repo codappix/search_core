@@ -298,7 +298,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 ['searching.fieldValueFactor']
             )
             ->will($this->onConsecutiveCalls(
-                '_all',
+                '',
                 [
                     'search_title' => 3,
                     'search_abstract' => 1.5,
@@ -355,7 +355,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 ['searching.fieldValueFactor']
             )
             ->will($this->onConsecutiveCalls(
-                '_all',
+                '',
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
@@ -526,7 +526,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 ['searching.fieldValueFactor']
             )
             ->will($this->onConsecutiveCalls(
-                '_all',
+                '',
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
                 [

@@ -108,7 +108,7 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
             ->will($this->returnValue($indexerMock));
 
         $indexerMock->expects($this->once())
-            ->method('delete');
+            ->method('deleteDocuments');
         $this->subject->deleteCommand('allowedTable');
     }
 
