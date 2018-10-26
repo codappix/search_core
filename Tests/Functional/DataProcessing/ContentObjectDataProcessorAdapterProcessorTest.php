@@ -22,7 +22,6 @@ namespace Codappix\SearchCore\Tests\Functional\DataProcessing;
  */
 
 use Codappix\SearchCore\Compatibility\TypoScriptService;
-use Codappix\SearchCore\Compatibility\TypoScriptService76;
 use Codappix\SearchCore\DataProcessing\ContentObjectDataProcessorAdapterProcessor;
 use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
 use TYPO3\CMS\Frontend\DataProcessing\SplitProcessor;
@@ -46,11 +45,7 @@ class ContentObjectDataProcessorAdapterProcessorTest extends AbstractFunctionalT
             'new_content' => ['value1', 'value2'],
         ];
 
-        if ($this->isLegacyVersion()) {
-            $typoScriptService = new TypoScriptService76();
-        } else {
-            $typoScriptService = new TypoScriptService();
-        }
+        $typoScriptService = new TypoScriptService();
 
         $subject = new ContentObjectDataProcessorAdapterProcessor($typoScriptService);
         $processedData = $subject->processData($record, $configuration);
