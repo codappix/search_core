@@ -397,7 +397,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
 
         $query = $this->subject->create($searchRequest);
         $this->assertInstanceOf(
-            stdClass,
+            'stdClass',
             $query->toArray()['query']['match_all'],
             'Empty search request does not create expected query.'
         );
