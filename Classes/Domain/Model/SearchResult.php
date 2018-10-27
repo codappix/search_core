@@ -79,10 +79,13 @@ class SearchResult implements SearchResultInterface
      */
     protected function initResults()
     {
-        if ($this->results === null) {
-            foreach ($this->resultItems as $item) {
-                $this->results[] = new ResultItem($item['data'], $item['type']);
-            }
+        if (is_array($this->results)) {
+            return;
+        }
+
+        $this->results = [];
+        foreach ($this->resultItems as $item) {
+            $this->results[] = new ResultItem($item['data'], $item['type']);
         }
     }
 

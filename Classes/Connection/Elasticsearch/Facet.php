@@ -99,11 +99,13 @@ class Facet implements FacetInterface
      */
     protected function initOptions()
     {
-        if ($this->options === null) {
-            $this->options = [];
-            foreach ($this->buckets as $bucket) {
-                $this->options[$bucket['key']] = new FacetOption($bucket);
-            }
+        if (is_array($this->options)) {
+            return;
+        }
+
+        $this->options = [];
+        foreach ($this->buckets as $bucket) {
+            $this->options[$bucket['key']] = new FacetOption($bucket);
         }
     }
 }

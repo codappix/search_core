@@ -115,11 +115,13 @@ class SearchResult implements SearchResultInterface
      */
     protected function initResults()
     {
-        if ($this->results === null) {
-            $this->results = [];
-            foreach ($this->result->getResults() as $result) {
-                $this->results[] = new ResultItem($result->getData(), $result->getParam('_type'));
-            }
+        if (is_array($this->results)) {
+            return;
+        }
+
+        $this->results = [];
+        foreach ($this->result->getResults() as $result) {
+            $this->results[] = new ResultItem($result->getData(), $result->getParam('_type'));
         }
     }
 
@@ -128,16 +130,18 @@ class SearchResult implements SearchResultInterface
      */
     protected function initFacets()
     {
-        if ($this->facets === null) {
-            $this->facets = [];
-            if ($this->result->hasAggregations()) {
-                foreach ($this->result->getAggregations() as $aggregationName => $aggregation) {
-                    $this->facets[$aggregationName] = $this->objectManager->get(
-                        Facet::class,
-                        $aggregationName,
-                        $aggregation
-                    );
-                }
+        if (is_array($this->facets)) {
+            return;
+        }
+
+        $this->facets = [];
+        if ($this->result->hasAggregations()) {
+            foreach ($this->result->getAggregations() as $aggregationName => $aggregation) {
+                $this->facets[$aggregationName] = $this->objectManager->get(
+                    Facet::class,
+                    $aggregationName,
+                    $aggregation
+                );
             }
         }
     }
