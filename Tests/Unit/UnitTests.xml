@@ -1,18 +1,18 @@
 <phpunit
-        backupGlobals="false"
-        backupStaticAttributes="false"
-        bootstrap="Bootstrap.php"
+    backupGlobals="false"
+    backupStaticAttributes="false"
+    bootstrap="../../.Build/vendor/typo3/testing-framework/Resources/Core/Build/UnitTestsBootstrap.php"
 
-        colors="true"
-        convertErrorsToExceptions="false"
-        convertWarningsToExceptions="false"
-        forceCoversAnnotation="false"
-        processIsolation="false"
-        stopOnError="false"
-        stopOnFailure="false"
-        stopOnIncomplete="false"
-        stopOnSkipped="false"
-        verbose="false">
+    colors="true"
+    convertErrorsToExceptions="false"
+    convertWarningsToExceptions="false"
+    forceCoversAnnotation="false"
+    processIsolation="false"
+    stopOnError="false"
+    stopOnFailure="false"
+    stopOnIncomplete="false"
+    stopOnSkipped="false"
+    verbose="false">
 
     <testsuites>
         <testsuite name="unit-tests">

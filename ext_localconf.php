@@ -61,8 +61,6 @@ call_user_func(function ($extension, $configuration) {
         '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:' . $extension . '/Configuration/TSconfig/Page/Mod/Wizards/NewContentElement.tsconfig">'
     );
 
-    \Codappix\SearchCore\Compatibility\ImplementationRegistrationService::registerImplementations();
-
     if (empty($configuration) ||
         (isset($configuration['disable.']['elasticsearch']) &&
             filter_var($configuration['disable.']['elasticsearch'], FILTER_VALIDATE_BOOLEAN) === false)

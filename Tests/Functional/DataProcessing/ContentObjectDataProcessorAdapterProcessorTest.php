@@ -21,9 +21,9 @@ namespace Codappix\SearchCore\Tests\Functional\DataProcessing;
  * 02110-1301, USA.
  */
 
-use Codappix\SearchCore\Compatibility\TypoScriptService;
 use Codappix\SearchCore\DataProcessing\ContentObjectDataProcessorAdapterProcessor;
 use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
+use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Frontend\DataProcessing\SplitProcessor;
 
 class ContentObjectDataProcessorAdapterProcessorTest extends AbstractFunctionalTestCase

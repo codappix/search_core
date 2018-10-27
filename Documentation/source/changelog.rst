@@ -5,6 +5,7 @@ Changelog
    :maxdepth: 1
    :glob:
 
+   changelog/20181027-remove-cms7-support
    changelog/20180518-75-make-index-name-configurable
    changelog/20180424-149-extract-relation-resolver-to-data-processing
    changelog/20180410-148-keep-sys_language_uid
