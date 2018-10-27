@@ -28,10 +28,6 @@ class ConfigurationUtility
 {
     /**
      * Will parse all entries, recursive as fluid template, with request variable set to $searchRequest.
-     *
-     * @param SearchRequestInterface $searchRequest
-     * @param array $array
-     * @return array
      */
     public function replaceArrayValuesWithRequestContent(SearchRequestInterface $searchRequest, array $array): array
     {
@@ -53,9 +49,6 @@ class ConfigurationUtility
     /**
      * Will check all entries, whether they have a condition and filter entries out, where condition is false.
      * Also will remove condition in the end.
-     *
-     * @param array $entries
-     * @return array
      */
     public function filterByCondition(array $entries): array
     {

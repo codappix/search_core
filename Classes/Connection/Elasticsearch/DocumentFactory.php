@@ -46,17 +46,14 @@ class DocumentFactory implements Singleton
     /**
      * Creates document from document.
      *
-     * @param string $documentType
-     * @param array $document
-     * @return \Elastica\Document
-     * @throws \Exception
+     * @throws \InvalidArgumentException If no search identifier was provided.
      */
     public function getDocument(string $documentType, array $document): \Elastica\Document
     {
         // TODO: Use DocumentType for further configuration.
 
         if (!isset($document['search_identifier'])) {
-            throw new \Exception('No search_identifier provided for document.', 1481194385);
+            throw new \InvalidArgumentException('No search_identifier provided for document.', 1481194385);
         }
 
         $identifier = $document['search_identifier'];
@@ -70,10 +67,8 @@ class DocumentFactory implements Singleton
 
     /**
      * Creates documents based on documents.
-     * @param string $documentType
-     * @param array $documents
-     * @return array
-     * @throws \Exception
+     *
+     * @throws \InvalidArgumentException If no search identifier was provided.
      */
     public function getDocuments(string $documentType, array $documents): array
     {

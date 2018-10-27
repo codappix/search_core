@@ -42,8 +42,6 @@ interface SearchResultInterface extends \Iterator, \Countable, QueryResultInterf
 
     /**
      * Returns the number of results in current result
-     *
-     * @return integer
      */
     public function getCurrentCount(): int;
 }

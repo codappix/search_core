@@ -28,31 +28,15 @@ interface SearchRequestInterface extends QueryInterface
 {
     /**
      * Returns the actual string the user searched for.
-     *
-     * @return string
      */
     public function getSearchTerm(): string;
 
-    /**
-     * @return bool
-     */
     public function hasFilter(): bool;
 
-    /**
-     * @return array
-     */
     public function getFilter(): array;
 
-    /**
-     * @param array $filter
-     * @return void
-     */
     public function setFilter(array $filter);
 
-    /**
-     * @param FacetRequestInterface $facet
-     * @return void
-     */
     public function addFacet(FacetRequestInterface $facet);
 
     /**
@@ -63,18 +47,12 @@ interface SearchRequestInterface extends QueryInterface
     /**
      * Workaround for paginate widget support which will
      * use the request to build another search.
-     *
-     * @param ConnectionInterface $connection
-     * @return void
      */
     public function setConnection(ConnectionInterface $connection);
 
     /**
      * Workaround for paginate widget support which will
      * use the request to build another search.
-     *
-     * @param SearchService $searchService
-     * @return void
      */
     public function setSearchService(SearchService $searchService);
 }

@@ -28,45 +28,31 @@ interface IndexerInterface
 {
     /**
      * Fetches all documents from the indexerService and pushes it to the connection.
-     *
-     * @return void
      */
     public function indexAllDocuments();
 
     /**
      * Fetches a single document and pushes it to the connection.
-     *
-     * @param string $identifier
-     * @return void
      */
     public function indexDocument(string $identifier);
 
     /**
      * Delete the whole index.
-     *
-     * @return void
      */
     public function delete();
 
     /**
      * Delete the whole index.
-     *
-     * @return void
      */
     public function deleteDocuments();
 
     /**
      * Receives the identifier of the indexer itself.
-     *
-     * @param string $identifier
-     * @return void
      */
     public function setIdentifier(string $identifier);
 
     /**
      * Returnes the identifier of the indexer.
-     *
-     * @return string
      */
     public function getIdentifier(): string;
 }

@@ -39,7 +39,6 @@ class IndexCommandController extends CommandController
 
     /**
      * @param IndexerFactory $factory
-     * @return void
      */
     public function injectIndexerFactory(IndexerFactory $factory)
     {
@@ -50,7 +49,6 @@ class IndexCommandController extends CommandController
      * Will index all documents for the given identifiers.
      *
      * @param string $identifier Comma separated list of identifiers.
-     * @return void
      */
     public function indexCommand(string $identifiers)
     {
@@ -64,7 +62,6 @@ class IndexCommandController extends CommandController
      * Will delete all indexed documents for the given identifiers.
      *
      * @param string $identifier Comma separated list of identifiers.
-     * @return void
      */
     public function deleteCommand(string $identifiers)
     {
@@ -78,7 +75,6 @@ class IndexCommandController extends CommandController
      * Will delete the full index for given identifiers.
      *
      * @param string $identifier Comma separated list of identifiers.
-     * @return void
      */
     public function flushCommand(string $identifiers = 'pages')
     {

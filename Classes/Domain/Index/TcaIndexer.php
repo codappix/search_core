@@ -49,16 +49,11 @@ class TcaIndexer extends AbstractIndexer
         $this->tcaTableService = $tcaTableService;
     }
 
-    /**
-     * @param integer $offset
-     * @param integer $limit
-     * @return array|null
-     */
-    protected function getRecords(int $offset, int $limit)
+    protected function getRecords(int $offset, int $limit): array
     {
         $records = $this->tcaTableService->getRecords($offset, $limit);
         if ($records === []) {
-            return null;
+            return [];
         }
 
         $this->tcaTableService->filterRecordsByRootLineBlacklist($records);
@@ -70,8 +65,6 @@ class TcaIndexer extends AbstractIndexer
     }
 
     /**
-     * @param integer $identifier
-     * @return array
      * @throws NoRecordFoundException If record could not be found.
      */
     protected function getRecord(int $identifier): array
@@ -88,18 +81,11 @@ class TcaIndexer extends AbstractIndexer
         return $record;
     }
 
-    /**
-     * @return string
-     */
     protected function getDocumentName(): string
     {
         return $this->tcaTableService->getTableName();
     }
 
-    /**
-     * @param string $identifier
-     * @return string
-     */
     public function getDocumentIdentifier($identifier): string
     {
         return $this->getDocumentName() . '-' . $identifier;

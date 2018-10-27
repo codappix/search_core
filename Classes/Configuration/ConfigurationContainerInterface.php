@@ -42,7 +42,7 @@ interface ConfigurationContainerInterface
      * Same as get but will not throw an exception but return null.
      *
      * @param string $path In dot notation.
-     * @return mixed|null
+     * @return mixed|null Null if it does not exist.
      */
     public function getIfExists(string $path);
 }

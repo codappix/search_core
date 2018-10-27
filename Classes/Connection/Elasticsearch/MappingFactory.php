@@ -45,10 +45,6 @@ class MappingFactory implements Singleton
 
     /**
      * Get an mapping based on type.
-     *
-     * @param \Elastica\Type $type
-     * @param string $documentType
-     * @return \Elastica\Type\Mapping
      */
     public function getMapping(\Elastica\Type $type, string $documentType = null): \Elastica\Type\Mapping
     {
@@ -61,10 +57,6 @@ class MappingFactory implements Singleton
         return $mapping;
     }
 
-    /**
-     * @param string $identifier
-     * @return array
-     */
     protected function getConfiguration(string $identifier): array
     {
         try {

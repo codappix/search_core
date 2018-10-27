@@ -55,8 +55,6 @@ class IndexerFactory implements Singleton
     }
 
     /**
-     * @param string $identifier
-     * @return IndexerInterface
      * @throws NoMatchingIndexerException
      */
     public function getIndexer(string $identifier): IndexerInterface
@@ -73,9 +71,6 @@ class IndexerFactory implements Singleton
     }
 
     /**
-     * @param string $indexerClass
-     * @param string $identifier
-     * @return IndexerInterface
      * @throws NoMatchingIndexerException
      */
     protected function buildIndexer(string $indexerClass, string $identifier): IndexerInterface

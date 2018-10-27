@@ -50,8 +50,6 @@ class DataHandler implements Singleton
     /**
      * Dependency injection as TYPO3 doesn't provide it on it's own.
      * Still you can submit your own dataHandler.
-     * @param OwnDataHandler $dataHandler
-     * @param Logger $logger
      */
     public function __construct(OwnDataHandler $dataHandler = null, Logger $logger = null)
     {
@@ -75,10 +73,6 @@ class DataHandler implements Singleton
 
     /**
      * Called by CoreDataHandler on deletion of records.
-     *
-     * @param string $table
-     * @param string $uid
-     * @return bool
      */
     public function processCmdmap_deleteAction(string $table, string $uid): bool
     {
@@ -92,8 +86,6 @@ class DataHandler implements Singleton
     }
 
     /**
-     * @param CoreDataHandler $dataHandler
-     * @return void
      * @throws NoMatchingIndexerException
      */
     public function processDatamap_afterAllOperations(CoreDataHandler $dataHandler)
@@ -117,9 +109,6 @@ class DataHandler implements Singleton
     }
 
     /**
-     * @param array $parameters
-     * @param CoreDataHandler $dataHandler
-     * @return void
      * @throws NoMatchingIndexerException
      */
     public function clearCachePostProc(array $parameters, CoreDataHandler $dataHandler)
@@ -141,9 +130,6 @@ class DataHandler implements Singleton
     }
 
     /**
-     * @param string $table
-     * @param integer $uid
-     * @return bool
      * @throws NoMatchingIndexerException
      */
     protected function processRecord(string $table, int $uid): bool
@@ -163,10 +149,6 @@ class DataHandler implements Singleton
         return false;
     }
 
-    /**
-     * @param string $table
-     * @return bool
-     */
     protected function shouldProcessHookForTable(string $table): bool
     {
         if ($this->dataHandler === null) {
@@ -184,8 +166,6 @@ class DataHandler implements Singleton
     /**
      * Wrapper to allow unit testing.
      *
-     * @param string $table
-     * @param integer $uid
      * @return array|null
      */
     protected function getRecord(string $table, int $uid)

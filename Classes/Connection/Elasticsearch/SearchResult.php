@@ -63,13 +63,6 @@ class SearchResult implements SearchResultInterface
      */
     protected $objectManager;
 
-    /**
-     * SearchResult constructor.
-     *
-     * @param SearchRequestInterface $searchRequest
-     * @param \Elastica\ResultSet $result
-     * @param ObjectManagerInterface $objectManager
-     */
     public function __construct(
         SearchRequestInterface $searchRequest,
         \Elastica\ResultSet $result,
@@ -102,17 +95,11 @@ class SearchResult implements SearchResultInterface
         return $this->facets;
     }
 
-    /**
-     * @return integer
-     */
     public function getCurrentCount(): int
     {
         return $this->result->count();
     }
 
-    /**
-     * @return void
-     */
     protected function initResults()
     {
         if (is_array($this->results)) {
@@ -125,9 +112,6 @@ class SearchResult implements SearchResultInterface
         }
     }
 
-    /**
-     * @return void
-     */
     protected function initFacets()
     {
         if (is_array($this->facets)) {
@@ -207,7 +191,7 @@ class SearchResult implements SearchResultInterface
     }
 
     /**
-     * @return SearchRequestInterface|\TYPO3\CMS\Extbase\Persistence\QueryInterface
+     * @return SearchRequestInterface
      */
     public function getQuery()
     {

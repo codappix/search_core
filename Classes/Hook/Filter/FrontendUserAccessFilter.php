@@ -38,10 +38,6 @@ class FrontendUserAccessFilter
         $this->appendQueryWithAccessFilter($parameters['query'], $parameters['value']);
     }
 
-    /**
-     * @param array $query
-     * @param string $field
-     */
     protected function appendQueryWithAccessFilter(array &$query, string $field)
     {
         $query['query']['bool']['must'][] = [
@@ -49,9 +45,6 @@ class FrontendUserAccessFilter
         ];
     }
 
-    /**
-     * @return array
-     */
     protected function getUserGroups(): array
     {
         $feUser = $this->getFrontendUserAuthentication();
@@ -72,10 +65,7 @@ class FrontendUserAccessFilter
         return [0];
     }
 
-    /**
-     * @return FrontendUserAuthentication
-     */
-    protected function getFrontendUserAuthentication()
+    protected function getFrontendUserAuthentication(): FrontendUserAuthentication
     {
         return $GLOBALS['TSFE']->fe_user ?? null;
     }

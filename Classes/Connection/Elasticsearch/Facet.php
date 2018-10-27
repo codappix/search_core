@@ -46,12 +46,6 @@ class Facet implements FacetInterface
      */
     protected $options;
 
-    /**
-     * Facet constructor.
-     * @param string $name
-     * @param array $aggregation
-     * @param ConfigurationContainerInterface $configuration
-     */
     public function __construct(string $name, array $aggregation, ConfigurationContainerInterface $configuration)
     {
         $this->name = $name;
@@ -66,17 +60,11 @@ class Facet implements FacetInterface
         }
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getField(): string
     {
         return $this->field;
@@ -94,9 +82,6 @@ class Facet implements FacetInterface
         return $this->options;
     }
 
-    /**
-     * @return void
-     */
     protected function initOptions()
     {
         if (is_array($this->options)) {

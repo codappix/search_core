@@ -34,11 +34,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RelationResolver implements Singleton
 {
-    /**
-     * @param TcaTableServiceInterface $service
-     * @param array $record
-     * @return array
-     */
     public function resolveRelationsForRecord(TcaTableServiceInterface $service, array $record): array
     {
         foreach (array_keys($record) as $column) {
@@ -64,11 +59,6 @@ class RelationResolver implements Singleton
         return $record;
     }
 
-    /**
-     * @param string $value
-     * @param array $tcaColumn
-     * @return array
-     */
     protected function resolveValue($value, array $tcaColumn)
     {
         if ($value === '' || $value === 'N/A') {
@@ -85,10 +75,6 @@ class RelationResolver implements Singleton
         return [];
     }
 
-    /**
-     * @param array $config
-     * @return boolean
-     */
     protected function isRelation(array &$config): bool
     {
         return isset($config['foreign_table'])
@@ -96,27 +82,16 @@ class RelationResolver implements Singleton
             || (isset($config['internal_type']) && strtolower($config['internal_type']) === 'db');
     }
 
-    /**
-     * @param string $value
-     * @return array
-     */
     protected function resolveForeignDbValue(string $value): array
     {
         return array_map('trim', explode(';', $value));
     }
 
-    /**
-     * @param string $value
-     * @return array
-     */
     protected function resolveInlineValue(string $value): array
     {
         return array_map('trim', explode(',', $value));
     }
 
-    /**
-     * @return string
-     */
     protected function getUtilityForMode(): string
     {
         if (TYPO3_MODE === 'BE') {
@@ -126,12 +101,6 @@ class RelationResolver implements Singleton
         return FrontendUtility::class;
     }
 
-    /**
-     * @param array $record
-     * @param string $column
-     * @param TcaTableServiceInterface $service
-     * @return string
-     */
     protected function getColumnValue(array $record, string $column, TcaTableServiceInterface $service): string
     {
         $utility = GeneralUtility::makeInstance($this->getUtilityForMode());

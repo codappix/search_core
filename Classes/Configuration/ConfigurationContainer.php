@@ -39,8 +39,6 @@ class ConfigurationContainer implements ConfigurationContainerInterface
 
     /**
      * Inject settings via ConfigurationManager.
-     *
-     * @param ConfigurationManagerInterface $configurationManager
      */
     public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
     {
@@ -83,8 +81,8 @@ class ConfigurationContainer implements ConfigurationContainerInterface
     }
 
     /**
-     * @param string $path
-     * @return mixed
+     * @param string $path In dot notation.
+     * @return mixed|null Null if no entry was found.
      */
     protected function getValueByPath(string $path)
     {

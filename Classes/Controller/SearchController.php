@@ -45,10 +45,6 @@ class SearchController extends ActionController
         parent::__construct();
     }
 
-    /**
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException
-     * @return void
-     */
     public function initializeSearchAction()
     {
         if (isset($this->settings['searching']['mode'])
@@ -68,31 +64,22 @@ class SearchController extends ActionController
     }
 
     /**
-     * Action: Search form
-     *
-     * @param SearchRequest $searchRequest
-     * @return void
+     * Display results and deliver original request and result to view.
      */
     public function formAction(SearchRequest $searchRequest = null)
     {
-        $searchResult = null;
-        if ($searchRequest !== null) {
-            $searchResult = $this->searchService->search($searchRequest);
-        }
-
-        $this->view->assignMultiple([
-            'searchRequest' => $searchRequest,
-            'searchResult' => $searchResult,
-        ]);
+        $this->action($searchRequest);
     }
 
     /**
-     * Action: Display list results and deliver original request and result to view.
-     *
-     * @param SearchRequest $searchRequest
-     * @return void
+     * Display results and deliver original request and result to view.
      */
     public function resultsAction(SearchRequest $searchRequest = null)
+    {
+        $this->action($searchRequest);
+    }
+
+    private function action(SearchRequest $searchRequest = null)
     {
         $searchResult = null;
         if ($searchRequest !== null) {

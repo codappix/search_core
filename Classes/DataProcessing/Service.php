@@ -33,10 +33,6 @@ class Service
      */
     protected $objectManager;
 
-    /**
-     * Service constructor.
-     * @param ObjectManagerInterface $objectManager
-     */
     public function __construct(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
@@ -46,9 +42,6 @@ class Service
      * Executes the dataprocessor depending on configuration and returns the result.
      *
      * @param array|string $configuration Either the full configuration or only the class name.
-     * @param array $data
-     * @param string $recordType
-     * @return array
      */
     public function executeDataProcessor($configuration, array $data, string $recordType = ''): array
     {

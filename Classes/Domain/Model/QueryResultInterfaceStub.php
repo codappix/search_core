@@ -46,8 +46,6 @@ trait QueryResultInterfaceStub
     }
 
     /**
-     * @param $offset
-     * @return boolean
      * @throws \BadMethodCallException
      */
     public function offsetExists($offset)
@@ -57,7 +55,6 @@ trait QueryResultInterfaceStub
     }
 
     /**
-     * @param $offset
      * @throws \BadMethodCallException
      */
     public function offsetGet($offset)
@@ -66,8 +63,6 @@ trait QueryResultInterfaceStub
     }
 
     /**
-     * @param $offset
-     * @param $value
      * @throws \BadMethodCallException
      */
     public function offsetSet($offset, $value)
@@ -76,7 +71,6 @@ trait QueryResultInterfaceStub
     }
 
     /**
-     * @param $offset
      * @throws \BadMethodCallException
      */
     public function offsetUnset($offset)

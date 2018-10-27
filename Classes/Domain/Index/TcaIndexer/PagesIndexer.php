@@ -60,9 +60,6 @@ class PagesIndexer extends TcaIndexer
         $this->contentTableService = $contentTableService;
     }
 
-    /**
-     * @param array $record
-     */
     protected function prepareRecord(array &$record)
     {
         parent::prepareRecord($record);
@@ -86,10 +83,6 @@ class PagesIndexer extends TcaIndexer
         }
     }
 
-    /**
-     * @param integer $uid
-     * @return array
-     */
     protected function fetchContentForPage(int $uid): array
     {
         if ($this->contentTableService instanceof TcaTableService) {
@@ -135,29 +128,16 @@ class PagesIndexer extends TcaIndexer
         ];
     }
 
-    /**
-     * @param integer $uidOfContentElement
-     * @return array
-     */
     protected function getContentElementImages(int $uidOfContentElement): array
     {
         return $this->fetchSysFileReferenceUids($uidOfContentElement, 'tt_content', 'image');
     }
 
-    /**
-     * @param integer $uid
-     * @return array
-     */
     protected function fetchMediaForPage(int $uid): array
     {
         return $this->fetchSysFileReferenceUids($uid, 'pages', 'media');
     }
 
-    /**
-     * @param integer $uid
-     * @param array $pageAccess
-     * @return array
-     */
     protected function fetchAccess(int $uid, array $pageAccess): array
     {
         try {
@@ -194,12 +174,6 @@ class PagesIndexer extends TcaIndexer
         return array_values($access);
     }
 
-    /**
-     * @param integer $uid
-     * @param string $tablename
-     * @param string $fieldname
-     * @return array
-     */
     protected function fetchSysFileReferenceUids(int $uid, string $tablename, string $fieldname): array
     {
         $imageRelationUids = [];
@@ -212,10 +186,6 @@ class PagesIndexer extends TcaIndexer
         return $imageRelationUids;
     }
 
-    /**
-     * @param array $contentElement
-     * @return string
-     */
     protected function getContentFromContentElement(array $contentElement): string
     {
         $content = '';

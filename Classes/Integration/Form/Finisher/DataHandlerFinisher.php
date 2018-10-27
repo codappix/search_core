@@ -49,7 +49,6 @@ class DataHandlerFinisher extends AbstractFinisher
     ];
 
     /**
-     * @return void
      * @throws FinisherException
      * @throws NoMatchingIndexerException
      */

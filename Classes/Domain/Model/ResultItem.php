@@ -35,54 +35,33 @@ class ResultItem implements ResultItemInterface
      */
     protected $type = '';
 
-    /**
-     * ResultItem constructor.
-     * @param array $result
-     * @param string $type
-     */
     public function __construct(array $result, string $type)
     {
         $this->data = $result;
         $this->type = $type;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return array
-     */
     public function getPlainData(): array
     {
         return $this->data;
     }
 
-    /**
-     * @param mixed $offset
-     * @return bool
-     */
     public function offsetExists($offset)
     {
         return isset($this->data[$offset]);
     }
 
-    /**
-     * @param mixed $offset
-     * @return mixed
-     */
     public function offsetGet($offset)
     {
         return $this->data[$offset];
     }
 
     /**
-     * @param mixed $offset
-     * @param mixed $value
      * @throws \BadMethodCallException
      */
     public function offsetSet($offset, $value)
@@ -91,7 +70,6 @@ class ResultItem implements ResultItemInterface
     }
 
     /**
-     * @param mixed $offset
      * @throws \BadMethodCallException
      */
     public function offsetUnset($offset)

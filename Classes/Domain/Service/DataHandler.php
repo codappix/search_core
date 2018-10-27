@@ -73,11 +73,6 @@ class DataHandler implements Singleton
         $this->logger = $logManager->getLogger(__CLASS__);
     }
 
-    /**
-     * DataHandler constructor.
-     * @param ConfigurationContainerInterface $configuration
-     * @param IndexerFactory $indexerFactory
-     */
     public function __construct(ConfigurationContainerInterface $configuration, IndexerFactory $indexerFactory)
     {
         $this->configuration = $configuration;
@@ -85,9 +80,6 @@ class DataHandler implements Singleton
     }
 
     /**
-     * @param string $table
-     * @param array $record
-     * @return void
      * @throws NoMatchingIndexerException
      */
     public function update(string $table, array $record)
@@ -96,11 +88,6 @@ class DataHandler implements Singleton
         $this->getIndexer($table)->indexDocument($record['uid']);
     }
 
-    /**
-     * @param string $table
-     * @param string $identifier
-     * @return void
-     */
     public function delete(string $table, string $identifier)
     {
         $this->logger->debug('Record received for delete.', [$table, $identifier]);
@@ -108,8 +95,6 @@ class DataHandler implements Singleton
     }
 
     /**
-     * @param string $table
-     * @return IndexerInterface
      * @throws NoMatchingIndexerException
      */
     protected function getIndexer(string $table): IndexerInterface
@@ -117,10 +102,6 @@ class DataHandler implements Singleton
         return $this->indexerFactory->getIndexer($table);
     }
 
-    /**
-     * @param string $table
-     * @return boolean
-     */
     public function supportsTable(string $table): bool
     {
         try {

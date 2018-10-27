@@ -35,20 +35,11 @@ class ContentObjectDataProcessorAdapterProcessor implements ProcessorInterface
      */
     protected $typoScriptService;
 
-    /**
-     * ContentObjectDataProcessorAdapterProcessor constructor.
-     * @param TypoScriptService $typoScriptService
-     */
     public function __construct(TypoScriptService $typoScriptService)
     {
         $this->typoScriptService = $typoScriptService;
     }
 
-    /**
-     * @param array $data
-     * @param array $configuration
-     * @return array
-     */
     public function processData(array $data, array $configuration): array
     {
         $dataProcessor = GeneralUtility::makeInstance($configuration['_dataProcessor']);

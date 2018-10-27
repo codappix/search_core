@@ -41,18 +41,11 @@ class CachedSearchService implements SingletonInterface
      */
     protected $searchService;
 
-    /**
-     * @param SearchService $searchService
-     */
     public function __construct(SearchService $searchService)
     {
         $this->searchService = $searchService;
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @return SearchResultInterface
-     */
     public function search(SearchRequestInterface $searchRequest): SearchResultInterface
     {
         $hash = $this->getHash($searchRequest);
@@ -62,10 +55,6 @@ class CachedSearchService implements SingletonInterface
         return $this->results[$hash] = $this->searchService->search($searchRequest);
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @return string
-     */
     protected function getHash(SearchRequestInterface $searchRequest): string
     {
         if (is_callable([$searchRequest, 'getRequestHash'])) {

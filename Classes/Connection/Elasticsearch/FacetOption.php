@@ -40,9 +40,6 @@ class FacetOption implements FacetOptionInterface
      */
     protected $count = 0;
 
-    /**
-     * @param array $bucket
-     */
     public function __construct(array $bucket)
     {
         $this->name = $bucket['key'];
@@ -50,9 +47,6 @@ class FacetOption implements FacetOptionInterface
         $this->count = $bucket['doc_count'];
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;

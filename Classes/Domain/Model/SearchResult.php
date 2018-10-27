@@ -53,11 +53,6 @@ class SearchResult implements SearchResultInterface
      */
     protected $position = 0;
 
-    /**
-     * SearchResult constructor.
-     * @param SearchResultInterface $originalSearchResult
-     * @param array $resultItems
-     */
     public function __construct(SearchResultInterface $originalSearchResult, array $resultItems)
     {
         $this->originalSearchResult = $originalSearchResult;
@@ -74,9 +69,6 @@ class SearchResult implements SearchResultInterface
         return $this->results;
     }
 
-    /**
-     * @return void
-     */
     protected function initResults()
     {
         if (is_array($this->results)) {
@@ -89,41 +81,26 @@ class SearchResult implements SearchResultInterface
         }
     }
 
-    /**
-     * @return array
-     */
     public function getFacets(): array
     {
         return $this->originalSearchResult->getFacets();
     }
 
-    /**
-     * @return integer
-     */
     public function getCurrentCount(): int
     {
         return $this->originalSearchResult->getCurrentCount();
     }
 
-    /**
-     * @return integer
-     */
     public function count()
     {
         return $this->originalSearchResult->count();
     }
 
-    /**
-     * @return mixed
-     */
     public function current()
     {
         return $this->getResults()[$this->position];
     }
 
-    /**
-     * @return mixed
-     */
     public function next()
     {
         ++$this->position;
@@ -131,33 +108,21 @@ class SearchResult implements SearchResultInterface
         return $this->current();
     }
 
-    /**
-     * @return integer|mixed
-     */
     public function key()
     {
         return $this->position;
     }
 
-    /**
-     * @return bool
-     */
     public function valid()
     {
         return isset($this->getResults()[$this->position]);
     }
 
-    /**
-     * @return void
-     */
     public function rewind()
     {
         $this->position = 0;
     }
 
-    /**
-     * @return \TYPO3\CMS\Extbase\Persistence\QueryInterface
-     */
     public function getQuery()
     {
         return $this->originalSearchResult->getQuery();

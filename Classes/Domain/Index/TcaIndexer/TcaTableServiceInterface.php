@@ -35,38 +35,16 @@ interface TcaTableServiceInterface
 
     /**
      * Filter the given records by root line blacklist settings.
-     * @param array $records
-     * @return void
      */
     public function filterRecordsByRootLineBlacklist(array &$records);
 
-    /**
-     * @param array $record
-     * @return mixed
-     */
     public function prepareRecord(array &$record);
 
-    /**
-     * @param string $columnName
-     * @return array
-     */
     public function getColumnConfig(string $columnName): array;
 
-    /**
-     * @param integer $offset
-     * @param integer $limit
-     * @return array
-     */
     public function getRecords(int $offset, int $limit): array;
 
-    /**
-     * @param integer $identifier
-     * @return array
-     */
     public function getRecord(int $identifier): array;
 
-    /**
-     * @return string
-     */
     public function getLanguageUidColumn(): string;
 }

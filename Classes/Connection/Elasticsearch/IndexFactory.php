@@ -63,8 +63,6 @@ class IndexFactory implements Singleton
 
     /**
      * Get the index name from the typoscript settings.
-     *
-     * @return string
      */
     public function getIndexName(): string
     {
@@ -72,11 +70,7 @@ class IndexFactory implements Singleton
     }
 
     /**
-     * Get an index bases on TYPO3 table name.
-     *
-     * @param Connection $connection
-     * @param string $documentType
-     * @return \Elastica\Index
+     * Get an index based on TYPO3 table name.
      */
     public function getIndex(Connection $connection, string $documentType): \Elastica\Index
     {
@@ -92,10 +86,6 @@ class IndexFactory implements Singleton
         return $index;
     }
 
-    /**
-     * @param string $documentType
-     * @return array
-     */
     protected function getConfigurationFor(string $documentType): array
     {
         try {
@@ -117,10 +107,6 @@ class IndexFactory implements Singleton
         }
     }
 
-    /**
-     * @param array $analyzer
-     * @return array
-     */
     protected function prepareAnalyzerConfiguration(array $analyzer): array
     {
         $fieldsToExplode = ['char_filter', 'filter', 'word_list'];

@@ -26,11 +26,6 @@ namespace Codappix\SearchCore\DataProcessing;
  */
 class GeoPointProcessor implements ProcessorInterface
 {
-    /**
-     * @param array $record
-     * @param array $configuration
-     * @return array
-     */
     public function processData(array $record, array $configuration): array
     {
         if (!$this->isApplyable($record, $configuration)) {
@@ -45,11 +40,6 @@ class GeoPointProcessor implements ProcessorInterface
         return $record;
     }
 
-    /**
-     * @param array $record
-     * @param array $configuration
-     * @return bool
-     */
     protected function isApplyable(array $record, array $configuration): bool
     {
         if (!isset($record[$configuration['lat']])

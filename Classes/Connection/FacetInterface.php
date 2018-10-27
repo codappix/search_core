@@ -26,9 +26,6 @@ namespace Codappix\SearchCore\Connection;
  */
 interface FacetInterface
 {
-    /**
-     * @return string
-     */
     public function getName(): string;
 
     /**

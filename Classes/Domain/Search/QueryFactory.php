@@ -45,12 +45,6 @@ class QueryFactory
      */
     protected $configurationUtility;
 
-    /**
-     * QueryFactory constructor.
-     * @param \TYPO3\CMS\Core\Log\LogManager $logManager
-     * @param ConfigurationContainerInterface $configuration
-     * @param ConfigurationUtility $configurationUtility
-     */
     public function __construct(
         \TYPO3\CMS\Core\Log\LogManager $logManager,
         ConfigurationContainerInterface $configuration,
@@ -65,19 +59,12 @@ class QueryFactory
      * TODO: This is not in scope Elasticsearch, therefore it should not return
      * \Elastica\Query, but decide to use a more specific QueryFactory like
      * ElasticaQueryFactory, once the second query is added?
-     *
-     * @param SearchRequestInterface $searchRequest
-     * @return \Elastica\Query
      */
     public function create(SearchRequestInterface $searchRequest): \Elastica\Query
     {
         return $this->createElasticaQuery($searchRequest);
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @return \Elastica\Query
-     */
     protected function createElasticaQuery(SearchRequestInterface $searchRequest): \Elastica\Query
     {
         $query = [];
@@ -97,10 +84,6 @@ class QueryFactory
         return new \Elastica\Query($query);
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     */
     protected function addSize(SearchRequestInterface $searchRequest, array &$query)
     {
         ArrayUtility::mergeRecursiveWithOverrule($query, [
@@ -109,10 +92,6 @@ class QueryFactory
         ]);
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     */
     protected function addSearch(SearchRequestInterface $searchRequest, array &$query)
     {
         if (trim($searchRequest->getSearchTerm()) === '') {
@@ -145,10 +124,6 @@ class QueryFactory
         $query = ArrayUtility::setValueByPath($query, 'query.bool.must.0.multi_match', $matchExpression, '.');
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     */
     protected function addBoosts(SearchRequestInterface $searchRequest, array &$query)
     {
         try {
@@ -185,10 +160,6 @@ class QueryFactory
         }
     }
 
-    /**
-     * @param array $query
-     * @return void
-     */
     protected function addFactorBoost(array &$query)
     {
         try {
@@ -203,11 +174,6 @@ class QueryFactory
         }
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     * @return void
-     */
     protected function addFields(SearchRequestInterface $searchRequest, array &$query)
     {
         try {
@@ -237,11 +203,6 @@ class QueryFactory
         }
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     * @return void
-     */
     protected function addSort(SearchRequestInterface $searchRequest, array &$query)
     {
         $sorting = $this->configuration->getIfExists('searching.sort') ?: [];
@@ -252,11 +213,6 @@ class QueryFactory
         }
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     * @return void
-     */
     protected function addFilters(SearchRequestInterface $searchRequest, array &$query)
     {
         if (!$searchRequest->hasFilter()) {
@@ -273,13 +229,6 @@ class QueryFactory
         }
     }
 
-    /**
-     * @param string $name
-     * @param string $value
-     * @param array $config
-     * @param array $query
-     * @return array
-     */
     protected function addFilter(string $name, $value, array $config, array &$query): array
     {
         if (!empty($config)) {
@@ -329,11 +278,6 @@ class QueryFactory
         return $query;
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @param array $query
-     * @return void
-     */
     protected function addFacets(SearchRequestInterface $searchRequest, array &$query)
     {
         foreach ($searchRequest->getFacets() as $facet) {

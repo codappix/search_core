@@ -114,10 +114,6 @@ class Elasticsearch implements Singleton, ConnectionInterface
         $this->queryFactory = $queryFactory;
     }
 
-    /**
-     * @param string $documentType
-     * @param array $document
-     */
     public function addDocument(string $documentType, array $document)
     {
         $this->withType(
@@ -128,10 +124,6 @@ class Elasticsearch implements Singleton, ConnectionInterface
         );
     }
 
-    /**
-     * @param string $documentType
-     * @param string $identifier
-     */
     public function deleteDocument(string $documentType, string $identifier)
     {
         try {
@@ -149,10 +141,6 @@ class Elasticsearch implements Singleton, ConnectionInterface
         }
     }
 
-    /**
-     * @param string $documentType
-     * @param array $document
-     */
     public function updateDocument(string $documentType, array $document)
     {
         $this->withType(
@@ -163,10 +151,6 @@ class Elasticsearch implements Singleton, ConnectionInterface
         );
     }
 
-    /**
-     * @param string $documentType
-     * @param array $documents
-     */
     public function addDocuments(string $documentType, array $documents)
     {
         $this->withType(
@@ -177,9 +161,6 @@ class Elasticsearch implements Singleton, ConnectionInterface
         );
     }
 
-    /**
-     * @return void
-     */
     public function deleteIndex()
     {
         $index = $this->connection->getClient()->getIndex($this->indexFactory->getIndexName());
@@ -195,10 +176,6 @@ class Elasticsearch implements Singleton, ConnectionInterface
         $index->delete();
     }
 
-    /**
-     * @param Query $query
-     * @return void
-     */
     public function deleteIndexByQuery(Query $query)
     {
         $index = $this->connection->getClient()->getIndex($this->indexFactory->getIndexName());
@@ -218,9 +195,6 @@ class Elasticsearch implements Singleton, ConnectionInterface
 
     /**
      * Execute given callback with Elastica Type based on provided documentType
-     *
-     * @param string $documentType
-     * @param callable $callback
      */
     protected function withType(string $documentType, callable $callback)
     {
@@ -236,10 +210,6 @@ class Elasticsearch implements Singleton, ConnectionInterface
         $type->getIndex()->refresh();
     }
 
-    /**
-     * @param SearchRequestInterface $searchRequest
-     * @return SearchResultInterface
-     */
     public function search(SearchRequestInterface $searchRequest): SearchResultInterface
     {
         $this->logger->debug('Search for', [$searchRequest->getSearchTerm()]);
@@ -251,10 +221,6 @@ class Elasticsearch implements Singleton, ConnectionInterface
         return $this->objectManager->get(SearchResult::class, $searchRequest, $search->search());
     }
 
-    /**
-     * @param string $documentType
-     * @return \Elastica\Type
-     */
     protected function getType($documentType): \Elastica\Type
     {
         return $this->typeFactory->getType(

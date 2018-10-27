@@ -41,11 +41,6 @@ class TcaRelationResolvingProcessor implements ProcessorInterface
      */
     protected $relationResolver;
 
-    /**
-     * TcaRelationResolvingProcessor constructor.
-     * @param ObjectManagerInterface $objectManager
-     * @param RelationResolver $relationResolver
-     */
     public function __construct(
         ObjectManagerInterface $objectManager,
         RelationResolver $relationResolver
@@ -55,9 +50,6 @@ class TcaRelationResolvingProcessor implements ProcessorInterface
     }
 
     /**
-     * @param array $record
-     * @param array $configuration
-     * @return array
      * @throws \InvalidArgumentException If _table is not configured.
      */
     public function processData(array $record, array $configuration): array
@@ -79,7 +71,6 @@ class TcaRelationResolvingProcessor implements ProcessorInterface
     }
 
     /**
-     * @param array $configuration
      * @throws \InvalidArgumentException If _table is not configured.
      */
     protected function initializeConfiguration(array &$configuration)
@@ -95,11 +86,6 @@ class TcaRelationResolvingProcessor implements ProcessorInterface
         $configuration['excludeFields'] = GeneralUtility::trimExplode(',', $configuration['excludeFields'], true);
     }
 
-    /**
-     * @param array $record
-     * @param array $configuration
-     * @return array
-     */
     protected function getRecordToProcess(array $record, array $configuration): array
     {
         if ($configuration['excludeFields'] === []) {

@@ -33,28 +33,17 @@ class Where
      */
     protected $parameters = [];
 
-    /**
-     * Where constructor.
-     * @param string $statement
-     * @param array $parameters
-     */
     public function __construct(string $statement, array $parameters)
     {
         $this->statement = $statement;
         $this->parameters = $parameters;
     }
 
-    /**
-     * @return string
-     */
     public function getStatement(): string
     {
         return $this->statement;
     }
 
-    /**
-     * @return array
-     */
     public function getParameters(): array
     {
         return $this->parameters;

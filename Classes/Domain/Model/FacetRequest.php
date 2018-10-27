@@ -38,8 +38,6 @@ class FacetRequest implements FacetRequestInterface
     /**
      * As the facets come from configuration this might be a good idea to help
      * integrators find issues.
-     * @param string $identifier
-     * @param array $config
      */
     public function __construct(string $identifier, array $config)
     {
@@ -47,17 +45,11 @@ class FacetRequest implements FacetRequestInterface
         $this->config = $config;
     }
 
-    /**
-     * @return string
-     */
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * @return array
-     */
     public function getConfig(): array
     {
         return $this->config;
