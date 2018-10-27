@@ -67,8 +67,6 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
      * @test
      * @dataProvider rootLineDataSets
      * @param string $dataSetPath
-     * @throws \Codappix\SearchCore\Domain\Index\NoMatchingIndexerException
-     * @throws \TYPO3\TestingFramework\Core\Exception
      */
     public function rootLineIsRespectedDuringIndexing($dataSetPath)
     {

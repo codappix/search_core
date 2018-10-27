@@ -2,8 +2,6 @@
 
 namespace Codappix\SearchCore\Domain\Model;
 
-use Codappix\SearchCore\Connection\ResultItemInterface;
-
 /*
  * Copyright (C) 2017  Daniel Siepmann <coding@daniel-siepmann.de>
  *
@@ -22,6 +20,8 @@ use Codappix\SearchCore\Connection\ResultItemInterface;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
+
+use Codappix\SearchCore\Connection\ResultItemInterface;
 
 class ResultItem implements ResultItemInterface
 {

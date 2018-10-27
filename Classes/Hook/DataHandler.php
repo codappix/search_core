@@ -22,11 +22,12 @@ namespace Codappix\SearchCore\Hook;
  */
 
 use Codappix\SearchCore\Configuration\NoConfigurationException;
+use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
 use Codappix\SearchCore\Domain\Service\DataHandler as OwnDataHandler;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler as CoreDataHandler;
-use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
+use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
@@ -93,7 +94,7 @@ class DataHandler implements Singleton
     /**
      * @param CoreDataHandler $dataHandler
      * @return void
-     * @throws \Codappix\SearchCore\Domain\Index\NoMatchingIndexerException
+     * @throws NoMatchingIndexerException
      */
     public function processDatamap_afterAllOperations(CoreDataHandler $dataHandler)
     {
@@ -119,7 +120,7 @@ class DataHandler implements Singleton
      * @param array $parameters
      * @param CoreDataHandler $dataHandler
      * @return void
-     * @throws \Codappix\SearchCore\Domain\Index\NoMatchingIndexerException
+     * @throws NoMatchingIndexerException
      */
     public function clearCachePostProc(array $parameters, CoreDataHandler $dataHandler)
     {
@@ -143,7 +144,7 @@ class DataHandler implements Singleton
      * @param string $table
      * @param integer $uid
      * @return bool
-     * @throws \Codappix\SearchCore\Domain\Index\NoMatchingIndexerException
+     * @throws NoMatchingIndexerException
      */
     protected function processRecord(string $table, int $uid): bool
     {

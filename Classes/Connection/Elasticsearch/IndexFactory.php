@@ -68,7 +68,7 @@ class IndexFactory implements Singleton
      */
     public function getIndexName(): string
     {
-        return (string)$this->configuration->get('connections.elasticsearch.index');
+        return $this->configuration->get('connections.elasticsearch.index');
     }
 
     /**

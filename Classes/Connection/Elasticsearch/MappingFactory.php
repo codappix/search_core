@@ -50,7 +50,7 @@ class MappingFactory implements Singleton
      * @param string $documentType
      * @return \Elastica\Type\Mapping
      */
-    public function getMapping(\Elastica\Type $type, $documentType = null): \Elastica\Type\Mapping
+    public function getMapping(\Elastica\Type $type, string $documentType = null): \Elastica\Type\Mapping
     {
         $mapping = new \Elastica\Type\Mapping();
         $mapping->setType($type);

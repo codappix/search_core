@@ -75,7 +75,7 @@ class IndexerFactory implements Singleton
     /**
      * @param string $indexerClass
      * @param string $identifier
-     * @return \Codappix\SearchCore\Domain\Index\IndexerInterface
+     * @return IndexerInterface
      * @throws NoMatchingIndexerException
      */
     protected function buildIndexer(string $indexerClass, string $identifier): IndexerInterface

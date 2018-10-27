@@ -24,6 +24,7 @@ namespace Codappix\SearchCore\Domain\Model;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\FacetRequestInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
+use Codappix\SearchCore\Connection\SearchResultInterface;
 use Codappix\SearchCore\Domain\Search\SearchService;
 use Codappix\SearchCore\Utility\ArrayUtility as CustomArrayUtility;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
@@ -158,12 +159,12 @@ class SearchRequest implements SearchRequestInterface
         $this->searchService = $searchService;
     }
 
+    // Extbase QueryInterface
+    // Current implementation covers only paginate widget support.
+
     /**
-     * Extbase QueryInterface
-     * Current implementation covers only paginate widget support.
-     *
      * @param bool $returnRawQueryResult
-     * @return array|\Codappix\SearchCore\Connection\SearchResultInterface|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+     * @return SearchResultInterface
      * @throws \InvalidArgumentException
      */
     public function execute($returnRawQueryResult = false)
@@ -223,7 +224,6 @@ class SearchRequest implements SearchRequestInterface
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\SourceInterface|void
      * @throws \BadMethodCallException
      */
     public function getSource()
@@ -233,7 +233,6 @@ class SearchRequest implements SearchRequestInterface
 
     /**
      * @param array $orderings
-     * @return \TYPO3\CMS\Extbase\Persistence\QueryInterface|void
      * @throws \BadMethodCallException
      */
     public function setOrderings(array $orderings)
@@ -243,7 +242,6 @@ class SearchRequest implements SearchRequestInterface
 
     /**
      * @param \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ConstraintInterface $constraint
-     * @return \TYPO3\CMS\Extbase\Persistence\QueryInterface|void
      * @throws \BadMethodCallException
      */
     public function matching($constraint)
@@ -253,7 +251,6 @@ class SearchRequest implements SearchRequestInterface
 
     /**
      * @param mixed $constraint1
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\AndInterface|void
      * @throws \BadMethodCallException
      */
     public function logicalAnd($constraint1)
@@ -263,7 +260,6 @@ class SearchRequest implements SearchRequestInterface
 
     /**
      * @param mixed $constraint1
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\OrInterface|void
      * @throws \BadMethodCallException
      */
     public function logicalOr($constraint1)
@@ -273,7 +269,6 @@ class SearchRequest implements SearchRequestInterface
 
     /**
      * @param \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ConstraintInterface $constraint
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\NotInterface|void
      * @throws \BadMethodCallException
      */
     public function logicalNot(\TYPO3\CMS\Extbase\Persistence\Generic\Qom\ConstraintInterface $constraint)
@@ -285,7 +280,6 @@ class SearchRequest implements SearchRequestInterface
      * @param string $propertyName
      * @param mixed $operand
      * @param bool $caseSensitive
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface|void
      * @throws \BadMethodCallException
      */
     public function equals($propertyName, $operand, $caseSensitive = true)
@@ -297,7 +291,6 @@ class SearchRequest implements SearchRequestInterface
      * @param string $propertyName
      * @param string $operand
      * @param bool $caseSensitive
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface|void
      * @throws \BadMethodCallException
      */
     public function like($propertyName, $operand, $caseSensitive = true)
@@ -308,7 +301,6 @@ class SearchRequest implements SearchRequestInterface
     /**
      * @param string $propertyName
      * @param mixed $operand
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface|void
      * @throws \BadMethodCallException
      */
     public function contains($propertyName, $operand)
@@ -319,7 +311,6 @@ class SearchRequest implements SearchRequestInterface
     /**
      * @param string $propertyName
      * @param mixed $operand
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface|void
      * @throws \BadMethodCallException
      */
     public function in($propertyName, $operand)
@@ -330,7 +321,6 @@ class SearchRequest implements SearchRequestInterface
     /**
      * @param string $propertyName
      * @param mixed $operand
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface|void
      * @throws \BadMethodCallException
      */
     public function lessThan($propertyName, $operand)
@@ -341,7 +331,6 @@ class SearchRequest implements SearchRequestInterface
     /**
      * @param string $propertyName
      * @param mixed $operand
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface|void
      * @throws \BadMethodCallException
      */
     public function lessThanOrEqual($propertyName, $operand)
@@ -352,7 +341,6 @@ class SearchRequest implements SearchRequestInterface
     /**
      * @param string $propertyName
      * @param mixed $operand
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface|void
      * @throws \BadMethodCallException
      */
     public function greaterThan($propertyName, $operand)
@@ -363,7 +351,6 @@ class SearchRequest implements SearchRequestInterface
     /**
      * @param string $propertyName
      * @param mixed $operand
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface|void
      * @throws \BadMethodCallException
      */
     public function greaterThanOrEqual($propertyName, $operand)
@@ -372,7 +359,6 @@ class SearchRequest implements SearchRequestInterface
     }
 
     /**
-     * @return string|void
      * @throws \BadMethodCallException
      */
     public function getType()
@@ -390,7 +376,6 @@ class SearchRequest implements SearchRequestInterface
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface|void
      * @throws \BadMethodCallException
      */
     public function getQuerySettings()
@@ -399,7 +384,6 @@ class SearchRequest implements SearchRequestInterface
     }
 
     /**
-     * @return integer|void
      * @throws \BadMethodCallException
      */
     public function count()
@@ -408,7 +392,6 @@ class SearchRequest implements SearchRequestInterface
     }
 
     /**
-     * @return array|void
      * @throws \BadMethodCallException
      */
     public function getOrderings()
@@ -417,7 +400,6 @@ class SearchRequest implements SearchRequestInterface
     }
 
     /**
-     * @return null|\TYPO3\CMS\Extbase\Persistence\Generic\Qom\ConstraintInterface|void
      * @throws \BadMethodCallException
      */
     public function getConstraint()
@@ -427,7 +409,6 @@ class SearchRequest implements SearchRequestInterface
 
     /**
      * @param string $propertyName
-     * @return bool|void
      * @throws \BadMethodCallException
      */
     public function isEmpty($propertyName)
@@ -445,7 +426,6 @@ class SearchRequest implements SearchRequestInterface
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement|void
      * @throws \BadMethodCallException
      */
     public function getStatement()

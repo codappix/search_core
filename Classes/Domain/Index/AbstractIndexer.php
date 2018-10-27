@@ -145,7 +145,7 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * @return \Generator
      */
-    protected function getRecordGenerator()
+    protected function getRecordGenerator(): \Generator
     {
         $offset = 0;
         $limit = $this->getLimit();

@@ -21,6 +21,7 @@ namespace Codappix\SearchCore\Integration\Form\Finisher;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
 use TYPO3\CMS\Form\Domain\Finishers\AbstractFinisher;
 use TYPO3\CMS\Form\Domain\Finishers\Exception\FinisherException;
 
@@ -48,9 +49,9 @@ class DataHandlerFinisher extends AbstractFinisher
     ];
 
     /**
-     * @return null|string|void
+     * @return void
      * @throws FinisherException
-     * @throws \Codappix\SearchCore\Domain\Index\NoMatchingIndexerException
+     * @throws NoMatchingIndexerException
      */
     protected function executeInternal()
     {

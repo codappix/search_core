@@ -58,6 +58,7 @@ class TcaRelationResolvingProcessor implements ProcessorInterface
      * @param array $record
      * @param array $configuration
      * @return array
+     * @throws \InvalidArgumentException If _table is not configured.
      */
     public function processData(array $record, array $configuration): array
     {

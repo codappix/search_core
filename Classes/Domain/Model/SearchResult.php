@@ -21,6 +21,7 @@ namespace Codappix\SearchCore\Domain\Model;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Connection\ResultItemInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
 
 /**

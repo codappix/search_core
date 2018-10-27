@@ -36,9 +36,6 @@ abstract class AbstractDataHandlerTest extends AbstractFunctionalTestCase
      */
     protected $subject;
 
-    /**
-     * @throws \Doctrine\DBAL\DBALException
-     */
     public function setUp()
     {
         parent::setUp();
