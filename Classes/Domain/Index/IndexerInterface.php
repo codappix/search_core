@@ -42,14 +42,6 @@ interface IndexerInterface
     public function indexDocument(string $identifier);
 
     /**
-     * Receives the identifier of the indexer itself.
-     *
-     * @param string $identifier
-     * @return void
-     */
-    public function setIdentifier(string $identifier);
-
-    /**
      * Delete the whole index.
      *
      * @return void
@@ -62,4 +54,19 @@ interface IndexerInterface
      * @return void
      */
     public function deleteDocuments();
+
+    /**
+     * Receives the identifier of the indexer itself.
+     *
+     * @param string $identifier
+     * @return void
+     */
+    public function setIdentifier(string $identifier);
+
+    /**
+     * Returnes the identifier of the indexer.
+     *
+     * @return string
+     */
+    public function getIdentifier(): string;
 }

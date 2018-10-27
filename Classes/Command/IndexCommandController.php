@@ -22,6 +22,7 @@ namespace Codappix\SearchCore\Command;
  */
 
 use Codappix\SearchCore\Domain\Index\IndexerFactory;
+use Codappix\SearchCore\Domain\Index\IndexerInterface;
 use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
@@ -46,58 +47,60 @@ class IndexCommandController extends CommandController
     }
 
     /**
-     * Will index the given identifier.
+     * Will index all documents for the given identifiers.
      *
-     * @param string $identifier
+     * @param string $identifier Comma separated list of identifiers.
      * @return void
      */
-    public function indexCommand(string $identifier)
+    public function indexCommand(string $identifiers)
     {
-        // Allow multiple identifiers per import task
-        $identifiers = GeneralUtility::trimExplode(',', $identifier, true);
-        foreach ($identifiers as $value) {
-            try {
-                $this->indexerFactory->getIndexer($value)->indexAllDocuments();
-                $this->outputLine($value . ' was indexed.');
-            } catch (NoMatchingIndexerException $e) {
-                $this->outputLine('No indexer found for: ' . $value);
-            }
-        }
+        $this->executeForIdentifier($identifiers, function (IndexerInterface $indexer) {
+            $indexer->indexAllDocuments();
+            $this->outputLine('Documents in indice ' . $indexer->getIdentifier() . ' were indexed.');
+        });
     }
 
     /**
-     * Will delete the given identifier.
+     * Will delete all indexed documents for the given identifiers.
      *
-     * @param string $identifier
+     * @param string $identifier Comma separated list of identifiers.
      * @return void
      */
-    public function deleteCommand(string $identifier)
+    public function deleteCommand(string $identifiers)
     {
-        // Allow multiple identifiers per import task
-        $identifiers = GeneralUtility::trimExplode(',', $identifier, true);
-        foreach ($identifiers as $value) {
-            try {
-                $this->indexerFactory->getIndexer($value)->deleteDocuments();
-                $this->outputLine($value . ' was deleted.');
-            } catch (NoMatchingIndexerException $e) {
-                $this->outputLine('No indexer found for: ' . $value);
-            }
-        }
+        $this->executeForIdentifier($identifiers, function (IndexerInterface $indexer) {
+            $indexer->deleteDocuments();
+            $this->outputLine('Documents in indice ' . $indexer->getIdentifier() . ' were deleted.');
+        });
     }
 
     /**
-     * Will delete the full index.
+     * Will delete the full index for given identifiers.
      *
-     * @param string $identifier
+     * @param string $identifier Comma separated list of identifiers.
      * @return void
      */
-    public function flushCommand(string $identifier = 'pages')
+    public function flushCommand(string $identifiers = 'pages')
     {
-        try {
-            $this->indexerFactory->getIndexer($identifier)->delete();
-            $this->outputLine('Default configured indices were deleted via ' . $identifier . '.');
-        } catch (NoMatchingIndexerException $e) {
-            $this->outputLine('No indexer found for: ' . $identifier);
+        $this->executeForIdentifier($identifiers, function (IndexerInterface $indexer) {
+            $indexer->delete();
+            $this->outputLine('Indice ' . $indexer->getIdentifier() . ' was deleted.');
+        });
+    }
+
+    /**
+     * Executes the given callback method for each provided identifier.
+     *
+     * An indexer is created for each identifier, which is provided as first argument to the callback.
+     */
+    private function executeForIdentifier(string $identifiers, callable $callback)
+    {
+        foreach (GeneralUtility::trimExplode(',', $identifiers, true) as $identifier) {
+            try {
+                $callback($this->indexerFactory->getIndexer($identifier));
+            } catch (NoMatchingIndexerException $e) {
+                $this->outputLine('No indexer found for: ' . $identifier . '.');
+            }
         }
     }
 }

@@ -100,7 +100,7 @@ class TcaIndexer extends AbstractIndexer
      * @param string $identifier
      * @return string
      */
-    public function getIdentifier($identifier): string
+    public function getDocumentIdentifier($identifier): string
     {
         return $this->getDocumentName() . '-' . $identifier;
     }

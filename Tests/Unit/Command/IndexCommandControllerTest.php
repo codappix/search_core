@@ -61,7 +61,7 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
     {
         $this->subject->expects($this->once())
             ->method('outputLine')
-            ->with('No indexer found for: nonAllowedTable');
+            ->with('No indexer found for: nonAllowedTable.');
         $this->indexerFactory->expects($this->once())
             ->method('getIndexer')
             ->with('nonAllowedTable')
@@ -78,11 +78,14 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
         $indexerMock = $this->getMockBuilder(TcaIndexer::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $indexerMock->expects($this->any())
+            ->method('getIdentifier')
+            ->willReturn('allowedTable');
         $this->subject->expects($this->never())
             ->method('quit');
         $this->subject->expects($this->once())
             ->method('outputLine')
-            ->with('allowedTable was indexed.');
+            ->with('Documents in indice allowedTable were indexed.');
         $this->indexerFactory->expects($this->once())
             ->method('getIndexer')
             ->with('allowedTable')
@@ -99,9 +102,12 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
         $indexerMock = $this->getMockBuilder(TcaIndexer::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $indexerMock->expects($this->any())
+            ->method('getIdentifier')
+            ->willReturn('allowedTable');
         $this->subject->expects($this->once())
             ->method('outputLine')
-            ->with('allowedTable was deleted.');
+            ->with('Documents in indice allowedTable were deleted.');
         $this->indexerFactory->expects($this->once())
             ->method('getIndexer')
             ->with('allowedTable')
@@ -120,9 +126,12 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
         $indexerMock = $this->getMockBuilder(TcaIndexer::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $indexerMock->expects($this->any())
+            ->method('getIdentifier')
+            ->willReturn('pages');
         $this->subject->expects($this->once())
             ->method('outputLine')
-            ->with('Default configured indices were deleted via pages.');
+            ->with('Indice pages was deleted.');
         $this->indexerFactory->expects($this->once())
             ->method('getIndexer')
             ->with('pages')
@@ -140,12 +149,93 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
     {
         $this->subject->expects($this->once())
             ->method('outputLine')
-            ->with('No indexer found for: nonAllowedTable');
+            ->with('No indexer found for: nonAllowedTable.');
         $this->indexerFactory->expects($this->once())
             ->method('getIndexer')
             ->with('nonAllowedTable')
             ->will($this->throwException(new NoMatchingIndexerException));
 
         $this->subject->deleteCommand('nonAllowedTable');
+    }
+
+    // As all methods use the same code base, we test the logic for multiple
+    // identifiers only for indexing.
+
+    /**
+     * @test
+     */
+    public function indexerExecutesForAllowedTables()
+    {
+        $indexerMock = $this->getMockBuilder(TcaIndexer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $indexerMock->expects($this->any())
+            ->method('getIdentifier')
+            ->will($this->onConsecutiveCalls('allowedTable', 'anotherTable'));
+        $this->subject->expects($this->never())
+            ->method('quit');
+        $this->subject->expects($this->exactly(2))
+            ->method('outputLine')
+            ->withConsecutive(
+                ['Documents in indice allowedTable were indexed.'],
+                ['Documents in indice anotherTable were indexed.']
+            );
+        $this->indexerFactory->expects($this->exactly(2))
+            ->method('getIndexer')
+            ->withConsecutive(['allowedTable'], ['anotherTable'])
+            ->will($this->returnValue($indexerMock));
+
+        $this->subject->indexCommand('allowedTable, anotherTable');
+    }
+
+    /**
+     * @test
+     */
+    public function indexerSkipsEmptyIdentifier()
+    {
+        $indexerMock = $this->getMockBuilder(TcaIndexer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $indexerMock->expects($this->any())
+            ->method('getIdentifier')
+            ->willReturn('allowedTable');
+        $this->subject->expects($this->never())
+            ->method('quit');
+        $this->subject->expects($this->once())
+            ->method('outputLine')
+            ->with('Documents in indice allowedTable were indexed.');
+        $this->indexerFactory->expects($this->once())
+            ->method('getIndexer')
+            ->with('allowedTable')
+            ->will($this->returnValue($indexerMock));
+
+        $this->subject->indexCommand('allowedTable, ');
+    }
+
+    /**
+     * @test
+     */
+    public function indexerSkipsAndOutputsNonExistingIdentifier()
+    {
+        $indexerMock = $this->getMockBuilder(TcaIndexer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $indexerMock->expects($this->any())
+            ->method('getIdentifier')
+            ->willReturn('allowedTable');
+        $this->subject->expects($this->never())
+            ->method('quit');
+        $this->subject->expects($this->exactly(2))
+            ->method('outputLine')
+            ->withConsecutive(
+                ['No indexer found for: nonExisting.'],
+                ['Documents in indice allowedTable were indexed.']
+            );
+        $this->indexerFactory->expects($this->exactly(2))
+            ->method('getIndexer')
+            ->withConsecutive(['nonExisting'], ['allowedTable'])
+            ->will($this->onConsecutiveCalls($this->throwException(new NoMatchingIndexerException), $this->returnValue($indexerMock)));
+
+        $this->subject->indexCommand('nonExisting, allowedTable');
     }
 }

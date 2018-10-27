@@ -66,15 +66,6 @@ abstract class AbstractIndexer implements IndexerInterface
     }
 
     /**
-     * @param string $identifier
-     * @return void
-     */
-    public function setIdentifier(string $identifier)
-    {
-        $this->identifier = $identifier;
-    }
-
-    /**
      * AbstractIndexer constructor.
      * @param ConnectionInterface $connection
      * @param ConfigurationContainerInterface $configuration
@@ -120,7 +111,7 @@ abstract class AbstractIndexer implements IndexerInterface
             $this->connection->addDocument($this->getDocumentName(), $record);
         } catch (NoRecordFoundException $e) {
             $this->logger->info('Could not index document. Try to delete it therefore.', [$e->getMessage()]);
-            $this->connection->deleteDocument($this->getDocumentName(), $this->getIdentifier($identifier));
+            $this->connection->deleteDocument($this->getDocumentName(), $this->getDocumentIdentifier($identifier));
         }
         $this->logger->info('Finish indexing');
     }
@@ -194,7 +185,7 @@ abstract class AbstractIndexer implements IndexerInterface
             $record['search_document_type'] = $this->getDocumentName();
         }
         if (!isset($record['search_identifier']) && isset($record['uid'])) {
-            $record['search_identifier'] = $this->getIdentifier($record['uid']);
+            $record['search_identifier'] = $this->getDocumentIdentifier($record['uid']);
         }
     }
 
@@ -237,6 +228,16 @@ abstract class AbstractIndexer implements IndexerInterface
         return 50;
     }
 
+    public function setIdentifier(string $identifier)
+    {
+        $this->identifier = $identifier;
+    }
+
+    public function getIdentifier(): string
+    {
+        return $this->identifier;
+    }
+
     /**
      * @param integer $offset
      * @param integer $limit
@@ -259,5 +260,5 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param string $identifier
      * @return string
      */
-    abstract public function getIdentifier($identifier): string;
+    abstract public function getDocumentIdentifier($identifier): string;
 }
