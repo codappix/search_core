@@ -35,7 +35,7 @@ use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 /**
  * Service to process a search request.
  */
-class SearchService
+class SearchService implements SearchServiceInterface
 {
     /**
      * @var ConnectionInterface

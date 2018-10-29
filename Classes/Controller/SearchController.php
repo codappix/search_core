@@ -22,7 +22,7 @@ namespace Codappix\SearchCore\Controller;
  */
 
 use Codappix\SearchCore\Domain\Model\SearchRequest;
-use Codappix\SearchCore\Domain\Search\CachedSearchService;
+use Codappix\SearchCore\Domain\Search\SearchServiceInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
@@ -31,21 +31,24 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 class SearchController extends ActionController
 {
     /**
-     * @var CachedSearchService
+     * @var SearchServiceInterface
      */
     protected $searchService;
 
     /**
-     * @param CachedSearchService $searchService
+     * @param SearchServiceInterface $searchService
      */
-    public function __construct(CachedSearchService $searchService)
+    public function __construct(SearchServiceInterface $searchService)
     {
         $this->searchService = $searchService;
 
         parent::__construct();
     }
 
-    public function initializeSearchAction()
+    /**
+     * Allow dynamic properties in search request
+     */
+    public function initializeResultsAction()
     {
         if (isset($this->settings['searching']['mode'])
             && $this->settings['searching']['mode'] === 'filter'
@@ -66,20 +69,7 @@ class SearchController extends ActionController
     /**
      * Display results and deliver original request and result to view.
      */
-    public function formAction(SearchRequest $searchRequest = null)
-    {
-        $this->action($searchRequest);
-    }
-
-    /**
-     * Display results and deliver original request and result to view.
-     */
     public function resultsAction(SearchRequest $searchRequest = null)
-    {
-        $this->action($searchRequest);
-    }
-
-    private function action(SearchRequest $searchRequest = null)
     {
         $searchResult = null;
         if ($searchRequest !== null) {

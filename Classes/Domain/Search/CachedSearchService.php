@@ -29,7 +29,7 @@ use TYPO3\CMS\Core\SingletonInterface;
  * Service: Cached Search
  * @package Codappix\SearchCore\Domain\Search
  */
-class CachedSearchService implements SingletonInterface
+class CachedSearchService implements SingletonInterface, SearchServiceInterface
 {
     /**
      * @var array
@@ -53,6 +53,11 @@ class CachedSearchService implements SingletonInterface
             return $this->results[$hash];
         }
         return $this->results[$hash] = $this->searchService->search($searchRequest);
+    }
+
+    public function processResult(SearchResultInterface $searchResult): SearchResultInterface
+    {
+        return $this->searchService->processResult($searchResult);
     }
 
     protected function getHash(SearchRequestInterface $searchRequest): string

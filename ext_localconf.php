@@ -62,5 +62,9 @@ call_user_func(function ($extension, $configuration) {
             \Codappix\SearchCore\Connection\ConnectionInterface::class,
             \Codappix\SearchCore\Connection\Elasticsearch::class
         );
+        $container->registerImplementation(
+            \Codappix\SearchCore\Domain\Search\SearchServiceInterface::class,
+            \Codappix\SearchCore\Domain\Search\CachedSearchService::class
+        );
     }
 }, $_EXTKEY, $_EXTCONF);
