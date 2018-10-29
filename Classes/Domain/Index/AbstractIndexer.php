@@ -24,7 +24,6 @@ namespace Codappix\SearchCore\Domain\Index;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
-use Elastica\Query;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractIndexer implements IndexerInterface
@@ -114,13 +113,7 @@ abstract class AbstractIndexer implements IndexerInterface
     public function deleteDocuments()
     {
         $this->logger->info('Start deletion of indexed documents.');
-        $this->connection->deleteIndexByQuery(Query::create([
-            'query' => [
-                'term' => [
-                    'search_document_type' => $this->getDocumentName()
-                ]
-            ]
-        ]));
+        $this->connection->deleteIndexByDocumentType($this->getDocumentName());
         $this->logger->info('Finish deletion.');
     }
 
