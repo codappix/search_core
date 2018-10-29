@@ -49,11 +49,14 @@ class TcaIndexer extends AbstractIndexer
         $this->tcaTableService = $tcaTableService;
     }
 
-    protected function getRecords(int $offset, int $limit): array
+    /**
+     * @return array|null Nullable when no items are found and execution should be stopped
+     */
+    protected function getRecords(int $offset, int $limit)
     {
         $records = $this->tcaTableService->getRecords($offset, $limit);
         if ($records === []) {
-            return [];
+            return null;
         }
 
         $this->tcaTableService->filterRecordsByRootLineBlacklist($records);

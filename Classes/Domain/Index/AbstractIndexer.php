@@ -122,8 +122,10 @@ abstract class AbstractIndexer implements IndexerInterface
         $offset = 0;
         $limit = $this->getLimit();
 
-        while (($records = $this->getRecords($offset, $limit)) !== []) {
-            yield $records;
+        while (($records = $this->getRecords($offset, $limit)) !== null) {
+            if (!empty($records)) {
+                yield $records;
+            }
             $offset += $limit;
         }
     }
@@ -194,7 +196,10 @@ abstract class AbstractIndexer implements IndexerInterface
         return $this->identifier;
     }
 
-    abstract protected function getRecords(int $offset, int $limit): array;
+    /**
+     * @return array|null Nullable when no items are found and execution should be stopped
+     */
+    abstract protected function getRecords(int $offset, int $limit);
 
     /**
      * @throws NoRecordFoundException If record could not be found.
