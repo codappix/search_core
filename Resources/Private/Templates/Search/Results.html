@@ -3,6 +3,10 @@
 <f:layout name="Default"/>
 
 <f:section name="Content">
+    <div class="core-search-form">
+        <f:render partial="Form/SearchRequest" arguments="{searchRequest: searchRequest, result: result}"/>
+    </div>
+
     <f:if condition="{searchResult}">
         <f:then>
             <ul class="core-search-results">

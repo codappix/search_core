@@ -3,17 +3,11 @@
     <file source-language="en" datatype="plaintext" original="messages">
         <header/>
         <body>
-            <trans-unit id="plugin.results.title">
-                <source>Search Core: Results</source>
+            <trans-unit id="plugin.search.title">
+                <source>Search Core: Search</source>
             </trans-unit>
-            <trans-unit id="plugin.results.description">
+            <trans-unit id="plugin.search.description">
                 <source>List results from search</source>
-            </trans-unit>
-            <trans-unit id="plugin.form.title">
-                <source>Search Core: Form</source>
-            </trans-unit>
-            <trans-unit id="plugin.form.description">
-                <source>Just a search form to list page</source>
             </trans-unit>
         </body>
     </file>

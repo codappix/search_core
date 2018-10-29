@@ -12,9 +12,9 @@ call_user_func(function ($extension, $configuration) {
         ['source' => 'EXT:search_core/Resources/Public/Icons/PluginForm.svg']
     );
     $iconRegistry->registerIcon(
-        'plugin-' . $extension . '-results',
+        'plugin-' . $extension . '-search',
         \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
-        ['source' => 'EXT:search_core/Resources/Public/Icons/PluginResults.svg']
+        ['source' => 'EXT:search_core/Resources/Public/Icons/PluginSearch.svg']
     );
 
     // TODO: Add hook for Extbase -> to handle records modified through
@@ -45,16 +45,8 @@ call_user_func(function ($extension, $configuration) {
 
     TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
         'Codappix.' . $extension,
-        'Results',
-        ['Search' => 'results'],
+        'Search',
         ['Search' => 'results']
-    );
-
-    TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-        'Codappix.' . $extension,
-        'Form',
-        ['Search' => 'form'],
-        ['Search' => 'form']
     );
 
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
@@ -65,10 +57,10 @@ call_user_func(function ($extension, $configuration) {
         (isset($configuration['disable.']['elasticsearch']) &&
             filter_var($configuration['disable.']['elasticsearch'], FILTER_VALIDATE_BOOLEAN) === false)
     ) {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\Container\Container::class)
-            ->registerImplementation(
-                \Codappix\SearchCore\Connection\ConnectionInterface::class,
-                \Codappix\SearchCore\Connection\Elasticsearch::class
-            );
+        $container = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\Container\Container::class);
+        $container->registerImplementation(
+            \Codappix\SearchCore\Connection\ConnectionInterface::class,
+            \Codappix\SearchCore\Connection\Elasticsearch::class
+        );
     }
 }, $_EXTKEY, $_EXTCONF);

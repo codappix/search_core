@@ -1,22 +1,12 @@
 mod.wizards.newContentElement.wizardItems.plugins {
     elements {
-        searchcore_results {
-            title = LLL:EXT:search_core/Resources/Private/Language/locallang_be.xlf:plugin.results.title
-            description = LLL:EXT:search_core/Resources/Private/Language/locallang_be.xlf:plugin.results.description
-            iconIdentifier = plugin-search_core-results
+        searchcore_search {
+            title = LLL:EXT:search_core/Resources/Private/Language/locallang_be.xlf:plugin.search.title
+            description = LLL:EXT:search_core/Resources/Private/Language/locallang_be.xlf:plugin.search.description
+            iconIdentifier = plugin-search_core-search
             tt_content_defValues {
                 CType = list
-                list_type = searchcore_results
-            }
-        }
-
-        searchcore_form {
-            title = LLL:EXT:search_core/Resources/Private/Language/locallang_be.xlf:plugin.form.title
-            description = LLL:EXT:search_core/Resources/Private/Language/locallang_be.xlf:plugin.form.description
-            iconIdentifier = plugin-search_core-form
-            tt_content_defValues {
-                CType = list
-                list_type = searchcore_form
+                list_type = searchcore_search
             }
         }
     }
