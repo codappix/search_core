@@ -384,7 +384,7 @@ class TcaTableService implements TcaTableServiceInterface
      */
     protected function isBlackListedRootLineConfigured(): bool
     {
-        return $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist');
+        return (bool)$this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist');
     }
 
     /**
@@ -396,7 +396,8 @@ class TcaTableService implements TcaTableServiceInterface
     {
         return GeneralUtility::intExplode(
             ',',
-            $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist')
+            $this->configuration->getIfExists('indexing.' . $this->getTableName() . '.rootLineBlacklist'),
+            true
         );
     }
 
