@@ -159,23 +159,6 @@ class TcaTableService implements TcaTableServiceInterface
             // Always fallback on public visibility when configured
             $record['search_access'] = !empty($groups) ? $groups : [0];
         }
-
-        if (!isset($record['search_page_typolink'])) {
-            switch ($this->tableName) {
-                case 'pages':
-                    $record['search_page_typolink'] = 't3://page?uid=' . $record['uid'];
-                    break;
-                case 'tt_content':
-                    $record['search_page_typolink'] = 't3://page?uid=' . $record['pid'] . '#' . $record['uid'];
-                    break;
-                case 'sys_file':
-                    $record['search_page_typolink'] = 't3://file?uid=' . $record['uid'];
-                    break;
-                default:
-                    $record['search_page_typolink'] = 't3://page?uid=' . $record['pid'];
-                    break;
-            }
-        }
     }
 
     protected function getWhereClause(): Where
