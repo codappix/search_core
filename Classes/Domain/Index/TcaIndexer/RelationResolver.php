@@ -104,7 +104,7 @@ class RelationResolver implements Singleton
     protected function getColumnValue(array $record, string $column, TcaTableServiceInterface $service): string
     {
         $utility = GeneralUtility::makeInstance($this->getUtilityForMode());
-        $value = $value = $utility::getProcessedValueExtra(
+        $value = $utility::getProcessedValueExtra(
             $service->getTableName(),
             $column,
             $record[$column],
