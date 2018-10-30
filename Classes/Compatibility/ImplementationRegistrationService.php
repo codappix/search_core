@@ -21,7 +21,6 @@ namespace Codappix\SearchCore\Compatibility;
  */
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
 
 /**
@@ -33,24 +32,15 @@ class ImplementationRegistrationService
     public static function registerImplementations()
     {
         $container = GeneralUtility::makeInstance(Container::class);
-        if (VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) >= 8000000) {
-            $container->registerImplementation(
-                \Codappix\SearchCore\Compatibility\TypoScriptServiceInterface::class,
-                \Codappix\SearchCore\Compatibility\TypoScriptService::class
-            );
-            $container->registerImplementation(
-                \Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface::class,
-                \Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService::class
-            );
-        } else {
-            $container->registerImplementation(
-                \Codappix\SearchCore\Compatibility\TypoScriptServiceInterface::class,
-                \Codappix\SearchCore\Compatibility\TypoScriptService76::class
-            );
-            $container->registerImplementation(
-                \Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface::class,
-                \Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService76::class
-            );
-        }
+
+        $container->registerImplementation(
+            \Codappix\SearchCore\Compatibility\TypoScriptServiceInterface::class,
+            \Codappix\SearchCore\Compatibility\TypoScriptService::class
+        );
+
+        $container->registerImplementation(
+            \Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface::class,
+            \Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService::class
+        );
     }
 }
