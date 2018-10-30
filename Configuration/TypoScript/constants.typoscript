@@ -6,7 +6,6 @@ plugin.tx_searchcore {
     }
 
     settings {
-        searchOverview =
         connections {
             elasticsearch {
                 host = localhost
