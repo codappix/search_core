@@ -137,7 +137,7 @@ abstract class AbstractIndexer implements IndexerInterface
     protected function prepareRecord(array &$record)
     {
         try {
-            $indexingConfiguration = $this->configuration->get('indexing.' . $this->identifier . '.dataProcessing');
+            $indexingConfiguration = $this->configuration->getIfExists('indexing.' . $this->identifier . '.dataProcessing');
             
             if (!empty($indexingConfiguration) && is_array($indexingConfiguration)) {
                 foreach ($indexingConfiguration as $configuration) {
@@ -170,7 +170,7 @@ abstract class AbstractIndexer implements IndexerInterface
         
         try {
             
-            $indexConfiguration = $this->configuration->get('indexing.' . $this->identifier . '.abstractFields');
+            $indexConfiguration = $this->configuration->getIfExists('indexing.' . $this->identifier . '.abstractFields');
             
             $fieldsToUse = GeneralUtility::trimExplode(',', $indexConfiguration);
             if ($fieldsToUse === []) {

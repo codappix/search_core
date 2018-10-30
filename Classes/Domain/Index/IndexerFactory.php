@@ -68,6 +68,8 @@ class IndexerFactory implements Singleton
             // Nothing to do, we throw exception below
         } catch (MissingArrayPathException $e) {
             // Nothing to do, we throw exception below
+        } catch (\RuntimeException $exception) {
+            // Nothing to do, we throw exception below
         }
 
         throw new NoMatchingIndexerException('Could not find an indexer for ' . $identifier, 1497341442);
