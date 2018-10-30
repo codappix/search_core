@@ -76,7 +76,7 @@ class SearchControllerTest extends AbstractUnitTestCase
             ]
         ]);
 
-        $this->subject->initializeSearchAction();
+        $this->subject->initializeResultsAction();
         $this->assertInstanceOf(
             SearchRequest::class,
             $this->request->getArgument('searchRequest'),
@@ -100,7 +100,7 @@ class SearchControllerTest extends AbstractUnitTestCase
             ]
         ]);
 
-        $this->subject->initializeSearchAction();
+        $this->subject->initializeResultsAction();
         $this->assertInstanceOf(
             SearchRequest::class,
             $this->request->getArgument('searchRequest'),
@@ -120,7 +120,7 @@ class SearchControllerTest extends AbstractUnitTestCase
     {
         $this->inject($this->subject, 'settings', ['searching' => []]);
 
-        $this->subject->initializeSearchAction();
+        $this->subject->initializeResultsAction();
         $this->assertFalse(
             $this->request->hasArgument('searchRequest'),
             'Search request should not exist.'
