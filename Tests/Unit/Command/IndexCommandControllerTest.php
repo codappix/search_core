@@ -234,7 +234,10 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
         $this->indexerFactory->expects($this->exactly(2))
             ->method('getIndexer')
             ->withConsecutive(['nonExisting'], ['allowedTable'])
-            ->will($this->onConsecutiveCalls($this->throwException(new NoMatchingIndexerException), $this->returnValue($indexerMock)));
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new NoMatchingIndexerException),
+                $this->returnValue($indexerMock)
+            ));
 
         $this->subject->indexCommand('nonExisting, allowedTable');
     }

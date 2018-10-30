@@ -56,7 +56,12 @@ class QueryFactoryTest extends AbstractUnitTestCase
         $this->objectManager = $this->getMockBuilder(ObjectManagerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->subject = new QueryFactory($this->getMockedLogger(), $this->configuration, $configurationUtility, $this->objectManager);
+        $this->subject = new QueryFactory(
+            $this->getMockedLogger(),
+            $this->configuration,
+            $configurationUtility,
+            $this->objectManager
+        );
     }
 
     /**
