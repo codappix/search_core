@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Compatibility;
 
 /*
@@ -20,7 +21,13 @@ namespace Codappix\SearchCore\Compatibility;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
+use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface;
+use Codappix\SearchCore\Utility\ExtensionConfiguration;
+use Codappix\SearchCore\Utility\ExtensionConfiguration87;
+use Codappix\SearchCore\Utility\ExtensionConfigurationInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
 
 /**
@@ -31,16 +38,39 @@ class ImplementationRegistrationService
 {
     public static function registerImplementations()
     {
+        /** @var Container $container */
         $container = GeneralUtility::makeInstance(Container::class);
 
-        $container->registerImplementation(
-            \Codappix\SearchCore\Compatibility\TypoScriptServiceInterface::class,
-            \Codappix\SearchCore\Compatibility\TypoScriptService::class
-        );
+        if (VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) >= 9000000) {
+            $container->registerImplementation(
+                ExtensionConfigurationInterface::class,
+                ExtensionConfiguration::class
+            );
 
-        $container->registerImplementation(
-            \Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface::class,
-            \Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService::class
-        );
+            $container->registerImplementation(
+                TypoScriptServiceInterface::class,
+                TypoScriptService::class
+            );
+
+            $container->registerImplementation(
+                TcaTableServiceInterface::class,
+                TcaTableService::class
+            );
+        } else if (VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) >= 8000000) {
+            $container->registerImplementation(
+                ExtensionConfigurationInterface::class,
+                ExtensionConfiguration87::class
+            );
+
+            $container->registerImplementation(
+                TypoScriptServiceInterface::class,
+                TypoScriptService::class
+            );
+
+            $container->registerImplementation(
+                TcaTableServiceInterface::class,
+                TcaTableService::class
+            );
+        }
     }
 }
