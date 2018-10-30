@@ -28,6 +28,7 @@ use Codappix\SearchCore\Domain\Model\FacetRequest;
 use Codappix\SearchCore\Domain\Model\SearchRequest;
 use Codappix\SearchCore\Domain\Search\QueryFactory;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 class QueryFactoryTest extends AbstractUnitTestCase
 {
@@ -41,13 +42,21 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     protected $configuration;
 
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
     public function setUp()
     {
         parent::setUp();
 
         $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)->getMock();
         $configurationUtility = new ConfigurationUtility();
-        $this->subject = new QueryFactory($this->getMockedLogger(), $this->configuration, $configurationUtility);
+        $this->objectManager = $this->getMockBuilder(ObjectManagerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->subject = new QueryFactory($this->getMockedLogger(), $this->configuration, $configurationUtility, $this->objectManager);
     }
 
     /**
