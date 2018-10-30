@@ -1,8 +1,5 @@
 plugin.tx_searchcore {
     view {
-        # This sets the plugin namespace of all your plugins inside the extension to "tx_searchcore",
-        # making it possible to directly access search_core parameters in your controller:
-        pluginNamespace = tx_searchcore
         templateRootPaths.10 = {$plugin.tx_searchcore.view.templateRootPath}
         partialRootPaths.10 = {$plugin.tx_searchcore.view.partialRootPath}
         layoutRootPaths.10 = {$plugin.tx_searchcore.view.layoutRootPath}
