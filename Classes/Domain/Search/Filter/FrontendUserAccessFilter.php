@@ -1,6 +1,6 @@
 <?php
 
-namespace Codappix\SearchCore\Hook\Filter;
+namespace Codappix\SearchCore\Domain\Search\Filter;
 
 /*
  * Copyright (C) 2018 Benjamin Serfhos <benjamin@serfhos.com>
@@ -25,26 +25,28 @@ use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 /**
  * Filter: FrontendUserAccess
- * @package Codappix\SearchCore\Hook\Filter
  */
-class FrontendUserAccessFilter
+class FrontendUserAccessFilter implements SearchFilterInterface
 {
-    /**
-     * @param array $parameters
-     * @return void
-     */
-    public function generate($parameters)
+    public function add(array $query, array $config, $value): array
     {
-        $this->appendQueryWithAccessFilter($parameters['query'], $parameters['value']);
+        return $this->addAccessFilter($query, $value);
     }
 
-    protected function appendQueryWithAccessFilter(array &$query, string $field)
+    /**
+     * Add simple boolean lookup for filtering on access groups
+     */
+    protected function addAccessFilter(array $query, string $field): array
     {
         $query['query']['bool']['must'][] = [
             'terms' => [$field => $this->getUserGroups()]
         ];
+        return $query;
     }
 
+    /**
+     * Get inherited user groups from logged in user or simulated user
+     */
     protected function getUserGroups(): array
     {
         $feUser = $this->getFrontendUserAuthentication();

@@ -25,8 +25,12 @@ use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\ConfigurationUtility;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
+use Codappix\SearchCore\Domain\Search\Filter\InvalidSearchFilterException;
+use Codappix\SearchCore\Domain\Search\Filter\SearchFilterInterface;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class QueryFactory
 {
@@ -45,14 +49,21 @@ class QueryFactory
      */
     protected $configurationUtility;
 
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
     public function __construct(
         \TYPO3\CMS\Core\Log\LogManager $logManager,
         ConfigurationContainerInterface $configuration,
-        ConfigurationUtility $configurationUtility
+        ConfigurationUtility $configurationUtility,
+        ObjectManagerInterface $objectManager
     ) {
         $this->logger = $logManager->getLogger(__CLASS__);
         $this->configuration = $configuration;
         $this->configurationUtility = $configurationUtility;
+        $this->objectManager = $objectManager;
     }
 
     /**
@@ -231,50 +242,50 @@ class QueryFactory
 
     protected function addFilter(string $name, $value, array $config, array &$query): array
     {
-        if (!empty($config)) {
-            if ($config['type'] && $config['type'] === 'user') {
-                if (!isset($config['userFunc'])) {
-                    throw new MissingAttributeException('No userFunc configured for filter type: user', 1539876182018);
-                }
-
-                $parameters = [
-                    'config' => $config,
-                    'value' => $value,
-                    'query' => &$query,
-                ];
-                GeneralUtility::callUserFunction($config['userFunc'], $parameters, $this);
-            } else {
-                $filter = [];
-                if (isset($config['fields'])) {
-                    foreach ($config['fields'] as $elasticField => $inputField) {
-                        $filter[$elasticField] = $value[$inputField];
-                    }
-                }
-
-                if (isset($config['raw'])) {
-                    $filter = array_merge($config['raw'], $filter);
-                }
-
-                if ($config['type'] === 'range') {
-                    $query['query']['bool']['filter'][] = [
-                        'range' => [
-                            $config['field'] => $filter
-                        ]
-                    ];
-                } else {
-                    $query['query']['bool']['filter'][] = [
-                        $config['field'] => $filter
-                    ];
-                }
-            }
-        } else {
+        if (empty($config)) {
+            // Fallback on default term query when no added configuration
             $query['query']['bool']['filter'][] = [
                 'term' => [
                     $name => $value
                 ]
             ];
+            return $query;
         }
 
+        if ($config['custom'] && $config['type'] === 'custom') {
+            $customFilter = $this->objectManager->get($config['custom']);
+            if (!($customFilter instanceof SearchFilterInterface)) {
+                throw new InvalidSearchFilterException(
+                    'Custom filter (' . $config['custom'] . ') not instance of SearchFilterInterface',
+                    1539876182018
+                );
+            }
+
+            return $customFilter->add($query, $config, $value);
+        }
+
+        $filter = [];
+        if (isset($config['fields'])) {
+            foreach ($config['fields'] as $elasticField => $inputField) {
+                $filter[$elasticField] = $value[$inputField];
+            }
+        }
+
+        if (isset($config['raw'])) {
+            $filter = array_merge($config['raw'], $filter);
+        }
+
+        if ($config['type'] === 'range') {
+            $query['query']['bool']['filter'][] = [
+                'range' => [
+                    $config['field'] => $filter
+                ]
+            ];
+        } else {
+            $query['query']['bool']['filter'][] = [
+                $config['field'] => $filter
+            ];
+        }
         return $query;
     }
 

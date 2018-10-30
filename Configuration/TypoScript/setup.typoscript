@@ -47,8 +47,8 @@ plugin.tx_searchcore {
             mapping {
                 filter {
                     frontendUserAccess {
-                        type = user
-                        userFunc = Codappix\SearchCore\Hook\Filter\FrontendUserAccessFilter->generate
+                        type = custom
+                        custom = Codappix\SearchCore\Domain\Search\Filter\FrontendUserAccessFilter
                     }
                 }
             }
