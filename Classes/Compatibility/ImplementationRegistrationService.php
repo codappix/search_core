@@ -26,7 +26,6 @@ use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
-use TYPO3\CMS\Extbase\Persistence\Generic\Qom\Comparison;
 
 /**
  * Register different concrete implementations, depending on current TYPO3 version.
@@ -44,31 +43,21 @@ class ImplementationRegistrationService
                 ExtensionConfigurationInterface::class,
                 ExtensionConfiguration::class
             );
-
-            $container->registerImplementation(
-                TypoScriptServiceInterface::class,
-                TypoScriptService::class
-            );
-
-            $container->registerImplementation(
-                TcaTableServiceInterface::class,
-                TcaTableService::class
-            );
         } else if (VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) >= 8000000) {
             $container->registerImplementation(
                 ExtensionConfigurationInterface::class,
                 Version87\ExtensionConfiguration::class
             );
-
-            $container->registerImplementation(
-                TypoScriptServiceInterface::class,
-                TypoScriptService::class
-            );
-
-            $container->registerImplementation(
-                TcaTableServiceInterface::class,
-                TcaTableService::class
-            );
         }
+
+        $container->registerImplementation(
+            TypoScriptServiceInterface::class,
+            TypoScriptService::class
+        );
+
+        $container->registerImplementation(
+            TcaTableServiceInterface::class,
+            TcaTableService::class
+        );
     }
 }
