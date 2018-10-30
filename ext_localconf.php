@@ -44,7 +44,7 @@ call_user_func(
 
 
         // API does make use of object manager, therefore use GLOBALS
-        $extensionConfiguration = \Codappix\SearchCore\Bootstrap::getObjectManager()->get(\Codappix\SearchCore\Utility\ExtensionConfigurationInterface::class)->get($extensionKey);
+        $extensionConfiguration = \Codappix\SearchCore\Bootstrap::getExtensionConfiguration()->get($extensionKey);
 
         if ($extensionConfiguration === false
             || !isset($extensionConfiguration['disable']['elasticsearch'])

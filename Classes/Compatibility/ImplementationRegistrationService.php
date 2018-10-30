@@ -23,12 +23,10 @@ namespace Codappix\SearchCore\Compatibility;
 
 use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface;
-use Codappix\SearchCore\Utility\ExtensionConfiguration;
-use Codappix\SearchCore\Utility\ExtensionConfiguration87;
-use Codappix\SearchCore\Utility\ExtensionConfigurationInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
+use TYPO3\CMS\Extbase\Persistence\Generic\Qom\Comparison;
 
 /**
  * Register different concrete implementations, depending on current TYPO3 version.
@@ -59,7 +57,7 @@ class ImplementationRegistrationService
         } else if (VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) >= 8000000) {
             $container->registerImplementation(
                 ExtensionConfigurationInterface::class,
-                ExtensionConfiguration87::class
+                Version87\ExtensionConfiguration::class
             );
 
             $container->registerImplementation(
