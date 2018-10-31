@@ -3,6 +3,12 @@
 Using custom (non-typoscript) configuration
 ===========================================
 
+When you are in need of your own non-typoscript configuration, you can create your own
+Configuration Container using the TYPO3 Dependency Injection handler.
+
+Example: Configuration through LocalConfiguration.php
+-----------------------------------------------------
+
 Configure your custom ext_localconf.php::
 
     \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\Container\Container::class)
