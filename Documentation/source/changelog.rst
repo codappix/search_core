@@ -14,3 +14,4 @@ Changelog
    changelog/20180308-introduce-php70-type-hints
    changelog/20180306-120-facet-configuration
    changelog/20180926-163-allow-zero-as-typoscript-filter-value
+   changelog/20181106-170-do-not-specify-the-pluginname-in-configurationcontainer
