@@ -18,7 +18,7 @@ $EM_CONF[$_EXTKEY] = [
         ],
     ],
     'state' => 'beta',
-    'version' => '0.0.7',
+    'version' => '0.0.8',
     'author' => 'Daniel Siepmann',
     'author_email' => 'coding@daniel-siepmann.de',
 ];
