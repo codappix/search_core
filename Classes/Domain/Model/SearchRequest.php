@@ -91,6 +91,11 @@ class SearchRequest implements SearchRequestInterface
         return $this->query;
     }
 
+    /**
+     * Type hint necessary for extbase!
+     *
+     * @param array $filter
+     */
     public function setFilter(array $filter)
     {
         $filter = ArrayUtility::removeArrayEntryByValue($filter, '');
