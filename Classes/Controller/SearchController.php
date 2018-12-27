@@ -48,7 +48,7 @@ class SearchController extends ActionController
     /**
      * Allow dynamic properties in search request
      */
-    public function initializeResultsAction()
+    public function initializeSearchAction()
     {
         if (isset($this->settings['searching']['mode'])
             && $this->settings['searching']['mode'] === 'filter'
@@ -69,7 +69,7 @@ class SearchController extends ActionController
     /**
      * Display results and deliver original request and result to view.
      */
-    public function resultsAction(SearchRequest $searchRequest = null)
+    public function searchAction(SearchRequest $searchRequest = null)
     {
         $searchResult = null;
         if ($searchRequest !== null) {

@@ -46,7 +46,8 @@ call_user_func(function ($extension, $configuration) {
     TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
         'Codappix.' . $extension,
         'Search',
-        ['Search' => 'results']
+        ['Search' => 'search'],
+        ['Search' => 'search']
     );
 
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
