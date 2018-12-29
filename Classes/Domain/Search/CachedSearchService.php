@@ -26,8 +26,7 @@ use Codappix\SearchCore\Connection\SearchResultInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /**
- * Service: Cached Search
- * @package Codappix\SearchCore\Domain\Search
+ * Service to process a search request, only once per request.
  */
 class CachedSearchService implements SingletonInterface, SearchServiceInterface
 {
