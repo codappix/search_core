@@ -179,17 +179,16 @@ class Elasticsearch implements Singleton, ConnectionInterface
 
     public function deleteIndexByDocumentType(string $documentType)
     {
-        $query = Query::create([
+        $this->deleteIndexByQuery(Query::create([
             'query' => [
                 'term' => [
-                    'search_document_type' => $documentType
-                ]
-            ]
-        ]);
-        $this->deleteIndexByQuery($query);
+                    'search_document_type' => $documentType,
+                ],
+            ],
+        ]));
     }
 
-    public function deleteIndexByQuery(Query $query)
+    private function deleteIndexByQuery(Query $query)
     {
         $index = $this->connection->getClient()->getIndex($this->indexFactory->getIndexName());
         if (!$index->exists()) {
