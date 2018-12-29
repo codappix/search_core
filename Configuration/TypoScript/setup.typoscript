@@ -36,19 +36,6 @@ plugin.tx_searchcore {
                 # Default query fields (leave empty for all)
                 query =
             }
-
-            filter {
-                frontendUserAccess = search_access
-            }
-
-            mapping {
-                filter {
-                    frontendUserAccess {
-                        type = custom
-                        custom = Codappix\SearchCore\Domain\Search\Filter\FrontendUserAccessFilter
-                    }
-                }
-            }
         }
     }
 }

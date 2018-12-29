@@ -146,19 +146,6 @@ class TcaTableService implements TcaTableServiceInterface
         if (isset($record[$this->tca['ctrl']['label']]) && !isset($record['search_title'])) {
             $record['search_title'] = $record[$this->tca['ctrl']['label']];
         }
-
-        if (isset(
-            $this->tca['ctrl']['enablecolumns']['fe_group'],
-            $record[$this->tca['ctrl']['enablecolumns']['fe_group']]
-        )) {
-            $groups = GeneralUtility::intExplode(
-                ',',
-                $record[$this->tca['ctrl']['enablecolumns']['fe_group']],
-                true
-            );
-            // Always fallback on public visibility when configured
-            $record['search_access'] = !empty($groups) ? $groups : [0];
-        }
     }
 
     protected function getWhereClause(): Where

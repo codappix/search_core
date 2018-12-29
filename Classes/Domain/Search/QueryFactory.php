@@ -25,8 +25,6 @@ use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\ConfigurationUtility;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
-use Codappix\SearchCore\Domain\Search\Filter\InvalidSearchFilterException;
-use Codappix\SearchCore\Domain\Search\Filter\SearchFilterInterface;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
@@ -250,18 +248,6 @@ class QueryFactory
                 ]
             ];
             return $query;
-        }
-
-        if ($config['custom'] && $config['type'] === 'custom') {
-            $customFilter = $this->objectManager->get($config['custom']);
-            if (!($customFilter instanceof SearchFilterInterface)) {
-                throw new InvalidSearchFilterException(
-                    'Custom filter (' . $config['custom'] . ') not instance of SearchFilterInterface',
-                    1539876182018
-                );
-            }
-
-            return $customFilter->add($query, $config, $value);
         }
 
         $filter = [];
