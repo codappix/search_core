@@ -1,6 +1,6 @@
 <?php
 
-call_user_func(function ($extension, $configuration) {
+(function ($extension, $configuration) {
     if (is_string($configuration)) {
         $configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extension]);
     }
@@ -68,4 +68,4 @@ call_user_func(function ($extension, $configuration) {
             \Codappix\SearchCore\Domain\Search\CachedSearchService::class
         );
     }
-}, $_EXTKEY, $_EXTCONF);
+})($_EXTKEY, $_EXTCONF);
