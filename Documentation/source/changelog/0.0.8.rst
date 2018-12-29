@@ -1,0 +1,16 @@
+Up till v0.0.8
+==============
+
+.. toctree::
+   :maxdepth: 1
+
+   0.0.8/20180306-120-facet-configuration
+   0.0.8/20180308-131-respect-page-cache-clear
+   0.0.8/20180308-introduce-php70-type-hints
+   0.0.8/20180309-25-provide-sys-language-uid
+   0.0.8/20180315-134-make-conent-fields-configurable
+   0.0.8/20180410-148-keep-sys_language_uid
+   0.0.8/20180424-149-extract-relation-resolver-to-data-processing
+   0.0.8/20180518-75-make-index-name-configurable
+   0.0.8/20180926-163-allow-zero-as-typoscript-filter-value
+   0.0.8/20181106-170-do-not-specify-the-pluginname-in-configurationcontainer

@@ -24,11 +24,11 @@ The structure is following TYPO3 Extbase conventions. All settings are placed in
 
 Here is the example default configuration that's provided through static include:
 
-.. literalinclude:: ../../Configuration/TypoScript/constants.txt
+.. literalinclude:: ../../Configuration/TypoScript/constants.typoscript
    :language: typoscript
    :caption: Static TypoScript Constants
 
-.. literalinclude:: ../../Configuration/TypoScript/setup.txt
+.. literalinclude:: ../../Configuration/TypoScript/setup.typoscript
    :language: typoscript
    :caption: Static TypoScript Setup
 

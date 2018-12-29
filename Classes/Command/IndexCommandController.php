@@ -72,7 +72,7 @@ class IndexCommandController extends CommandController
     }
 
     /**
-     * Will delete the full index for given identifiers.
+     * Will flush the index for given identifiers from backend.
      *
      * @param string $identifier Comma separated list of identifiers.
      */
@@ -80,7 +80,7 @@ class IndexCommandController extends CommandController
     {
         $this->executeForIdentifier($identifiers, function (IndexerInterface $indexer) {
             $indexer->delete();
-            $this->outputLine('Indice ' . $indexer->getIdentifier() . ' was deleted.');
+            $this->outputLine('Indice ' . $indexer->getIdentifier() . ' was flushed.');
         });
     }
 

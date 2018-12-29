@@ -1,5 +1,5 @@
-Breaking Change "Remove CMS7 support"
-=====================================
+Breaking Change "Removed CMS7 support"
+======================================
 
 We no longer support TYPO3 CMS 7.x.
 
