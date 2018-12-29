@@ -131,7 +131,7 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
             ->willReturn('pages');
         $this->subject->expects($this->once())
             ->method('outputLine')
-            ->with('Indice pages was deleted.');
+            ->with('Indice pages was flushed.');
         $this->indexerFactory->expects($this->once())
             ->method('getIndexer')
             ->with('pages')
