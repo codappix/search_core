@@ -121,14 +121,17 @@ class SearchResult implements SearchResultInterface
         }
 
         $this->facets = [];
-        if ($this->result->hasAggregations()) {
-            foreach ($this->result->getAggregations() as $aggregationName => $aggregation) {
-                $this->facets[$aggregationName] = $this->objectManager->get(
-                    Facet::class,
-                    $aggregationName,
-                    $aggregation
-                );
-            }
+
+        if ($this->result->hasAggregations() === false) {
+            return;
+        }
+
+        foreach ($this->result->getAggregations() as $aggregationName => $aggregation) {
+            $this->facets[$aggregationName] = $this->objectManager->get(
+                Facet::class,
+                $aggregationName,
+                $aggregation
+            );
         }
     }
 
