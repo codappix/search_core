@@ -24,6 +24,7 @@ namespace Codappix\SearchCore\Connection;
 use Codappix\SearchCore\Connection\Elasticsearch\SearchResult;
 use Codappix\SearchCore\Domain\Search\QueryFactory;
 use Elastica\Query;
+use Elastica\Type;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
@@ -118,7 +119,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
     {
         $this->withType(
             $documentType,
-            function ($type) use ($documentType, $document) {
+            function (Type $type, string $documentType) use ($document) {
                 $type->addDocument($this->documentFactory->getDocument($documentType, $document));
             }
         );
@@ -129,7 +130,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         try {
             $this->withType(
                 $documentType,
-                function ($type) use ($identifier) {
+                function (Type $type, string $documentType) use ($identifier) {
                     $type->deleteById($identifier);
                 }
             );
@@ -145,7 +146,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
     {
         $this->withType(
             $documentType,
-            function ($type) use ($documentType, $document) {
+            function (Type $type, string $documentType) use ($document) {
                 $type->updateDocument($this->documentFactory->getDocument($documentType, $document));
             }
         );
@@ -155,7 +156,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
     {
         $this->withType(
             $documentType,
-            function ($type) use ($documentType, $documents) {
+            function (Type $type, string $documentType) use ($documents) {
                 $type->addDocuments($this->documentFactory->getDocuments($documentType, $documents));
             }
         );
@@ -205,23 +206,6 @@ class Elasticsearch implements Singleton, ConnectionInterface
         }
     }
 
-    /**
-     * Execute given callback with Elastica Type based on provided documentType
-     */
-    protected function withType(string $documentType, callable $callback)
-    {
-        $type = $this->getType($documentType);
-        // TODO: Check whether it's to heavy to send it so often e.g. for every single document.
-        // Perhaps add command controller to submit mapping?!
-        // Also it's not possible to change mapping without deleting index first.
-        // Mattes told about a solution.
-        // So command looks like the best way so far, except we manage mattes solution.
-        // Still then this should be done once. So perhaps singleton which tracks state and does only once?
-        $this->mappingFactory->getMapping($type, $documentType)->send();
-        $callback($type);
-        $type->getIndex()->refresh();
-    }
-
     public function search(SearchRequestInterface $searchRequest): SearchResultInterface
     {
         $this->logger->debug('Search for', [$searchRequest->getSearchTerm()]);
@@ -233,14 +217,20 @@ class Elasticsearch implements Singleton, ConnectionInterface
         return $this->objectManager->get(SearchResult::class, $searchRequest, $search->search());
     }
 
-    protected function getType($documentType): \Elastica\Type
+    /**
+     * Execute given callback with Elastica Type based on provided documentType
+     */
+    private function withType(string $documentType, callable $callback)
     {
-        return $this->typeFactory->getType(
-            $this->indexFactory->getIndex(
-                $this->connection,
-                $documentType
-            ),
-            'document'
-        );
+        $type = $this->typeFactory->getType($documentType);
+        // TODO: Check whether it's to heavy to send it so often e.g. for every single document.
+        // Perhaps add command controller to submit mapping?!
+        // Also it's not possible to change mapping without deleting index first.
+        // Mattes told about a solution.
+        // So command looks like the best way so far, except we manage mattes solution.
+        // Still then this should be done once. So perhaps singleton which tracks state and does only once?
+        $this->mappingFactory->getMapping($documentType)->send();
+        $callback($type, $documentType);
+        $type->getIndex()->refresh();
     }
 }

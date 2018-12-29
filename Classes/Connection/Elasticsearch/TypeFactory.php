@@ -21,6 +21,7 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Connection\Elasticsearch\IndexFactory;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 
 /**
@@ -31,10 +32,29 @@ use TYPO3\CMS\Core\SingletonInterface as Singleton;
 class TypeFactory implements Singleton
 {
     /**
+     * @var IndexFactory
+     */
+    protected $indexFactory;
+
+    /**
+     * @var Connection
+     */
+    private $connection;
+
+    public function __construct(
+        Connection $connection,
+        IndexFactory $indexFactory
+    ) {
+        $this->indexFactory = $indexFactory;
+        $this->connection = $connection;
+    }
+
+    /**
      * Get an index bases on TYPO3 table name.
      */
-    public function getType(\Elastica\Index $index, string $documentType): \Elastica\Type
+    public function getType(string $documentType): \Elastica\Type
     {
-        return $index->getType($documentType);
+        $index = $this->indexFactory->getIndex($this->connection, $documentType);
+        return $index->getType('document');
     }
 }
