@@ -21,6 +21,8 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Connection\FacetInterface;
+use Codappix\SearchCore\Connection\ResultItemInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
 use Codappix\SearchCore\Domain\Model\QueryResultInterfaceStub;

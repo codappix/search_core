@@ -29,7 +29,9 @@ use Codappix\SearchCore\Connection\SearchResultInterface;
  */
 interface SearchServiceInterface
 {
-
+    /**
+     * Fetches result for provided search request.
+     */
     public function search(SearchRequestInterface $searchRequest): SearchResultInterface;
 
     /**

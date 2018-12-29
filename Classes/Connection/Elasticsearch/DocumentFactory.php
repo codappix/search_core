@@ -44,8 +44,6 @@ class DocumentFactory implements Singleton
     }
 
     /**
-     * Creates document from document.
-     *
      * @throws \InvalidArgumentException If no search identifier was provided.
      */
     public function getDocument(string $documentType, array $document): \Elastica\Document
@@ -67,8 +65,6 @@ class DocumentFactory implements Singleton
     }
 
     /**
-     * Creates documents based on documents.
-     *
      * @throws \InvalidArgumentException If no search identifier was provided.
      */
     public function getDocuments(string $documentType, array $documents): array

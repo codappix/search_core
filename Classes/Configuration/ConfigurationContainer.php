@@ -26,7 +26,7 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /**
  * Container of all configurations for extension.
- * Always inject this to have a single place for configuration and parsing only once.
+ * Always inject this to have a single place for configuration.
  */
 class ConfigurationContainer implements ConfigurationContainerInterface
 {
@@ -39,6 +39,8 @@ class ConfigurationContainer implements ConfigurationContainerInterface
 
     /**
      * Inject settings via ConfigurationManager.
+     *
+     * @throws NoConfigurationException
      */
     public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
     {
