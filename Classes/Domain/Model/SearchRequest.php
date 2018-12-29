@@ -25,7 +25,7 @@ use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\FacetRequestInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
-use Codappix\SearchCore\Domain\Search\SearchService;
+use Codappix\SearchCore\Domain\Search\SearchServiceInterface;
 use Codappix\SearchCore\Utility\ArrayUtility as CustomArrayUtility;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 
@@ -69,7 +69,7 @@ class SearchRequest implements SearchRequestInterface
     protected $connection;
 
     /**
-     * @var SearchService
+     * @var SearchServiceInterface
      */
     protected $searchService;
 
@@ -137,7 +137,7 @@ class SearchRequest implements SearchRequestInterface
         $this->connection = $connection;
     }
 
-    public function setSearchService(SearchService $searchService)
+    public function setSearchService(SearchServiceInterface $searchService)
     {
         $this->searchService = $searchService;
     }
@@ -156,7 +156,7 @@ class SearchRequest implements SearchRequestInterface
                 1502197732
             );
         }
-        if (!($this->searchService instanceof SearchService)) {
+        if (!($this->searchService instanceof SearchServiceInterface)) {
             throw new \InvalidArgumentException(
                 'SearchService was not set before, therefore execute can not work. Use `setSearchService` before.',
                 1520325175
