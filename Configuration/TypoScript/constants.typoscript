@@ -1,10 +1,4 @@
 plugin.tx_searchcore {
-    view {
-        templateRootPath = EXT:search_core/Resources/Private/Templates
-        partialRootPath = EXT:search_core/Resources/Private/Partials
-        layoutRootPath = EXT:search_core/Resources/Private/Layouts
-    }
-
     settings {
         connections {
             elasticsearch {

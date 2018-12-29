@@ -1,13 +1,5 @@
 plugin.tx_searchcore {
-    view {
-        templateRootPaths.10 = {$plugin.tx_searchcore.view.templateRootPath}
-        partialRootPaths.10 = {$plugin.tx_searchcore.view.partialRootPath}
-        layoutRootPaths.10 = {$plugin.tx_searchcore.view.layoutRootPath}
-    }
-
     settings {
-        searchOverview = {$plugin.tx_searchcore.settings.searchOverview}
-
         connections {
             elasticsearch {
                 host = {$plugin.tx_searchcore.settings.connections.elasticsearch.host}
