@@ -30,6 +30,8 @@ use Codappix\SearchCore\DataProcessing\Service as DataProcessorService;
 use Codappix\SearchCore\Domain\Model\FacetRequest;
 use Codappix\SearchCore\Domain\Model\SearchResult;
 use Codappix\SearchCore\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 /**
@@ -58,21 +60,29 @@ class SearchService implements SearchServiceInterface
     protected $dataProcessorService;
 
     /**
+     * @var FrontendInterface
+     */
+    protected $cache;
+
+    /**
      * @param ConnectionInterface $connection
      * @param ConfigurationContainerInterface $configuration
      * @param ObjectManagerInterface $objectManager
      * @param DataProcessorService $dataProcessorService
+     * @param CacheManager $cacheManager
      */
     public function __construct(
         ConnectionInterface $connection,
         ConfigurationContainerInterface $configuration,
         ObjectManagerInterface $objectManager,
-        DataProcessorService $dataProcessorService
+        DataProcessorService $dataProcessorService,
+        CacheManager $cacheManager
     ) {
         $this->connection = $connection;
         $this->configuration = $configuration;
         $this->objectManager = $objectManager;
         $this->dataProcessorService = $dataProcessorService;
+        $this->cache = $cacheManager->getCache('search_core');
     }
 
     public function search(SearchRequestInterface $searchRequest): SearchResultInterface
@@ -85,7 +95,15 @@ class SearchService implements SearchServiceInterface
         $searchRequest->setConnection($this->connection);
         $searchRequest->setSearchService($this);
 
-        return $this->processResult($this->connection->search($searchRequest));
+        $identifier = sha1('search' . serialize($searchRequest));
+        if ($this->cache->has($identifier)) {
+            return $this->cache->get($identifier);
+        }
+
+        $result = $this->processResult($this->connection->search($searchRequest));
+        $this->cache->set($identifier, $result);
+
+        return $result;
     }
 
     /**

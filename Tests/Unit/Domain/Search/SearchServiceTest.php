@@ -30,6 +30,8 @@ use Codappix\SearchCore\Domain\Model\SearchRequest;
 use Codappix\SearchCore\Domain\Model\SearchResult;
 use Codappix\SearchCore\Domain\Search\SearchService;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 class SearchServiceTest extends AbstractUnitTestCase
@@ -68,6 +70,13 @@ class SearchServiceTest extends AbstractUnitTestCase
     {
         parent::setUp();
 
+        $cacheMock = $this->getMockBuilder(FrontendInterface::class)->getMock();
+        $cacheManagerMock = $this->getMockBuilder(CacheManager::class)->getMock();
+        $cacheManagerMock->expects($this->any())
+            ->method('getCache')
+            ->with('search_core')
+            ->willReturn($cacheMock);
+
         $this->result = $this->getMockBuilder(SearchResultInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -88,7 +97,8 @@ class SearchServiceTest extends AbstractUnitTestCase
             $this->connection,
             $this->configuration,
             $this->objectManager,
-            $this->dataProcessorService
+            $this->dataProcessorService,
+            $cacheManagerMock
         );
     }
 

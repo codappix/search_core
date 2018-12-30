@@ -189,6 +189,20 @@ class SearchRequest implements SearchRequestInterface
     }
 
     /**
+     * Used, e.g. by caching to determine identifier.
+     */
+    public function __sleep()
+    {
+        return [
+            'query',
+            'filter',
+            'facets',
+            'offset',
+            'limit',
+        ];
+    }
+
+    /**
      * @throws \BadMethodCallException
      */
     public function getSource()

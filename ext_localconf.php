@@ -54,6 +54,14 @@
         '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:' . $extension . '/Configuration/TSconfig/Page/Mod/Wizards/NewContentElement.tsconfig">'
     );
 
+    if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['search_core'])) {
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['search_core'] = [];
+    }
+    if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['search_core']['backend'])) {
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['search_core']['backend'] =
+            \TYPO3\CMS\Core\Cache\Backend\NullBackend::class;
+    }
+
     if (empty($configuration) ||
         (isset($configuration['disable.']['elasticsearch']) &&
             filter_var($configuration['disable.']['elasticsearch'], FILTER_VALIDATE_BOOLEAN) === false)

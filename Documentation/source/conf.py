@@ -304,6 +304,7 @@ texinfo_documents = [
 intersphinx_mapping = {
     't3tcaref': ('https://docs.typo3.org/typo3cms/TCAReference/', None),
     't3tsref': ('https://docs.typo3.org/typo3cms/TyposcriptReference/', None),
+    't3explained': ('https://docs.typo3.org/typo3cms/CoreApiReference/', None),
 }
 extlinks = {
     'project': ('https://github.com/Codappix/search_core/projects/%s', 'Github project: '),
