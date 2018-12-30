@@ -54,7 +54,7 @@ class IndexCommandController extends CommandController
     {
         $this->executeForIdentifier($identifiers, function (IndexerInterface $indexer) {
             $indexer->indexAllDocuments();
-            $this->outputLine('Documents in indice ' . $indexer->getIdentifier() . ' were indexed.');
+            $this->outputLine('Documents in index ' . $indexer->getIdentifier() . ' were indexed.');
         });
     }
 
@@ -67,7 +67,7 @@ class IndexCommandController extends CommandController
     {
         $this->executeForIdentifier($identifiers, function (IndexerInterface $indexer) {
             $indexer->deleteDocuments();
-            $this->outputLine('Documents in indice ' . $indexer->getIdentifier() . ' were deleted.');
+            $this->outputLine('Documents in index ' . $indexer->getIdentifier() . ' were deleted.');
         });
     }
 

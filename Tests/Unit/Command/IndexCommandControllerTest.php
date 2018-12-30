@@ -85,7 +85,7 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
             ->method('quit');
         $this->subject->expects($this->once())
             ->method('outputLine')
-            ->with('Documents in indice allowedTable were indexed.');
+            ->with('Documents in index allowedTable were indexed.');
         $this->indexerFactory->expects($this->once())
             ->method('getIndexer')
             ->with('allowedTable')
@@ -107,7 +107,7 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
             ->willReturn('allowedTable');
         $this->subject->expects($this->once())
             ->method('outputLine')
-            ->with('Documents in indice allowedTable were deleted.');
+            ->with('Documents in index allowedTable were deleted.');
         $this->indexerFactory->expects($this->once())
             ->method('getIndexer')
             ->with('allowedTable')
@@ -131,7 +131,7 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
             ->willReturn('pages');
         $this->subject->expects($this->once())
             ->method('outputLine')
-            ->with('Indice pages was flushed.');
+            ->with('Index pages was deleted.');
         $this->indexerFactory->expects($this->once())
             ->method('getIndexer')
             ->with('pages')
@@ -177,8 +177,8 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
         $this->subject->expects($this->exactly(2))
             ->method('outputLine')
             ->withConsecutive(
-                ['Documents in indice allowedTable were indexed.'],
-                ['Documents in indice anotherTable were indexed.']
+                ['Documents in index allowedTable were indexed.'],
+                ['Documents in index anotherTable were indexed.']
             );
         $this->indexerFactory->expects($this->exactly(2))
             ->method('getIndexer')
@@ -203,7 +203,7 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
             ->method('quit');
         $this->subject->expects($this->once())
             ->method('outputLine')
-            ->with('Documents in indice allowedTable were indexed.');
+            ->with('Documents in index allowedTable were indexed.');
         $this->indexerFactory->expects($this->once())
             ->method('getIndexer')
             ->with('allowedTable')
@@ -229,7 +229,7 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
             ->method('outputLine')
             ->withConsecutive(
                 ['No indexer found for: nonExisting.'],
-                ['Documents in indice allowedTable were indexed.']
+                ['Documents in index allowedTable were indexed.']
             );
         $this->indexerFactory->expects($this->exactly(2))
             ->method('getIndexer')

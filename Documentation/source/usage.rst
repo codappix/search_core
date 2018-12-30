@@ -33,7 +33,7 @@ You can trigger deletion for indexes from CLI::
 This will delete the index for the table ``pages``. Deletion means removing all
 documents from the index.
 
-Multiple indices can be called by providing a comma separated list of identifiers as
+Multiple indexes can be called by providing a comma separated list of identifiers as
 a single argument. Spaces before and after commas are ignored.
 
 .. _usage_manual_flush:
@@ -49,7 +49,7 @@ You can trigger flush for indexes from CLI::
 This will flush the index for the table ``pages``. Flush means removing the index
 from backend.
 
-Multiple indices can be called by providing a comma separated list of identifiers as
+Multiple indexes can be called by providing a comma separated list of identifiers as
 a single argument. Spaces before and after commas are ignored.
 
 .. _usage_auto_indexing:
