@@ -26,8 +26,7 @@ use Codappix\SearchCore\Connection\FacetRequestInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
 use Codappix\SearchCore\Domain\Search\SearchServiceInterface;
-use Codappix\SearchCore\Utility\ArrayUtility as CustomArrayUtility;
-use TYPO3\CMS\Core\Utility\ArrayUtility;
+use Codappix\SearchCore\Utility\ArrayUtility;
 
 /**
  * Represents a search request used to process an actual search.
@@ -99,7 +98,7 @@ class SearchRequest implements SearchRequestInterface
     public function setFilter(array $filter)
     {
         $filter = ArrayUtility::removeArrayEntryByValue($filter, '');
-        $this->filter = CustomArrayUtility::removeEmptyElementsRecursively($filter);
+        $this->filter = ArrayUtility::removeEmptyElementsRecursively($filter);
     }
 
     public function hasFilter(): bool

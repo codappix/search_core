@@ -29,7 +29,7 @@ use Codappix\SearchCore\Connection\SearchResultInterface;
 use Codappix\SearchCore\DataProcessing\Service as DataProcessorService;
 use Codappix\SearchCore\Domain\Model\FacetRequest;
 use Codappix\SearchCore\Domain\Model\SearchResult;
-use TYPO3\CMS\Core\Utility\ArrayUtility;
+use Codappix\SearchCore\Utility\ArrayUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 /**

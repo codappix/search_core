@@ -21,7 +21,7 @@ namespace Codappix\SearchCore\Configuration;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Core\Utility\ArrayUtility;
+use Codappix\SearchCore\Utility\ArrayUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /**

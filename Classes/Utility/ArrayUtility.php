@@ -21,7 +21,9 @@ namespace Codappix\SearchCore\Utility;
  * 02110-1301, USA.
  */
 
-class ArrayUtility
+use TYPO3\CMS\Core\Utility\ArrayUtility as Typo3ArrayUtility;
+
+class ArrayUtility extends Typo3ArrayUtility
 {
     /**
      * Recursively removes empty array elements.

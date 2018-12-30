@@ -25,7 +25,7 @@ SearchCoreConfigurationContainer.php::
 
     use Codappix\SearchCore\Configuration\ConfigurationContainer;
     use Codappix\SearchCore\Configuration\NoConfigurationException;
-    use TYPO3\CMS\Core\Utility\ArrayUtility;
+    use Codappix\SearchCore\Utility\ArrayUtility;
     use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
     /**
