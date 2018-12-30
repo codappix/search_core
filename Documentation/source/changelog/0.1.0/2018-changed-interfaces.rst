@@ -15,7 +15,7 @@ Some interfaces and abstract classes have been adjusted:
 
 ``Codappix\SearchCore\Domain\Index\AbstractIndexer``:
 
-   * New method ``abstract public function getDocumentIdentifier($identifier): string;``
+   * New method ``abstract protected function getDocumentIdentifier($identifier): string;``
 
 ``Codappix\SearchCore\Connection\SearchRequestInterface``:
 

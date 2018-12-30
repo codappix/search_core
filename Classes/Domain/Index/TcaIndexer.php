@@ -89,7 +89,7 @@ class TcaIndexer extends AbstractIndexer
         return $this->tcaTableService->getTableName();
     }
 
-    public function getDocumentIdentifier($identifier): string
+    protected function getDocumentIdentifier($identifier): string
     {
         return $this->getDocumentName() . '-' . $identifier;
     }

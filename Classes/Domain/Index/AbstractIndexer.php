@@ -208,5 +208,5 @@ abstract class AbstractIndexer implements IndexerInterface
 
     abstract protected function getDocumentName(): string;
 
-    abstract public function getDocumentIdentifier($identifier): string;
+    abstract protected function getDocumentIdentifier($identifier): string;
 }
