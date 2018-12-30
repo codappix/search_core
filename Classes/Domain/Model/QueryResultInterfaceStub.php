@@ -45,9 +45,6 @@ trait QueryResultInterfaceStub
         throw new \BadMethodCallException('Method is not implemented yet.', 1502195135);
     }
 
-    /**
-     * @throws \BadMethodCallException
-     */
     public function offsetExists($offset)
     {
         // Return false to allow Fluid to use appropriate getter methods.
