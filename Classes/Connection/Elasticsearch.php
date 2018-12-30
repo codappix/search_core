@@ -142,6 +142,29 @@ class Elasticsearch implements Singleton, ConnectionInterface
         }
     }
 
+    public function deleteAllDocuments(string $documentType)
+    {
+        $this->deleteDocumentsByQuery($documentType, Query::create([
+            'query' => [
+                'term' => [
+                    'search_document_type' => $documentType,
+                ],
+            ],
+        ]));
+    }
+
+    public function deleteIndex(string $documentType)
+    {
+        try {
+            $this->indexFactory->getIndex($this->connection, $documentType)->delete();
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->notice(
+                'Index did not exist, therefore was not deleted.',
+                [$documentType, $e]
+            );
+        }
+    }
+
     public function updateDocument(string $documentType, array $document)
     {
         $this->withType(
@@ -160,49 +183,6 @@ class Elasticsearch implements Singleton, ConnectionInterface
                 $type->addDocuments($this->documentFactory->getDocuments($documentType, $documents));
             }
         );
-    }
-
-    public function deleteIndex()
-    {
-        $index = $this->connection->getClient()->getIndex($this->indexFactory->getIndexName());
-
-        if (!$index->exists()) {
-            $this->logger->notice(
-                'Index did not exist, therefore was not deleted.',
-                [$this->indexFactory->getIndexName()]
-            );
-            return;
-        }
-
-        $index->delete();
-    }
-
-    public function deleteIndexByDocumentType(string $documentType)
-    {
-        $this->deleteIndexByQuery(Query::create([
-            'query' => [
-                'term' => [
-                    'search_document_type' => $documentType,
-                ],
-            ],
-        ]));
-    }
-
-    private function deleteIndexByQuery(Query $query)
-    {
-        $index = $this->connection->getClient()->getIndex($this->indexFactory->getIndexName());
-        if (!$index->exists()) {
-            $this->logger->notice(
-                'Index did not exist, therefore items can not be deleted by query.',
-                [$this->indexFactory->getIndexName(), $query->getQuery()]
-            );
-            return;
-        }
-        $response = $index->deleteByQuery($query);
-        if ($response->getData()['deleted'] > 0) {
-            // Refresh index when delete query is invoked
-            $index->refresh();
-        }
     }
 
     public function search(SearchRequestInterface $searchRequest): SearchResultInterface
@@ -231,5 +211,23 @@ class Elasticsearch implements Singleton, ConnectionInterface
         $this->mappingFactory->getMapping($documentType)->send();
         $callback($type, $documentType);
         $type->getIndex()->refresh();
+    }
+
+    private function deleteDocumentsByQuery(string $documentType, Query $query)
+    {
+        try {
+            $index = $this->indexFactory->getIndex($this->connection, $documentType);
+            $response = $index->deleteByQuery($query);
+
+            if ($response->getData()['deleted'] > 0) {
+                // Refresh index when delete query is invoked
+                $index->refresh();
+            }
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->notice(
+                'Index did not exist, therefore items can not be deleted by query.',
+                [$documentType, $query->getQuery()]
+            );
+        }
     }
 }

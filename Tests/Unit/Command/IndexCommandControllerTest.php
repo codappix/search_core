@@ -97,7 +97,7 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
     /**
      * @test
      */
-    public function deletionIsPossible()
+    public function deletionOfDocumentsIsPossible()
     {
         $indexerMock = $this->getMockBuilder(TcaIndexer::class)
             ->disableOriginalConstructor()
@@ -114,14 +114,14 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
             ->will($this->returnValue($indexerMock));
 
         $indexerMock->expects($this->once())
-            ->method('deleteDocuments');
-        $this->subject->deleteCommand('allowedTable');
+            ->method('deleteAllDocuments');
+        $this->subject->deleteDocumentsCommand('allowedTable');
     }
 
     /**
      * @test
      */
-    public function flushIsPossible()
+    public function deletionOfIndexIsPossible()
     {
         $indexerMock = $this->getMockBuilder(TcaIndexer::class)
             ->disableOriginalConstructor()
@@ -139,7 +139,7 @@ class IndexCommandControllerTest extends AbstractUnitTestCase
 
         $indexerMock->expects($this->once())
             ->method('delete');
-        $this->subject->flushCommand('pages');
+        $this->subject->deleteCommand('pages');
     }
 
     /**

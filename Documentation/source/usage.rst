@@ -36,18 +36,17 @@ documents from the index.
 Multiple indexes can be called by providing a comma separated list of identifiers as
 a single argument. Spaces before and after commas are ignored.
 
-.. _usage_manual_flush:
+.. _usage_manual_delete_all_documents:
 
-Manual flush
-------------
+Manual delete all documents
+---------------------------
 
-You can trigger flush for indexes from CLI::
+You can trigger deletion of all documents for indexes from CLI::
 
-    ./typo3/cli_dispatch.phpsh extbase index:flush --identifiers 'pages'
-    ./bin/typo3cms index:flush --identifiers 'pages'
+    ./typo3/cli_dispatch.phpsh extbase index:deletedocuments --identifiers 'pages'
+    ./bin/typo3cms index:deletedocuments --identifiers 'pages'
 
-This will flush the index for the table ``pages``. Flush means removing the index
-from backend.
+This will delete all documents within the index for the table ``pages``.
 
 Multiple indexes can be called by providing a comma separated list of identifiers as
 a single argument. Spaces before and after commas are ignored.

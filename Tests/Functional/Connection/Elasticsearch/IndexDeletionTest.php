@@ -89,14 +89,12 @@ class IndexDeletionTest extends AbstractFunctionalTestCase
         $response = $this->client->request('typo3content/_search?q=*:*');
         $this->assertSame($response->getData()['hits']['total'], 5, 'Not exactly 5 documents are in index.');
 
-        $contentIndexer->deleteDocuments();
+        $contentIndexer->deleteAllDocuments();
         $response = $this->client->request('typo3content/_search?q=*:*');
         $this->assertSame($response->getData()['hits']['total'], 2, 'Not exactly 2 documents are in index.');
 
-        $pageIndexer->deleteDocuments();
+        $pageIndexer->deleteAllDocuments();
         $response = $this->client->request('typo3content/_search?q=*:*');
         $this->assertSame($response->getData()['hits']['total'], 0, 'Index should be empty.');
-
-        $index->delete();
     }
 }

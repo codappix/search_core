@@ -42,9 +42,9 @@ interface IndexerInterface
     public function delete();
 
     /**
-     * Delete the whole index.
+     * Delete all documents from index.
      */
-    public function deleteDocuments();
+    public function deleteAllDocuments();
 
     /**
      * Receives the identifier of the indexer itself.

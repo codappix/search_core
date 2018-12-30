@@ -63,24 +63,24 @@ class IndexCommandController extends CommandController
      *
      * @param string $identifier Comma separated list of identifiers.
      */
-    public function deleteCommand(string $identifiers)
+    public function deleteDocumentsCommand(string $identifiers)
     {
         $this->executeForIdentifier($identifiers, function (IndexerInterface $indexer) {
-            $indexer->deleteDocuments();
+            $indexer->deleteAllDocuments();
             $this->outputLine('Documents in index ' . $indexer->getIdentifier() . ' were deleted.');
         });
     }
 
     /**
-     * Will flush the index for given identifiers from backend.
+     * Will delete the index for given identifiers.
      *
      * @param string $identifier Comma separated list of identifiers.
      */
-    public function flushCommand(string $identifiers = 'pages')
+    public function deleteCommand(string $identifiers = 'pages')
     {
         $this->executeForIdentifier($identifiers, function (IndexerInterface $indexer) {
             $indexer->delete();
-            $this->outputLine('Indice ' . $indexer->getIdentifier() . ' was flushed.');
+            $this->outputLine('Index ' . $indexer->getIdentifier() . ' was deleted.');
         });
     }
 

@@ -51,17 +51,17 @@ interface ConnectionInterface
     public function deleteDocument(string $documentType, string $identifier);
 
     /**
-     * Search by given request and return result.
+     * Will all documents of certain kind / in certain index.
      */
-    public function search(SearchRequestInterface $searchRequest): SearchResultInterface;
-
-    /**
-     * Will delete the index / db of defined document type.
-     */
-    public function deleteIndexByDocumentType(string $documentType);
+    public function deleteAllDocuments(string $documentType);
 
     /**
      * Will delete the whole index / db.
      */
-    public function deleteIndex();
+    public function deleteIndex(string $documentType);
+
+    /**
+     * Search by given request and return result.
+     */
+    public function search(SearchRequestInterface $searchRequest): SearchResultInterface;
 }

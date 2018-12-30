@@ -8,7 +8,7 @@ v0.1.0
    0.1.0/2018-changed-interfaces
    0.1.0/2018-elasticsearch-upgrade
    0.1.0/2018-search-service-interface
-   0.1.0/20181027-added-flush-command
+   0.1.0/20181027-added-delete-all-documents-command
    0.1.0/20181027-allow-multiple-identifier-on-cli
    0.1.0/20181027-remove-cms7-support
    0.1.0/20181028-fluid-templating-list-items

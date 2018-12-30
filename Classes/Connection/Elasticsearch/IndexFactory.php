@@ -70,18 +70,31 @@ class IndexFactory implements Singleton
     }
 
     /**
-     * Get an index based on TYPO3 table name.
+     * @throws \InvalidArgumentException If index does not exist.
      */
     public function getIndex(Connection $connection, string $documentType): \Elastica\Index
     {
         $index = $connection->getClient()->getIndex($this->getIndexName());
 
         if ($index->exists() === false) {
-            $config = $this->getConfigurationFor($documentType);
-            $this->logger->debug(sprintf('Create index %s.', $documentType), [$documentType, $config]);
-            $index->create($config);
-            $this->logger->debug(sprintf('Created index %s.', $documentType), [$documentType]);
+            throw new \InvalidArgumentException('The requested index does not exist.', 1546173102);
         }
+
+        return $index;
+    }
+
+    public function createIndex(Connection $connection, string $documentType): \Elastica\Index
+    {
+        $index = $connection->getClient()->getIndex($this->getIndexName());
+
+        if ($index->exists() === true) {
+            return $index;
+        }
+
+        $config = $this->getConfigurationFor($documentType);
+        $this->logger->debug(sprintf('Create index %s.', $documentType), [$documentType, $config]);
+        $index->create($config);
+        $this->logger->debug(sprintf('Created index %s.', $documentType), [$documentType]);
 
         return $index;
     }

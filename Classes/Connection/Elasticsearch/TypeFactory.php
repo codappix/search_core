@@ -49,12 +49,9 @@ class TypeFactory implements Singleton
         $this->connection = $connection;
     }
 
-    /**
-     * Get an index bases on TYPO3 table name.
-     */
     public function getType(string $documentType): \Elastica\Type
     {
-        $index = $this->indexFactory->getIndex($this->connection, $documentType);
+        $index = $this->indexFactory->createIndex($this->connection, $documentType);
         return $index->getType('document');
     }
 }
