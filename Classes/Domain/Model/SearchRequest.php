@@ -24,7 +24,6 @@ namespace Codappix\SearchCore\Domain\Model;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\FacetRequestInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
-use Codappix\SearchCore\Connection\SearchResultInterface;
 use Codappix\SearchCore\Domain\Search\SearchServiceInterface;
 use Codappix\SearchCore\Utility\ArrayUtility;
 

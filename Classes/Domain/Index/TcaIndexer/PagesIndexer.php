@@ -26,19 +26,12 @@ use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Domain\Index\TcaIndexer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 /**
  * Specific indexer for Pages, will basically add content of page.
  */
 class PagesIndexer extends TcaIndexer
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
     /**
      * @var TcaTableServiceInterface
      */
@@ -54,12 +47,10 @@ class PagesIndexer extends TcaIndexer
         TcaTableServiceInterface $tcaTableService,
         TcaTableServiceInterface $contentTableService,
         ConnectionInterface $connection,
-        ConfigurationContainerInterface $configuration,
-        ObjectManagerInterface $objectManager
+        ConfigurationContainerInterface $configuration
     ) {
         parent::__construct($tcaTableService, $connection, $configuration);
         $this->contentTableService = $contentTableService;
-        $this->objectManager = $objectManager;
     }
 
     protected function prepareRecord(array &$record)
