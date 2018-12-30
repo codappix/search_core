@@ -58,14 +58,12 @@
         (isset($configuration['disable.']['elasticsearch']) &&
             filter_var($configuration['disable.']['elasticsearch'], FILTER_VALIDATE_BOOLEAN) === false)
     ) {
-        $container = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\Container\Container::class);
+        $container = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+            \TYPO3\CMS\Extbase\Object\Container\Container::class
+        );
         $container->registerImplementation(
             \Codappix\SearchCore\Connection\ConnectionInterface::class,
             \Codappix\SearchCore\Connection\Elasticsearch::class
-        );
-        $container->registerImplementation(
-            \Codappix\SearchCore\Domain\Search\SearchServiceInterface::class,
-            \Codappix\SearchCore\Domain\Search\CachedSearchService::class
         );
     }
 })($_EXTKEY, $_EXTCONF);

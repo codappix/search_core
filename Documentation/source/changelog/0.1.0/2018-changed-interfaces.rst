@@ -25,8 +25,8 @@ Some interfaces and abstract classes have been adjusted:
 Also some exceptions have changed:
 
 * ``Codappix\SearchCore\Connection\Elasticsearch\DocumentFactory::getDocument()`` now
-throws an ``\InvalidArgumentException`` instead of ``\Exception``, if no
-``search_identifier`` was provided.
+  throws an ``\InvalidArgumentException`` instead of ``\Exception``, if no
+  ``search_identifier`` was provided.
 
 * ``Codappix\SearchCore\Connection\Elasticsearch\IndexFactory::getIndex()`` now
   throws an ``\InvalidArgumentException`` if the index does not exist. Leaving
