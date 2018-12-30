@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Functional\Connection\Elasticsearch;
 
 /*
@@ -28,11 +29,14 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
  */
 class IndexTcaTableTest extends AbstractFunctionalTestCase
 {
+    /**
+     * @return array
+     */
     protected function getDataSets()
     {
         return array_merge(
             parent::getDataSets(),
-            ['Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml']
+            ['EXT:search_core/Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml']
         );
     }
 
@@ -44,8 +48,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
             ->getIndexer('tt_content')
-            ->indexAllDocuments()
-            ;
+            ->indexAllDocuments();
 
         $response = $this->client->request('typo3content/_search?q=*:*');
 
@@ -53,7 +56,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
         $this->assertSame($response->getData()['hits']['total'], 3, 'Not exactly 3 documents were indexed.');
         $this->assertSame(
             'indexed content element',
-            $response->getData()['hits']['hits'][2]['_source']['header'],
+            $response->getData()['hits']['hits'][0]['_source']['header'],
             'Record was not indexed.'
         );
     }
@@ -66,8 +69,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
             ->getIndexer('tt_content')
-            ->indexDocument(6)
-            ;
+            ->indexDocument(6);
 
         $response = $this->client->request('typo3content/_search?q=*:*');
 
@@ -89,8 +91,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
     {
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
-            ->getIndexer('non_existing_table')
-            ;
+            ->getIndexer('non_existing_table');
     }
 
     /**
@@ -101,8 +102,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
     {
         $indexer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
-            ->getIndexer('tt_content')
-            ;
+            ->getIndexer('tt_content');
 
         $indexer->indexAllDocuments();
 
@@ -124,13 +124,12 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
             parent::getTypoScriptFilesForFrontendRootPage(),
             ['EXT:search_core/Tests/Functional/Fixtures/Indexing/UserWhereClause.ts']
         ));
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/UserWhereClause.xml');
+        $this->importDataSet('EXT:search_core/Tests/Functional/Fixtures/Indexing/UserWhereClause.xml');
 
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
             ->getIndexer('tt_content')
-            ->indexAllDocuments()
-            ;
+            ->indexAllDocuments();
 
         $response = $this->client->request('typo3content/_search?q=*:*');
 
@@ -157,13 +156,12 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
      */
     public function resolvesRelations()
     {
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/ResolveRelations.xml');
+        $this->importDataSet('EXT:search_core/Tests/Functional/Fixtures/Indexing/ResolveRelations.xml');
 
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
             ->getIndexer('tt_content')
-            ->indexAllDocuments()
-            ;
+            ->indexAllDocuments();
 
         $response = $this->client->request('typo3content/_search?q=*:*');
         $this->assertTrue($response->isOk(), 'Elastica did not answer with ok code.');
@@ -171,11 +169,13 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
 
         $response = $this->client->request('typo3content/_search?q=uid:11');
         $this->assertArraySubset(
-            ['_source' => [
-                'uid' => '11',
-                'CType' => 'Header', // Testing items
-                'categories' => ['Category 2', 'Category 1'], // Testing mm
-            ]],
+            [
+                '_source' => [
+                    'uid' => '11',
+                    'CType' => 'Header', // Testing items
+                    'categories' => ['Category 2', 'Category 1'], // Testing mm
+                ]
+            ],
             $response->getData()['hits']['hits'][0],
             false,
             'Record was not indexed with resolved category relations to multiple values.'
@@ -183,11 +183,13 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
 
         $response = $this->client->request('typo3content/_search?q=uid:12');
         $this->assertArraySubset(
-            ['_source' => [
-                'uid' => '12',
-                'CType' => 'Header',
-                'categories' => ['Category 2'],
-            ]],
+            [
+                '_source' => [
+                    'uid' => '12',
+                    'CType' => 'Header',
+                    'categories' => ['Category 2'],
+                ]
+            ],
             $response->getData()['hits']['hits'][0],
             false,
             'Record was not indexed with resolved category relations to a single value.'
@@ -195,10 +197,12 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
 
         $response = $this->client->request('typo3content/_search?q=uid:6');
         $this->assertArraySubset(
-            ['_source' => [
-                'uid' => '6',
-                'categories' => null,
-            ]],
+            [
+                '_source' => [
+                    'uid' => '6',
+                    'categories' => null,
+                ]
+            ],
             $response->getData()['hits']['hits'][0],
             false,
             'Record was indexed with resolved category relation, but should not have any.'
@@ -213,8 +217,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
             ->getIndexer('tt_content')
-            ->indexAllDocuments()
-            ;
+            ->indexAllDocuments();
 
         $response = $this->client->request('typo3content/_search?q=*:*');
         $this->assertSame($response->getData()['hits']['total'], 3, 'Not exactly 3 documents were indexed.');
@@ -234,8 +237,7 @@ class IndexTcaTableTest extends AbstractFunctionalTestCase
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
             ->getIndexer('tt_content')
-            ->indexDocument(10)
-            ;
+            ->indexDocument(10);
 
         $response = $this->client->request('typo3content/_search?q=*:*');
         $this->assertSame($response->getData()['hits']['total'], 2, 'Not exactly 2 document is in index.');

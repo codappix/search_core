@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 /*
@@ -43,14 +44,14 @@ class DocumentFactory implements Singleton
     }
 
     /**
-     * Creates document from document.
+     * @throws \InvalidArgumentException If no search identifier was provided.
      */
-    public function getDocument(string $documentType, array $document) : \Elastica\Document
+    public function getDocument(string $documentType, array $document): \Elastica\Document
     {
         // TODO: Use DocumentType for further configuration.
 
         if (!isset($document['search_identifier'])) {
-             throw new \Exception('No search_identifier provided for document.', 1481194385);
+            throw new \InvalidArgumentException('No search_identifier provided for document.', 1481194385);
         }
 
         $identifier = $document['search_identifier'];
@@ -64,9 +65,9 @@ class DocumentFactory implements Singleton
     }
 
     /**
-     * Creates documents based on documents.
+     * @throws \InvalidArgumentException If no search identifier was provided.
      */
-    public function getDocuments(string $documentType, array $documents) : array
+    public function getDocuments(string $documentType, array $documents): array
     {
         foreach ($documents as &$document) {
             $document = $this->getDocument($documentType, $document);

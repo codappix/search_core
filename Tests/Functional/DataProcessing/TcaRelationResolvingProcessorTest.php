@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Functional\DataProcessing;
 
 /*
@@ -33,7 +34,9 @@ class TcaRelationResolvingProcessorTest extends AbstractFunctionalTestCase
      */
     public function resolveInlineRelation()
     {
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/TcaIndexer/RelationResolver/InlineRelation.xml');
+        $this->importDataSet(
+            'EXT:search_core/Tests/Functional/Fixtures/Indexing/TcaIndexer/RelationResolver/InlineRelation.xml'
+        );
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $table = 'sys_file';
 
@@ -55,7 +58,9 @@ class TcaRelationResolvingProcessorTest extends AbstractFunctionalTestCase
      */
     public function resolveStaticSelectItems()
     {
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/TcaIndexer/RelationResolver/StaticSelectItems.xml');
+        $this->importDataSet(
+            'EXT:search_core/Tests/Functional/Fixtures/Indexing/TcaIndexer/RelationResolver/StaticSelectItems.xml'
+        );
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $table = 'tt_content';
 
@@ -74,7 +79,9 @@ class TcaRelationResolvingProcessorTest extends AbstractFunctionalTestCase
      */
     public function resolveForeignDb()
     {
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/TcaIndexer/RelationResolver/ForeignDb.xml');
+        $this->importDataSet(
+            'EXT:search_core/Tests/Functional/Fixtures/Indexing/TcaIndexer/RelationResolver/ForeignDb.xml'
+        );
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $table = 'tt_content';
 
@@ -96,7 +103,9 @@ class TcaRelationResolvingProcessorTest extends AbstractFunctionalTestCase
      */
     public function resolveForeignMmSelect()
     {
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/TcaIndexer/RelationResolver/ForeignMmSelect.xml');
+        $this->importDataSet(
+            'EXT:search_core/Tests/Functional/Fixtures/Indexing/TcaIndexer/RelationResolver/ForeignMmSelect.xml'
+        );
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $table = 'tt_content';
 

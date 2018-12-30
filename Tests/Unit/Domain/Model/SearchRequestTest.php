@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Domain\Model;
 
 /*
@@ -23,7 +24,7 @@ namespace Codappix\SearchCore\Tests\Unit\Domain\Model;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
 use Codappix\SearchCore\Domain\Model\SearchRequest;
-use Codappix\SearchCore\Domain\Search\SearchService;
+use Codappix\SearchCore\Domain\Search\SearchServiceInterface;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
 
 class SearchRequestTest extends AbstractUnitTestCase
@@ -31,6 +32,7 @@ class SearchRequestTest extends AbstractUnitTestCase
     /**
      * @test
      * @dataProvider possibleEmptyFilter
+     * @param array $filter
      */
     public function emptyFilterWillNotBeSet(array $filter)
     {
@@ -44,6 +46,10 @@ class SearchRequestTest extends AbstractUnitTestCase
         );
     }
 
+    /**
+     * Data provider for emptyFilterWillNotBeSet()
+     * @return array
+     */
     public function possibleEmptyFilter()
     {
         return [
@@ -99,7 +105,7 @@ class SearchRequestTest extends AbstractUnitTestCase
     {
         $subject = new SearchRequest();
         $subject->setSearchService(
-            $this->getMockBuilder(SearchService::class)
+            $this->getMockBuilder(SearchServiceInterface::class)
                 ->disableOriginalConstructor()
                 ->getMock()
         );
@@ -112,8 +118,7 @@ class SearchRequestTest extends AbstractUnitTestCase
      */
     public function executionMakesUseOfProvidedConnectionAndSearchService()
     {
-        $searchServiceMock = $this->getMockBuilder(SearchService::class)
-            ->disableOriginalConstructor()
+        $searchServiceMock = $this->getMockBuilder(SearchServiceInterface::class)
             ->getMock();
         $connectionMock = $this->getMockBuilder(ConnectionInterface::class)
             ->getMock();

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 /*
@@ -62,32 +63,43 @@ class IndexFactory implements Singleton
 
     /**
      * Get the index name from the typoscript settings.
-     *
-     * @return string
      */
-    public function getIndexName()
+    public function getIndexName(): string
     {
         return $this->configuration->get('connections.elasticsearch.index');
     }
 
     /**
-     * Get an index bases on TYPO3 table name.
+     * @throws \InvalidArgumentException If index does not exist.
      */
-    public function getIndex(Connection $connection, string $documentType) : \Elastica\Index
+    public function getIndex(Connection $connection, string $documentType): \Elastica\Index
     {
         $index = $connection->getClient()->getIndex($this->getIndexName());
 
         if ($index->exists() === false) {
-            $config = $this->getConfigurationFor($documentType);
-            $this->logger->debug(sprintf('Create index %s.', $documentType), [$documentType, $config]);
-            $index->create($config);
-            $this->logger->debug(sprintf('Created index %s.', $documentType), [$documentType]);
+            throw new \InvalidArgumentException('The requested index does not exist.', 1546173102);
         }
 
         return $index;
     }
 
-    protected function getConfigurationFor(string $documentType) : array
+    public function createIndex(Connection $connection, string $documentType): \Elastica\Index
+    {
+        $index = $connection->getClient()->getIndex($this->getIndexName());
+
+        if ($index->exists() === true) {
+            return $index;
+        }
+
+        $config = $this->getConfigurationFor($documentType);
+        $this->logger->debug(sprintf('Create index %s.', $documentType), [$documentType, $config]);
+        $index->create($config);
+        $this->logger->debug(sprintf('Created index %s.', $documentType), [$documentType]);
+
+        return $index;
+    }
+
+    protected function getConfigurationFor(string $documentType): array
     {
         try {
             $configuration = $this->configuration->get('indexing.' . $documentType . '.index');
@@ -108,7 +120,7 @@ class IndexFactory implements Singleton
         }
     }
 
-    protected function prepareAnalyzerConfiguration(array $analyzer) : array
+    protected function prepareAnalyzerConfiguration(array $analyzer): array
     {
         $fieldsToExplode = ['char_filter', 'filter', 'word_list'];
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection;
 
 /*
@@ -27,15 +28,11 @@ interface ConnectionInterface
 {
     /**
      * Will add a new document.
-     *
-     * @return void
      */
     public function addDocument(string $documentType, array $document);
 
     /**
      * Add the given documents.
-     *
-     * @return void
      */
     public function addDocuments(string $documentType, array $documents);
 
@@ -43,8 +40,6 @@ interface ConnectionInterface
      * Will update an existing document.
      *
      * NOTE: Batch updating is not yet supported.
-     *
-     * @return void
      */
     public function updateDocument(string $documentType, array $document);
 
@@ -52,20 +47,21 @@ interface ConnectionInterface
      * Will remove an existing document.
      *
      * NOTE: Batch deleting is not yet supported.
-     *
-     * @return void
      */
     public function deleteDocument(string $documentType, string $identifier);
 
     /**
-     * Search by given request and return result.
+     * Will all documents of certain kind / in certain index.
      */
-    public function search(SearchRequestInterface $searchRequest) : SearchResultInterface;
+    public function deleteAllDocuments(string $documentType);
 
     /**
      * Will delete the whole index / db.
-     *
-     * @return void
      */
     public function deleteIndex(string $documentType);
+
+    /**
+     * Search by given request and return result.
+     */
+    public function search(SearchRequestInterface $searchRequest): SearchResultInterface;
 }

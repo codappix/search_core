@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Index;
 
 /*
@@ -27,29 +28,31 @@ interface IndexerInterface
 {
     /**
      * Fetches all documents from the indexerService and pushes it to the connection.
-     *
-     * @return void
      */
     public function indexAllDocuments();
 
     /**
      * Fetches a single document and pushes it to the connection.
-     *
-     * @return void
      */
     public function indexDocument(string $identifier);
 
     /**
-     * Recieves the identifier of the indexer itself.
-     *
-     * @return void
+     * Delete the whole index.
+     */
+    public function delete();
+
+    /**
+     * Delete all documents from index.
+     */
+    public function deleteAllDocuments();
+
+    /**
+     * Receives the identifier of the indexer itself.
      */
     public function setIdentifier(string $identifier);
 
     /**
-     * Delete the whole index.
-     *
-     * @return void
+     * Returnes the identifier of the indexer.
      */
-    public function delete();
+    public function getIdentifier(): string;
 }

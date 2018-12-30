@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 
 /*
@@ -23,8 +24,8 @@ namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Domain\Index\TcaIndexer;
-use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\RootlineUtility;
 
 /**
  * Specific indexer for Pages, will basically add content of page.
@@ -42,12 +43,6 @@ class PagesIndexer extends TcaIndexer
      */
     protected $fileRepository;
 
-    /**
-     * @param TcaTableServiceInterface $tcaTableService
-     * @param TcaTableServiceInterface $contentTableService
-     * @param ConnectionInterface $connection
-     * @param ConfigurationContainerInterface $configuration
-     */
     public function __construct(
         TcaTableServiceInterface $tcaTableService,
         TcaTableServiceInterface $contentTableService,
@@ -78,7 +73,7 @@ class PagesIndexer extends TcaIndexer
         }
     }
 
-    protected function fetchContentForPage(int $uid) : array
+    protected function fetchContentForPage(int $uid): array
     {
         if ($this->contentTableService instanceof TcaTableService) {
             $queryBuilder = $this->contentTableService->getQuery();
@@ -123,17 +118,17 @@ class PagesIndexer extends TcaIndexer
         ];
     }
 
-    protected function getContentElementImages(int $uidOfContentElement) : array
+    protected function getContentElementImages(int $uidOfContentElement): array
     {
         return $this->fetchSysFileReferenceUids($uidOfContentElement, 'tt_content', 'image');
     }
 
-    protected function fetchMediaForPage(int $uid) : array
+    protected function fetchMediaForPage(int $uid): array
     {
         return $this->fetchSysFileReferenceUids($uid, 'pages', 'media');
     }
 
-    protected function fetchSysFileReferenceUids(int $uid, string $tablename, string $fieldname) : array
+    protected function fetchSysFileReferenceUids(int $uid, string $tablename, string $fieldname): array
     {
         $imageRelationUids = [];
         $imageRelations = $this->fileRepository->findByRelation($tablename, $fieldname, $uid);
@@ -145,7 +140,7 @@ class PagesIndexer extends TcaIndexer
         return $imageRelationUids;
     }
 
-    protected function getContentFromContentElement(array $contentElement) : string
+    protected function getContentFromContentElement(array $contentElement): string
     {
         $content = '';
 

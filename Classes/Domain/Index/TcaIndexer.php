@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Index;
 
 /*
@@ -49,7 +50,7 @@ class TcaIndexer extends AbstractIndexer
     }
 
     /**
-     * @return array|null
+     * @return array|null Nullable when no items are found and execution should be stopped
      */
     protected function getRecords(int $offset, int $limit)
     {
@@ -69,10 +70,9 @@ class TcaIndexer extends AbstractIndexer
     /**
      * @throws NoRecordFoundException If record could not be found.
      */
-    protected function getRecord(int $identifier) : array
+    protected function getRecord(int $identifier): array
     {
         $record = $this->tcaTableService->getRecord($identifier);
-
         if ($record === []) {
             throw new NoRecordFoundException(
                 'Record could not be fetched from database: "' . $identifier . '". Perhaps record is not active.',
@@ -84,8 +84,13 @@ class TcaIndexer extends AbstractIndexer
         return $record;
     }
 
-    protected function getDocumentName() : string
+    protected function getDocumentName(): string
     {
         return $this->tcaTableService->getTableName();
+    }
+
+    protected function getDocumentIdentifier($identifier): string
+    {
+        return $this->getDocumentName() . '-' . $identifier;
     }
 }

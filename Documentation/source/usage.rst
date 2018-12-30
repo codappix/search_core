@@ -11,12 +11,13 @@ Manual indexing
 
 You can trigger indexing from CLI::
 
-    ./typo3/cli_dispatch.phpsh extbase index:index --identifier 'pages'
-    ./bin/typo3cms index:index --identifier 'pages'
+    ./typo3/cli_dispatch.phpsh extbase index:index --identifiers 'pages'
+    ./bin/typo3cms index:index --identifiers 'pages'
 
 This will index the table ``pages`` using the :ref:`TcaIndexer`.
 
-Only one index per call is available, to run multiple indexers, just make multiple calls.
+Multiple indexer can be called by providing a comma separated list of identifiers as
+a single argument. Spaces before and after commas are ignored.
 The indexers have to be defined in TypoScript via :ref:`configuration_options_index`.
 
 .. _usage_manual_deletion:
@@ -24,14 +25,31 @@ The indexers have to be defined in TypoScript via :ref:`configuration_options_in
 Manual deletion
 ---------------
 
-You can trigger deletion for a single index from CLI::
+You can trigger deletion for indexes from CLI::
 
-    ./typo3/cli_dispatch.phpsh extbase index:delete --identifier 'pages'
-    ./bin/typo3cms index:delete --identifier 'pages'
+    ./typo3/cli_dispatch.phpsh extbase index:delete --identifiers 'pages'
+    ./bin/typo3cms index:delete --identifiers 'pages'
 
-This will delete the index for the table ``pages``.
+This will delete the index for the table ``pages``. Deletion means removing all
+documents from the index.
 
-Only one delete per call is available, to run multiple deletions, just make multiple calls.
+Multiple indexes can be called by providing a comma separated list of identifiers as
+a single argument. Spaces before and after commas are ignored.
+
+.. _usage_manual_delete_all_documents:
+
+Manual delete all documents
+---------------------------
+
+You can trigger deletion of all documents for indexes from CLI::
+
+    ./typo3/cli_dispatch.phpsh extbase index:deletedocuments --identifiers 'pages'
+    ./bin/typo3cms index:deletedocuments --identifiers 'pages'
+
+This will delete all documents within the index for the table ``pages``.
+
+Multiple indexes can be called by providing a comma separated list of identifiers as
+a single argument. Spaces before and after commas are ignored.
 
 .. _usage_auto_indexing:
 

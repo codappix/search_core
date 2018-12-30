@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Domain\Search;
 
 /*
@@ -29,6 +30,8 @@ use Codappix\SearchCore\Domain\Model\SearchRequest;
 use Codappix\SearchCore\Domain\Model\SearchResult;
 use Codappix\SearchCore\Domain\Search\SearchService;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 class SearchServiceTest extends AbstractUnitTestCase
@@ -67,6 +70,13 @@ class SearchServiceTest extends AbstractUnitTestCase
     {
         parent::setUp();
 
+        $cacheMock = $this->getMockBuilder(FrontendInterface::class)->getMock();
+        $cacheManagerMock = $this->getMockBuilder(CacheManager::class)->getMock();
+        $cacheManagerMock->expects($this->any())
+            ->method('getCache')
+            ->with('search_core')
+            ->willReturn($cacheMock);
+
         $this->result = $this->getMockBuilder(SearchResultInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -87,7 +97,8 @@ class SearchServiceTest extends AbstractUnitTestCase
             $this->connection,
             $this->configuration,
             $this->objectManager,
-            $this->dataProcessorService
+            $this->dataProcessorService,
+            $cacheManagerMock
         );
     }
 
@@ -100,7 +111,7 @@ class SearchServiceTest extends AbstractUnitTestCase
             ->method('getIfExists')
             ->withConsecutive(['searching.size'], ['searching.facets'])
             ->will($this->onConsecutiveCalls(45, null));
-            $this->configuration->expects($this->any())
+        $this->configuration->expects($this->any())
             ->method('get')
             ->will($this->throwException(new InvalidArgumentException));
         $this->connection->expects($this->once())
@@ -211,9 +222,9 @@ class SearchServiceTest extends AbstractUnitTestCase
             ->method('search')
             ->with($this->callback(function ($searchRequest) {
                 return $searchRequest->getFilter() === [
-                    'anotherProperty' => 'anything',
-                    'property' => 'something',
-                ];
+                        'anotherProperty' => 'anything',
+                        'property' => 'something',
+                    ];
             }))
             ->willReturn($this->getMockBuilder(SearchResultInterface::class)->getMock());
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Hook;
 
 /*
@@ -21,6 +22,7 @@ namespace Codappix\SearchCore\Hook;
  */
 
 use Codappix\SearchCore\Configuration\NoConfigurationException;
+use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
 use Codappix\SearchCore\Domain\Service\DataHandler as OwnDataHandler;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler as CoreDataHandler;
@@ -72,17 +74,20 @@ class DataHandler implements Singleton
     /**
      * Called by CoreDataHandler on deletion of records.
      */
-    public function processCmdmap_deleteAction(string $table, string $uid) : bool
+    public function processCmdmap_deleteAction(string $table, string $uid): bool
     {
-        if (! $this->shouldProcessHookForTable($table)) {
+        if (!$this->shouldProcessHookForTable($table)) {
             $this->logger->debug('Delete not processed.', [$table, $uid]);
             return false;
         }
 
-        $this->dataHandler->delete($table, (string) $uid);
+        $this->dataHandler->delete($table, $uid);
         return true;
     }
 
+    /**
+     * @throws NoMatchingIndexerException
+     */
     public function processDatamap_afterAllOperations(CoreDataHandler $dataHandler)
     {
         foreach ($dataHandler->datamap as $table => $record) {
@@ -103,6 +108,9 @@ class DataHandler implements Singleton
         }
     }
 
+    /**
+     * @throws NoMatchingIndexerException
+     */
     public function clearCachePostProc(array $parameters, CoreDataHandler $dataHandler)
     {
         $pageUid = 0;
@@ -117,13 +125,16 @@ class DataHandler implements Singleton
         }
 
         if ($pageUid > 0) {
-            $this->processRecord('pages', (int) $pageUid);
+            $this->processRecord('pages', (int)$pageUid);
         }
     }
 
-    protected function processRecord(string $table, int $uid) : bool
+    /**
+     * @throws NoMatchingIndexerException
+     */
+    protected function processRecord(string $table, int $uid): bool
     {
-        if (! $this->shouldProcessHookForTable($table)) {
+        if (!$this->shouldProcessHookForTable($table)) {
             $this->logger->debug('Indexing of record not processed.', [$table, $uid]);
             return false;
         }
@@ -138,13 +149,13 @@ class DataHandler implements Singleton
         return false;
     }
 
-    protected function shouldProcessHookForTable(string $table) : bool
+    protected function shouldProcessHookForTable(string $table): bool
     {
         if ($this->dataHandler === null) {
             $this->logger->debug('Datahandler could not be setup.');
             return false;
         }
-        if (! $this->dataHandler->supportsTable($table)) {
+        if (!$this->dataHandler->supportsTable($table)) {
             $this->logger->debug('Table is not allowed.', [$table]);
             return false;
         }

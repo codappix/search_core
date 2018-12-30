@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Model;
 
 /*
@@ -40,12 +41,12 @@ class ResultItem implements ResultItemInterface
         $this->type = $type;
     }
 
-    public function getType() : string
+    public function getType(): string
     {
         return $this->type;
     }
 
-    public function getPlainData() : array
+    public function getPlainData(): array
     {
         return $this->data;
     }
@@ -60,11 +61,17 @@ class ResultItem implements ResultItemInterface
         return $this->data[$offset];
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function offsetSet($offset, $value)
     {
         throw new \BadMethodCallException('It\'s not possible to change the search result.', 1499179077);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function offsetUnset($offset)
     {
         throw new \BadMethodCallException('It\'s not possible to change the search result.', 1499179077);

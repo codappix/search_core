@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Functional\Connection\Elasticsearch;
 
 /*
@@ -31,7 +32,7 @@ class FilterTest extends AbstractFunctionalTestCase
     {
         return array_merge(
             parent::getDataSets(),
-            ['Tests/Functional/Fixtures/Searching/Filter.xml']
+            ['EXT:search_core/Tests/Functional/Fixtures/Searching/Filter.xml']
         );
     }
 
@@ -43,8 +44,7 @@ class FilterTest extends AbstractFunctionalTestCase
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
             ->getIndexer('tt_content')
-            ->indexAllDocuments()
-            ;
+            ->indexAllDocuments();
 
         $searchService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(SearchService::class);
@@ -55,7 +55,7 @@ class FilterTest extends AbstractFunctionalTestCase
 
         $searchRequest->setFilter(['CType' => 'HTML']);
         $result = $searchService->search($searchRequest);
-        $this->assertSame(5, (int) $result->getResults()[0]['uid'], 'Did not get the expected result entry.');
+        $this->assertSame(5, (int)$result->getResults()[0]['uid'], 'Did not get the expected result entry.');
         $this->assertSame(1, count($result), 'Did not receive the single filtered element.');
     }
 }

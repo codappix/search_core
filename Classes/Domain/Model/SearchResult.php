@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Model;
 
 /*
@@ -22,7 +23,6 @@ namespace Codappix\SearchCore\Domain\Model;
 
 use Codappix\SearchCore\Connection\ResultItemInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
-use Codappix\SearchCore\Domain\Model\QueryResultInterfaceStub;
 
 /**
  * Generic model for mapping a concrete search result from a connection.
@@ -44,7 +44,7 @@ class SearchResult implements SearchResultInterface
     /**
      * @var array
      */
-    protected $results = [];
+    protected $results;
 
     /**
      * For Iterator interface.
@@ -62,7 +62,7 @@ class SearchResult implements SearchResultInterface
     /**
      * @return array<ResultItemInterface>
      */
-    public function getResults() : array
+    public function getResults(): array
     {
         $this->initResults();
 
@@ -71,21 +71,22 @@ class SearchResult implements SearchResultInterface
 
     protected function initResults()
     {
-        if ($this->results !== []) {
+        if (is_array($this->results)) {
             return;
         }
 
+        $this->results = [];
         foreach ($this->resultItems as $item) {
             $this->results[] = new ResultItem($item['data'], $item['type']);
         }
     }
 
-    public function getFacets() : array
+    public function getFacets(): array
     {
         return $this->originalSearchResult->getFacets();
     }
 
-    public function getCurrentCount() : int
+    public function getCurrentCount(): int
     {
         return $this->originalSearchResult->getCurrentCount();
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection;
 
 /*
@@ -32,7 +33,7 @@ interface ResultItemInterface extends \ArrayAccess
      *
      * Used e.g. for dataprocessing.
      */
-    public function getPlainData() : array;
+    public function getPlainData(): array;
 
     /**
      * Returns the type of the item.
@@ -40,5 +41,5 @@ interface ResultItemInterface extends \ArrayAccess
      * That should make it easier to differentiate if multiple
      * types are returned for one query.
      */
-    public function getType() : string;
+    public function getType(): string;
 }

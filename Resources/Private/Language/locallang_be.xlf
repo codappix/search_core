@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages">
+        <header/>
+        <body>
+            <trans-unit id="plugin.search.title">
+                <source>Search Core: Search</source>
+            </trans-unit>
+            <trans-unit id="plugin.search.description">
+                <source>List results from search</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

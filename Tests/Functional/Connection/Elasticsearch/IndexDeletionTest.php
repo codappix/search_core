@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Functional\Connection\Elasticsearch;
 
 /*
@@ -26,6 +27,17 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 class IndexDeletionTest extends AbstractFunctionalTestCase
 {
     /**
+     * @return array
+     */
+    protected function getDataSets()
+    {
+        return array_merge(
+            parent::getDataSets(),
+            ['EXT:search_core/Tests/Functional/Fixtures/Indexing/IndexDeletion.xml']
+        );
+    }
+
+    /**
      * @test
      */
     public function indexIsDeleted()
@@ -39,12 +51,50 @@ class IndexDeletionTest extends AbstractFunctionalTestCase
         \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
             ->get(IndexerFactory::class)
             ->getIndexer('tt_content')
-            ->delete()
-            ;
+            ->delete();
 
         $this->assertFalse(
             $this->client->getIndex('typo3content')->exists(),
             'Index could not be deleted through command controller.'
         );
+    }
+
+    /**
+     * @test
+     */
+    public function documentsAreDeleted()
+    {
+        $index = $this->client->getIndex('typo3content');
+        $index->create();
+        $this->assertTrue(
+            $index->exists(),
+            'Could not create index for test.'
+        );
+
+        $contentIndexer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
+            ->get(IndexerFactory::class)
+            ->getIndexer('tt_content');
+        $pageIndexer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)
+            ->get(IndexerFactory::class)
+            ->getIndexer('pages');
+
+        $response = $this->client->request('typo3content/_search?q=*:*');
+        $this->assertSame($response->getData()['hits']['total'], 0, 'Index should be empty.');
+
+        $contentIndexer->indexAllDocuments();
+        $response = $this->client->request('typo3content/_search?q=*:*');
+        $this->assertSame($response->getData()['hits']['total'], 3, 'Not exactly 3 documents are in index.');
+
+        $pageIndexer->indexAllDocuments();
+        $response = $this->client->request('typo3content/_search?q=*:*');
+        $this->assertSame($response->getData()['hits']['total'], 5, 'Not exactly 5 documents are in index.');
+
+        $contentIndexer->deleteAllDocuments();
+        $response = $this->client->request('typo3content/_search?q=*:*');
+        $this->assertSame($response->getData()['hits']['total'], 2, 'Not exactly 2 documents are in index.');
+
+        $pageIndexer->deleteAllDocuments();
+        $response = $this->client->request('typo3content/_search?q=*:*');
+        $this->assertSame($response->getData()['hits']['total'], 0, 'Index should be empty.');
     }
 }

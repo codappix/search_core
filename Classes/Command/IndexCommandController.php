@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Command;
 
 /*
@@ -21,7 +22,9 @@ namespace Codappix\SearchCore\Command;
  */
 
 use Codappix\SearchCore\Domain\Index\IndexerFactory;
+use Codappix\SearchCore\Domain\Index\IndexerInterface;
 use Codappix\SearchCore\Domain\Index\NoMatchingIndexerException;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
 /**
@@ -43,32 +46,57 @@ class IndexCommandController extends CommandController
     }
 
     /**
-     * Will index the given identifier.
+     * Will index all documents for the given identifiers.
      *
-     * @param string $identifier
+     * @param string $identifier Comma separated list of identifiers.
      */
-    public function indexCommand(string $identifier)
+    public function indexCommand(string $identifiers)
     {
-        try {
-            $this->indexerFactory->getIndexer($identifier)->indexAllDocuments();
-            $this->outputLine($identifier . ' was indexed.');
-        } catch (NoMatchingIndexerException $e) {
-            $this->outputLine('No indexer found for: ' . $identifier);
-        }
+        $this->executeForIdentifier($identifiers, function (IndexerInterface $indexer) {
+            $indexer->indexAllDocuments();
+            $this->outputLine('Documents in index ' . $indexer->getIdentifier() . ' were indexed.');
+        });
     }
 
     /**
-     * Will delete the given identifier.
+     * Will delete all indexed documents for the given identifiers.
      *
-     * @param string $identifier
+     * @param string $identifier Comma separated list of identifiers.
      */
-    public function deleteCommand(string $identifier)
+    public function deleteDocumentsCommand(string $identifiers)
     {
-        try {
-            $this->indexerFactory->getIndexer($identifier)->delete();
-            $this->outputLine($identifier . ' was deleted.');
-        } catch (NoMatchingIndexerException $e) {
-            $this->outputLine('No indexer found for: ' . $identifier);
+        $this->executeForIdentifier($identifiers, function (IndexerInterface $indexer) {
+            $indexer->deleteAllDocuments();
+            $this->outputLine('Documents in index ' . $indexer->getIdentifier() . ' were deleted.');
+        });
+    }
+
+    /**
+     * Will delete the index for given identifiers.
+     *
+     * @param string $identifier Comma separated list of identifiers.
+     */
+    public function deleteCommand(string $identifiers = 'pages')
+    {
+        $this->executeForIdentifier($identifiers, function (IndexerInterface $indexer) {
+            $indexer->delete();
+            $this->outputLine('Index ' . $indexer->getIdentifier() . ' was deleted.');
+        });
+    }
+
+    /**
+     * Executes the given callback method for each provided identifier.
+     *
+     * An indexer is created for each identifier, which is provided as first argument to the callback.
+     */
+    private function executeForIdentifier(string $identifiers, callable $callback)
+    {
+        foreach (GeneralUtility::trimExplode(',', $identifiers, true) as $identifier) {
+            try {
+                $callback($this->indexerFactory->getIndexer($identifier));
+            } catch (NoMatchingIndexerException $e) {
+                $this->outputLine('No indexer found for: ' . $identifier . '.');
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\DataProcessing;
 
 /*
@@ -51,10 +52,11 @@ class TcaRelationResolvingProcessor implements ProcessorInterface
     /**
      * @throws \InvalidArgumentException If _table is not configured.
      */
-    public function processData(array $record, array $configuration) : array
+    public function processData(array $record, array $configuration): array
     {
         $this->initializeConfiguration($configuration);
 
+        /** @var TcaTableServiceInterface $tcaTableService */
         $tcaTableService = $this->objectManager->get(
             TcaTableServiceInterface::class,
             $configuration['_table']
@@ -84,7 +86,7 @@ class TcaRelationResolvingProcessor implements ProcessorInterface
         $configuration['excludeFields'] = GeneralUtility::trimExplode(',', $configuration['excludeFields'], true);
     }
 
-    protected function getRecordToProcess(array $record, array $configuration) : array
+    protected function getRecordToProcess(array $record, array $configuration): array
     {
         if ($configuration['excludeFields'] === []) {
             return $record;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Database\Doctrine;
 
 /*
@@ -38,12 +39,12 @@ class Join
         $this->condition = $condition;
     }
 
-    public function getTable() : string
+    public function getTable(): string
     {
         return $this->table;
     }
 
-    public function getCondition() : string
+    public function getCondition(): string
     {
         return $this->condition;
     }

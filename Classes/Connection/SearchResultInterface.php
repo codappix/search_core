@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection;
 
 /*
@@ -30,17 +31,17 @@ interface SearchResultInterface extends \Iterator, \Countable, QueryResultInterf
     /**
      * @return array<ResultItemInterface>
      */
-    public function getResults() : array;
+    public function getResults(): array;
 
     /**
      * Return all facets, if any.
      *
      * @return array<FacetInterface>
      */
-    public function getFacets() : array;
+    public function getFacets(): array;
 
     /**
      * Returns the number of results in current result
      */
-    public function getCurrentCount() : int;
+    public function getCurrentCount(): int;
 }

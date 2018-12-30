@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\DataProcessing;
 
 /*
@@ -29,5 +30,5 @@ interface ProcessorInterface
      * Processes the given data.
      * Also retrieves the configuration for this processor instance.
      */
-    public function processData(array $record, array $configuration) : array;
+    public function processData(array $record, array $configuration): array;
 }

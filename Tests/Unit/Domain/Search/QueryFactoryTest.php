@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Domain\Search;
 
 /*
@@ -27,6 +28,7 @@ use Codappix\SearchCore\Domain\Model\FacetRequest;
 use Codappix\SearchCore\Domain\Model\SearchRequest;
 use Codappix\SearchCore\Domain\Search\QueryFactory;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 class QueryFactoryTest extends AbstractUnitTestCase
 {
@@ -40,13 +42,26 @@ class QueryFactoryTest extends AbstractUnitTestCase
      */
     protected $configuration;
 
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
     public function setUp()
     {
         parent::setUp();
 
         $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)->getMock();
         $configurationUtility = new ConfigurationUtility();
-        $this->subject = new QueryFactory($this->getMockedLogger(), $this->configuration, $configurationUtility);
+        $this->objectManager = $this->getMockBuilder(ObjectManagerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->subject = new QueryFactory(
+            $this->getMockedLogger(),
+            $this->configuration,
+            $configurationUtility,
+            $this->objectManager
+        );
     }
 
     /**
@@ -232,9 +247,6 @@ class QueryFactoryTest extends AbstractUnitTestCase
                             'multi_match' => [
                                 'type' => 'most_fields',
                                 'query' => 'SearchWord',
-                                'fields' => [
-                                    '_all',
-                                ],
                             ],
                         ],
                     ],
@@ -272,9 +284,6 @@ class QueryFactoryTest extends AbstractUnitTestCase
                             'multi_match' => [
                                 'type' => 'most_fields',
                                 'query' => 'SearchWord',
-                                'fields' => [
-                                    '_all',
-                                ],
                                 'minimum_should_match' => '50%',
                             ],
                         ],
@@ -303,7 +312,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 ['searching.fieldValueFactor']
             )
             ->will($this->onConsecutiveCalls(
-                '_all',
+                '',
                 [
                     'search_title' => 3,
                     'search_abstract' => 1.5,
@@ -360,7 +369,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 ['searching.fieldValueFactor']
             )
             ->will($this->onConsecutiveCalls(
-                '_all',
+                '',
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
@@ -378,9 +387,6 @@ class QueryFactoryTest extends AbstractUnitTestCase
                                     'multi_match' => [
                                         'type' => 'most_fields',
                                         'query' => 'SearchWord',
-                                        'fields' => [
-                                            '_all',
-                                        ],
                                     ],
                                 ],
                             ],
@@ -405,7 +411,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
 
         $query = $this->subject->create($searchRequest);
         $this->assertInstanceOf(
-            stdClass,
+            'stdClass',
             $query->toArray()['query']['match_all'],
             'Empty search request does not create expected query.'
         );
@@ -428,7 +434,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 ['searching.fieldValueFactor']
             )
             ->will($this->onConsecutiveCalls(
-                '_all, field1, field2',
+                'field1, field2',
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
@@ -445,7 +451,6 @@ class QueryFactoryTest extends AbstractUnitTestCase
                                 'type' => 'most_fields',
                                 'query' => 'SearchWord',
                                 'fields' => [
-                                    '_all',
                                     'field1',
                                     'field2',
                                 ],
@@ -535,7 +540,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                 ['searching.fieldValueFactor']
             )
             ->will($this->onConsecutiveCalls(
-                '_all',
+                '',
                 $this->throwException(new InvalidArgumentException),
                 $this->throwException(new InvalidArgumentException),
                 [
@@ -662,13 +667,16 @@ class QueryFactoryTest extends AbstractUnitTestCase
         );
     }
 
+    /**
+     * @return void
+     */
     protected function configureConfigurationMockWithDefault()
     {
         $this->configuration->expects($this->any())
             ->method('get')
             ->will($this->returnCallback(function ($configName) {
                 if ($configName === 'searching.fields.query') {
-                    return '_all';
+                    return '';
                 }
 
                 throw new InvalidArgumentException();

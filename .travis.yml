@@ -5,7 +5,7 @@ addons:
     packages:
       - oracle-java8-set-default
 before_install:
-  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.0.deb && sudo dpkg -i --force-confnew elasticsearch-5.2.0.deb && sudo service elasticsearch restart
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.5.4.deb && sudo dpkg -i --force-confnew elasticsearch-6.5.4.deb && sudo service elasticsearch restart
   - mysql -u root -e 'GRANT ALL ON `typo3_ci_ft%`.* TO travis@127.0.0.1;'
 
 language: php
@@ -26,7 +26,6 @@ env:
     - typo3DatabaseUsername="travis"
     - typo3DatabasePassword=""
   matrix:
-    - TYPO3_VERSION="~7.6"
     - TYPO3_VERSION="~8.7"
 
 matrix:

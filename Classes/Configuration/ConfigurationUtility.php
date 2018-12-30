@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Configuration;
 
 /*
@@ -28,7 +29,7 @@ class ConfigurationUtility
     /**
      * Will parse all entries, recursive as fluid template, with request variable set to $searchRequest.
      */
-    public function replaceArrayValuesWithRequestContent(SearchRequestInterface $searchRequest, array $array) : array
+    public function replaceArrayValuesWithRequestContent(SearchRequestInterface $searchRequest, array $array): array
     {
         array_walk_recursive($array, function (&$value, $key, SearchRequestInterface $searchRequest) {
             $template = new StandaloneView();
@@ -38,7 +39,7 @@ class ConfigurationUtility
 
             // As elasticsearch does need some doubles to be send as doubles.
             if (is_numeric($value)) {
-                $value = (float) $value;
+                $value = (float)$value;
             }
         }, $searchRequest);
 
@@ -49,13 +50,12 @@ class ConfigurationUtility
      * Will check all entries, whether they have a condition and filter entries out, where condition is false.
      * Also will remove condition in the end.
      */
-    public function filterByCondition(array $entries) : array
+    public function filterByCondition(array $entries): array
     {
         $entries = array_filter($entries, function ($entry) {
             return !is_array($entry)
                 || !array_key_exists('condition', $entry)
-                || (bool) $entry['condition'] === true
-                ;
+                || (bool)$entry['condition'] === true;
         });
 
         foreach ($entries as $key => $entry) {

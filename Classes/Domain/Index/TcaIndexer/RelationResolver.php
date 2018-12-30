@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Index\TcaIndexer;
 
 /*
@@ -33,11 +34,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RelationResolver implements Singleton
 {
-    public function resolveRelationsForRecord(TcaTableServiceInterface $service, array $record) : array
+    public function resolveRelationsForRecord(TcaTableServiceInterface $service, array $record): array
     {
         foreach (array_keys($record) as $column) {
             if (in_array($column, ['pid', $service->getLanguageUidColumn()])) {
-                $record[$column] = (int) $record[$column];
+                $record[$column] = (int)$record[$column];
                 continue;
             }
 
@@ -74,25 +75,24 @@ class RelationResolver implements Singleton
         return [];
     }
 
-    protected function isRelation(array &$config) : bool
+    protected function isRelation(array &$config): bool
     {
         return isset($config['foreign_table'])
             || (isset($config['renderType']) && !in_array($config['renderType'], ['selectSingle', 'inputDateTime']))
-            || (isset($config['internal_type']) && strtolower($config['internal_type']) === 'db')
-            ;
+            || (isset($config['internal_type']) && strtolower($config['internal_type']) === 'db');
     }
 
-    protected function resolveForeignDbValue(string $value) : array
+    protected function resolveForeignDbValue(string $value): array
     {
         return array_map('trim', explode(';', $value));
     }
 
-    protected function resolveInlineValue(string $value) : array
+    protected function resolveInlineValue(string $value): array
     {
         return array_map('trim', explode(',', $value));
     }
 
-    protected function getUtilityForMode() : string
+    protected function getUtilityForMode(): string
     {
         if (TYPO3_MODE === 'BE') {
             return BackendUtility::class;
@@ -104,12 +104,13 @@ class RelationResolver implements Singleton
     protected function getColumnValue(array $record, string $column, TcaTableServiceInterface $service): string
     {
         $utility = GeneralUtility::makeInstance($this->getUtilityForMode());
-        return $utility::getProcessedValueExtra(
+        $value = $utility::getProcessedValueExtra(
             $service->getTableName(),
             $column,
             $record[$column],
             0,
             $record['uid']
-        ) ?? '';
+        );
+        return $value ? (string)$value : '';
     }
 }

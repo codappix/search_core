@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Controller;
 
 /*
@@ -21,7 +22,7 @@ namespace Codappix\SearchCore\Controller;
  */
 
 use Codappix\SearchCore\Domain\Model\SearchRequest;
-use Codappix\SearchCore\Domain\Search\SearchService;
+use Codappix\SearchCore\Domain\Search\SearchServiceInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
@@ -30,44 +31,43 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 class SearchController extends ActionController
 {
     /**
-     * @var SearchService
+     * @var SearchServiceInterface
      */
     protected $searchService;
 
     /**
-     * @param SearchService $searchService
+     * @param SearchServiceInterface $searchService
      */
-    public function __construct(SearchService $searchService)
+    public function __construct(SearchServiceInterface $searchService)
     {
         $this->searchService = $searchService;
 
         parent::__construct();
     }
 
+    /**
+     * Allow dynamic properties in search request
+     */
     public function initializeSearchAction()
     {
-        if (isset($this->settings['searching']['mode']) && $this->settings['searching']['mode'] === 'filter'
+        if (isset($this->settings['searching']['mode'])
+            && $this->settings['searching']['mode'] === 'filter'
             && $this->request->hasArgument('searchRequest') === false
         ) {
             $this->request->setArguments(array_merge(
                 $this->request->getArguments(),
-                [
-                    'searchRequest' => $this->objectManager->get(SearchRequest::class),
-                ]
+                ['searchRequest' => $this->objectManager->get(SearchRequest::class)]
             ));
         }
 
         if ($this->arguments->hasArgument('searchRequest')) {
             $this->arguments->getArgument('searchRequest')->getPropertyMappingConfiguration()
-                ->allowAllProperties()
-                ;
+                ->allowAllProperties();
         }
     }
 
     /**
-     * Process a search and deliver original request and result to view.
-     *
-     * @param null|SearchRequest $searchRequest
+     * Display results and deliver original request and result to view.
      */
     public function searchAction(SearchRequest $searchRequest = null)
     {

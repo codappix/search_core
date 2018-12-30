@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Configuration;
 
 /*
@@ -20,12 +21,12 @@ namespace Codappix\SearchCore\Configuration;
  * 02110-1301, USA.
  */
 
+use Codappix\SearchCore\Utility\ArrayUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Utility\ArrayUtility;
 
 /**
  * Container of all configurations for extension.
- * Always inject this to have a single place for configuration and parsing only once.
+ * Always inject this to have a single place for configuration.
  */
 class ConfigurationContainer implements ConfigurationContainerInterface
 {
@@ -59,7 +60,7 @@ class ConfigurationContainer implements ConfigurationContainerInterface
      */
     public function get(string $path)
     {
-        $value = ArrayUtility::getValueByPath($this->settings, $path);
+        $value = $this->getValueByPath($path);
 
         if ($value === null) {
             throw new InvalidArgumentException(
@@ -77,6 +78,20 @@ class ConfigurationContainer implements ConfigurationContainerInterface
      */
     public function getIfExists(string $path)
     {
-        return ArrayUtility::getValueByPath($this->settings, $path);
+        return $this->getValueByPath($path);
+    }
+
+    /**
+     * @param string $path In dot notation.
+     * @return mixed|null Null if no entry was found.
+     */
+    protected function getValueByPath(string $path)
+    {
+        try {
+            return ArrayUtility::getValueByPath($this->settings, $path, '.');
+        } catch (\Exception $e) {
+            // Catch all exceptions to safely handle path retrieval
+        }
+        return null;
     }
 }

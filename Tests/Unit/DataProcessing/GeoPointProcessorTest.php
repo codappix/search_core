@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\DataProcessing;
 
 /*
@@ -28,6 +29,9 @@ class GeoPointProcessorTest extends AbstractUnitTestCase
     /**
      * @test
      * @dataProvider getPossibleDataConfigurationCombinations
+     * @param array $record
+     * @param array $configuration
+     * @param array $expectedData
      */
     public function geoPointsAreAddedAsConfigured(array $record, array $configuration, array $expectedData)
     {

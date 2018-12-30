@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Functional\Hooks\DataHandler;
 
 /*
@@ -25,7 +26,6 @@ use Codappix\SearchCore\Domain\Index\IndexerFactory;
 use Codappix\SearchCore\Domain\Service\DataHandler as DataHandlerService;
 use Codappix\SearchCore\Hook\DataHandler as DataHandlerHook;
 use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
-use TYPO3\CMS\Core\DataHandling\DataHandler as Typo3DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Index;
 
 /*
@@ -22,7 +23,6 @@ namespace Codappix\SearchCore\Domain\Index;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
-use Codappix\SearchCore\Domain\Index\IndexerInterface;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
@@ -55,9 +55,9 @@ class IndexerFactory implements Singleton
     }
 
     /**
-     * @throws NoMatchingIndexer
+     * @throws NoMatchingIndexerException
      */
-    public function getIndexer(string $identifier) : IndexerInterface
+    public function getIndexer(string $identifier): IndexerInterface
     {
         try {
             return $this->buildIndexer($this->configuration->get('indexing.' . $identifier . '.indexer'), $identifier);
@@ -71,9 +71,9 @@ class IndexerFactory implements Singleton
     }
 
     /**
-     * @throws NoMatchingIndexer
+     * @throws NoMatchingIndexerException
      */
-    protected function buildIndexer(string $indexerClass, string $identifier) : IndexerInterface
+    protected function buildIndexer(string $indexerClass, string $identifier): IndexerInterface
     {
         $indexer = null;
         if (is_subclass_of($indexerClass, TcaIndexer\PagesIndexer::class)

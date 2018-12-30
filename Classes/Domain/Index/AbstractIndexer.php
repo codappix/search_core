@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Index;
 
 /*
@@ -63,11 +64,6 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->logger = $logManager->getLogger(__CLASS__);
     }
 
-    public function setIdentifier(string $identifier)
-    {
-        $this->identifier = $identifier;
-    }
-
     public function __construct(ConnectionInterface $connection, ConfigurationContainerInterface $configuration)
     {
         $this->connection = $connection;
@@ -96,13 +92,13 @@ abstract class AbstractIndexer implements IndexerInterface
     {
         $this->logger->info('Start indexing single record.', [$identifier]);
         try {
-            $record = $this->getRecord((int) $identifier);
+            $record = $this->getRecord((int)$identifier);
             $this->prepareRecord($record);
 
             $this->connection->addDocument($this->getDocumentName(), $record);
         } catch (NoRecordFoundException $e) {
             $this->logger->info('Could not index document. Try to delete it therefore.', [$e->getMessage()]);
-            $this->connection->deleteDocument($this->getDocumentName(), $identifier);
+            $this->connection->deleteDocument($this->getDocumentName(), $this->getDocumentIdentifier($identifier));
         }
         $this->logger->info('Finish indexing');
     }
@@ -114,13 +110,22 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->logger->info('Finish deletion.');
     }
 
-    protected function getRecordGenerator() : \Generator
+    public function deleteAllDocuments()
+    {
+        $this->logger->info('Start deletion of indexed documents.');
+        $this->connection->deleteAllDocuments($this->getDocumentName());
+        $this->logger->info('Finish deletion.');
+    }
+
+    protected function getRecordGenerator(): \Generator
     {
         $offset = 0;
         $limit = $this->getLimit();
 
-        while (($records = $this->getRecords($offset, $limit)) !== []) {
-            yield $records;
+        while (($records = $this->getRecords($offset, $limit)) !== null) {
+            if (!empty($records)) {
+                yield $records;
+            }
             $offset += $limit;
         }
     }
@@ -134,8 +139,18 @@ abstract class AbstractIndexer implements IndexerInterface
         } catch (InvalidArgumentException $e) {
             // Nothing to do.
         }
-
+        $this->generateSearchIdentifiers($record);
         $this->handleAbstract($record);
+    }
+
+    protected function generateSearchIdentifiers(array &$record)
+    {
+        if (!isset($record['search_document'])) {
+            $record['search_document_type'] = $this->getDocumentName();
+        }
+        if (!isset($record['search_identifier']) && isset($record['uid'])) {
+            $record['search_identifier'] = $this->getDocumentIdentifier($record['uid']);
+        }
     }
 
     protected function handleAbstract(array &$record)
@@ -148,8 +163,9 @@ abstract class AbstractIndexer implements IndexerInterface
                 $this->configuration->get('indexing.' . $this->identifier . '.abstractFields')
             );
             if ($fieldsToUse === []) {
-                return;
+                throw new InvalidArgumentException('No fields to use', 1538487209251);
             }
+
             foreach ($fieldsToUse as $fieldToUse) {
                 if (isset($record[$fieldToUse]) && trim($record[$fieldToUse])) {
                     $record['search_abstract'] = trim($record[$fieldToUse]);
@@ -157,28 +173,40 @@ abstract class AbstractIndexer implements IndexerInterface
                 }
             }
         } catch (InvalidArgumentException $e) {
-            return;
+            // Nothing to do.
         }
     }
 
     /**
      * Returns the limit to use to fetch records.
      */
-    protected function getLimit() : int
+    protected function getLimit(): int
     {
         // TODO: Make configurable.
         return 50;
     }
 
+    public function setIdentifier(string $identifier)
+    {
+        $this->identifier = $identifier;
+    }
+
+    public function getIdentifier(): string
+    {
+        return $this->identifier;
+    }
+
     /**
-     * @return array|null
+     * @return array|null Nullable when no items are found and execution should be stopped
      */
     abstract protected function getRecords(int $offset, int $limit);
 
     /**
      * @throws NoRecordFoundException If record could not be found.
      */
-    abstract protected function getRecord(int $identifier) : array;
+    abstract protected function getRecord(int $identifier): array;
 
-    abstract protected function getDocumentName() : string;
+    abstract protected function getDocumentName(): string;
+
+    abstract protected function getDocumentIdentifier($identifier): string;
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Indexing;
 
 /*
@@ -20,7 +21,6 @@ namespace Codappix\SearchCore\Tests\Indexing;
  * 02110-1301, USA.
  */
 
-use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\Elasticsearch;
 use Codappix\SearchCore\Domain\Index\IndexerFactory;
 use Codappix\SearchCore\Tests\Functional\AbstractFunctionalTestCase;
@@ -33,7 +33,7 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
      */
     public function pagesContainAllAdditionalInformation()
     {
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml');
+        $this->importDataSet('EXT:search_core/Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml');
 
         $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
         $tableName = 'pages';
@@ -54,8 +54,7 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
                         ' this is the content of header content element that should get indexed' .
                         ' Indexed without html tags Some text in paragraph'
                         && isset($documents[0]['search_abstract']) && $documents[0]['search_abstract'] ===
-                        'Used as abstract as no abstract is defined.'
-                        ;
+                        'Used as abstract as no abstract is defined.';
                 })
             );
 
@@ -95,12 +94,21 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
         $indexer->indexAllDocuments();
     }
 
+    /**
+     * @return array
+     */
     public function rootLineDataSets()
     {
         return [
-            'Broken root line' => ['Tests/Functional/Fixtures/Indexing/PagesIndexer/BrokenRootLine.xml'],
-            'Recycler doktype' => ['Tests/Functional/Fixtures/Indexing/PagesIndexer/Recycler.xml'],
-            'Extended timing to sub pages' => ['Tests/Functional/Fixtures/Indexing/PagesIndexer/InheritedTiming.xml'],
+            'Broken root line' => [
+                'EXT:search_core/Tests/Functional/Fixtures/Indexing/PagesIndexer/BrokenRootLine.xml'
+            ],
+            'Recycler doktype' => [
+                'EXT:search_core/Tests/Functional/Fixtures/Indexing/PagesIndexer/Recycler.xml'
+            ],
+            'Extended timing to sub pages' => [
+                'EXT:search_core/Tests/Functional/Fixtures/Indexing/PagesIndexer/InheritedTiming.xml'
+            ],
         ];
     }
 }

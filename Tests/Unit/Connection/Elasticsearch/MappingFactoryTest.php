@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Connection\Elasticsearch;
 
 /*
@@ -22,7 +23,9 @@ namespace Codappix\SearchCore\Tests\Unit\Connection\Elasticsearch;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Connection\Elasticsearch\MappingFactory;
+use Codappix\SearchCore\Connection\Elasticsearch\TypeFactory;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use Elastica\Type;
 
 class MappingFactoryTest extends AbstractUnitTestCase
 {
@@ -31,12 +34,24 @@ class MappingFactoryTest extends AbstractUnitTestCase
      */
     protected $subject;
 
+    /**
+     * @var ConfigurationContainerInterface
+     */
+    protected $configurationMock;
+
+    /**
+     * @var TypeFactory
+     */
+    protected $typeFactoryMock;
+
     public function setUp()
     {
         parent::setUp();
 
-        $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)->getMock();
-        $this->subject = new MappingFactory($this->configuration);
+        $this->configurationMock = $this->getMockBuilder(ConfigurationContainerInterface::class)->getMock();
+        $this->typeFactoryMock = $this->getMockBuilder(TypeFactory::class)->disableOriginalConstructor()->getMock();
+
+        $this->subject = new MappingFactory($this->configurationMock, $this->typeFactoryMock);
     }
 
     /**
@@ -44,40 +59,27 @@ class MappingFactoryTest extends AbstractUnitTestCase
      */
     public function typoScriptConfigurationIsProvidedToIndex()
     {
-        $indexName = 'someIndex';
+        $documentType = 'someDocument';
         $configuration = [
-            '_all' => [
-                'type' => 'text',
-                'analyzer' => 'ngram4',
-            ],
             'channel' => [
                 'type' => 'keyword',
             ],
         ];
-        $type = $this->getMockBuilder(\Elastica\Type::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $type->expects($this->any())
-            ->method('getName')
-            ->willReturn($indexName);
-        $this->configuration->expects($this->once())
+
+        $typeMock = $this->getMockBuilder(Type::class)->disableOriginalConstructor()->getMock();
+
+        $this->typeFactoryMock->expects($this->any())
+            ->method('getType')
+            ->with($documentType)
+            ->willReturn($typeMock);
+        $this->configurationMock->expects($this->once())
             ->method('get')
-            ->with('indexing.' . $indexName . '.mapping')
+            ->with('indexing.' . $documentType . '.mapping')
             ->willReturn($configuration);
 
-        $mapping = $this->subject->getMapping($type)->toArray()[$indexName];
+        $mapping = $this->subject->getMapping($documentType)->toArray()[''];
         $this->assertArraySubset(
-            [
-                '_all' => $configuration['_all']
-            ],
-            $mapping,
-            true,
-            'Configuration of _all field was not set for mapping.'
-        );
-        $this->assertArraySubset(
-            [
-                'channel' => $configuration['channel']
-            ],
+            $configuration,
             $mapping['properties'],
             true,
             'Configuration for properties was not set for mapping.'

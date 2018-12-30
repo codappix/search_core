@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Database\Doctrine;
 
 /*
@@ -38,12 +39,12 @@ class Where
         $this->parameters = $parameters;
     }
 
-    public function getStatement() : string
+    public function getStatement(): string
     {
         return $this->statement;
     }
 
-    public function getParameters() : array
+    public function getParameters(): array
     {
         return $this->parameters;
     }

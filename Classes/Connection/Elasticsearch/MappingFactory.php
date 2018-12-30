@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 /*
@@ -35,32 +36,38 @@ class MappingFactory implements Singleton
     protected $configuration;
 
     /**
+     * @var TypeFactory
+     */
+    protected $typeFactory;
+
+    /**
      * @param ConfigurationContainerInterface $configuration
      */
-    public function __construct(ConfigurationContainerInterface $configuration)
-    {
+    public function __construct(
+        ConfigurationContainerInterface $configuration,
+        TypeFactory $typeFactory
+    ) {
         $this->configuration = $configuration;
+        $this->typeFactory = $typeFactory;
     }
 
     /**
      * Get an mapping based on type.
      */
-    public function getMapping(\Elastica\Type $type) : \Elastica\Type\Mapping
+    public function getMapping(string $documentType): \Elastica\Type\Mapping
     {
+        $type = $this->typeFactory->getType($documentType);
+
         $mapping = new \Elastica\Type\Mapping();
         $mapping->setType($type);
 
-        $configuration = $this->getConfiguration($type->getName());
-        if (isset($configuration['_all'])) {
-            $mapping->setAllField($configuration['_all']);
-            unset($configuration['_all']);
-        }
+        $configuration = $this->getConfiguration($documentType);
         $mapping->setProperties($configuration);
 
         return $mapping;
     }
 
-    protected function getConfiguration(string $identifier) : array
+    private function getConfiguration(string $identifier): array
     {
         try {
             return $this->configuration->get('indexing.' . $identifier . '.mapping');

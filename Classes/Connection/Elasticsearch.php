@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection;
 
 /*
@@ -22,6 +23,8 @@ namespace Codappix\SearchCore\Connection;
 
 use Codappix\SearchCore\Connection\Elasticsearch\SearchResult;
 use Codappix\SearchCore\Domain\Search\QueryFactory;
+use Elastica\Query;
+use Elastica\Type;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
@@ -116,8 +119,8 @@ class Elasticsearch implements Singleton, ConnectionInterface
     {
         $this->withType(
             $documentType,
-            function ($type) use ($document) {
-                $type->addDocument($this->documentFactory->getDocument($type->getName(), $document));
+            function (Type $type, string $documentType) use ($document) {
+                $type->addDocument($this->documentFactory->getDocument($documentType, $document));
             }
         );
     }
@@ -127,7 +130,7 @@ class Elasticsearch implements Singleton, ConnectionInterface
         try {
             $this->withType(
                 $documentType,
-                function ($type) use ($identifier) {
+                function (Type $type, string $documentType) use ($identifier) {
                     $type->deleteById($identifier);
                 }
             );
@@ -139,12 +142,35 @@ class Elasticsearch implements Singleton, ConnectionInterface
         }
     }
 
+    public function deleteAllDocuments(string $documentType)
+    {
+        $this->deleteDocumentsByQuery($documentType, Query::create([
+            'query' => [
+                'term' => [
+                    'search_document_type' => $documentType,
+                ],
+            ],
+        ]));
+    }
+
+    public function deleteIndex(string $documentType)
+    {
+        try {
+            $this->indexFactory->getIndex($this->connection, $documentType)->delete();
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->notice(
+                'Index did not exist, therefore was not deleted.',
+                [$documentType, $e]
+            );
+        }
+    }
+
     public function updateDocument(string $documentType, array $document)
     {
         $this->withType(
             $documentType,
-            function ($type) use ($document) {
-                $type->updateDocument($this->documentFactory->getDocument($type->getName(), $document));
+            function (Type $type, string $documentType) use ($document) {
+                $type->updateDocument($this->documentFactory->getDocument($documentType, $document));
             }
         );
     }
@@ -153,45 +179,13 @@ class Elasticsearch implements Singleton, ConnectionInterface
     {
         $this->withType(
             $documentType,
-            function ($type) use ($documents) {
-                $type->addDocuments($this->documentFactory->getDocuments($type->getName(), $documents));
+            function (Type $type, string $documentType) use ($documents) {
+                $type->addDocuments($this->documentFactory->getDocuments($documentType, $documents));
             }
         );
     }
 
-    public function deleteIndex(string $documentType)
-    {
-        $index = $this->connection->getClient()->getIndex($this->indexFactory->getIndexName());
-
-        if (! $index->exists()) {
-            $this->logger->notice(
-                'Index did not exist, therefore was not deleted.',
-                [$documentType, $this->indexFactory->getIndexName()]
-            );
-            return;
-        }
-
-        $index->delete();
-    }
-
-    /**
-     * Execute given callback with Elastica Type based on provided documentType
-     */
-    protected function withType(string $documentType, callable $callback)
-    {
-        $type = $this->getType($documentType);
-        // TODO: Check whether it's to heavy to send it so often e.g. for every single document.
-        // Perhaps add command controller to submit mapping?!
-        // Also it's not possible to change mapping without deleting index first.
-        // Mattes told about a solution.
-        // So command looks like the best way so far, except we manage mattes solution.
-        // Still then this should be done once. So perhaps singleton which tracks state and does only once?
-        $this->mappingFactory->getMapping($type)->send();
-        $callback($type);
-        $type->getIndex()->refresh();
-    }
-
-    public function search(SearchRequestInterface $searchRequest) : SearchResultInterface
+    public function search(SearchRequestInterface $searchRequest): SearchResultInterface
     {
         $this->logger->debug('Search for', [$searchRequest->getSearchTerm()]);
 
@@ -202,14 +196,38 @@ class Elasticsearch implements Singleton, ConnectionInterface
         return $this->objectManager->get(SearchResult::class, $searchRequest, $search->search());
     }
 
-    protected function getType(string $documentType) : \Elastica\Type
+    /**
+     * Execute given callback with Elastica Type based on provided documentType
+     */
+    private function withType(string $documentType, callable $callback)
     {
-        return $this->typeFactory->getType(
-            $this->indexFactory->getIndex(
-                $this->connection,
-                $documentType
-            ),
-            $documentType
-        );
+        $type = $this->typeFactory->getType($documentType);
+        // TODO: Check whether it's to heavy to send it so often e.g. for every single document.
+        // Perhaps add command controller to submit mapping?!
+        // Also it's not possible to change mapping without deleting index first.
+        // Mattes told about a solution.
+        // So command looks like the best way so far, except we manage mattes solution.
+        // Still then this should be done once. So perhaps singleton which tracks state and does only once?
+        $this->mappingFactory->getMapping($documentType)->send();
+        $callback($type, $documentType);
+        $type->getIndex()->refresh();
+    }
+
+    private function deleteDocumentsByQuery(string $documentType, Query $query)
+    {
+        try {
+            $index = $this->indexFactory->getIndex($this->connection, $documentType);
+            $response = $index->deleteByQuery($query);
+
+            if ($response->getData()['deleted'] > 0) {
+                // Refresh index when delete query is invoked
+                $index->refresh();
+            }
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->notice(
+                'Index did not exist, therefore items can not be deleted by query.',
+                [$documentType, $query->getQuery()]
+            );
+        }
     }
 }

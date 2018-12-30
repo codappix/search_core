@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit;
 
 /*
@@ -91,12 +92,12 @@ abstract class AbstractUnitTestCase extends CoreTestCase
         GeneralUtility::setSingletonInstance(ObjectManager::class, $objectManager);
     }
 
-    protected function isLegacyVersion() : bool
+    protected function isLegacyVersion(): bool
     {
         return \TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) < 8000000;
     }
 
-    protected function getCacheConfiguration() : array
+    protected function getCacheConfiguration(): array
     {
         $cacheConfiguration = [
             'extbase_object' => [

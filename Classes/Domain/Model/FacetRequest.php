@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Model;
 
 /*
@@ -44,12 +45,12 @@ class FacetRequest implements FacetRequestInterface
         $this->config = $config;
     }
 
-    public function getIdentifier() : string
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    public function getConfig() : array
+    public function getConfig(): array
     {
         return $this->config;
     }

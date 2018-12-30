@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Connection\Elasticsearch;
 
 /*
@@ -149,6 +150,6 @@ class IndexFactoryTest extends AbstractUnitTestCase
                 ])
             );
 
-        $this->subject->getIndex($connection, 'someIndex');
+        $this->subject->createIndex($connection, 'someIndex');
     }
 }

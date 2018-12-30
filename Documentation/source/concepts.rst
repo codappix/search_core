@@ -4,7 +4,8 @@ Concepts
 ========
 
 The main concept is to provide a foundation where other developers can profit from, to provide
-integrations into search services like Elasticsearch, Algolia, ... .
+integrations into search services like Elasticsearch, Algolia, …. But also to provide
+an ETL Framework.
 
 Our code contains the following concepts which should be understand:
 
@@ -18,6 +19,9 @@ interfaces. The main purpose is to provide a stable API between TYPO3 and concre
 
 For information about implementing a new connection, take a look at :ref:`development_connection`.
 
+These are equivalent to "Load" of ETL while "indexing", and equivalent to
+"Extraction" in frontend mode.
+
 .. _concepts_indexing:
 
 Indexing
@@ -30,6 +34,8 @@ in TypoScript.
 Currently :ref:`TcaIndexer` and :ref:`PagesIndexer` are provided.
 
 For information about implementing a new indexer, take a look at :ref:`development_indexer`.
+
+This is the process of "loading" data inside the ETL.
 
 .. _concepts_dataprocessing:
 
@@ -47,3 +53,5 @@ flexible as integrators are able to configure DataProcessors and change their or
 Configuration is done through TypoScript, see :ref:`dataprocessors`.
 
 For information about implementing a new DataProcessor, take a look at :ref:`development_dataprocessor`.
+
+This is the "transforming" step of ETL.

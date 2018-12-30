@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Integration\Form\Finisher;
 
 /*
@@ -63,6 +64,9 @@ class DataHandlerFinisherTest extends AbstractUnitTestCase
      * @test
      * @requires function \TYPO3\CMS\Form\Domain\Finishers\AbstractFinisher::setOptions
      * @dataProvider possibleFinisherSetup
+     * @param string $action
+     * @param array $nonCalledActions
+     * @param $expectedSecondArgument
      */
     public function validConfiguration(string $action, array $nonCalledActions, $expectedSecondArgument)
     {
@@ -81,7 +85,7 @@ class DataHandlerFinisherTest extends AbstractUnitTestCase
         $this->subject->execute($this->finisherContextMock);
     }
 
-    public function possibleFinisherSetup() : array
+    public function possibleFinisherSetup(): array
     {
         return [
             'valid update configuration' => [
@@ -101,6 +105,7 @@ class DataHandlerFinisherTest extends AbstractUnitTestCase
      * @test
      * @requires function \TYPO3\CMS\Form\Domain\Finishers\AbstractFinisher::setOptions
      * @dataProvider invalidFinisherSetup
+     * @param array $options
      */
     public function nothingHappensIfUnknownActionIsConfigured(array $options)
     {
@@ -114,7 +119,7 @@ class DataHandlerFinisherTest extends AbstractUnitTestCase
         $this->subject->execute($this->finisherContextMock);
     }
 
-    public function invalidFinisherSetup() : array
+    public function invalidFinisherSetup(): array
     {
         return [
             'missing options' => [

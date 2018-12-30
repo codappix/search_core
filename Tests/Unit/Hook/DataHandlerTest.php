@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Hook;
 
 /*
@@ -30,6 +31,8 @@ class DataHandlerToProcessorTest extends AbstractUnitTestCase
     /**
      * @test
      * @dataProvider getPossibleCallCombinations
+     * @param array $parameters
+     * @param bool $expectCall
      */
     public function fieldsAreCopiedAsConfigured(array $parameters, bool $expectCall)
     {
@@ -64,7 +67,7 @@ class DataHandlerToProcessorTest extends AbstractUnitTestCase
         $subject->clearCachePostProc($parameters, $coreDataHandlerMock);
     }
 
-    public function getPossibleCallCombinations() : array
+    public function getPossibleCallCombinations(): array
     {
         return [
             'Editor triggered cache clear of page manual' => [
@@ -75,7 +78,7 @@ class DataHandlerToProcessorTest extends AbstractUnitTestCase
             ],
             'Editor changed records on a page' => [
                 'parameters' => [
-                    'uid_page' =>10,
+                    'uid_page' => 10,
                 ],
                 'expectCall' => true,
             ],
@@ -110,6 +113,7 @@ class DataHandlerToProcessorTest extends AbstractUnitTestCase
             'cacheCmd' => 'NEW343',
         ], $coreDataHandlerMock);
     }
+
     /**
      * @test
      */

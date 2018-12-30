@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Domain\Model;
 
 /*
@@ -23,7 +24,8 @@ namespace Codappix\SearchCore\Domain\Model;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\FacetRequestInterface;
 use Codappix\SearchCore\Connection\SearchRequestInterface;
-use Codappix\SearchCore\Domain\Search\SearchService;
+use Codappix\SearchCore\Domain\Search\SearchServiceInterface;
+use Codappix\SearchCore\Utility\ArrayUtility;
 
 /**
  * Represents a search request used to process an actual search.
@@ -62,12 +64,12 @@ class SearchRequest implements SearchRequestInterface
      *
      * @var ConnectionInterface
      */
-    protected $connection = null;
+    protected $connection;
 
     /**
-     * @var SearchService
+     * @var SearchServiceInterface
      */
-    protected $searchService = null;
+    protected $searchService;
 
     /**
      * @param string $query
@@ -77,31 +79,33 @@ class SearchRequest implements SearchRequestInterface
         $this->query = $query;
     }
 
-    public function getQuery() : string
+    public function getQuery(): string
     {
         return $this->query;
     }
 
-    public function getSearchTerm() : string
+    public function getSearchTerm(): string
     {
         return $this->query;
     }
 
     /**
+     * Type hint necessary for extbase!
+     *
      * @param array $filter
      */
     public function setFilter(array $filter)
     {
-        $filter = \TYPO3\CMS\Core\Utility\ArrayUtility::removeArrayEntryByValue($filter, '');
-        $this->filter = \TYPO3\CMS\Extbase\Utility\ArrayUtility::removeEmptyElementsRecursively($filter);
+        $filter = ArrayUtility::removeArrayEntryByValue($filter, '');
+        $this->filter = ArrayUtility::removeEmptyElementsRecursively($filter);
     }
 
-    public function hasFilter() : bool
+    public function hasFilter(): bool
     {
         return count($this->filter) > 0;
     }
 
-    public function getFilter() : array
+    public function getFilter(): array
     {
         return $this->filter;
     }
@@ -117,7 +121,7 @@ class SearchRequest implements SearchRequestInterface
     /**
      * Returns all configured facets to fetch in this search request.
      */
-    public function getFacets() : array
+    public function getFacets(): array
     {
         return $this->facets;
     }
@@ -131,22 +135,26 @@ class SearchRequest implements SearchRequestInterface
         $this->connection = $connection;
     }
 
-    public function setSearchService(SearchService $searchService)
+    public function setSearchService(SearchServiceInterface $searchService)
     {
         $this->searchService = $searchService;
     }
 
     // Extbase QueryInterface
     // Current implementation covers only paginate widget support.
+
+    /**
+     * @throws \InvalidArgumentException
+     */
     public function execute($returnRawQueryResult = false)
     {
-        if (! ($this->connection instanceof ConnectionInterface)) {
+        if (!($this->connection instanceof ConnectionInterface)) {
             throw new \InvalidArgumentException(
                 'Connection was not set before, therefore execute can not work. Use `setConnection` before.',
                 1502197732
             );
         }
-        if (! ($this->searchService instanceof SearchService)) {
+        if (!($this->searchService instanceof SearchServiceInterface)) {
             throw new \InvalidArgumentException(
                 'SearchService was not set before, therefore execute can not work. Use `setSearchService` before.',
                 1520325175
@@ -158,14 +166,14 @@ class SearchRequest implements SearchRequestInterface
 
     public function setLimit($limit)
     {
-        $this->limit = (int) $limit;
+        $this->limit = (int)$limit;
 
         return $this;
     }
 
     public function setOffset($offset)
     {
-        $this->offset = (int) $offset;
+        $this->offset = (int)$offset;
 
         return $this;
     }
@@ -180,116 +188,199 @@ class SearchRequest implements SearchRequestInterface
         return $this->offset;
     }
 
+    /**
+     * Used, e.g. by caching to determine identifier.
+     */
+    public function __sleep()
+    {
+        return [
+            'query',
+            'filter',
+            'facets',
+            'offset',
+            'limit',
+        ];
+    }
+
+    /**
+     * @throws \BadMethodCallException
+     */
     public function getSource()
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196146);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function setOrderings(array $orderings)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196163);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function matching($constraint)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196197);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function logicalAnd($constraint1)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196166);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function logicalOr($constraint1)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196198);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function logicalNot(\TYPO3\CMS\Extbase\Persistence\Generic\Qom\ConstraintInterface $constraint)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196166);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function equals($propertyName, $operand, $caseSensitive = true)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196199);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function like($propertyName, $operand, $caseSensitive = true)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196167);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function contains($propertyName, $operand)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196200);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function in($propertyName, $operand)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196167);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function lessThan($propertyName, $operand)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196201);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function lessThanOrEqual($propertyName, $operand)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196168);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function greaterThan($propertyName, $operand)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196202);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function greaterThanOrEqual($propertyName, $operand)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196168);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function getType()
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196203);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function setQuerySettings(\TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface $querySettings)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196168);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function getQuerySettings()
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196205);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function count()
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196169);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function getOrderings()
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196206);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function getConstraint()
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196171);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function isEmpty($propertyName)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196207);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function setSource(\TYPO3\CMS\Extbase\Persistence\Generic\Qom\SourceInterface $source)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196172);
     }
 
+    /**
+     * @throws \BadMethodCallException
+     */
     public function getStatement()
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196208);

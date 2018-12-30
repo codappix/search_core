@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\DataProcessing;
 
 /*
@@ -42,7 +43,7 @@ class Service
      *
      * @param array|string $configuration Either the full configuration or only the class name.
      */
-    public function executeDataProcessor($configuration, array $data, string $recordType = '') : array
+    public function executeDataProcessor($configuration, array $data, string $recordType = ''): array
     {
         if (is_string($configuration)) {
             $configuration = [
@@ -50,7 +51,7 @@ class Service
             ];
         }
 
-        if (!isset($configuration['_table']) && $recordType !== '') {
+        if ($recordType !== '' && !isset($configuration['_table'])) {
             $configuration['_table'] = $recordType;
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 /*
@@ -45,12 +46,12 @@ class SearchResult implements SearchResultInterface
     /**
      * @var array<FacetInterface>
      */
-    protected $facets = [];
+    protected $facets;
 
     /**
      * @var array<ResultItemInterface>
      */
-    protected $results = [];
+    protected $results;
 
     /**
      * For Iterator interface.
@@ -77,7 +78,7 @@ class SearchResult implements SearchResultInterface
     /**
      * @return array<ResultItemInterface>
      */
-    public function getResults() : array
+    public function getResults(): array
     {
         $this->initResults();
 
@@ -89,24 +90,25 @@ class SearchResult implements SearchResultInterface
      *
      * @return array<FacetInterface>
      */
-    public function getFacets() : array
+    public function getFacets(): array
     {
         $this->initFacets();
 
         return $this->facets;
     }
 
-    public function getCurrentCount() : int
+    public function getCurrentCount(): int
     {
         return $this->result->count();
     }
 
     protected function initResults()
     {
-        if ($this->results !== []) {
+        if (is_array($this->results)) {
             return;
         }
 
+        $this->results = [];
         foreach ($this->result->getResults() as $result) {
             $this->results[] = new ResultItem($result->getData(), $result->getParam('_type'));
         }
@@ -114,27 +116,50 @@ class SearchResult implements SearchResultInterface
 
     protected function initFacets()
     {
-        if ($this->facets !== [] || !$this->result->hasAggregations()) {
+        if (is_array($this->facets)) {
+            return;
+        }
+
+        $this->facets = [];
+
+        if ($this->result->hasAggregations() === false) {
             return;
         }
 
         foreach ($this->result->getAggregations() as $aggregationName => $aggregation) {
-            $this->facets[$aggregationName] = $this->objectManager->get(Facet::class, $aggregationName, $aggregation);
+            $this->facets[$aggregationName] = $this->objectManager->get(
+                Facet::class,
+                $aggregationName,
+                $aggregation
+            );
         }
     }
 
-    // Countable - Interface
+    /**
+     * Countable - Interface
+     *
+     * @return integer
+     */
     public function count()
     {
         return $this->result->getTotalHits();
     }
 
-    // Iterator - Interface
+    /**
+     * Iterator - Interface
+     *
+     * @return mixed
+     */
     public function current()
     {
         return $this->getResults()[$this->position];
     }
 
+    /**
+     * Iterator - Interface
+     *
+     * @return mixed
+     */
     public function next()
     {
         ++$this->position;
@@ -142,21 +167,37 @@ class SearchResult implements SearchResultInterface
         return $this->current();
     }
 
+    /**
+     * Iterator - Interface
+     *
+     * @return int|mixed
+     */
     public function key()
     {
         return $this->position;
     }
 
+    /**
+     * Iterator - Interface
+     *
+     * @return bool
+     */
     public function valid()
     {
         return isset($this->getResults()[$this->position]);
     }
 
+    /**
+     * Iterator - Interface
+     */
     public function rewind()
     {
         $this->position = 0;
     }
 
+    /**
+     * @return SearchRequestInterface
+     */
     public function getQuery()
     {
         return $this->searchRequest;

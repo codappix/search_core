@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\DataProcessing;
 
 /*
@@ -25,21 +26,21 @@ namespace Codappix\SearchCore\DataProcessing;
  */
 class GeoPointProcessor implements ProcessorInterface
 {
-    public function processData(array $record, array $configuration) : array
+    public function processData(array $record, array $configuration): array
     {
-        if (! $this->isApplyable($record, $configuration)) {
+        if (!$this->isApplyable($record, $configuration)) {
             return $record;
         }
 
         $record[$configuration['to']] = [
-            'lat' => (float) $record[$configuration['lat']],
-            'lon' => (float) $record[$configuration['lon']],
+            'lat' => (float)$record[$configuration['lat']],
+            'lon' => (float)$record[$configuration['lon']],
         ];
 
         return $record;
     }
 
-    protected function isApplyable(array $record, array $configuration) : bool
+    protected function isApplyable(array $record, array $configuration): bool
     {
         if (!isset($record[$configuration['lat']])
             || !is_numeric($record[$configuration['lat']])

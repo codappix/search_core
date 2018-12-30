@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\Configuration;
 
 /*
@@ -30,6 +31,9 @@ class ConfigurationUtilityTest extends AbstractUnitTestCase
     /**
      * @test
      * @dataProvider possibleRequestAndConfigurationForFluidtemplate
+     * @param SearchRequestInterface $searchRequest
+     * @param array $array
+     * @param array $expected
      */
     public function recursiveEntriesAreProcessedAsFluidtemplate(
         SearchRequestInterface $searchRequest,
@@ -45,7 +49,7 @@ class ConfigurationUtilityTest extends AbstractUnitTestCase
         );
     }
 
-    public function possibleRequestAndConfigurationForFluidtemplate() : array
+    public function possibleRequestAndConfigurationForFluidtemplate(): array
     {
         return [
             'Nothing in array' => [
@@ -92,6 +96,8 @@ class ConfigurationUtilityTest extends AbstractUnitTestCase
     /**
      * @test
      * @dataProvider possibleConditionEntries
+     * @param array $entries
+     * @param array $expected
      */
     public function conditionsAreHandledAsExpected(array $entries, array $expected)
     {
@@ -104,7 +110,7 @@ class ConfigurationUtilityTest extends AbstractUnitTestCase
         );
     }
 
-    public function possibleConditionEntries() : array
+    public function possibleConditionEntries(): array
     {
         return [
             'Nothing in array' => [

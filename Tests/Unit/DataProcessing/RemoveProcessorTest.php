@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Tests\Unit\DataProcessing;
 
 /*
@@ -28,6 +29,9 @@ class RemoveProcessorTest extends AbstractUnitTestCase
     /**
      * @test
      * @dataProvider getPossibleDataConfigurationCombinations
+     * @param array $record
+     * @param array $configuration
+     * @param array $expectedData
      */
     public function fieldsAreCopiedAsConfigured(array $record, array $configuration, array $expectedData)
     {

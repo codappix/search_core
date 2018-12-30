@@ -1,4 +1,5 @@
 <?php
+
 namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 /*
@@ -68,7 +69,7 @@ class Connection implements Singleton
     /**
      * Get the concrete client for internal usage!
      */
-    public function getClient() : \Elastica\Client
+    public function getClient(): \Elastica\Client
     {
         return $this->elasticaClient;
     }
