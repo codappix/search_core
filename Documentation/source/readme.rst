@@ -7,22 +7,28 @@ Introduction
 What does it do?
 ----------------
 
-The goal of this extension is to provide search integrations into TYPO3 CMS. The extension will
-provide a convenient API to allow developers to provide concrete implementations of backends like
-Elasticsearch, Algolia or Solr.
+Contrary to most search solutions, search_core is an ETL (=Extract, Transform, Load)
+Framework. This allows to extract data from one source, transform it, and load them
+into an target system. Focusing on search solutions, but not limited to them.
 
-The extension provides integration into TYPO3 like a frontend plugin for searches and hooks to
-update search indexes on updates. Also a command line interface is provided for interactions like
-re-indexing.
+The provided process is to extract data from TYPO3 database storage using TCA, to
+transform those data using data processors, and to load them into some search
+storage like Elasticsearch. This is done via Hooks and CLI.
+
+Also the process is to extract data from some storage like Elasticsearch, transform
+the data using data processors and to load them into the TYPO3 frontend. This is done
+via a Frontend Plugin.
 
 Current state
 -------------
 
-This is still a very early beta version. More information can be taken from Github at
-`current issues`_.
+The basic necessary features are already implemented. Still features like workspaces
+or multi language are not provided out of the box.
 
-We are also focusing on Code Quality and Testing through `travis ci`_, ``phpcs``, ``phpunit`` and
-``phpstan``.
+Also only Elasticsearch is provided out of the box as a storage backend. But an
+implementation for Algolia is already available via 3rd Party:
+https://github.com/martinhummer/search_algolia
 
-.. _current issues: https://github.com/Codappix/search_core/issues
-.. _travis ci: https://travis-ci.org/Codappix/search_core
+As the initial intend was to provide a common API and implementation for arbitrary
+search implementations for TYPO3, the API is not fully implemented for ETL right now.
+Also that's the reason for using "search_core" as extension name.

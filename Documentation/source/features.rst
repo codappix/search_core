@@ -46,6 +46,16 @@ output.
 
 See :ref:`concepts_dataprocessing` in :ref:`concepts` section.
 
+.. _feature_up_to_you:
+
+Up to you
+---------
+
+The following is not provided by default, but possible with custom PHP code:
+
+* Integrating Social Media Feed imports via custom indexer to display feed content
+  inside of TYPO3 or publishing via custom connections.
+
 .. _features_planned:
 
 Planned
