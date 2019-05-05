@@ -7,7 +7,7 @@ $EM_CONF[$_EXTKEY] = [
     'clearCacheOnLoad' => 1,
     'constraints' => [
         'depends' => [
-            'typo3' => '7.6.0-9.5.99',
+            'typo3' => '8.7.0-9.5.99',
             'php' => '7.0.0-7.2.99'
         ],
         'conflicts' => [],
