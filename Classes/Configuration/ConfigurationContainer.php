@@ -20,7 +20,6 @@ namespace Codappix\SearchCore\Configuration;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Core\Utility\Exception\MissingArrayPathException;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 
@@ -61,7 +60,11 @@ class ConfigurationContainer implements ConfigurationContainerInterface
      */
     public function get(string $path)
     {
-        $value = ArrayUtility::getValueByPath($this->settings, $path, '.');
+        try {
+            $value = ArrayUtility::getValueByPath($this->settings, $path, '.');
+        } catch (\Exception $e) {
+            $value = null;
+        }
 
         if ($value === null) {
             throw new InvalidArgumentException(

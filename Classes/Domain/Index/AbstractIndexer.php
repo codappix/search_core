@@ -127,55 +127,28 @@ abstract class AbstractIndexer implements IndexerInterface
         }
     }
 
-    /**
-     * @param array $record
-     *
-     * @throws \Exception
-     */
     protected function prepareRecord(array &$record)
     {
         try {
-            $indexingConfiguration = $this->configuration->getIfExists(
-                'indexing.' . $this->identifier . '.dataProcessing'
-            );
-
-            if (!empty($indexingConfiguration) && is_array($indexingConfiguration)) {
-                foreach ($indexingConfiguration as $configuration) {
-                    $record = $this->dataProcessorService->executeDataProcessor(
-                        $configuration,
-                        $record,
-                        $this->identifier
-                    );
-                }
+            foreach ($this->configuration->get('indexing.' . $this->identifier . '.dataProcessing') as $configuration) {
+                $record = $this->dataProcessorService->executeDataProcessor($configuration, $record, $this->identifier);
             }
-        } catch (\Exception $e) {
-            if ($e instanceof InvalidArgumentException) {
-                // Nothing to do
-            } elseif ($e instanceof MissingArrayPathException) {
-                // Nothing to do
-            } else {
-                throw $e;
-            }
+        } catch (InvalidArgumentException $e) {
+            // Nothing to do
         }
 
         $this->handleAbstract($record);
     }
 
-    /**
-     * @param array $record
-     *
-     * @throws \Exception
-     */
     protected function handleAbstract(array &$record)
     {
         $record['search_abstract'] = '';
 
         try {
-            $indexConfiguration = $this->configuration->getIfExists(
-                'indexing.' . $this->identifier . '.abstractFields'
+            $fieldsToUse = GeneralUtility::trimExplode(
+                ',',
+                $this->configuration->get('indexing.' . $this->identifier . '.abstractFields')
             );
-
-            $fieldsToUse = GeneralUtility::trimExplode(',', $indexConfiguration);
             if ($fieldsToUse === []) {
                 return;
             }
@@ -185,14 +158,8 @@ abstract class AbstractIndexer implements IndexerInterface
                     break;
                 }
             }
-        } catch (\Exception $e) {
-            if ($e instanceof InvalidArgumentException) {
-                return;
-            } elseif ($e instanceof MissingArrayPathException) {
-                return;
-            } else {
-                throw $e;
-            }
+        } catch (InvalidArgumentException $e) {
+            return;
         }
     }
 

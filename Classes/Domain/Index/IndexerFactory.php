@@ -25,7 +25,6 @@ use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Domain\Index\IndexerInterface;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableServiceInterface;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
-use TYPO3\CMS\Core\Utility\Exception\MissingArrayPathException;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
 /**
@@ -65,10 +64,6 @@ class IndexerFactory implements Singleton
         } catch (NoMatchingIndexerException $e) {
             // Nothing to do, we throw exception below
         } catch (InvalidArgumentException $e) {
-            // Nothing to do, we throw exception below
-        } catch (MissingArrayPathException $e) {
-            // Nothing to do, we throw exception below
-        } catch (\RuntimeException $exception) {
             // Nothing to do, we throw exception below
         }
 

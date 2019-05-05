@@ -54,8 +54,8 @@ class Connection implements Singleton
 
         if ($elasticaClient === null) {
             $elasticaClient = new \Elastica\Client([
-                'host' => $this->configuration->getIfExists('connections.elasticsearch.host'),
-                'port' => $this->configuration->getIfExists('connections.elasticsearch.port'),
+                'host' => $this->configuration->get('connections.elasticsearch.host'),
+                'port' => $this->configuration->get('connections.elasticsearch.port'),
                 // TODO: Make configurable
                 // 'log' => 'file',
             ]);
