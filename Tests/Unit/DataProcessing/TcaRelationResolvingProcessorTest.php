@@ -23,6 +23,7 @@ namespace Codappix\SearchCore\Tests\Unit\DataProcessing;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\DataProcessing\TcaRelationResolvingProcessor;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -51,6 +52,14 @@ class TcaRelationResolvingProcessorTest extends AbstractUnitTestCase
 
         $this->subject = GeneralUtility::makeInstance(ObjectManager::class)
             ->get(TcaRelationResolvingProcessor::class);
+
+        $GLOBALS['LANG'] = $this->getMockBuilder(LanguageService::class)->getMock();
+    }
+
+    public function tearDown()
+    {
+        unset($GLOBALS['LANG']);
+        parent::tearDown();
     }
 
     /**
@@ -118,6 +127,7 @@ class TcaRelationResolvingProcessorTest extends AbstractUnitTestCase
     public function renderTypeInputDateTimeIsHandled()
     {
         $originalRecord = [
+            'uid' => 10,
             'endtime' => 99999999999,
             'starttime' => 1523010960,
         ];
@@ -159,6 +169,7 @@ class TcaRelationResolvingProcessorTest extends AbstractUnitTestCase
         $record = $this->subject->processData($originalRecord, $configuration);
         $this->assertSame(
             [
+                'uid' => '10',
                 'endtime' => '16-11-38 09:46',
                 'starttime' => 1523010960,
             ],

@@ -41,6 +41,9 @@ class GeoPointProcessor implements ProcessorInterface
 
     protected function isApplyable(array $record, array $configuration) : bool
     {
+        if (!isset($configuration['lat']) || !isset($configuration['lon'])) {
+            return false;
+        }
         if (!isset($record[$configuration['lat']])
             || !is_numeric($record[$configuration['lat']])
             || trim($record[$configuration['lat']]) === ''

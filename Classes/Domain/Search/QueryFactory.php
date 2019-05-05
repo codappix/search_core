@@ -85,7 +85,7 @@ class QueryFactory
 
     protected function addSize(SearchRequestInterface $searchRequest, array &$query)
     {
-        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+        ArrayUtility::mergeRecursiveWithOverrule($query, [
             'from' => $searchRequest->getOffset(),
             'size' => $searchRequest->getLimit(),
         ]);
@@ -108,7 +108,7 @@ class QueryFactory
             $matchExpression['minimum_should_match'] = $minimumShouldMatch;
         }
 
-        $query = ArrayUtility::setValueByPath($query, 'query.bool.must.0.multi_match', $matchExpression);
+        $query = ArrayUtility::setValueByPath($query, 'query.bool.must.0.multi_match', $matchExpression, '.');
     }
 
     protected function addBoosts(SearchRequestInterface $searchRequest, array &$query)
@@ -137,7 +137,7 @@ class QueryFactory
         }
 
         if (!empty($boostQueryParts)) {
-            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+            ArrayUtility::mergeRecursiveWithOverrule($query, [
                 'query' => [
                     'bool' => [
                         'should' => $boostQueryParts,
@@ -149,6 +149,10 @@ class QueryFactory
 
     protected function addFactorBoost(array &$query)
     {
+        if (!isset($query['query'])) {
+            return;
+        }
+
         try {
             $query['query'] = [
                 'function_score' => [
@@ -164,7 +168,7 @@ class QueryFactory
     protected function addFields(SearchRequestInterface $searchRequest, array &$query)
     {
         try {
-            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+            ArrayUtility::mergeRecursiveWithOverrule($query, [
                 'stored_fields' => GeneralUtility::trimExplode(
                     ',',
                     $this->configuration->get('searching.fields.stored_fields'),
@@ -183,7 +187,7 @@ class QueryFactory
             );
             $scriptFields = $this->configurationUtility->filterByCondition($scriptFields);
             if ($scriptFields !== []) {
-                $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['script_fields' => $scriptFields]);
+                ArrayUtility::mergeRecursiveWithOverrule($query, ['script_fields' => $scriptFields]);
             }
         } catch (InvalidArgumentException $e) {
             // Nothing configured
@@ -196,7 +200,7 @@ class QueryFactory
         $sorting = $this->configurationUtility->replaceArrayValuesWithRequestContent($searchRequest, $sorting);
         $sorting = $this->configurationUtility->filterByCondition($sorting);
         if ($sorting !== []) {
-            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, ['sort' => $sorting]);
+            ArrayUtility::mergeRecursiveWithOverrule($query, ['sort' => $sorting]);
         }
     }
 
@@ -215,7 +219,7 @@ class QueryFactory
             );
         }
 
-        $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+        ArrayUtility::mergeRecursiveWithOverrule($query, [
             'query' => [
                 'bool' => [
                     'filter' => $filter,
@@ -260,7 +264,7 @@ class QueryFactory
     protected function addFacets(SearchRequestInterface $searchRequest, array &$query)
     {
         foreach ($searchRequest->getFacets() as $facet) {
-            $query = ArrayUtility::arrayMergeRecursiveOverrule($query, [
+            ArrayUtility::mergeRecursiveWithOverrule($query, [
                 'aggs' => [
                     $facet->getIdentifier() => $facet->getConfig(),
                 ],

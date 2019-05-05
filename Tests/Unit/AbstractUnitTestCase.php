@@ -20,10 +20,10 @@ namespace Codappix\SearchCore\Tests\Unit;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Core\Tests\UnitTestCase as CoreTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Form\Service\TranslationService;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase as CoreTestCase;
 
 abstract class AbstractUnitTestCase extends CoreTestCase
 {

@@ -23,6 +23,7 @@ namespace Codappix\SearchCore\Tests\Unit\Domain\Search;
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use Codappix\SearchCore\Configuration\InvalidArgumentException;
 use Codappix\SearchCore\Connection\ConnectionInterface;
+use Codappix\SearchCore\Connection\SearchRequestInterface;
 use Codappix\SearchCore\Connection\SearchResultInterface;
 use Codappix\SearchCore\DataProcessing\Service as DataProcessorService;
 use Codappix\SearchCore\Domain\Model\SearchRequest;
@@ -182,7 +183,7 @@ class SearchServiceTest extends AbstractUnitTestCase
 
         $this->connection->expects($this->once())
             ->method('search')
-            ->with($this->callback(function ($searchRequest) {
+            ->with($this->callback(function (SearchRequestInterface $searchRequest) {
                 return $searchRequest->getFilter() === ['property' => '0'];
             }))
             ->willReturn($this->getMockBuilder(SearchResultInterface::class)->getMock());
