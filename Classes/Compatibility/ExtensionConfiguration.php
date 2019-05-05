@@ -1,5 +1,4 @@
 <?php
-
 namespace Codappix\SearchCore\Compatibility;
 
 use Codappix\SearchCore\Bootstrap;
@@ -9,7 +8,7 @@ class ExtensionConfiguration implements ExtensionConfigurationInterface
     /**
      * @return object|\TYPO3\CMS\Core\Configuration\ExtensionConfiguration
      */
-    protected function _base()
+    private function base()
     {
         return Bootstrap::getObjectManager()->get(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class);
     }
@@ -22,6 +21,6 @@ class ExtensionConfiguration implements ExtensionConfigurationInterface
      */
     public function get($extensionKey)
     {
-        return $this->_base()->get($extensionKey);
+        return $this->base()->get($extensionKey);
     }
 }

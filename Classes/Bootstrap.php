@@ -1,5 +1,4 @@
 <?php
-
 namespace Codappix\SearchCore;
 
 use Codappix\SearchCore\Compatibility\ExtensionConfigurationInterface;

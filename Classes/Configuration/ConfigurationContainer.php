@@ -63,14 +63,14 @@ class ConfigurationContainer implements ConfigurationContainerInterface
     public function get(string $path)
     {
         $value = ArrayUtility::getValueByPath($this->settings, $path, '.');
-        
+
         if ($value === null) {
             throw new InvalidArgumentException(
                 'The given configuration option "' . $path . '" does not exist.',
                 InvalidArgumentException::OPTION_DOES_NOT_EXIST
             );
         }
-        
+
         return $value;
     }
 
@@ -80,12 +80,9 @@ class ConfigurationContainer implements ConfigurationContainerInterface
      */
     public function getIfExists(string $path)
     {
-        try
-        {
+        try {
             return ArrayUtility::getValueByPath($this->settings, $path, '.');
-        }
-        catch (\Exception $exception)
-        {
+        } catch (\Exception $exception) {
             return null;
         }
     }

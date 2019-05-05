@@ -1,5 +1,4 @@
 <?php
-
 namespace Codappix\SearchCore\Compatibility;
 
 /*
@@ -43,7 +42,7 @@ class ImplementationRegistrationService
                 ExtensionConfigurationInterface::class,
                 ExtensionConfiguration::class
             );
-        } else if (VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) >= 8000000) {
+        } elseif (VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) >= 8000000) {
             $container->registerImplementation(
                 ExtensionConfigurationInterface::class,
                 Version87\ExtensionConfiguration::class

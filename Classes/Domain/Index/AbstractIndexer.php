@@ -1,5 +1,4 @@
 <?php
-
 namespace Codappix\SearchCore\Domain\Index;
 
 /*
@@ -34,28 +33,28 @@ abstract class AbstractIndexer implements IndexerInterface
      * @var ConnectionInterface
      */
     protected $connection;
-    
+
     /**
      * @var ConfigurationContainerInterface
      */
     protected $configuration;
-    
+
     /**
      * @var string
      */
     protected $identifier = '';
-    
+
     /**
      * @var \Codappix\SearchCore\DataProcessing\Service
      * @inject
      */
     protected $dataProcessorService;
-    
+
     /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
-    
+
     /**
      * Inject log manager to get concrete logger from it.
      *
@@ -65,18 +64,18 @@ abstract class AbstractIndexer implements IndexerInterface
     {
         $this->logger = $logManager->getLogger(__CLASS__);
     }
-    
+
     public function setIdentifier(string $identifier)
     {
         $this->identifier = $identifier;
     }
-    
+
     public function __construct(ConnectionInterface $connection, ConfigurationContainerInterface $configuration)
     {
         $this->connection = $connection;
         $this->configuration = $configuration;
     }
-    
+
     public function indexAllDocuments()
     {
         $this->logger->info('Start indexing');
@@ -84,24 +83,24 @@ abstract class AbstractIndexer implements IndexerInterface
             if ($records === null) {
                 break;
             }
-            
+
             foreach ($records as &$record) {
                 $this->prepareRecord($record);
             }
-            
+
             $this->logger->debug('Index records.', [$records]);
             $this->connection->addDocuments($this->getDocumentName(), $records);
         }
         $this->logger->info('Finish indexing');
     }
-    
+
     public function indexDocument(string $identifier)
     {
         $this->logger->info('Start indexing single record.', [$identifier]);
         try {
             $record = $this->getRecord((int)$identifier);
             $this->prepareRecord($record);
-            
+
             $this->connection->addDocument($this->getDocumentName(), $record);
         } catch (NoRecordFoundException $e) {
             $this->logger->info('Could not index document. Try to delete it therefore.', [$e->getMessage()]);
@@ -109,26 +108,25 @@ abstract class AbstractIndexer implements IndexerInterface
         }
         $this->logger->info('Finish indexing');
     }
-    
+
     public function delete()
     {
         $this->logger->info('Start deletion of index.');
         $this->connection->deleteIndex($this->getDocumentName());
         $this->logger->info('Finish deletion.');
     }
-    
+
     protected function getRecordGenerator(): \Generator
     {
         $offset = 0;
         $limit = $this->getLimit();
-        
+
         while (($records = $this->getRecords($offset, $limit)) !== []) {
             yield $records;
             $offset += $limit;
         }
     }
-    
-    
+
     /**
      * @param array $record
      *
@@ -137,12 +135,17 @@ abstract class AbstractIndexer implements IndexerInterface
     protected function prepareRecord(array &$record)
     {
         try {
-            $indexingConfiguration = $this->configuration->getIfExists('indexing.' . $this->identifier . '.dataProcessing');
-            
+            $indexingConfiguration = $this->configuration->getIfExists(
+                'indexing.' . $this->identifier . '.dataProcessing'
+            );
+
             if (!empty($indexingConfiguration) && is_array($indexingConfiguration)) {
                 foreach ($indexingConfiguration as $configuration) {
-                    $record = $this->dataProcessorService->executeDataProcessor($configuration, $record,
-                        $this->identifier);
+                    $record = $this->dataProcessorService->executeDataProcessor(
+                        $configuration,
+                        $record,
+                        $this->identifier
+                    );
                 }
             }
         } catch (\Exception $e) {
@@ -154,11 +157,10 @@ abstract class AbstractIndexer implements IndexerInterface
                 throw $e;
             }
         }
-        
+
         $this->handleAbstract($record);
     }
-    
-    
+
     /**
      * @param array $record
      *
@@ -167,11 +169,12 @@ abstract class AbstractIndexer implements IndexerInterface
     protected function handleAbstract(array &$record)
     {
         $record['search_abstract'] = '';
-        
+
         try {
-            
-            $indexConfiguration = $this->configuration->getIfExists('indexing.' . $this->identifier . '.abstractFields');
-            
+            $indexConfiguration = $this->configuration->getIfExists(
+                'indexing.' . $this->identifier . '.abstractFields'
+            );
+
             $fieldsToUse = GeneralUtility::trimExplode(',', $indexConfiguration);
             if ($fieldsToUse === []) {
                 return;
@@ -192,7 +195,7 @@ abstract class AbstractIndexer implements IndexerInterface
             }
         }
     }
-    
+
     /**
      * Returns the limit to use to fetch records.
      */
@@ -201,16 +204,16 @@ abstract class AbstractIndexer implements IndexerInterface
         // TODO: Make configurable.
         return 50;
     }
-    
+
     /**
      * @return array|null
      */
     abstract protected function getRecords(int $offset, int $limit);
-    
+
     /**
      * @throws NoRecordFoundException If record could not be found.
      */
     abstract protected function getRecord(int $identifier): array;
-    
+
     abstract protected function getDocumentName(): string;
 }
