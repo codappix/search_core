@@ -22,7 +22,6 @@ namespace Codappix\SearchCore\Connection\Elasticsearch;
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
 use TYPO3\CMS\Core\SingletonInterface as Singleton;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * The current connection to elasticsearch.
