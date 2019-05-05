@@ -39,4 +39,4 @@ uploadCodeCoverageToScrutinizer:
 	php ocular.phar code-coverage:upload --format=php-clover .Build/report/functional/clover/coverage
 
 clean:
-	rm -rf .Build composer.lock
+	rm -rf .Build/ var/ composer.lock
