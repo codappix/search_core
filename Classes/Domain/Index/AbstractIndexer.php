@@ -98,7 +98,7 @@ abstract class AbstractIndexer implements IndexerInterface
     {
         $this->logger->info('Start indexing single record.', [$identifier]);
         try {
-            $record = $this->getRecord((int)$identifier);
+            $record = $this->getRecord((int) $identifier);
             $this->prepareRecord($record);
 
             $this->connection->addDocument($this->getDocumentName(), $record);
@@ -116,7 +116,7 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->logger->info('Finish deletion.');
     }
 
-    protected function getRecordGenerator(): \Generator
+    protected function getRecordGenerator() : \Generator
     {
         $offset = 0;
         $limit = $this->getLimit();
@@ -134,7 +134,7 @@ abstract class AbstractIndexer implements IndexerInterface
                 $record = $this->dataProcessorService->executeDataProcessor($configuration, $record, $this->identifier);
             }
         } catch (InvalidArgumentException $e) {
-            // Nothing to do
+            // Nothing to do.
         }
 
         $this->handleAbstract($record);
@@ -166,7 +166,7 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * Returns the limit to use to fetch records.
      */
-    protected function getLimit(): int
+    protected function getLimit() : int
     {
         // TODO: Make configurable.
         return 50;
@@ -180,7 +180,7 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * @throws NoRecordFoundException If record could not be found.
      */
-    abstract protected function getRecord(int $identifier): array;
+    abstract protected function getRecord(int $identifier) : array;
 
-    abstract protected function getDocumentName(): string;
+    abstract protected function getDocumentName() : string;
 }
