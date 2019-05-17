@@ -43,7 +43,9 @@ class TcaIndexerTest extends AbstractFunctionalTestCase
      */
     public function respectRootLineBlacklist()
     {
-        $this->importDataSet('EXT:search_core/Tests/Functional/Fixtures/Indexing/TcaIndexer/RespectRootLineBlacklist.xml');
+        $this->importDataSet(
+            'EXT:search_core/Tests/Functional/Fixtures/Indexing/TcaIndexer/RespectRootLineBlacklist.xml'
+        );
         $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
         $tableName = 'tt_content';
         $tableService = $objectManager->get(
