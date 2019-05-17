@@ -20,7 +20,7 @@ namespace Codappix\SearchCore\Tests\Functional;
  * 02110-1301, USA.
  */
 
-use TYPO3\CMS\Core\Tests\FunctionalTestCase as CoreTestCase;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase as CoreTestCase;
 
 /**
  * All functional tests should extend this base class.
