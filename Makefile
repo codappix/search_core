@@ -12,7 +12,7 @@ typo3DatabaseHost ?= "127.0.0.1"
 
 .PHONY: install
 install: clean
-	COMPOSER_PROCESS_TIMEOUT=1000 composer require -vv --dev typo3/cms-core="$(TYPO3_VERSION)"
+	COMPOSER_PROCESS_TIMEOUT=1000 composer require --dev typo3/cms-core="$(TYPO3_VERSION)"
 	git checkout composer.json
 
 cgl:
@@ -24,12 +24,12 @@ functionalTests:
 		typo3DatabasePassword=$(typo3DatabasePassword) \
 		typo3DatabaseHost=$(typo3DatabaseHost) \
 		TYPO3_PATH_WEB=$(TYPO3_WEB_DIR) \
-		.Build/bin/phpunit --colors --debug -v \
+		.Build/bin/phpunit --colors -v \
 			-c Tests/Functional/FunctionalTests.xml
 
 unitTests:
 	TYPO3_PATH_WEB=$(TYPO3_WEB_DIR) \
-		.Build/bin/phpunit --colors --debug -v \
+		.Build/bin/phpunit --colors -v \
 		-c Tests/Unit/UnitTests.xml
 
 uploadCodeCoverage: uploadCodeCoverageToScrutinizer
