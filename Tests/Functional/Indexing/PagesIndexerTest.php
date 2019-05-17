@@ -33,7 +33,7 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
      */
     public function pagesContainAllAdditionalInformation()
     {
-        $this->importDataSet('Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml');
+        $this->importDataSet('EXT:search_core/Tests/Functional/Fixtures/Indexing/IndexTcaTable.xml');
 
         $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
         $tableName = 'pages';
@@ -71,7 +71,7 @@ class PagesIndexerTest extends AbstractFunctionalTestCase
      */
     public function rootLineIsRespectedDuringIndexing($dataSetPath)
     {
-        $this->importDataSet($dataSetPath);
+        $this->importDataSet('EXT:search_core/' . $dataSetPath);
 
         $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class);
         $tableName = 'pages';

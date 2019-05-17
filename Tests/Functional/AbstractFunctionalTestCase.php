@@ -37,7 +37,7 @@ abstract class AbstractFunctionalTestCase extends CoreTestCase
         \TYPO3\CMS\Core\Core\Bootstrap::getInstance()->initializeLanguageObject();
 
         foreach ($this->getDataSets() as $dataSet) {
-            $this->importDataSet($dataSet);
+            $this->importDataSet('EXT:search_core/' . $dataSet);
         }
 
         $this->setUpFrontendRootPage(1, $this->getTypoScriptFilesForFrontendRootPage());
