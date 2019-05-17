@@ -17,7 +17,7 @@
     },
     "require": {
         "php": ">=7.2.0 <8",
-        "typo3/cms-core": "^8.7 || ^9.5",
+        "typo3/cms-core": "^9.5",
         "ruflin/elastica": "^3.2"
     },
     "suggests": {
@@ -25,11 +25,10 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.4",
-        "typo3/testing-framework": "^2.0 || ^4.12",
-        "typo3/cms-form": "^8.7 || ^9.5"
+        "typo3/testing-framework": "^4.12",
+        "typo3/cms-form": "^9.5"
     },
     "config": {
-        "optimize-autoloader": true,
         "vendor-dir": ".Build/vendor",
         "bin-dir": ".Build/bin"
     },
