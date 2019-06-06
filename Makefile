@@ -21,7 +21,7 @@ install: clean
 		patch composer.json Tests/InstallPatches/composer.json.patch; \
 	fi
 
-	COMPOSER_PROCESS_TIMEOUT=1000 composer require -vv --dev $(sourceOrDist) typo3/cms="$(TYPO3_VERSION)"
+	COMPOSER_PROCESS_TIMEOUT=1000 composer require --dev $(sourceOrDist) typo3/cms="$(TYPO3_VERSION)"
 	git checkout composer.json
 
 cgl:
