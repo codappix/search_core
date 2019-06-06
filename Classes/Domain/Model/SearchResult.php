@@ -103,8 +103,6 @@ class SearchResult implements SearchResultInterface
     public function next()
     {
         ++$this->position;
-
-        return $this->current();
     }
 
     public function key()

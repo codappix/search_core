@@ -29,6 +29,8 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class SearchControllerTest extends AbstractUnitTestCase
 {
+    protected $resetSingletonInstances = true;
+
     /**
      * @var SearchController
      */

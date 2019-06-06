@@ -31,6 +31,7 @@ use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * Encapsulate logik related to TCA configuration.
@@ -316,6 +317,18 @@ class TcaTableService implements TcaTableServiceInterface
                 $this->logger->info(
                     sprintf(
                         'Record %u is black listed due to configured root line configuration of page %u.',
+                        $record['uid'],
+                        $pageInRootLine['uid']
+                    ),
+                    [$record, $pageInRootLine]
+                );
+                return true;
+            }
+
+            if ($pageInRootLine['doktype'] === PageRepository::DOKTYPE_RECYCLER) {
+                $this->logger->info(
+                    sprintf(
+                        'Record %u is black listed due to being within recycler page %u.',
                         $record['uid'],
                         $pageInRootLine['uid']
                     ),

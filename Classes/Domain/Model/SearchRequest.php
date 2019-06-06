@@ -30,6 +30,8 @@ use Codappix\SearchCore\Domain\Search\SearchService;
  */
 class SearchRequest implements SearchRequestInterface
 {
+    use QueryResultInterfaceStub;
+
     /**
      * The search string provided by the user, the actual term to search for.
      *
@@ -93,7 +95,10 @@ class SearchRequest implements SearchRequestInterface
     public function setFilter(array $filter)
     {
         $filter = \TYPO3\CMS\Core\Utility\ArrayUtility::removeArrayEntryByValue($filter, '');
-        $this->filter = \TYPO3\CMS\Extbase\Utility\ArrayUtility::removeEmptyElementsRecursively($filter);
+        $this->filter = \TYPO3\CMS\Core\Utility\ArrayUtility::filterRecursive($filter, function ($value) {
+            return (!is_array($value) && trim($value) !== '')
+                || is_array($value) && count($value) !== 0;
+        });
     }
 
     public function hasFilter() : bool
@@ -170,12 +175,12 @@ class SearchRequest implements SearchRequestInterface
         return $this;
     }
 
-    public function getLimit()
+    public function getLimit(): int
     {
         return $this->limit;
     }
 
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->offset;
     }
@@ -213,11 +218,6 @@ class SearchRequest implements SearchRequestInterface
     public function equals($propertyName, $operand, $caseSensitive = true)
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196199);
-    }
-
-    public function like($propertyName, $operand, $caseSensitive = true)
-    {
-        throw new \BadMethodCallException('Method is not implemented yet.', 1502196167);
     }
 
     public function contains($propertyName, $operand)
@@ -291,6 +291,31 @@ class SearchRequest implements SearchRequestInterface
     }
 
     public function getStatement()
+    {
+        throw new \BadMethodCallException('Method is not implemented yet.', 1502196208);
+    }
+
+    public function current()
+    {
+        throw new \BadMethodCallException('Method is not implemented yet.', 1502196208);
+    }
+
+    public function next()
+    {
+        throw new \BadMethodCallException('Method is not implemented yet.', 1502196208);
+    }
+
+    public function key()
+    {
+        throw new \BadMethodCallException('Method is not implemented yet.', 1502196208);
+    }
+
+    public function valid()
+    {
+        throw new \BadMethodCallException('Method is not implemented yet.', 1502196208);
+    }
+
+    public function rewind()
     {
         throw new \BadMethodCallException('Method is not implemented yet.', 1502196208);
     }

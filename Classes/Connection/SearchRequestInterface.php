@@ -23,9 +23,9 @@ namespace Codappix\SearchCore\Connection;
 use Codappix\SearchCore\Connection\ConnectionInterface;
 use Codappix\SearchCore\Connection\FacetRequestInterface;
 use Codappix\SearchCore\Domain\Search\SearchService;
-use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
-interface SearchRequestInterface extends QueryInterface
+interface SearchRequestInterface extends QueryResultInterface
 {
     /**
      * Returns the actual string the user searched for.
@@ -47,6 +47,14 @@ interface SearchRequestInterface extends QueryInterface
      * @return array<FacetRequestInterface>
      */
     public function getFacets() : array;
+
+    public function setLimit(int $limit);
+
+    public function setOffset(int $offset);
+
+    public function getLimit() : int;
+
+    public function getOffset() : int;
 
     /**
      * Workaround for paginate widget support which will

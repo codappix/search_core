@@ -58,7 +58,8 @@ class SearchRequestTest extends AbstractUnitTestCase
             'Single filter with empty recursive values' => [
                 'filter' => [
                     'someFilter' => [
-                        'someKey' => '',
+                        'firstEmptyKey' => '',
+                        'secondEmptyKey' => '',
                     ],
                 ],
             ],
@@ -79,59 +80,5 @@ class SearchRequestTest extends AbstractUnitTestCase
             $subject->getFilter(),
             'Filter was not set.'
         );
-    }
-
-    /**
-     * @test
-     */
-    public function exceptionIsThrownIfSearchServiceWasNotSet()
-    {
-        $subject = new SearchRequest();
-        $subject->setConnection($this->getMockBuilder(ConnectionInterface::class)->getMock());
-        $this->expectException(\InvalidArgumentException::class);
-        $subject->execute();
-    }
-
-    /**
-     * @test
-     */
-    public function exceptionIsThrownIfConnectionWasNotSet()
-    {
-        $subject = new SearchRequest();
-        $subject->setSearchService(
-            $this->getMockBuilder(SearchService::class)
-                ->disableOriginalConstructor()
-                ->getMock()
-        );
-        $this->expectException(\InvalidArgumentException::class);
-        $subject->execute();
-    }
-
-    /**
-     * @test
-     */
-    public function executionMakesUseOfProvidedConnectionAndSearchService()
-    {
-        $searchServiceMock = $this->getMockBuilder(SearchService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connectionMock = $this->getMockBuilder(ConnectionInterface::class)
-            ->getMock();
-        $searchResultMock = $this->getMockBuilder(SearchResultInterface::class)
-            ->getMock();
-
-        $subject = new SearchRequest();
-        $subject->setSearchService($searchServiceMock);
-        $subject->setConnection($connectionMock);
-
-        $connectionMock->expects($this->once())
-            ->method('search')
-            ->with($subject)
-            ->willReturn($searchResultMock);
-        $searchServiceMock->expects($this->once())
-            ->method('processResult')
-            ->with($searchResultMock);
-
-        $subject->execute();
     }
 }

@@ -21,12 +21,11 @@ namespace Codappix\SearchCore\Tests\Unit\Domain\Index\TcaIndexer;
  */
 
 use Codappix\SearchCore\Configuration\ConfigurationContainerInterface;
-use Codappix\SearchCore\DataProcessing\CopyToProcessor;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\RelationResolver;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService76;
 use Codappix\SearchCore\Domain\Index\TcaIndexer\TcaTableService;
 use Codappix\SearchCore\Tests\Unit\AbstractUnitTestCase;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 
 class TcaTableServiceTest extends AbstractUnitTestCase
 {
@@ -41,16 +40,16 @@ class TcaTableServiceTest extends AbstractUnitTestCase
     protected $configuration;
 
     /**
-     * @var DatabaseConnection
+     * @var ConnectionPool
      */
-    protected $databaseConnection;
+    protected $connectionPool;
 
     public function setUp()
     {
         parent::setUp();
 
         $this->configuration = $this->getMockBuilder(ConfigurationContainerInterface::class)->getMock();
-        $this->databaseConnection = $this->getMockBuilder(DatabaseConnection::class)->getMock();
+        $this->connectionPool = $this->getMockBuilder(ConnectionPool::class)->getMock();
 
         $className = TcaTableService::class;
         if ($this->isLegacyVersion()) {
@@ -62,7 +61,7 @@ class TcaTableServiceTest extends AbstractUnitTestCase
             ->getMock();
         $this->subject->expects($this->any())
             ->method('getConnection')
-            ->willReturn($this->databaseConnection);
+            ->willReturn($this->connectionPool);
 
         $this->inject($this->subject, 'configuration', $this->configuration);
         $this->inject($this->subject, 'logger', $this->getMockedLogger());

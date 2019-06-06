@@ -156,9 +156,8 @@ class QueryFactoryTest extends AbstractUnitTestCase
         );
 
         $query = $this->subject->create($searchRequest);
-        $this->assertSame(
-            null,
-            $query->toArray()['query']['bool']['filter'],
+        $this->assertTrue(
+            !isset($query->toArray()['query']['bool']['filter']),
             'Filter was added to query, even if no filter exists.'
         );
     }
@@ -405,7 +404,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
 
         $query = $this->subject->create($searchRequest);
         $this->assertInstanceOf(
-            stdClass,
+            \stdClass::class,
             $query->toArray()['query']['match_all'],
             'Empty search request does not create expected query.'
         );
@@ -543,7 +542,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                         'config' => 'something',
                     ],
                     'field2' => [
-                        'config' => '{request.query}',
+                        'config' => '{request.searchTerm}',
                     ],
                 ],
                 $this->throwException(new InvalidArgumentException)
@@ -613,7 +612,7 @@ class QueryFactoryTest extends AbstractUnitTestCase
                         'config' => 'something',
                     ],
                     'field2' => [
-                        'config' => '{request.query}',
+                        'config' => '{request.searchTerm}',
                     ],
                 ]
             ));

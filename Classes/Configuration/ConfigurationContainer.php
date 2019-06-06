@@ -21,7 +21,7 @@ namespace Codappix\SearchCore\Configuration;
  */
 
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 
 /**
  * Container of all configurations for extension.
@@ -59,7 +59,11 @@ class ConfigurationContainer implements ConfigurationContainerInterface
      */
     public function get(string $path)
     {
-        $value = ArrayUtility::getValueByPath($this->settings, $path);
+        try {
+            $value = ArrayUtility::getValueByPath($this->settings, $path, '.');
+        } catch (\Exception $e) {
+            $value = null;
+        }
 
         if ($value === null) {
             throw new InvalidArgumentException(
@@ -77,6 +81,10 @@ class ConfigurationContainer implements ConfigurationContainerInterface
      */
     public function getIfExists(string $path)
     {
-        return ArrayUtility::getValueByPath($this->settings, $path);
+        try {
+            return ArrayUtility::getValueByPath($this->settings, $path, '.');
+        } catch (\Exception $exception) {
+            return null;
+        }
     }
 }
