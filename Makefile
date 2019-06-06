@@ -12,8 +12,7 @@ typo3DatabaseHost ?= "127.0.0.1"
 
 .PHONY: install
 install: clean
-	COMPOSER_PROCESS_TIMEOUT=1000 composer require --dev typo3/cms-core="$(TYPO3_VERSION)"
-	git checkout composer.json
+	composer install
 
 cgl:
 	./.Build/bin/phpcs
