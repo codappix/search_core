@@ -9,8 +9,9 @@ This change contains some breaking changes:
 * Due to dropped TYPO3 CMS < v9 support, also all PHP Code within ``Compatibility``
   namespace was removed.
 
-* Fluid variable ``{request.query}`` is no longer provided, due to internal API
-  changes. Use ``{request.searchTerm}`` instead.
+   * ``\Codappix\SearchCore\DataProcessing\ContentObjectDataProcessorAdapterProcessor``
+   has changed signature for ``__construct`` due to removed ``Compatibility``
+   namespace.
 
 * PHP Interface ``\Codappix\SearchCore\Connection\SearchRequestInterface`` has
   changed, due to extending TYPO3 Interface
@@ -18,3 +19,5 @@ This change contains some breaking changes:
 
   Therefore also PHP class ``\Codappix\SearchCore\Domain\Model\SearchRequest`` has
   been adjusted.
+
+* Recycler are respected. Pages from type recycler are ignored during indexing.
