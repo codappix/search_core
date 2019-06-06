@@ -20,10 +20,6 @@ start indexing TYPO3.
 Just add the indexer for a TYPO3 table. The indexer will use the TCA to fetch all necessary
 information like relations.
 
-.. note::
-
-  Not all relations are resolved yet, see :issue:`17`.
-
 .. _PagesIndexer:
 
 PagesIndexer
@@ -34,7 +30,3 @@ start indexing TYPO3.
 
 The indexer will use the TCA to fetch all necessary information like relations. Currently the
 implementation is very basic.
-
-.. note::
-
-  Not all relations are resolved yet, see :issue:`17` and :pr:`20`.

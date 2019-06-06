@@ -9,16 +9,7 @@ Composer
 
 The extension can be installed through composer::
 
-    composer require "codappix/search_core" "~0.0.7"
-
-Note that you have to allow unstable packages:
-
-.. code-block:: json
-
-   {
-      "minimum-stability": "dev",
-      "prefer-stable": true
-   }
+    composer require "codappix/search_core" "^1.0"
 
 Download
 --------
@@ -26,11 +17,14 @@ Download
 You can also `download`_ the extension and placing it inside the :file:`typo3conf/ext`-Folder of
 your installation.  In that case you need to install all dependencies yourself. Dependencies are:
 
-.. code::
+PHP
+   Higher or equal then 7.2.0 and lower then 8
 
-   "php": ">=7.2.0 <8",
-   "typo3/cms-core": "^9.5",
-   "ruflin/elastica": "^3.2"
+TYPO3 CMS
+   Higher or equal then 9.5.0 and lower then 10.0.0
+
+Library https://elastica.io/
+   In version 3.2.x
 
 Setup
 -----

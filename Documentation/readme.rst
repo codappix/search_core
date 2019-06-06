@@ -18,7 +18,7 @@ re-indexing.
 Current state
 -------------
 
-This is still a very early beta version. More information can be taken from Github at
+This is still a very early beta version. More information can be taken from GitHub at
 `current issues`_.
 
 We are also focusing on Code Quality and Testing through `travis ci`_, ``phpcs``, ``phpunit`` and

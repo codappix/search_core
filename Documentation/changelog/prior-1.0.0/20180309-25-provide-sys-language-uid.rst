@@ -1,3 +1,5 @@
+.. _change-feature-25:
+
 Feature 25 "Respect multiple languages" - Provide sys_language_uid
 ==================================================================
 

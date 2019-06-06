@@ -11,8 +11,8 @@ Manual indexing
 
 You can trigger indexing from CLI::
 
-    ./typo3/cli_dispatch.phpsh extbase index:index --identifier 'pages'
-    ./bin/typo3cms index:index --identifier 'pages'
+    ./typo3/cli_dispatch.phpsh extbase index:index 'pages'
+    ./bin/typo3cms index:index 'pages'
 
 This will index the table ``pages`` using the :ref:`TcaIndexer`.
 
@@ -26,8 +26,8 @@ Manual deletion
 
 You can trigger deletion for a single index from CLI::
 
-    ./typo3/cli_dispatch.phpsh extbase index:delete --identifier 'pages'
-    ./bin/typo3cms index:delete --identifier 'pages'
+    ./typo3/cli_dispatch.phpsh extbase index:delete 'pages'
+    ./bin/typo3cms index:delete 'pages'
 
 This will delete the index for the table ``pages``.
 

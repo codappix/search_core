@@ -8,10 +8,10 @@ Table of Contents
    :glob:
 
    features
+   concepts
    installation
    configuration
    usage
-   concepts
    connections
    indexer
    dataprocessors

@@ -10,8 +10,8 @@ This change contains some breaking changes:
   namespace was removed.
 
    * ``\Codappix\SearchCore\DataProcessing\ContentObjectDataProcessorAdapterProcessor``
-   has changed signature for ``__construct`` due to removed ``Compatibility``
-   namespace.
+     has changed signature for ``__construct`` due to removed ``Compatibility``
+     namespace.
 
 * PHP Interface ``\Codappix\SearchCore\Connection\SearchRequestInterface`` has
   changed, due to extending TYPO3 Interface

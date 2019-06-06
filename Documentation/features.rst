@@ -26,7 +26,7 @@ Searching
 
 .. note::
     Currently only integrated for Elasticsearch with no abstraction.
-    If you need to implement your own search, please open an issue on Github and we will change the code
+    If you need to implement your own search, please open an issue on GitHub and we will change the code
     base.
 
 Via TypoScript it's possible to configure the fields to query, minimum match and script fields.
@@ -54,8 +54,10 @@ Planned
 The following features are currently planned and will be integrated:
 
 #. :issue:`25` Multi language.
+
+   Partially supported, see :ref:`change-feature-25`.
+
 #. :issue:`94` Respect access rights while indexing relations.
-#. :issue:`75` Configuration of index name (for Elasticsearch).
 
 For a full list, check out our `open issues`_.
 

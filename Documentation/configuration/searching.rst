@@ -123,32 +123,28 @@ E.g. you submit a filter in form of:
 
 .. code-block:: html
 
-   <f:comment>
-       Due to TYPO3 7.x fluid limitations, we build this input ourself.
-       No longer necessary in 8 and above
-   </f:comment>
-   <select name="tx_searchcore_search[searchRequest][filter][month][from]" class="_control" >
-       <option value="">Month</option>
+   <f:select name="searchRequest[filter][month][from]">
+       <f:select.option value="">Month</f:select.option>
        <f:for each="{searchResult.facets.month.options}" as="month">
            <f:if condition="{month.count}">
-               <option
+               <f:select.option
                    value="{month.displayName -> f:format.date(format: 'Y-m')}"
-                   {f:if(condition: '{searchRequest.filter.month.from} == {month.displayName -> f:format.date(format: \'Y-m\')}', then: 'selected="true"')}
-               >{month.displayName -> f:format.date(format: '%B %Y')}</option>
+                   selected="{f:if(condition: '{searchRequest.filter.month.from} == {month.displayName -> f:format.date(format: \'Y-m\')}', then: 1, else: 0)}"
+               >{month.displayName -> f:format.date(format: '%B %Y')}</f:select.option>
            </f:if>
        </f:for>
-   </select>
-   <select name="tx_searchcore_search[searchRequest][filter][month][to]" class="_control" >
-       <option value="">Month</option>
+   </f:select>
+   <f:select name="searchRequest[filter][month][to]">
+       <f:select.option value="">Month</of:select.ption>
        <f:for each="{searchResult.facets.month.options}" as="month">
            <f:if condition="{month.count}">
-               <option
+               <f:select.option
                    value="{month.displayName -> f:format.date(format: 'Y-m')}"
-                   {f:if(condition: '{searchRequest.filter.month.from} == {month.displayName -> f:format.date(format: \'Y-m\')}', then: 'selected="true"')}
-               >{month.displayName -> f:format.date(format: '%B %Y')}</option>
+                   selected="{f:if(condition: '{searchRequest.filter.month.from} == {month.displayName -> f:format.date(format: \'Y-m\')}', then: 1, else: 0)}"
+               >{month.displayName -> f:format.date(format: '%B %Y')}</f:select.option>
            </f:if>
        </f:for>
-   </select>
+   </f:select>
 
 This will create a ``month`` filter with sub properties. To make this filter actually work, you
 can add the following TypoScript, which will be added to the filter::

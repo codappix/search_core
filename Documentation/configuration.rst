@@ -25,6 +25,8 @@ The structure is following TYPO3 Extbase conventions. All settings are placed in
 Here is the example default configuration that's provided through static include:
 
 .. code-block:: typoscript
+   :caption: Constants
+   :name: static-typoscript-constants
 
    plugin {
        tx_searchcore {
@@ -53,6 +55,8 @@ Here is the example default configuration that's provided through static include
    }
 
 .. code-block:: typoscript
+   :caption: Setup
+   :name: static-typoscript-setup
 
    plugin {
        tx_searchcore {
