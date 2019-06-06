@@ -26,10 +26,11 @@ Download
 You can also `download`_ the extension and placing it inside the :file:`typo3conf/ext`-Folder of
 your installation.  In that case you need to install all dependencies yourself. Dependencies are:
 
-.. literalinclude:: ../../composer.json
-   :caption: Dependencies from composer.json
-   :lines: 19-21
-   :dedent: 8
+.. code::
+
+   "php": ">=7.2.0 <8",
+   "typo3/cms-core": "^9.5",
+   "ruflin/elastica": "^3.2"
 
 Setup
 -----
